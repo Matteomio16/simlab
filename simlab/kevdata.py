@@ -28,18 +28,9 @@ from scipy.optimize import brentq
 from scipy.special import expit
 
 from . import probes
-from .ces import DATA, PID7, VOTE_OPTIONS, _logit, cells, load, turnout_shift
+from .ces import DATA, PID7, STATE_NAMES, VOTE_OPTIONS, _logit, cells, load, turnout_shift
 from .personas import render
 
-STATES = {1: "Alabama", 2: "Alaska", 4: "Arizona", 5: "Arkansas", 6: "California", 8: "Colorado", 9: "Connecticut",
-          10: "Delaware", 11: "District of Columbia", 12: "Florida", 13: "Georgia", 15: "Hawaii", 16: "Idaho",
-          17: "Illinois", 18: "Indiana", 19: "Iowa", 20: "Kansas", 21: "Kentucky", 22: "Louisiana", 23: "Maine",
-          24: "Maryland", 25: "Massachusetts", 26: "Michigan", 27: "Minnesota", 28: "Mississippi", 29: "Missouri",
-          30: "Montana", 31: "Nebraska", 32: "Nevada", 33: "New Hampshire", 34: "New Jersey", 35: "New Mexico",
-          36: "New York", 37: "North Carolina", 38: "North Dakota", 39: "Ohio", 40: "Oklahoma", 41: "Oregon",
-          42: "Pennsylvania", 44: "Rhode Island", 45: "South Carolina", 46: "South Dakota", 47: "Tennessee",
-          48: "Texas", 49: "Utah", 50: "Vermont", 51: "Virginia", 53: "Washington", 54: "West Virginia",
-          55: "Wisconsin", 56: "Wyoming"}
 HELD_OUT = ("Ohio", "North Carolina", "Texas")
 OUT = DATA / "kev" / "ces-v1"
 
@@ -66,11 +57,11 @@ def state_records(df, state: str, shift: float, min_n: int, rng: random.Random) 
 def build(min_n_train: int = 20, calibration: float = 0.15, seed: int = 0) -> None:
     csv = next(DATA.glob("CCES24_*.csv"))
     df = load(csv)
-    df["state"] = df.inputstate.map(STATES)
-    shift = {s: turnout_shift(df, s) for s in STATES.values()}
+    df["state"] = df.inputstate.map(STATE_NAMES)
+    shift = {s: turnout_shift(df, s) for s in STATE_NAMES.values()}
     rng = random.Random(seed)
     dev = [r for s in HELD_OUT for r in state_records(df, s, shift[s], 30, rng)]
-    rest = [r for s in sorted(set(STATES.values()) - set(HELD_OUT))
+    rest = [r for s in sorted(set(STATE_NAMES.values()) - set(HELD_OUT))
             for r in state_records(df, s, shift[s], min_n_train, rng)]
     rng.shuffle(rest)
     k = max(40, round(calibration * len(rest)))
@@ -160,7 +151,7 @@ def add_choice(qs: dict, name: str, make, options: dict, target: dict, rng: rand
 def build_v2(min_n: int = 20, calibration: float = 0.15, seed: int = 0) -> None:
     csv = next(DATA.glob("CCES24_*.csv"))
     df = load(csv)
-    df["state"] = df.inputstate.map(STATES)
+    df["state"] = df.inputstate.map(STATE_NAMES)
     df["party_id"] = df.pid7.map(PARTY)
     df["race2"] = np.where(df.race5 == "White", "White", "Non-white")
     df["vote_2020"] = df.presvote20post.map(VOTE20)
@@ -169,7 +160,7 @@ def build_v2(min_n: int = 20, calibration: float = 0.15, seed: int = 0) -> None:
     mid = midterms()
     rng = random.Random(seed)
     records, shifts, sizes = {}, defaultdict(dict), defaultdict(dict)
-    for s in STATES.values():
+    for s in STATE_NAMES.values():
         shifts[2024][s] = turnout_shift(df, s)
         n_dev = 30 if s in HELD_OUT else min_n   # held-out demographic cells = the fidelity-test cells
         qs = defaultdict(dict)
@@ -206,7 +197,7 @@ def build_v2(min_n: int = 20, calibration: float = 0.15, seed: int = 0) -> None:
                     sizes[persona(k)]["house22"] = n
         records[s] = [{"state": p, "questions": q} for p, q in sorted(qs.items())]
     dev = [r for s in HELD_OUT for r in records[s]]
-    rest = [r for s in sorted(set(STATES.values()) - set(HELD_OUT)) for r in records[s]]
+    rest = [r for s in sorted(set(STATE_NAMES.values()) - set(HELD_OUT)) for r in records[s]]
     rng.shuffle(rest)
     k = max(40, round(calibration * len(rest)))
     parts = {"calibration": rest[:k], "train": rest[k:], "development": dev}

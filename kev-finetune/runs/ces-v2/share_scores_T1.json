@@ -1,0 +1,164 @@
+{
+ "house22|demographic cells|Ohio": {
+  "cells": 9,
+  "kev": 0.06723425616604806,
+  "pooled": 0.06579406617222203,
+  "regression": NaN
+ },
+ "house22|demographic cells|North Carolina": {
+  "cells": 10,
+  "kev": 0.08729706364304873,
+  "pooled": 0.07733524613587986,
+  "regression": NaN
+ },
+ "house22|demographic cells|Texas": {
+  "cells": 23,
+  "kev": 0.07373588367406679,
+  "pooled": 0.1555412032872591,
+  "regression": NaN
+ },
+ "pres24|2020-vote cells|Ohio": {
+  "cells": 7,
+  "kev": 0.041336878466171595,
+  "pooled": 0.030991038620462263,
+  "regression": NaN
+ },
+ "pres24|2020-vote cells|North Carolina": {
+  "cells": 9,
+  "kev": 0.028031369923798358,
+  "pooled": 0.022457337626545847,
+  "regression": NaN
+ },
+ "pres24|2020-vote cells|Texas": {
+  "cells": 11,
+  "kev": 0.04753071917464605,
+  "pooled": 0.04454194020138338,
+  "regression": NaN
+ },
+ "pres24|demographic cells|Ohio": {
+  "cells": 9,
+  "kev": 0.07006212747355942,
+  "pooled": 0.055000417936722126,
+  "regression": 0.047221340460526305
+ },
+ "pres24|demographic cells|North Carolina": {
+  "cells": 9,
+  "kev": 0.09397317814545161,
+  "pooled": 0.07947461772183266,
+  "regression": 0.09340034403669724
+ },
+ "pres24|demographic cells|Texas": {
+  "cells": 19,
+  "kev": 0.09006505101121264,
+  "pooled": 0.13761719386964036,
+  "regression": 0.1375923404255319
+ },
+ "pres24|party strata|Ohio": {
+  "cells": 16,
+  "kev": 0.03234123372597783,
+  "pooled": 0.02697236628822394,
+  "regression": NaN
+ },
+ "pres24|party strata|North Carolina": {
+  "cells": 16,
+  "kev": 0.034067160541120606,
+  "pooled": 0.02655236022188944,
+  "regression": NaN
+ },
+ "pres24|party strata|Texas": {
+  "cells": 28,
+  "kev": 0.04017824059999087,
+  "pooled": 0.043560391801592074,
+  "regression": NaN
+ },
+ "turnout18|demographic cells|Ohio": {
+  "cells": 13,
+  "kev": 0.041212144924085835,
+  "pooled": 0.03241782413822223,
+  "regression": NaN
+ },
+ "turnout18|demographic cells|North Carolina": {
+  "cells": 15,
+  "kev": 0.0629235607032524,
+  "pooled": 0.05686444718533015,
+  "regression": NaN
+ },
+ "turnout18|demographic cells|Texas": {
+  "cells": 30,
+  "kev": 0.05190557959252365,
+  "pooled": 0.05173136182049073,
+  "regression": NaN
+ },
+ "turnout22|demographic cells|Ohio": {
+  "cells": 17,
+  "kev": 0.05431561362677633,
+  "pooled": 0.040070015771457454,
+  "regression": NaN
+ },
+ "turnout22|demographic cells|North Carolina": {
+  "cells": 21,
+  "kev": 0.05413653414926452,
+  "pooled": 0.05747464145083468,
+  "regression": NaN
+ },
+ "turnout22|demographic cells|Texas": {
+  "cells": 32,
+  "kev": 0.0486284568608475,
+  "pooled": 0.04057238093810624,
+  "regression": NaN
+ },
+ "turnout24|2020-vote cells|Ohio": {
+  "cells": 12,
+  "kev": 0.07738208428323815,
+  "pooled": 0.04763062379492334,
+  "regression": NaN
+ },
+ "turnout24|2020-vote cells|North Carolina": {
+  "cells": 12,
+  "kev": 0.1008395041419778,
+  "pooled": 0.07864076476481191,
+  "regression": NaN
+ },
+ "turnout24|2020-vote cells|Texas": {
+  "cells": 15,
+  "kev": 0.03985005281325662,
+  "pooled": 0.042255352939199145,
+  "regression": NaN
+ },
+ "turnout24|demographic cells|Ohio": {
+  "cells": 13,
+  "kev": 0.07604437657726604,
+  "pooled": 0.06187529647814335,
+  "regression": 0.07088041740674955
+ },
+ "turnout24|demographic cells|North Carolina": {
+  "cells": 13,
+  "kev": 0.09806668508793703,
+  "pooled": 0.06912601974204247,
+  "regression": 0.05871772470144562
+ },
+ "turnout24|demographic cells|Texas": {
+  "cells": 27,
+  "kev": 0.04521555380151791,
+  "pooled": 0.05249544749389056,
+  "regression": 0.03638109822795887
+ },
+ "turnout24|party strata|Ohio": {
+  "cells": 24,
+  "kev": 0.06412857360655497,
+  "pooled": 0.055828863684819166,
+  "regression": NaN
+ },
+ "turnout24|party strata|North Carolina": {
+  "cells": 23,
+  "kev": 0.08656774682455358,
+  "pooled": 0.07330372552415333,
+  "regression": NaN
+ },
+ "turnout24|party strata|Texas": {
+  "cells": 28,
+  "kev": 0.06740056213352225,
+  "pooled": 0.06690598081468017,
+  "regression": NaN
+ }
+}
