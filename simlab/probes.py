@@ -98,6 +98,18 @@ def vote_question(options: dict) -> dict:
 
 
 TURNOUT_Q = {"type": "noul", "instructions": "Did this person actually vote in the November 2024 general election?"}
+HOUSE_OPTIONS = {"democrat": "The Democratic candidate", "republican": "The Republican candidate",
+                 "other": "Another candidate"}
+
+
+def turnout_question(year: int) -> dict:
+    return {"type": "noul", "instructions": f"Did this person actually vote in the November {year} general election?"}
+
+
+def house_vote_question(year: int, options: dict) -> dict:
+    return {"type": "choice",
+            "instructions": f"How did this person vote for the U.S. House of Representatives in November {year}?",
+            "criteria": options}
 
 # ------------------------------------------------ news classification
 EVENT_TYPES = {
