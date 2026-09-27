@@ -226,21 +226,23 @@ def archetypes(df: pd.DataFrame, draws: int = 3000, seed: int = 0) -> list[dict]
 
 
 def build() -> None:
-    """Write simlab/archetypes.json and simlab/cells.json from the downloaded CES file."""
-    df = load(download())
+    """Write simlab/archetypes.json and simlab/cells.json: vote cells from CES validated voters, turnout cells from
+    the Census CPS 2024 (CES validated turnout tracks voter-file match rates; see cps.py)."""
+    from .cps import respondents
+    df, cp = load(download()), respondents(2024)
     here = Path(__file__).parent
     arch = archetypes(df)
     (here / "archetypes.json").write_text(json.dumps(arch, indent=1))
-    shift = {s: turnout_shift(df, s) for s in (None, *FIPS.values())}
-    preds = {"vote24": crossfit(df[df.vote24.notna() & df.vvweight_post.notna()], "vote24", "vvweight_post"),
-             "turnout": crossfit(df[df.cit1 == 1], "turnout", "commonweight")}
-    out = {t: {s or "national": cells(df, t, s, shift=shift[s], pred=preds[t]) for s in (None, *FIPS.values())}
+    src = {"vote24": df[df.vote24.notna() & df.vvweight_post.notna()], "turnout": cp}
+    preds = {"vote24": crossfit(src["vote24"], "vote24", "vvweight_post"),
+             "turnout": crossfit(cp, "turnout", "commonweight")}
+    out = {t: {s or "national": cells(src[t], t, s, pred=preds[t]) for s in (None, *FIPS.values())}
            for t in ("vote24", "turnout")}
     (here / "cells.json").write_text(json.dumps(out, indent=1))
-    c = df[df.cit1 == 1]
-    print(f"respondents {len(df)}, citizens' validated turnout {np.average(c.voted, weights=c.commonweight):.3f}; "
-          "logit shifts to official 2024 turnout: " + ", ".join(
-              f"{s or 'national'} {TURNOUT_2024[s or 'United States']} ({v:+.3f})" for s, v in shift.items()))
+    print(f"CES respondents {len(df)}; CPS 2024 citizens {len(cp)}, weighted turnout "
+          f"{np.average(cp.voted, weights=cp.commonweight):.3f} (official {TURNOUT_2024['United States']}); "
+          + ", ".join(f"{s} {np.average(cp.voted[cp.state == s], weights=cp.commonweight[cp.state == s]):.3f}"
+                      for s in FIPS.values()))
     v = df[df.vote24.notna() & df.vvweight_post.notna()]
     print("weighted 2024 vote (validated voters):",
           (v.groupby("vote24").vvweight_post.sum() / v.vvweight_post.sum()).round(3).to_dict())

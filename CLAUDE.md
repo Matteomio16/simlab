@@ -127,12 +127,13 @@ simlab/
 Decided in Claude Code, 27 Sep (reasons in `docs/CHANGELOG.md`):
 - Every model gets option-order averaging: scales asked as written and reversed, choices in 3 orders; `<model>1`
   = single order (cached, free).
-- One pinned host per LLM (GLM and DeepSeek → InferenceNet, MiMo → Xiaomi, Luna → OpenAI); GLM reasoning
-  `effort: minimal` (can't be disabled, 0 reasoning tokens).
-- Fidelity targets: vote among validated voters (`vvweight_post`); turnout = validated vote among citizens,
-  logit-shifted per state to that state's official 2024 turnout (`simlab/turnout2024.json`, UF Election Lab v0.4;
-  national cells to 64.3%), because CES voter-file match rates vary by state (Matteo, 27 Sep evening; assumption:
-  match failures even across cells within a state).
+- Pinned hosts per LLM, one quantisation per model (GLM → InferenceNet with DeepInfra overflow, DeepSeek →
+  DeepInfra, MiMo → Xiaomi + DeepInfra, Luna → OpenAI); GLM reasoning `effort: minimal` (can't be disabled, 0
+  reasoning tokens).
+- Fidelity targets: vote among CES validated voters (`vvweight_post`); turnout from the Census CPS 2024 November
+  supplement (`simlab/cps.py`: self-reported, non-answerers dropped, each state reweighted to its official 2024
+  turnout in `simlab/turnout2024.json`), demographic cells only. CES validated turnout is not used: it tracks
+  voter-file match rates (correlation 0.99 across cells; young men of color at 5–15%) (Matteo, 27 Sep night).
 - Test personas: 28 party-ID × race × degree strata, one real OH/NC/TX respondent each, balanced on gender, age,
   race and ideology (`simlab/archetypes.json`, built by `python -m simlab.ces`).
 

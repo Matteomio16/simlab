@@ -2,6 +2,18 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-27 (late night, test bench): fidelity turnout targets switched to the Census CPS
+
+- Matteo approved downloading the CPS November supplements (2024, 2022, 2018; census.gov, public, no account); they are
+  in `data/cps/` (gitignored). `cps.py` (infrastructure session) turns them into citizen respondents with self-reported
+  turnout, non-answerers dropped (Hur and Achen) and each state reweighted to its official VEP turnout.
+- `cells.json` (first fidelity test) and `cells2.json` (wider test) now take turnout targets and the turnout regression
+  baseline from CPS 2024: 77 national, 8 OH, 11 NC, 24 TX turnout cells; turnout is asked only on demographic cells
+  (CPS has no party ID). Vote and opinion targets stay CES; archetypes unchanged. Weighted CPS turnout: national 0.651,
+  OH 0.654, NC 0.707, TX 0.568. All models re-scored (cached answers reused; new cells asked fresh).
+- CLAUDE.md section 5 updated (Matteo's OK): fidelity turnout now from CPS; the hosts line now matches the current
+  pins (it still listed DeepSeek on InferenceNet).
+
 ## 2026-09-27 (late night): Kev ces-v2 results; Census CPS turnout; ces-v3 test
 
 - Kev `ces-v2` (H100, 2 epochs, 1,000 replay records, ~21 min, $1.52). 1,356 training records from 48 states: 2024

@@ -16,12 +16,11 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import pandas as pd
-from scipy.special import expit
 from sklearn.linear_model import LogisticRegression
 
 from . import probes
 from .askers import DecisionAsker, LLMAsker
-from .ces import CELL_FIELDS, DATA, FIPS, VOTE_OPTIONS, _logit, load, turnout_shift
+from .ces import CELL_FIELDS, DATA, FIPS, VOTE_OPTIONS, load
 from .core import JEV, RUNS, Ledger
 from .personas import render
 
@@ -134,11 +133,16 @@ def crossfit(d: pd.DataFrame, y: str, w: str, features: list[str], folds: int = 
 
 
 def build() -> dict:
-    df = frame()
-    shifts = {s: turnout_shift(df, s) for s in (None, *FIPS.values())}
+    """Turnout targets come from the Census CPS 2024 (cps.py), on demographic cells only: CES validated turnout
+    tracks voter-file match rates, and the CPS has no party ID for the agent-style cells."""
+    from .cps import respondents
+    df, cp = frame(), respondents(2024)
     demo_f, agent_f = ["age4", "gender4", "race5", "degree"], ["age4", "gender4", "race5", "degree", "party5"]
     preds = {}
     for item in ITEMS:
+        if item == "turnout":
+            preds[item] = {"demographic": crossfit(cp, "turnout", "commonweight", demo_f)}
+            continue
         d, w = population(df, item)
         preds[item] = {"demographic": crossfit(d, ITEMS[item][1], w, demo_f),
                        "agent": crossfit(d, ITEMS[item][1], w, agent_f)}
@@ -148,25 +152,27 @@ def build() -> dict:
     cells = []
     for kind, scope, by, min_n in layouts:
         d0 = df[df.gender.isin(["Man", "Woman"])]
+        c0 = cp if scope == "national" else cp[cp.state == scope]
         if scope != "national":
             d0 = d0[d0.state == scope]
+        cps_groups = dict(iter(c0.groupby(by))) if kind == "demographic" else {}
         for key, g in d0.groupby(by):
             fields = {CELL_FIELDS.get(b, "party_id"): v for b, v in zip(by, key)}
             cell = {"kind": kind, "scope": scope, "persona": render({"state": None if scope == "national" else scope,
                                                                      **fields}),
                     "targets": {}, "baseline": {}, "n": {}}
             for item, (_, col, _, _) in ITEMS.items():
-                d, w = population(g, item)
+                if item == "turnout":
+                    d, w = cps_groups.get(key), "commonweight"
+                    if d is None:
+                        continue
+                else:
+                    d, w = population(g, item)
                 if len(d) < min_n:
                     continue
                 shares = (d.groupby(col)[w].sum() / d[w].sum()).to_dict()
                 base = dict(zip(preds[item][kind].columns,
                                 np.average(preds[item][kind].loc[d.index], axis=0, weights=d[w])))
-                if item == "turnout":
-                    k = shifts[None if scope == "national" else scope]
-                    shares = {"true": float(expit(_logit(shares.get("true", 0.0)) + k))}
-                    base = {"true": float(expit(_logit(base["true"]) + k))}
-                    shares["false"], base["false"] = 1 - shares["true"], 1 - base["true"]
                 cell["targets"][item] = {k2: round(float(v), 4) for k2, v in shares.items()}
                 cell["baseline"][item] = {k2: round(float(v), 4) for k2, v in base.items()}
                 cell["n"][item] = len(d)

@@ -1445,1024 +1445,1024 @@
   "national": [
    {
     "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
-    "n": 116,
+    "n": 112,
     "scope": "national",
     "target": {
-     "true": 0.5113,
-     "false": 0.4887
+     "true": 0.6,
+     "false": 0.4
     },
-    "raw_true": 0.4039,
+    "raw_true": 0.6,
     "baseline": {
-     "true": 0.4164,
-     "false": 0.5836
+     "true": 0.582,
+     "false": 0.418
     }
    },
    {
     "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Asian\nEducation: No four-year college degree",
-    "n": 121,
+    "n": 163,
     "scope": "national",
     "target": {
-     "true": 0.1792,
-     "false": 0.8208
+     "true": 0.3587,
+     "false": 0.6413
     },
-    "raw_true": 0.1239,
+    "raw_true": 0.3587,
     "baseline": {
-     "true": 0.1388,
-     "false": 0.8612
+     "true": 0.252,
+     "false": 0.748
     }
    },
    {
     "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 85,
+    "n": 75,
     "scope": "national",
     "target": {
-     "true": 0.142,
-     "false": 0.858
+     "true": 0.6854,
+     "false": 0.3146
     },
-    "raw_true": 0.0968,
+    "raw_true": 0.6854,
     "baseline": {
-     "true": 0.4334,
-     "false": 0.5666
+     "true": 0.7216,
+     "false": 0.2784
     }
    },
    {
     "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 369,
+    "n": 426,
     "scope": "national",
     "target": {
-     "true": 0.0765,
-     "false": 0.9235
+     "true": 0.3458,
+     "false": 0.6542
     },
-    "raw_true": 0.0509,
+    "raw_true": 0.3458,
     "baseline": {
-     "true": 0.1462,
-     "false": 0.8538
+     "true": 0.3906,
+     "false": 0.6094
     }
    },
    {
     "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 171,
+    "n": 107,
     "scope": "national",
     "target": {
-     "true": 0.5583,
-     "false": 0.4417
+     "true": 0.623,
+     "false": 0.377
     },
-    "raw_true": 0.4502,
+    "raw_true": 0.623,
     "baseline": {
-     "true": 0.5025,
-     "false": 0.4975
+     "true": 0.6314,
+     "false": 0.3686
     }
    },
    {
     "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 494,
+    "n": 808,
     "scope": "national",
     "target": {
-     "true": 0.2575,
-     "false": 0.7425
+     "true": 0.2925,
+     "false": 0.7075
     },
-    "raw_true": 0.1834,
+    "raw_true": 0.2925,
     "baseline": {
-     "true": 0.183,
-     "false": 0.817
-    }
-   },
-   {
-    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 81,
-    "scope": "national",
-    "target": {
-     "true": 0.661,
-     "false": 0.339
-    },
-    "raw_true": 0.5581,
-    "baseline": {
-     "true": 0.5569,
-     "false": 0.4431
+     "true": 0.2932,
+     "false": 0.7068
     }
    },
    {
     "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 131,
+    "n": 189,
     "scope": "national",
     "target": {
-     "true": 0.305,
-     "false": 0.695
+     "true": 0.278,
+     "false": 0.722
     },
-    "raw_true": 0.2213,
+    "raw_true": 0.278,
     "baseline": {
-     "true": 0.2181,
-     "false": 0.7819
+     "true": 0.3616,
+     "false": 0.6384
     }
    },
    {
     "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 719,
+    "n": 810,
     "scope": "national",
     "target": {
-     "true": 0.6921,
-     "false": 0.3079
+     "true": 0.7604,
+     "false": 0.2396
     },
-    "raw_true": 0.5928,
+    "raw_true": 0.7604,
     "baseline": {
-     "true": 0.6351,
-     "false": 0.3649
+     "true": 0.7757,
+     "false": 0.2243
     }
    },
    {
     "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 1173,
+    "n": 2331,
     "scope": "national",
     "target": {
-     "true": 0.2787,
-     "false": 0.7213
+     "true": 0.4583,
+     "false": 0.5417
     },
-    "raw_true": 0.2002,
+    "raw_true": 0.4583,
     "baseline": {
-     "true": 0.2812,
-     "false": 0.7188
+     "true": 0.4597,
+     "false": 0.5403
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
-    "n": 131,
+    "n": 143,
     "scope": "national",
     "target": {
-     "true": 0.339,
-     "false": 0.661
+     "true": 0.575,
+     "false": 0.425
     },
-    "raw_true": 0.2494,
+    "raw_true": 0.575,
     "baseline": {
-     "true": 0.4047,
-     "false": 0.5953
+     "true": 0.6097,
+     "false": 0.3903
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Asian\nEducation: No four-year college degree",
-    "n": 172,
+    "n": 122,
     "scope": "national",
     "target": {
-     "true": 0.218,
-     "false": 0.782
+     "true": 0.4667,
+     "false": 0.5333
     },
-    "raw_true": 0.153,
+    "raw_true": 0.4667,
     "baseline": {
-     "true": 0.1316,
-     "false": 0.8684
+     "true": 0.2752,
+     "false": 0.7248
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 129,
+    "n": 112,
     "scope": "national",
     "target": {
-     "true": 0.5977,
-     "false": 0.4023
+     "true": 0.7698,
+     "false": 0.2302
     },
-    "raw_true": 0.4904,
+    "raw_true": 0.7698,
     "baseline": {
-     "true": 0.4209,
-     "false": 0.5791
+     "true": 0.7443,
+     "false": 0.2557
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 552,
+    "n": 389,
     "scope": "national",
     "target": {
-     "true": 0.1356,
-     "false": 0.8644
+     "true": 0.3822,
+     "false": 0.6178
     },
-    "raw_true": 0.0923,
+    "raw_true": 0.3822,
     "baseline": {
-     "true": 0.14,
-     "false": 0.86
+     "true": 0.4194,
+     "false": 0.5806
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 215,
+    "n": 185,
     "scope": "national",
     "target": {
-     "true": 0.4565,
-     "false": 0.5435
+     "true": 0.6887,
+     "false": 0.3113
     },
-    "raw_true": 0.3523,
+    "raw_true": 0.6887,
     "baseline": {
-     "true": 0.4863,
-     "false": 0.5137
+     "true": 0.6558,
+     "false": 0.3442
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 699,
+    "n": 769,
     "scope": "national",
     "target": {
-     "true": 0.227,
-     "false": 0.773
+     "true": 0.3403,
+     "false": 0.6597
     },
-    "raw_true": 0.1599,
+    "raw_true": 0.3403,
     "baseline": {
-     "true": 0.1747,
-     "false": 0.8253
+     "true": 0.3197,
+     "false": 0.6803
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 67,
+    "n": 54,
     "scope": "national",
     "target": {
-     "true": 0.5849,
-     "false": 0.4151
+     "true": 0.7281,
+     "false": 0.2719
     },
-    "raw_true": 0.4772,
+    "raw_true": 0.7281,
     "baseline": {
-     "true": 0.5434,
-     "false": 0.4566
+     "true": 0.7224,
+     "false": 0.2776
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 206,
+    "n": 187,
     "scope": "national",
     "target": {
-     "true": 0.0887,
-     "false": 0.9113
+     "true": 0.4806,
+     "false": 0.5194
     },
-    "raw_true": 0.0593,
+    "raw_true": 0.4806,
     "baseline": {
-     "true": 0.2104,
-     "false": 0.7896
+     "true": 0.3902,
+     "false": 0.6098
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 916,
+    "n": 1082,
     "scope": "national",
     "target": {
-     "true": 0.584,
-     "false": 0.416
+     "true": 0.7772,
+     "false": 0.2228
     },
-    "raw_true": 0.4763,
+    "raw_true": 0.7772,
     "baseline": {
-     "true": 0.6248,
-     "false": 0.3752
+     "true": 0.7959,
+     "false": 0.2041
     }
    },
    {
     "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 1853,
+    "n": 2114,
     "scope": "national",
     "target": {
-     "true": 0.2089,
-     "false": 0.7911
+     "true": 0.4908,
+     "false": 0.5092
     },
-    "raw_true": 0.146,
+    "raw_true": 0.4908,
     "baseline": {
-     "true": 0.2722,
-     "false": 0.7278
+     "true": 0.4898,
+     "false": 0.5102
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
-    "n": 104,
+    "n": 223,
     "scope": "national",
     "target": {
-     "true": 0.8226,
-     "false": 0.1774
+     "true": 0.6745,
+     "false": 0.3255
     },
-    "raw_true": 0.7502,
+    "raw_true": 0.6745,
     "baseline": {
-     "true": 0.6907,
-     "false": 0.3093
+     "true": 0.6332,
+     "false": 0.3668
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Asian\nEducation: No four-year college degree",
-    "n": 69,
+    "n": 126,
     "scope": "national",
     "target": {
-     "true": 0.3461,
-     "false": 0.6539
+     "true": 0.3866,
+     "false": 0.6134
     },
-    "raw_true": 0.2553,
+    "raw_true": 0.3866,
     "baseline": {
-     "true": 0.3307,
-     "false": 0.6693
+     "true": 0.2976,
+     "false": 0.7024
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 134,
+    "n": 163,
     "scope": "national",
     "target": {
-     "true": 0.6977,
-     "false": 0.3023
+     "true": 0.7168,
+     "false": 0.2832
     },
-    "raw_true": 0.5992,
+    "raw_true": 0.7168,
     "baseline": {
-     "true": 0.7079,
-     "false": 0.2921
+     "true": 0.7653,
+     "false": 0.2347
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 540,
+    "n": 402,
     "scope": "national",
     "target": {
-     "true": 0.2659,
-     "false": 0.7341
+     "true": 0.382,
+     "false": 0.618
     },
-    "raw_true": 0.1901,
+    "raw_true": 0.382,
     "baseline": {
-     "true": 0.3494,
-     "false": 0.6506
+     "true": 0.4445,
+     "false": 0.5555
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 311,
+    "n": 242,
     "scope": "national",
     "target": {
-     "true": 0.7509,
-     "false": 0.2491
+     "true": 0.752,
+     "false": 0.248
     },
-    "raw_true": 0.6613,
+    "raw_true": 0.752,
     "baseline": {
-     "true": 0.7606,
-     "false": 0.2394
+     "true": 0.6799,
+     "false": 0.3201
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 515,
+    "n": 685,
     "scope": "national",
     "target": {
-     "true": 0.3516,
-     "false": 0.6484
+     "true": 0.3647,
+     "false": 0.6353
     },
-    "raw_true": 0.26,
+    "raw_true": 0.3647,
     "baseline": {
-     "true": 0.4141,
-     "false": 0.5859
+     "true": 0.3403,
+     "false": 0.6597
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 92,
+    "n": 77,
     "scope": "national",
     "target": {
-     "true": 0.7212,
-     "false": 0.2788
+     "true": 0.7932,
+     "false": 0.2068
     },
-    "raw_true": 0.6263,
+    "raw_true": 0.7932,
     "baseline": {
-     "true": 0.7977,
-     "false": 0.2023
+     "true": 0.7426,
+     "false": 0.2574
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 145,
+    "n": 160,
     "scope": "national",
     "target": {
-     "true": 0.3511,
-     "false": 0.6489
+     "true": 0.3589,
+     "false": 0.6411
     },
-    "raw_true": 0.2595,
+    "raw_true": 0.3589,
     "baseline": {
-     "true": 0.4689,
-     "false": 0.5311
+     "true": 0.414,
+     "false": 0.586
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 1725,
+    "n": 2204,
     "scope": "national",
     "target": {
-     "true": 0.8305,
-     "false": 0.1695
+     "true": 0.8136,
+     "false": 0.1864
     },
-    "raw_true": 0.7604,
+    "raw_true": 0.8136,
     "baseline": {
-     "true": 0.8454,
-     "false": 0.1546
+     "true": 0.8121,
+     "false": 0.1879
     }
    },
    {
     "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 1354,
+    "n": 2838,
     "scope": "national",
     "target": {
-     "true": 0.5849,
-     "false": 0.4151
+     "true": 0.5092,
+     "false": 0.4908
     },
-    "raw_true": 0.4772,
+    "raw_true": 0.5092,
     "baseline": {
-     "true": 0.5513,
-     "false": 0.4487
+     "true": 0.515,
+     "false": 0.485
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
-    "n": 151,
+    "n": 266,
     "scope": "national",
     "target": {
-     "true": 0.7208,
-     "false": 0.2792
+     "true": 0.6635,
+     "false": 0.3365
     },
-    "raw_true": 0.6258,
+    "raw_true": 0.6635,
     "baseline": {
-     "true": 0.6766,
-     "false": 0.3234
+     "true": 0.6601,
+     "false": 0.3399
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Asian\nEducation: No four-year college degree",
-    "n": 71,
+    "n": 127,
     "scope": "national",
     "target": {
-     "true": 0.2607,
-     "false": 0.7393
+     "true": 0.3846,
+     "false": 0.6154
     },
-    "raw_true": 0.1859,
+    "raw_true": 0.3846,
     "baseline": {
-     "true": 0.3207,
-     "false": 0.6793
+     "true": 0.3236,
+     "false": 0.6764
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 197,
+    "n": 264,
     "scope": "national",
     "target": {
-     "true": 0.7015,
-     "false": 0.2985
+     "true": 0.7913,
+     "false": 0.2087
     },
-    "raw_true": 0.6035,
+    "raw_true": 0.7913,
     "baseline": {
-     "true": 0.6963,
-     "false": 0.3037
+     "true": 0.785,
+     "false": 0.215
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 709,
+    "n": 421,
     "scope": "national",
     "target": {
-     "true": 0.2997,
-     "false": 0.7003
+     "true": 0.5493,
+     "false": 0.4507
     },
-    "raw_true": 0.2171,
+    "raw_true": 0.5493,
     "baseline": {
-     "true": 0.3386,
-     "false": 0.6614
+     "true": 0.4738,
+     "false": 0.5262
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 266,
+    "n": 360,
     "scope": "national",
     "target": {
-     "true": 0.7906,
-     "false": 0.2094
+     "true": 0.7237,
+     "false": 0.2763
     },
-    "raw_true": 0.7097,
+    "raw_true": 0.7237,
     "baseline": {
-     "true": 0.749,
-     "false": 0.251
+     "true": 0.7043,
+     "false": 0.2957
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 854,
+    "n": 692,
     "scope": "national",
     "target": {
-     "true": 0.3003,
-     "false": 0.6997
+     "true": 0.3813,
+     "false": 0.6187
     },
-    "raw_true": 0.2175,
+    "raw_true": 0.3813,
     "baseline": {
-     "true": 0.4001,
-     "false": 0.5999
+     "true": 0.3693,
+     "false": 0.6307
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 101,
+    "n": 95,
     "scope": "national",
     "target": {
-     "true": 0.7756,
-     "false": 0.2244
+     "true": 0.814,
+     "false": 0.186
     },
-    "raw_true": 0.6913,
+    "raw_true": 0.814,
     "baseline": {
-     "true": 0.7889,
-     "false": 0.2111
+     "true": 0.7661,
+     "false": 0.2339
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 190,
+    "n": 165,
     "scope": "national",
     "target": {
-     "true": 0.4306,
-     "false": 0.5694
+     "true": 0.3826,
+     "false": 0.6174
     },
-    "raw_true": 0.3288,
+    "raw_true": 0.3826,
     "baseline": {
-     "true": 0.4552,
-     "false": 0.5448
+     "true": 0.4457,
+     "false": 0.5543
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 1493,
+    "n": 2748,
     "scope": "national",
     "target": {
-     "true": 0.8422,
-     "false": 0.1578
+     "true": 0.8238,
+     "false": 0.1762
     },
-    "raw_true": 0.7757,
+    "raw_true": 0.8238,
     "baseline": {
-     "true": 0.8392,
-     "false": 0.1608
+     "true": 0.8296,
+     "false": 0.1704
     }
    },
    {
     "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 1983,
+    "n": 2355,
     "scope": "national",
     "target": {
-     "true": 0.5837,
-     "false": 0.4163
+     "true": 0.5208,
+     "false": 0.4792
     },
-    "raw_true": 0.476,
+    "raw_true": 0.5208,
     "baseline": {
-     "true": 0.5399,
-     "false": 0.4601
+     "true": 0.5449,
+     "false": 0.4551
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
-    "n": 168,
+    "n": 274,
     "scope": "national",
     "target": {
-     "true": 0.7818,
-     "false": 0.2182
+     "true": 0.7119,
+     "false": 0.2881
     },
-    "raw_true": 0.6989,
+    "raw_true": 0.7119,
     "baseline": {
-     "true": 0.8005,
-     "false": 0.1995
+     "true": 0.7497,
+     "false": 0.2503
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Asian\nEducation: No four-year college degree",
-    "n": 59,
+    "n": 204,
     "scope": "national",
     "target": {
-     "true": 0.5276,
-     "false": 0.4724
+     "true": 0.4388,
+     "false": 0.5612
     },
-    "raw_true": 0.4198,
+    "raw_true": 0.4388,
     "baseline": {
-     "true": 0.4736,
-     "false": 0.5264
+     "true": 0.4247,
+     "false": 0.5753
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 243,
+    "n": 232,
     "scope": "national",
     "target": {
-     "true": 0.822,
-     "false": 0.178
+     "true": 0.8435,
+     "false": 0.1565
     },
-    "raw_true": 0.7494,
+    "raw_true": 0.8435,
     "baseline": {
-     "true": 0.8117,
-     "false": 0.1883
+     "true": 0.8484,
+     "false": 0.1516
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 787,
+    "n": 610,
     "scope": "national",
     "target": {
-     "true": 0.4474,
-     "false": 0.5526
+     "true": 0.6071,
+     "false": 0.3929
     },
-    "raw_true": 0.344,
+    "raw_true": 0.6071,
     "baseline": {
-     "true": 0.4916,
-     "false": 0.5084
+     "true": 0.5807,
+     "false": 0.4193
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 427,
+    "n": 220,
     "scope": "national",
     "target": {
-     "true": 0.8486,
-     "false": 0.1514
+     "true": 0.7954,
+     "false": 0.2046
     },
-    "raw_true": 0.784,
+    "raw_true": 0.7954,
     "baseline": {
-     "true": 0.8504,
-     "false": 0.1496
+     "true": 0.7872,
+     "false": 0.2128
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 649,
+    "n": 630,
     "scope": "national",
     "target": {
-     "true": 0.5379,
-     "false": 0.4621
+     "true": 0.4184,
+     "false": 0.5816
     },
-    "raw_true": 0.4299,
+    "raw_true": 0.4184,
     "baseline": {
-     "true": 0.5595,
-     "false": 0.4405
+     "true": 0.4738,
+     "false": 0.5262
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 233,
+    "n": 68,
     "scope": "national",
     "target": {
-     "true": 0.8078,
-     "false": 0.1922
+     "true": 0.7663,
+     "false": 0.2337
     },
-    "raw_true": 0.7313,
+    "raw_true": 0.7663,
     "baseline": {
-     "true": 0.8751,
-     "false": 0.1249
+     "true": 0.8365,
+     "false": 0.1635
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 266,
+    "n": 178,
     "scope": "national",
     "target": {
-     "true": 0.6383,
-     "false": 0.3617
+     "true": 0.5535,
+     "false": 0.4465
     },
-    "raw_true": 0.5334,
+    "raw_true": 0.5535,
     "baseline": {
-     "true": 0.6113,
-     "false": 0.3887
+     "true": 0.5533,
+     "false": 0.4467
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 3561,
+    "n": 2839,
     "scope": "national",
     "target": {
-     "true": 0.8978,
-     "false": 0.1022
+     "true": 0.8942,
+     "false": 0.1058
     },
-    "raw_true": 0.8505,
+    "raw_true": 0.8942,
     "baseline": {
-     "true": 0.9075,
-     "false": 0.0925
+     "true": 0.882,
+     "false": 0.118
     }
    },
    {
     "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 4232,
+    "n": 4241,
     "scope": "national",
     "target": {
-     "true": 0.6949,
-     "false": 0.3051
+     "true": 0.6437,
+     "false": 0.3563
     },
-    "raw_true": 0.596,
+    "raw_true": 0.6437,
+    "baseline": {
+     "true": 0.6475,
+     "false": 0.3525
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 328,
+    "scope": "national",
+    "target": {
+     "true": 0.7632,
+     "false": 0.2368
+    },
+    "raw_true": 0.7632,
+    "baseline": {
+     "true": 0.7724,
+     "false": 0.2276
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Asian\nEducation: No four-year college degree",
+    "n": 197,
+    "scope": "national",
+    "target": {
+     "true": 0.3903,
+     "false": 0.6097
+    },
+    "raw_true": 0.3903,
+    "baseline": {
+     "true": 0.455,
+     "false": 0.545
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 323,
+    "scope": "national",
+    "target": {
+     "true": 0.8839,
+     "false": 0.1161
+    },
+    "raw_true": 0.8839,
+    "baseline": {
+     "true": 0.8629,
+     "false": 0.1371
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 658,
+    "scope": "national",
+    "target": {
+     "true": 0.655,
+     "false": 0.345
+    },
+    "raw_true": 0.655,
+    "baseline": {
+     "true": 0.61,
+     "false": 0.39
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 312,
+    "scope": "national",
+    "target": {
+     "true": 0.7871,
+     "false": 0.2129
+    },
+    "raw_true": 0.7871,
+    "baseline": {
+     "true": 0.806,
+     "false": 0.194
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 702,
+    "scope": "national",
+    "target": {
+     "true": 0.4849,
+     "false": 0.5151
+    },
+    "raw_true": 0.4849,
+    "baseline": {
+     "true": 0.5045,
+     "false": 0.4955
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 93,
+    "scope": "national",
+    "target": {
+     "true": 0.9197,
+     "false": 0.0803
+    },
+    "raw_true": 0.9197,
+    "baseline": {
+     "true": 0.8549,
+     "false": 0.1451
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 195,
+    "scope": "national",
+    "target": {
+     "true": 0.5953,
+     "false": 0.4047
+    },
+    "raw_true": 0.5953,
+    "baseline": {
+     "true": 0.5837,
+     "false": 0.4163
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 3370,
+    "scope": "national",
+    "target": {
+     "true": 0.8925,
+     "false": 0.1075
+    },
+    "raw_true": 0.8925,
+    "baseline": {
+     "true": 0.8939,
+     "false": 0.1061
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 4090,
+    "scope": "national",
+    "target": {
+     "true": 0.6769,
+     "false": 0.3231
+    },
+    "raw_true": 0.6769,
+    "baseline": {
+     "true": 0.6744,
+     "false": 0.3256
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 148,
+    "scope": "national",
+    "target": {
+     "true": 0.6885,
+     "false": 0.3115
+    },
+    "raw_true": 0.6885,
+    "baseline": {
+     "true": 0.81,
+     "false": 0.19
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Asian\nEducation: No four-year college degree",
+    "n": 159,
+    "scope": "national",
+    "target": {
+     "true": 0.4502,
+     "false": 0.5498
+    },
+    "raw_true": 0.4502,
+    "baseline": {
+     "true": 0.5118,
+     "false": 0.4882
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 143,
+    "scope": "national",
+    "target": {
+     "true": 0.8787,
+     "false": 0.1213
+    },
+    "raw_true": 0.8787,
+    "baseline": {
+     "true": 0.8883,
+     "false": 0.1117
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 463,
+    "scope": "national",
+    "target": {
+     "true": 0.6757,
+     "false": 0.3243
+    },
+    "raw_true": 0.6757,
+    "baseline": {
+     "true": 0.6628,
+     "false": 0.3372
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 94,
+    "scope": "national",
+    "target": {
+     "true": 0.821,
+     "false": 0.179
+    },
+    "raw_true": 0.821,
+    "baseline": {
+     "true": 0.8384,
+     "false": 0.1616
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 357,
+    "scope": "national",
+    "target": {
+     "true": 0.5761,
+     "false": 0.4239
+    },
+    "raw_true": 0.5761,
+    "baseline": {
+     "true": 0.5614,
+     "false": 0.4386
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 114,
+    "scope": "national",
+    "target": {
+     "true": 0.5658,
+     "false": 0.4342
+    },
+    "raw_true": 0.5658,
+    "baseline": {
+     "true": 0.6396,
+     "false": 0.3604
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 2715,
+    "scope": "national",
+    "target": {
+     "true": 0.9193,
+     "false": 0.0807
+    },
+    "raw_true": 0.9193,
+    "baseline": {
+     "true": 0.9136,
+     "false": 0.0864
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 4169,
+    "scope": "national",
+    "target": {
+     "true": 0.7466,
+     "false": 0.2534
+    },
+    "raw_true": 0.7466,
+    "baseline": {
+     "true": 0.7214,
+     "false": 0.2786
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 174,
+    "scope": "national",
+    "target": {
+     "true": 0.6793,
+     "false": 0.3207
+    },
+    "raw_true": 0.6793,
+    "baseline": {
+     "true": 0.8285,
+     "false": 0.1715
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Asian\nEducation: No four-year college degree",
+    "n": 202,
+    "scope": "national",
+    "target": {
+     "true": 0.4707,
+     "false": 0.5293
+    },
+    "raw_true": 0.4707,
+    "baseline": {
+     "true": 0.5413,
+     "false": 0.4587
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 196,
+    "scope": "national",
+    "target": {
+     "true": 0.9556,
+     "false": 0.0444
+    },
+    "raw_true": 0.9556,
+    "baseline": {
+     "true": 0.8999,
+     "false": 0.1001
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 632,
+    "scope": "national",
+    "target": {
+     "true": 0.6969,
+     "false": 0.3031
+    },
+    "raw_true": 0.6969,
     "baseline": {
      "true": 0.6881,
      "false": 0.3119
     }
    },
    {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
-    "n": 189,
-    "scope": "national",
-    "target": {
-     "true": 0.7525,
-     "false": 0.2475
-    },
-    "raw_true": 0.6632,
-    "baseline": {
-     "true": 0.7883,
-     "false": 0.2117
-    }
-   },
-   {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Asian\nEducation: No four-year college degree",
-    "n": 85,
-    "scope": "national",
-    "target": {
-     "true": 0.5435,
-     "false": 0.4565
-    },
-    "raw_true": 0.4354,
-    "baseline": {
-     "true": 0.4541,
-     "false": 0.5459
-    }
-   },
-   {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 469,
-    "scope": "national",
-    "target": {
-     "true": 0.841,
-     "false": 0.159
-    },
-    "raw_true": 0.774,
-    "baseline": {
-     "true": 0.8039,
-     "false": 0.1961
-    }
-   },
-   {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 1308,
-    "scope": "national",
-    "target": {
-     "true": 0.5224,
-     "false": 0.4776
-    },
-    "raw_true": 0.4147,
-    "baseline": {
-     "true": 0.4789,
-     "false": 0.5211
-    }
-   },
-   {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 378,
-    "scope": "national",
-    "target": {
-     "true": 0.8434,
-     "false": 0.1566
-    },
-    "raw_true": 0.7773,
-    "baseline": {
-     "true": 0.842,
-     "false": 0.158
-    }
-   },
-   {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 1058,
-    "scope": "national",
-    "target": {
-     "true": 0.4719,
-     "false": 0.5281
-    },
-    "raw_true": 0.3666,
-    "baseline": {
-     "true": 0.5441,
-     "false": 0.4559
-    }
-   },
-   {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 149,
-    "scope": "national",
-    "target": {
-     "true": 0.8808,
-     "false": 0.1192
-    },
-    "raw_true": 0.8272,
-    "baseline": {
-     "true": 0.8697,
-     "false": 0.1303
-    }
-   },
-   {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 348,
-    "scope": "national",
-    "target": {
-     "true": 0.6554,
-     "false": 0.3446
-    },
-    "raw_true": 0.552,
-    "baseline": {
-     "true": 0.6,
-     "false": 0.4
-    }
-   },
-   {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 2071,
-    "scope": "national",
-    "target": {
-     "true": 0.9011,
-     "false": 0.0989
-    },
-    "raw_true": 0.8552,
-    "baseline": {
-     "true": 0.9037,
-     "false": 0.0963
-    }
-   },
-   {
-    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 5250,
-    "scope": "national",
-    "target": {
-     "true": 0.6849,
-     "false": 0.3151
-    },
-    "raw_true": 0.5847,
-    "baseline": {
-     "true": 0.6785,
-     "false": 0.3215
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
-    "n": 98,
-    "scope": "national",
-    "target": {
-     "true": 0.7698,
-     "false": 0.2302
-    },
-    "raw_true": 0.6842,
-    "baseline": {
-     "true": 0.8771,
-     "false": 0.1229
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 233,
-    "scope": "national",
-    "target": {
-     "true": 0.8787,
-     "false": 0.1213
-    },
-    "raw_true": 0.8243,
-    "baseline": {
-     "true": 0.8859,
-     "false": 0.1141
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 417,
-    "scope": "national",
-    "target": {
-     "true": 0.6362,
-     "false": 0.3638
-    },
-    "raw_true": 0.5312,
-    "baseline": {
-     "true": 0.6349,
-     "false": 0.3651
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 269,
-    "scope": "national",
-    "target": {
-     "true": 0.948,
-     "false": 0.052
-    },
-    "raw_true": 0.9219,
-    "baseline": {
-     "true": 0.91,
-     "false": 0.09
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 302,
-    "scope": "national",
-    "target": {
-     "true": 0.743,
-     "false": 0.257
-    },
-    "raw_true": 0.6519,
-    "baseline": {
-     "true": 0.6953,
-     "false": 0.3047
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 208,
-    "scope": "national",
-    "target": {
-     "true": 0.9394,
-     "false": 0.0606
-    },
-    "raw_true": 0.9094,
-    "baseline": {
-     "true": 0.926,
-     "false": 0.074
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 219,
-    "scope": "national",
-    "target": {
-     "true": 0.8463,
-     "false": 0.1537
-    },
-    "raw_true": 0.781,
-    "baseline": {
-     "true": 0.7394,
-     "false": 0.2606
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 2304,
-    "scope": "national",
-    "target": {
-     "true": 0.9451,
-     "false": 0.0549
-    },
-    "raw_true": 0.9176,
-    "baseline": {
-     "true": 0.9466,
-     "false": 0.0534
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 3975,
-    "scope": "national",
-    "target": {
-     "true": 0.7901,
-     "false": 0.2099
-    },
-    "raw_true": 0.7091,
-    "baseline": {
-     "true": 0.7989,
-     "false": 0.2011
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
-    "n": 83,
-    "scope": "national",
-    "target": {
-     "true": 0.7361,
-     "false": 0.2639
-    },
-    "raw_true": 0.6437,
-    "baseline": {
-     "true": 0.8696,
-     "false": 0.1304
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 436,
-    "scope": "national",
-    "target": {
-     "true": 0.9234,
-     "false": 0.0766
-    },
-    "raw_true": 0.8864,
-    "baseline": {
-     "true": 0.8808,
-     "false": 0.1192
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 814,
-    "scope": "national",
-    "target": {
-     "true": 0.7204,
-     "false": 0.2796
-    },
-    "raw_true": 0.6253,
-    "baseline": {
-     "true": 0.6226,
-     "false": 0.3774
-    }
-   },
-   {
     "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 180,
+    "n": 113,
     "scope": "national",
     "target": {
-     "true": 0.9393,
-     "false": 0.0607
+     "true": 0.7677,
+     "false": 0.2323
     },
-    "raw_true": 0.9093,
+    "raw_true": 0.7677,
     "baseline": {
-     "true": 0.905,
-     "false": 0.095
+     "true": 0.8537,
+     "false": 0.1463
     }
    },
    {
@@ -2470,607 +2470,467 @@
     "n": 498,
     "scope": "national",
     "target": {
-     "true": 0.7661,
-     "false": 0.2339
+     "true": 0.5451,
+     "false": 0.4549
     },
-    "raw_true": 0.6796,
+    "raw_true": 0.5451,
     "baseline": {
-     "true": 0.6807,
-     "false": 0.3193
-    }
-   },
-   {
-    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 107,
-    "scope": "national",
-    "target": {
-     "true": 0.893,
-     "false": 0.107
-    },
-    "raw_true": 0.844,
-    "baseline": {
-     "true": 0.9226,
-     "false": 0.0774
+     "true": 0.5903,
+     "false": 0.4097
     }
    },
    {
     "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 214,
+    "n": 144,
     "scope": "national",
     "target": {
-     "true": 0.7041,
-     "false": 0.2959
+     "true": 0.6769,
+     "false": 0.3231
     },
-    "raw_true": 0.6065,
+    "raw_true": 0.6769,
     "baseline": {
-     "true": 0.7294,
-     "false": 0.2706
+     "true": 0.6631,
+     "false": 0.3369
     }
    },
    {
     "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 1750,
+    "n": 2741,
     "scope": "national",
     "target": {
-     "true": 0.946,
-     "false": 0.054
+     "true": 0.9215,
+     "false": 0.0785
     },
-    "raw_true": 0.919,
+    "raw_true": 0.9215,
     "baseline": {
-     "true": 0.944,
-     "false": 0.056
+     "true": 0.9225,
+     "false": 0.0775
     }
    },
    {
     "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 5103,
+    "n": 5379,
     "scope": "national",
     "target": {
-     "true": 0.7733,
-     "false": 0.2267
+     "true": 0.7394,
+     "false": 0.2606
     },
-    "raw_true": 0.6884,
+    "raw_true": 0.7394,
     "baseline": {
-     "true": 0.7914,
-     "false": 0.2086
+     "true": 0.7452,
+     "false": 0.2548
     }
    }
   ],
   "Ohio": [
    {
-    "persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 41,
-    "scope": "Ohio",
-    "target": {
-     "true": 0.3266,
-     "false": 0.6734
-    },
-    "raw_true": 0.2091,
-    "baseline": {
-     "true": 0.3154,
-     "false": 0.6846
-    }
-   },
-   {
     "persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 106,
+    "n": 73,
     "scope": "Ohio",
     "target": {
-     "true": 0.7421,
-     "false": 0.2579
+     "true": 0.8234,
+     "false": 0.1766
     },
-    "raw_true": 0.6107,
+    "raw_true": 0.8234,
     "baseline": {
-     "true": 0.8055,
-     "false": 0.1945
+     "true": 0.8008,
+     "false": 0.1992
     }
    },
    {
     "persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 163,
+    "n": 170,
     "scope": "Ohio",
     "target": {
-     "true": 0.5478,
-     "false": 0.4522
+     "true": 0.4225,
+     "false": 0.5775
     },
-    "raw_true": 0.3977,
+    "raw_true": 0.4225,
     "baseline": {
-     "true": 0.4575,
-     "false": 0.5425
-    }
-   },
-   {
-    "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 67,
-    "scope": "Ohio",
-    "target": {
-     "true": 0.1918,
-     "false": 0.8082
-    },
-    "raw_true": 0.1146,
-    "baseline": {
-     "true": 0.2759,
-     "false": 0.7241
-    }
-   },
-   {
-    "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 37,
-    "scope": "Ohio",
-    "target": {
-     "true": 0.1019,
-     "false": 0.8981
-    },
-    "raw_true": 0.0582,
-    "baseline": {
-     "true": 0.3587,
-     "false": 0.6413
+     "true": 0.4879,
+     "false": 0.5121
     }
    },
    {
     "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 116,
+    "n": 105,
     "scope": "Ohio",
     "target": {
-     "true": 0.7641,
-     "false": 0.2359
+     "true": 0.7916,
+     "false": 0.2084
     },
-    "raw_true": 0.6384,
+    "raw_true": 0.7916,
     "baseline": {
-     "true": 0.8012,
-     "false": 0.1988
+     "true": 0.8187,
+     "false": 0.1813
     }
    },
    {
     "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 258,
+    "n": 150,
     "scope": "Ohio",
     "target": {
-     "true": 0.2446,
-     "false": 0.7554
+     "true": 0.3811,
+     "false": 0.6189
     },
-    "raw_true": 0.1501,
+    "raw_true": 0.3811,
     "baseline": {
-     "true": 0.4637,
-     "false": 0.5363
-    }
-   },
-   {
-    "persona": "State: Ohio\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 66,
-    "scope": "Ohio",
-    "target": {
-     "true": 0.4723,
-     "false": 0.5277
-    },
-    "raw_true": 0.3279,
-    "baseline": {
-     "true": 0.5985,
-     "false": 0.4015
+     "true": 0.5218,
+     "false": 0.4782
     }
    },
    {
     "persona": "State: Ohio\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 225,
+    "n": 116,
     "scope": "Ohio",
     "target": {
-     "true": 0.9635,
-     "false": 0.0365
+     "true": 0.9741,
+     "false": 0.0259
     },
-    "raw_true": 0.9351,
+    "raw_true": 0.9741,
     "baseline": {
-     "true": 0.9314,
-     "false": 0.0686
+     "true": 0.8934,
+     "false": 0.1066
     }
    },
    {
     "persona": "State: Ohio\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 392,
+    "n": 268,
     "scope": "Ohio",
     "target": {
-     "true": 0.7529,
-     "false": 0.2471
+     "true": 0.6926,
+     "false": 0.3074
     },
-    "raw_true": 0.6243,
+    "raw_true": 0.6926,
     "baseline": {
-     "true": 0.7638,
-     "false": 0.2362
-    }
-   },
-   {
-    "persona": "State: Ohio\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 101,
-    "scope": "Ohio",
-    "target": {
-     "true": 0.5992,
-     "false": 0.4008
-    },
-    "raw_true": 0.449,
-    "baseline": {
-     "true": 0.5952,
-     "false": 0.4048
+     "true": 0.6771,
+     "false": 0.3229
     }
    },
    {
     "persona": "State: Ohio\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 160,
+    "n": 154,
     "scope": "Ohio",
     "target": {
-     "true": 0.9463,
-     "false": 0.0537
+     "true": 0.9502,
+     "false": 0.0498
     },
-    "raw_true": 0.9057,
+    "raw_true": 0.9502,
     "baseline": {
-     "true": 0.9292,
-     "false": 0.0708
+     "true": 0.9038,
+     "false": 0.0962
     }
    },
    {
     "persona": "State: Ohio\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 520,
+    "n": 303,
     "scope": "Ohio",
     "target": {
-     "true": 0.6969,
-     "false": 0.3031
+     "true": 0.7009,
+     "false": 0.2991
     },
-    "raw_true": 0.5562,
+    "raw_true": 0.7009,
     "baseline": {
-     "true": 0.7715,
-     "false": 0.2285
+     "true": 0.7067,
+     "false": 0.2933
     }
    }
   ],
   "North Carolina": [
    {
     "persona": "State: North Carolina\nAge: 18-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 40,
+    "n": 34,
     "scope": "North Carolina",
     "target": {
-     "true": 0.1348,
-     "false": 0.8652
+     "true": 0.5046,
+     "false": 0.4954
     },
-    "raw_true": 0.0607,
+    "raw_true": 0.5046,
     "baseline": {
-     "true": 0.3696,
-     "false": 0.6304
+     "true": 0.4079,
+     "false": 0.5921
     }
    },
    {
     "persona": "State: North Carolina\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 77,
+    "n": 59,
     "scope": "North Carolina",
     "target": {
-     "true": 0.85,
-     "false": 0.15
+     "true": 0.8046,
+     "false": 0.1954
     },
-    "raw_true": 0.7015,
+    "raw_true": 0.8046,
     "baseline": {
-     "true": 0.8509,
-     "false": 0.1491
+     "true": 0.8039,
+     "false": 0.1961
     }
    },
    {
     "persona": "State: North Carolina\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 82,
+    "n": 122,
     "scope": "North Carolina",
     "target": {
-     "true": 0.4075,
-     "false": 0.5925
+     "true": 0.5531,
+     "false": 0.4469
     },
-    "raw_true": 0.222,
+    "raw_true": 0.5531,
     "baseline": {
-     "true": 0.5382,
-     "false": 0.4618
-    }
-   },
-   {
-    "persona": "State: North Carolina\nAge: 18-44\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 65,
-    "scope": "North Carolina",
-    "target": {
-     "true": 0.1327,
-     "false": 0.8673
-    },
-    "raw_true": 0.0597,
-    "baseline": {
-     "true": 0.32,
-     "false": 0.68
+     "true": 0.4929,
+     "false": 0.5071
     }
    },
    {
     "persona": "State: North Carolina\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 74,
+    "n": 86,
     "scope": "North Carolina",
     "target": {
-     "true": 0.8467,
-     "false": 0.1533
+     "true": 0.8552,
+     "false": 0.1448
     },
-    "raw_true": 0.6961,
+    "raw_true": 0.8552,
     "baseline": {
-     "true": 0.8305,
-     "false": 0.1695
+     "true": 0.8222,
+     "false": 0.1778
     }
    },
    {
     "persona": "State: North Carolina\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 145,
+    "n": 103,
     "scope": "North Carolina",
     "target": {
-     "true": 0.4095,
-     "false": 0.5905
+     "true": 0.5347,
+     "false": 0.4653
     },
-    "raw_true": 0.2234,
+    "raw_true": 0.5347,
     "baseline": {
-     "true": 0.5808,
-     "false": 0.4192
+     "true": 0.5142,
+     "false": 0.4858
     }
    },
    {
     "persona": "State: North Carolina\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 59,
+    "n": 30,
     "scope": "North Carolina",
     "target": {
-     "true": 0.6661,
-     "false": 0.3339
+     "true": 0.7689,
+     "false": 0.2311
     },
-    "raw_true": 0.4528,
+    "raw_true": 0.7689,
     "baseline": {
-     "true": 0.643,
-     "false": 0.357
+     "true": 0.6068,
+     "false": 0.3932
     }
    },
    {
     "persona": "State: North Carolina\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 177,
+    "n": 115,
     "scope": "North Carolina",
     "target": {
-     "true": 0.9291,
-     "false": 0.0709
+     "true": 0.9339,
+     "false": 0.0661
     },
-    "raw_true": 0.8447,
+    "raw_true": 0.9339,
     "baseline": {
-     "true": 0.9521,
-     "false": 0.0479
+     "true": 0.8976,
+     "false": 0.1024
     }
    },
    {
     "persona": "State: North Carolina\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 243,
+    "n": 196,
     "scope": "North Carolina",
     "target": {
-     "true": 0.8182,
-     "false": 0.1818
+     "true": 0.7475,
+     "false": 0.2525
     },
-    "raw_true": 0.6512,
+    "raw_true": 0.7475,
     "baseline": {
-     "true": 0.8217,
-     "false": 0.1783
-    }
-   },
-   {
-    "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 53,
-    "scope": "North Carolina",
-    "target": {
-     "true": 0.8498,
-     "false": 0.1502
-    },
-    "raw_true": 0.7013,
-    "baseline": {
-     "true": 0.8797,
-     "false": 0.1203
+     "true": 0.6831,
+     "false": 0.3169
     }
    },
    {
     "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 140,
+    "n": 50,
     "scope": "North Carolina",
     "target": {
-     "true": 0.8129,
-     "false": 0.1871
+     "true": 0.757,
+     "false": 0.243
     },
-    "raw_true": 0.6431,
+    "raw_true": 0.757,
     "baseline": {
-     "true": 0.6326,
-     "false": 0.3674
+     "true": 0.638,
+     "false": 0.362
     }
    },
    {
     "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 123,
+    "n": 135,
     "scope": "North Carolina",
     "target": {
-     "true": 0.9478,
-     "false": 0.0522
+     "true": 0.9563,
+     "false": 0.0437
     },
-    "raw_true": 0.8828,
+    "raw_true": 0.9563,
     "baseline": {
-     "true": 0.9494,
-     "false": 0.0506
+     "true": 0.9063,
+     "false": 0.0937
     }
    },
    {
     "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 313,
+    "n": 195,
     "scope": "North Carolina",
     "target": {
-     "true": 0.8352,
-     "false": 0.1648
+     "true": 0.7512,
+     "false": 0.2488
     },
-    "raw_true": 0.6777,
+    "raw_true": 0.7512,
     "baseline": {
-     "true": 0.8297,
-     "false": 0.1703
+     "true": 0.7132,
+     "false": 0.2868
     }
    }
   ],
   "Texas": [
    {
     "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 95,
+    "n": 53,
     "scope": "Texas",
     "target": {
-     "true": 0.1372,
-     "false": 0.8628
+     "true": 0.2935,
+     "false": 0.7065
     },
-    "raw_true": 0.0964,
+    "raw_true": 0.2935,
     "baseline": {
-     "true": 0.2467,
-     "false": 0.7533
+     "true": 0.4145,
+     "false": 0.5855
     }
    },
    {
     "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 78,
+    "n": 57,
     "scope": "Texas",
     "target": {
-     "true": 0.7396,
-     "false": 0.2604
+     "true": 0.7348,
+     "false": 0.2652
     },
-    "raw_true": 0.6559,
+    "raw_true": 0.7348,
     "baseline": {
-     "true": 0.6721,
-     "false": 0.3279
+     "true": 0.6794,
+     "false": 0.3206
     }
    },
    {
     "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 193,
+    "n": 190,
     "scope": "Texas",
     "target": {
-     "true": 0.2104,
-     "false": 0.7896
+     "true": 0.2478,
+     "false": 0.7522
     },
-    "raw_true": 0.1517,
+    "raw_true": 0.2478,
     "baseline": {
-     "true": 0.2916,
-     "false": 0.7084
-    }
-   },
-   {
-    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 33,
-    "scope": "Texas",
-    "target": {
-     "true": 0.1373,
-     "false": 0.8627
-    },
-    "raw_true": 0.0965,
-    "baseline": {
-     "true": 0.1768,
-     "false": 0.8232
+     "true": 0.3343,
+     "false": 0.6657
     }
    },
    {
     "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 142,
+    "n": 125,
     "scope": "Texas",
     "target": {
-     "true": 0.7659,
-     "false": 0.2341
+     "true": 0.7592,
+     "false": 0.2408
     },
-    "raw_true": 0.6871,
+    "raw_true": 0.7592,
     "baseline": {
-     "true": 0.7953,
-     "false": 0.2047
+     "true": 0.8052,
+     "false": 0.1948
     }
    },
    {
     "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 147,
+    "n": 188,
     "scope": "Texas",
     "target": {
-     "true": 0.3812,
-     "false": 0.6188
+     "true": 0.4299,
+     "false": 0.5701
     },
-    "raw_true": 0.2925,
+    "raw_true": 0.4299,
     "baseline": {
-     "true": 0.4271,
-     "false": 0.5729
+     "true": 0.4959,
+     "false": 0.5041
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 35,
+    "scope": "Texas",
+    "target": {
+     "true": 0.6203,
+     "false": 0.3797
+    },
+    "raw_true": 0.6203,
+    "baseline": {
+     "true": 0.763,
+     "false": 0.237
     }
    },
    {
     "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 126,
+    "n": 54,
     "scope": "Texas",
     "target": {
-     "true": 0.1342,
-     "false": 0.8658
+     "true": 0.4621,
+     "false": 0.5379
     },
-    "raw_true": 0.0943,
+    "raw_true": 0.4621,
     "baseline": {
-     "true": 0.2432,
-     "false": 0.7568
+     "true": 0.4351,
+     "false": 0.5649
     }
    },
    {
     "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 73,
+    "n": 71,
     "scope": "Texas",
     "target": {
-     "true": 0.5629,
-     "false": 0.4371
+     "true": 0.6717,
+     "false": 0.3283
     },
-    "raw_true": 0.4637,
+    "raw_true": 0.6717,
     "baseline": {
-     "true": 0.6566,
-     "false": 0.3434
+     "true": 0.7061,
+     "false": 0.2939
     }
    },
    {
     "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 312,
+    "n": 204,
     "scope": "Texas",
     "target": {
-     "true": 0.2904,
-     "false": 0.7096
+     "true": 0.2768,
+     "false": 0.7232
     },
-    "raw_true": 0.2155,
+    "raw_true": 0.2768,
     "baseline": {
-     "true": 0.2809,
-     "false": 0.7191
-    }
-   },
-   {
-    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 35,
-    "scope": "Texas",
-    "target": {
-     "true": 0.2673,
-     "false": 0.7327
-    },
-    "raw_true": 0.1967,
-    "baseline": {
-     "true": 0.5847,
-     "false": 0.4153
-    }
-   },
-   {
-    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 53,
-    "scope": "Texas",
-    "target": {
-     "true": 0.2177,
-     "false": 0.7823
-    },
-    "raw_true": 0.1574,
-    "baseline": {
-     "true": 0.2635,
-     "false": 0.7365
+     "true": 0.3576,
+     "false": 0.6424
     }
    },
    {
     "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 138,
+    "n": 151,
     "scope": "Texas",
     "target": {
-     "true": 0.7906,
-     "false": 0.2094
+     "true": 0.7331,
+     "false": 0.2669
     },
-    "raw_true": 0.717,
+    "raw_true": 0.7331,
     "baseline": {
-     "true": 0.7786,
-     "false": 0.2214
+     "true": 0.8222,
+     "false": 0.1778
     }
    },
    {
@@ -3078,181 +2938,167 @@
     "n": 195,
     "scope": "Texas",
     "target": {
-     "true": 0.4188,
-     "false": 0.5812
+     "true": 0.4714,
+     "false": 0.5286
     },
-    "raw_true": 0.326,
+    "raw_true": 0.4714,
     "baseline": {
-     "true": 0.4182,
-     "false": 0.5818
-    }
-   },
-   {
-    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 45,
-    "scope": "Texas",
-    "target": {
-     "true": 0.9168,
-     "false": 0.0832
-    },
-    "raw_true": 0.881,
-    "baseline": {
-     "true": 0.8312,
-     "false": 0.1688
+     "true": 0.5205,
+     "false": 0.4795
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 107,
+    "n": 67,
     "scope": "Texas",
     "target": {
-     "true": 0.5064,
-     "false": 0.4936
+     "true": 0.6619,
+     "false": 0.3381
     },
-    "raw_true": 0.4078,
+    "raw_true": 0.6619,
     "baseline": {
-     "true": 0.5536,
-     "false": 0.4464
+     "true": 0.591,
+     "false": 0.409
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 123,
+    "n": 44,
     "scope": "Texas",
     "target": {
-     "true": 0.9159,
-     "false": 0.0841
+     "true": 0.7521,
+     "false": 0.2479
     },
-    "raw_true": 0.8797,
+    "raw_true": 0.7521,
     "baseline": {
-     "true": 0.8619,
-     "false": 0.1381
+     "true": 0.8081,
+     "false": 0.1919
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 183,
+    "n": 155,
     "scope": "Texas",
     "target": {
-     "true": 0.5572,
-     "false": 0.4428
+     "true": 0.3981,
+     "false": 0.6019
     },
-    "raw_true": 0.4578,
+    "raw_true": 0.3981,
     "baseline": {
-     "true": 0.6011,
-     "false": 0.3989
+     "true": 0.5233,
+     "false": 0.4767
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
-    "n": 46,
+    "n": 33,
     "scope": "Texas",
     "target": {
-     "true": 0.7995,
-     "false": 0.2005
+     "true": 0.5947,
+     "false": 0.4053
     },
-    "raw_true": 0.728,
+    "raw_true": 0.5947,
     "baseline": {
-     "true": 0.8523,
-     "false": 0.1477
-    }
-   },
-   {
-    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
-    "n": 41,
-    "scope": "Texas",
-    "target": {
-     "true": 0.4342,
-     "false": 0.5658
-    },
-    "raw_true": 0.34,
-    "baseline": {
-     "true": 0.5761,
-     "false": 0.4239
+     "true": 0.785,
+     "false": 0.215
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
-    "n": 415,
+    "n": 237,
     "scope": "Texas",
     "target": {
-     "true": 0.9028,
-     "false": 0.0972
+     "true": 0.8682,
+     "false": 0.1318
     },
-    "raw_true": 0.8618,
+    "raw_true": 0.8682,
     "baseline": {
-     "true": 0.9242,
-     "false": 0.0758
+     "true": 0.8967,
+     "false": 0.1033
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 465,
+    "n": 314,
     "scope": "Texas",
     "target": {
-     "true": 0.7054,
-     "false": 0.2946
+     "true": 0.6728,
+     "false": 0.3272
     },
-    "raw_true": 0.6164,
+    "raw_true": 0.6728,
     "baseline": {
-     "true": 0.7351,
-     "false": 0.2649
+     "true": 0.6795,
+     "false": 0.3205
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
-    "n": 77,
+    "n": 37,
     "scope": "Texas",
     "target": {
-     "true": 0.8024,
-     "false": 0.1976
+     "true": 0.8674,
+     "false": 0.1326
     },
-    "raw_true": 0.7316,
+    "raw_true": 0.8674,
     "baseline": {
-     "true": 0.8175,
-     "false": 0.1825
+     "true": 0.8691,
+     "false": 0.1309
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
-    "n": 180,
+    "n": 63,
     "scope": "Texas",
     "target": {
-     "true": 0.5162,
-     "false": 0.4838
+     "true": 0.7208,
+     "false": 0.2792
     },
-    "raw_true": 0.4173,
+    "raw_true": 0.7208,
     "baseline": {
-     "true": 0.5281,
-     "false": 0.4719
+     "true": 0.6221,
+     "false": 0.3779
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
-    "n": 102,
+    "n": 55,
     "scope": "Texas",
     "target": {
-     "true": 0.8461,
-     "false": 0.1539
+     "true": 0.8066,
+     "false": 0.1934
     },
-    "raw_true": 0.7868,
+    "raw_true": 0.8066,
     "baseline": {
-     "true": 0.8572,
-     "false": 0.1428
+     "true": 0.824,
+     "false": 0.176
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
-    "n": 310,
+    "n": 185,
     "scope": "Texas",
     "target": {
-     "true": 0.584,
-     "false": 0.416
+     "true": 0.4258,
+     "false": 0.5742
     },
-    "raw_true": 0.4851,
+    "raw_true": 0.4258,
     "baseline": {
-     "true": 0.5999,
-     "false": 0.4001
+     "true": 0.5572,
+     "false": 0.4428
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 38,
+    "scope": "Texas",
+    "target": {
+     "true": 0.6476,
+     "false": 0.3524
+    },
+    "raw_true": 0.6476,
+    "baseline": {
+     "true": 0.795,
+     "false": 0.205
     }
    },
    {
@@ -3260,27 +3106,27 @@
     "n": 245,
     "scope": "Texas",
     "target": {
+     "true": 0.8615,
+     "false": 0.1385
+    },
+    "raw_true": 0.8615,
+    "baseline": {
      "true": 0.904,
      "false": 0.096
-    },
-    "raw_true": 0.8634,
-    "baseline": {
-     "true": 0.9212,
-     "false": 0.0788
     }
    },
    {
     "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
-    "n": 612,
+    "n": 357,
     "scope": "Texas",
     "target": {
-     "true": 0.712,
-     "false": 0.288
+     "true": 0.6881,
+     "false": 0.3119
     },
-    "raw_true": 0.6239,
+    "raw_true": 0.6881,
     "baseline": {
-     "true": 0.7378,
-     "false": 0.2622
+     "true": 0.7134,
+     "false": 0.2866
     }
    }
   ]

@@ -67,8 +67,8 @@ Weighted total variation distance between predicted and real shares by demograph
 | jev1 | 0.327 | 0.282 | 0.243 | 0.247 | 0.85 | -20 pts |
 | kev | 0.262 | 0.260 | 0.284 | 0.265 | 0.65 | -5 pts |
 | kev1 | 0.231 | 0.224 | 0.265 | 0.241 | 0.64 | -3 pts |
-| glm | 0.077 | 0.078 | 0.080 | 0.110 | 0.82 | +0 pts |
-| glm1 | 0.076 | 0.087 | 0.086 | 0.118 | 0.83 | +2 pts |
+| glm | 0.075 | 0.067 | 0.100 | 0.109 | 0.80 | -0 pts |
+| glm1 | 0.087 | 0.077 | 0.112 | 0.103 | 0.81 | -1 pts |
 | mimo | 0.084 | 0.083 | 0.115 | 0.121 | 0.88 | +4 pts |
 | mimo1 | 0.095 | 0.080 | 0.113 | 0.134 | 0.85 | +3 pts |
 | deepseek | 0.073 | 0.071 | 0.101 | 0.105 | 0.86 | +3 pts |
@@ -77,25 +77,25 @@ Weighted total variation distance between predicted and real shares by demograph
 | luna1 | 0.091 | 0.100 | 0.145 | 0.110 | 0.86 | +4 pts |
 | regression | 0.042 | 0.047 | 0.093 | 0.138 | 0.89 | +0 pts |
 
-## Fidelity: turnout (citizens, shifted to each state's official 2024 rate; national 64.3%)
+## Fidelity: turnout (Census CPS 2024, each state matched to its official turnout)
 
 Weighted total variation distance between predicted and real shares by demographic cell (lower is better). Bias = average predicted minus real turnout, national cells.
 
 | model | TVD national | TVD Ohio | TVD North Carolina | TVD Texas | correlation (national) | bias in turnout |
 |---|---|---|---|---|---|---|
-| jev | 0.186 | 0.194 | 0.257 | 0.187 | 0.82 | -15 pts |
-| jev1 | 0.186 | 0.194 | 0.257 | 0.187 | 0.82 | -15 pts |
-| kev | 0.206 | 0.209 | 0.244 | 0.183 | 0.51 | -11 pts |
-| kev1 | 0.206 | 0.209 | 0.244 | 0.183 | 0.51 | -11 pts |
-| glm | 0.114 | 0.114 | 0.083 | 0.116 | 0.76 | +10 pts |
-| glm1 | 0.114 | 0.114 | 0.083 | 0.116 | 0.76 | +10 pts |
-| mimo | 0.099 | 0.121 | 0.158 | 0.125 | 0.89 | -0 pts |
-| mimo1 | 0.099 | 0.121 | 0.158 | 0.125 | 0.89 | -0 pts |
-| deepseek | 0.093 | 0.109 | 0.160 | 0.106 | 0.89 | -1 pts |
-| deepseek1 | 0.093 | 0.109 | 0.160 | 0.106 | 0.89 | -1 pts |
-| luna | 0.125 | 0.136 | 0.102 | 0.132 | 0.86 | +10 pts |
-| luna1 | 0.125 | 0.136 | 0.102 | 0.132 | 0.86 | +10 pts |
-| regression | 0.028 | 0.071 | 0.059 | 0.036 | 0.96 | +0 pts |
+| jev | 0.155 | 0.176 | 0.224 | 0.146 | 0.86 | -15 pts |
+| jev1 | 0.155 | 0.176 | 0.224 | 0.146 | 0.86 | -15 pts |
+| kev | 0.164 | 0.195 | 0.191 | 0.156 | 0.52 | -12 pts |
+| kev1 | 0.164 | 0.195 | 0.191 | 0.156 | 0.52 | -12 pts |
+| glm | 0.091 | 0.084 | 0.030 | 0.096 | 0.83 | +9 pts |
+| glm1 | 0.091 | 0.084 | 0.030 | 0.096 | 0.83 | +9 pts |
+| mimo | 0.060 | 0.098 | 0.088 | 0.093 | 0.87 | -2 pts |
+| mimo1 | 0.060 | 0.098 | 0.088 | 0.093 | 0.87 | -2 pts |
+| deepseek | 0.081 | 0.101 | 0.088 | 0.096 | 0.74 | -2 pts |
+| deepseek1 | 0.081 | 0.101 | 0.088 | 0.096 | 0.74 | -2 pts |
+| luna | 0.113 | 0.121 | 0.051 | 0.131 | 0.69 | +9 pts |
+| luna1 | 0.113 | 0.121 | 0.051 | 0.131 | 0.69 | +9 pts |
+| regression | 0.015 | 0.044 | 0.051 | 0.061 | 0.96 | +0 pts |
 
 ## Cost
 
@@ -103,15 +103,15 @@ From the spend ledger, with today's short prompts (~200–350 tokens). A decisio
 
 | model | $ per 1,000 calls | $ per 1,000 decisions | $ per month at 300k decisions |
 |---|---|---|---|
-| jev | 0.0198 | 0.0396 | 11.87 |
-| jev1 | 0.0198 | 0.0198 | 5.93 |
+| jev | 0.0246 | 0.0491 | 14.74 |
+| jev1 | 0.0246 | 0.0246 | 7.37 |
 | kev | 0.0078 | 0.0155 | 4.65 |
 | kev1 | 0.0078 | 0.0078 | 2.33 |
-| glm | 0.0146 | 0.0291 | 8.74 |
-| glm1 | 0.0146 | 0.0146 | 4.37 |
-| mimo | 0.0380 | 0.0761 | 22.82 |
+| glm | 0.0230 | 0.0459 | 13.78 |
+| glm1 | 0.0230 | 0.0230 | 6.89 |
+| mimo | 0.0380 | 0.0760 | 22.81 |
 | mimo1 | 0.0380 | 0.0380 | 11.41 |
-| deepseek | 0.0554 | 0.1107 | 33.22 |
-| deepseek1 | 0.0554 | 0.0554 | 16.61 |
-| luna | 0.0477 | 0.0953 | 28.60 |
+| deepseek | 0.0553 | 0.1107 | 33.21 |
+| deepseek1 | 0.0553 | 0.0553 | 16.60 |
+| luna | 0.0477 | 0.0953 | 28.59 |
 | luna1 | 0.0477 | 0.0477 | 14.30 |
