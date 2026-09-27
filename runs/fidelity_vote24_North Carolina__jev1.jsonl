@@ -1,0 +1,2 @@
+{"persona": "State: North Carolina\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more", "n": 54, "target": {"harris": 0.5781, "other": 0.0042, "trump": 0.4177}, "pred": {"trump": 0.58, "harris": 0.22, "other": 0.2}, "tvd": 0.3581}
+{"persona": "State: North Carolina\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more", "n": 46, "target": {"harris": 0.5382, "other": 0.0017, "trump": 0.46}, "pred": {"harris": 0.73, "trump": 0.18, "other": 0.09}, "tvd": 0.28005}

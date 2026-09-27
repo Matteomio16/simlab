@@ -1,0 +1,2 @@
+{"persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree", "n": 95, "target": {"true": 0.1387, "false": 0.8613}, "pred": {"true": 0.45, "false": 0.55}, "tvd": 0.31129999999999997}
+{"persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more", "n": 78, "target": {"true": 0.742, "false": 0.258}, "pred": {"true": 0.62, "false": 0.38}, "tvd": 0.122}

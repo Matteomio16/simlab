@@ -1,0 +1,2 @@
+{"persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree", "n": 62, "target": {"harris": 0.4794, "other": 0.0438, "trump": 0.4768}, "pred": {"trump": 0.33, "harris": 0.38, "other": 0.29}, "tvd": 0.24619999999999997}
+{"persona": "Age: 18-29\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more", "n": 260, "target": {"harris": 0.542, "other": 0.0595, "trump": 0.3985}, "pred": {"harris": 0.44, "trump": 0.21, "other": 0.35}, "tvd": 0.29050000000000004}

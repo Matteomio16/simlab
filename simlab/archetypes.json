@@ -1,0 +1,198 @@
+[
+ {
+  "id": "Strong Democrat / non-white / Four-year college degree or more",
+  "party": "D",
+  "weight": 0.02816,
+  "text": "State: Ohio\nAge: 30-44\nGender: Man\nRace/ethnicity: Middle Eastern\nEducation: 4-year degree\nReligion: Protestant\nLives in: City\nParty identification: Strong Democrat\nIdeology: Very liberal\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Most of the time",
+  "text_events": "State: Ohio\nAge: 30-44\nGender: Man\nRace/ethnicity: Middle Eastern\nEducation: 4-year degree\nReligion: Protestant\nLives in: City\nParty identification: Strong Democrat\nIdeology: Very liberal\nFollows government and public affairs: Most of the time"
+ },
+ {
+  "id": "Strong Democrat / non-white / No four-year college degree",
+  "party": "D",
+  "weight": 0.06142,
+  "text": "State: Texas\nAge: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: 2-year degree\nFamily income: $50,000 - $59,999\nReligion: Protestant\nLives in: City\nParty identification: Strong Democrat\nIdeology: Very liberal\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Hardly at all",
+  "text_events": "State: Texas\nAge: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: 2-year degree\nFamily income: $50,000 - $59,999\nReligion: Protestant\nLives in: City\nParty identification: Strong Democrat\nIdeology: Very liberal\nFollows government and public affairs: Hardly at all"
+ },
+ {
+  "id": "Strong Democrat / white / Four-year college degree or more",
+  "party": "D",
+  "weight": 0.06628,
+  "text": "State: North Carolina\nAge: 18-29\nGender: Man\nRace/ethnicity: White\nEducation: 4-year degree\nFamily income: Less than $10,000\nReligion: Jewish\nLives in: Town\nParty identification: Strong Democrat\nIdeology: Liberal\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Some of the time",
+  "text_events": "State: North Carolina\nAge: 18-29\nGender: Man\nRace/ethnicity: White\nEducation: 4-year degree\nFamily income: Less than $10,000\nReligion: Jewish\nLives in: Town\nParty identification: Strong Democrat\nIdeology: Liberal\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Strong Democrat / white / No four-year college degree",
+  "party": "D",
+  "weight": 0.0629,
+  "text": "State: North Carolina\nAge: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: High school graduate\nFamily income: $50,000 - $59,999\nReligion: Roman Catholic\nLives in: Suburb\nParty identification: Strong Democrat\nIdeology: Liberal\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Some of the time",
+  "text_events": "State: North Carolina\nAge: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: High school graduate\nFamily income: $50,000 - $59,999\nReligion: Roman Catholic\nLives in: Suburb\nParty identification: Strong Democrat\nIdeology: Liberal\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Not very strong Democrat / non-white / Four-year college degree or more",
+  "party": "D",
+  "weight": 0.01487,
+  "text": "State: Ohio\nAge: 18-29\nGender: Man\nRace/ethnicity: Asian\nEducation: 4-year degree\nFamily income: $100,000 - $119,999\nReligion: Nothing in particular\nLives in: City\nParty identification: Not very strong Democrat\nIdeology: Very liberal\n2020 presidential vote: Did not vote\nFollows government and public affairs: Some of the time",
+  "text_events": "State: Ohio\nAge: 18-29\nGender: Man\nRace/ethnicity: Asian\nEducation: 4-year degree\nFamily income: $100,000 - $119,999\nReligion: Nothing in particular\nLives in: City\nParty identification: Not very strong Democrat\nIdeology: Very liberal\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Not very strong Democrat / non-white / No four-year college degree",
+  "party": "D",
+  "weight": 0.03567,
+  "text": "State: North Carolina\nAge: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: 2-year degree\nFamily income: $100,000 - $119,999\nReligion: Something else\nLives in: Suburb\nParty identification: Not very strong Democrat\nIdeology: Not sure\n2020 presidential vote: Did not vote\nFollows government and public affairs: Some of the time",
+  "text_events": "State: North Carolina\nAge: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: 2-year degree\nFamily income: $100,000 - $119,999\nReligion: Something else\nLives in: Suburb\nParty identification: Not very strong Democrat\nIdeology: Not sure\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Not very strong Democrat / white / Four-year college degree or more",
+  "party": "D",
+  "weight": 0.02201,
+  "text": "State: Texas\nAge: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: 4-year degree\nFamily income: $30,000 - $39,999\nReligion: Protestant\nLives in: Suburb\nParty identification: Not very strong Democrat\nIdeology: Conservative\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Most of the time",
+  "text_events": "State: Texas\nAge: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: 4-year degree\nFamily income: $30,000 - $39,999\nReligion: Protestant\nLives in: Suburb\nParty identification: Not very strong Democrat\nIdeology: Conservative\nFollows government and public affairs: Most of the time"
+ },
+ {
+  "id": "Not very strong Democrat / white / No four-year college degree",
+  "party": "D",
+  "weight": 0.02953,
+  "text": "State: Ohio\nAge: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: High school graduate\nFamily income: $10,000 - $19,999\nReligion: Protestant\nLives in: City\nParty identification: Not very strong Democrat\nIdeology: Moderate\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Only now and then",
+  "text_events": "State: Ohio\nAge: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: High school graduate\nFamily income: $10,000 - $19,999\nReligion: Protestant\nLives in: City\nParty identification: Not very strong Democrat\nIdeology: Moderate\nFollows government and public affairs: Only now and then"
+ },
+ {
+  "id": "Lean Democrat / non-white / Four-year college degree or more",
+  "party": "I",
+  "weight": 0.01144,
+  "text": "State: Texas\nAge: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: 4-year degree\nFamily income: $100,000 - $119,999\nReligion: Roman Catholic\nLives in: Suburb\nParty identification: Lean Democrat\nIdeology: Liberal\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Some of the time",
+  "text_events": "State: Texas\nAge: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: 4-year degree\nFamily income: $100,000 - $119,999\nReligion: Roman Catholic\nLives in: Suburb\nParty identification: Lean Democrat\nIdeology: Liberal\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Lean Democrat / non-white / No four-year college degree",
+  "party": "I",
+  "weight": 0.02113,
+  "text": "State: North Carolina\nAge: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: Some college\nFamily income: $70,000 - $79,999\nReligion: Protestant\nLives in: City\nParty identification: Lean Democrat\nIdeology: Moderate\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Most of the time",
+  "text_events": "State: North Carolina\nAge: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: Some college\nFamily income: $70,000 - $79,999\nReligion: Protestant\nLives in: City\nParty identification: Lean Democrat\nIdeology: Moderate\nFollows government and public affairs: Most of the time"
+ },
+ {
+  "id": "Lean Democrat / white / Four-year college degree or more",
+  "party": "I",
+  "weight": 0.02945,
+  "text": "State: Ohio\nAge: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: Post-graduate degree\nFamily income: $70,000 - $79,999\nReligion: Atheist\nLives in: Town\nParty identification: Lean Democrat\nIdeology: Moderate\n2020 presidential vote: Did not vote\nFollows government and public affairs: Hardly at all",
+  "text_events": "State: Ohio\nAge: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: Post-graduate degree\nFamily income: $70,000 - $79,999\nReligion: Atheist\nLives in: Town\nParty identification: Lean Democrat\nIdeology: Moderate\nFollows government and public affairs: Hardly at all"
+ },
+ {
+  "id": "Lean Democrat / white / No four-year college degree",
+  "party": "I",
+  "weight": 0.03258,
+  "text": "State: Texas\nAge: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: Some college\nFamily income: $70,000 - $79,999\nReligion: Atheist\nLives in: Suburb\nParty identification: Lean Democrat\nIdeology: Moderate\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Most of the time",
+  "text_events": "State: Texas\nAge: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: Some college\nFamily income: $70,000 - $79,999\nReligion: Atheist\nLives in: Suburb\nParty identification: Lean Democrat\nIdeology: Moderate\nFollows government and public affairs: Most of the time"
+ },
+ {
+  "id": "Independent / non-white / Four-year college degree or more",
+  "party": "I",
+  "weight": 0.01987,
+  "text": "State: Ohio\nAge: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: 4-year degree\nFamily income: $350,000 - $499,999\nReligion: Nothing in particular\nLives in: City\nParty identification: Independent\nIdeology: Moderate\n2020 presidential vote: Did not vote\nFollows government and public affairs: Most of the time",
+  "text_events": "State: Ohio\nAge: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: 4-year degree\nFamily income: $350,000 - $499,999\nReligion: Nothing in particular\nLives in: City\nParty identification: Independent\nIdeology: Moderate\nFollows government and public affairs: Most of the time"
+ },
+ {
+  "id": "Independent / non-white / No four-year college degree",
+  "party": "I",
+  "weight": 0.07074,
+  "text": "State: Texas\nAge: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: High school graduate\nFamily income: $50,000 - $59,999\nReligion: Roman Catholic\nLives in: Suburb\nParty identification: Independent\nIdeology: Moderate\n2020 presidential vote: Did not vote\nFollows government and public affairs: Hardly at all",
+  "text_events": "State: Texas\nAge: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: High school graduate\nFamily income: $50,000 - $59,999\nReligion: Roman Catholic\nLives in: Suburb\nParty identification: Independent\nIdeology: Moderate\nFollows government and public affairs: Hardly at all"
+ },
+ {
+  "id": "Independent / white / Four-year college degree or more",
+  "party": "I",
+  "weight": 0.02592,
+  "text": "State: Texas\nAge: 45-64\nGender: Man\nRace/ethnicity: White\nEducation: Post-graduate degree\nFamily income: $40,000 - $49,999\nReligion: Something else\nLives in: City\nParty identification: Independent\nIdeology: Moderate\n2020 presidential vote: Donald Trump\nFollows government and public affairs: Most of the time",
+  "text_events": "State: Texas\nAge: 45-64\nGender: Man\nRace/ethnicity: White\nEducation: Post-graduate degree\nFamily income: $40,000 - $49,999\nReligion: Something else\nLives in: City\nParty identification: Independent\nIdeology: Moderate\nFollows government and public affairs: Most of the time"
+ },
+ {
+  "id": "Independent / white / No four-year college degree",
+  "party": "I",
+  "weight": 0.0709,
+  "text": "State: North Carolina\nAge: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: High school graduate\nFamily income: $10,000 - $19,999\nReligion: Protestant\nLives in: Suburb\nParty identification: Independent\nIdeology: Liberal\n2020 presidential vote: Donald Trump\nFollows government and public affairs: Hardly at all",
+  "text_events": "State: North Carolina\nAge: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: High school graduate\nFamily income: $10,000 - $19,999\nReligion: Protestant\nLives in: Suburb\nParty identification: Independent\nIdeology: Liberal\nFollows government and public affairs: Hardly at all"
+ },
+ {
+  "id": "Lean Republican / non-white / Four-year college degree or more",
+  "party": "I",
+  "weight": 0.00822,
+  "text": "State: Ohio\nAge: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: 4-year degree\nFamily income: $30,000 - $39,999\nReligion: Protestant\nLives in: City\nParty identification: Lean Republican\nIdeology: Moderate\n2020 presidential vote: Did not vote\nFollows government and public affairs: Hardly at all",
+  "text_events": "State: Ohio\nAge: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: 4-year degree\nFamily income: $30,000 - $39,999\nReligion: Protestant\nLives in: City\nParty identification: Lean Republican\nIdeology: Moderate\nFollows government and public affairs: Hardly at all"
+ },
+ {
+  "id": "Lean Republican / non-white / No four-year college degree",
+  "party": "I",
+  "weight": 0.01805,
+  "text": "State: North Carolina\nAge: 30-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: 2-year degree\nFamily income: $30,000 - $39,999\nReligion: Nothing in particular\nLives in: Town\nParty identification: Lean Republican\nIdeology: Conservative\n2020 presidential vote: Donald Trump\nFollows government and public affairs: Hardly at all",
+  "text_events": "State: North Carolina\nAge: 30-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: 2-year degree\nFamily income: $30,000 - $39,999\nReligion: Nothing in particular\nLives in: Town\nParty identification: Lean Republican\nIdeology: Conservative\nFollows government and public affairs: Hardly at all"
+ },
+ {
+  "id": "Lean Republican / white / Four-year college degree or more",
+  "party": "I",
+  "weight": 0.02777,
+  "text": "State: Texas\nAge: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: Post-graduate degree\nFamily income: $250,000 - $349,999\nReligion: Protestant\nLives in: Suburb\nParty identification: Lean Republican\nIdeology: Moderate\n2020 presidential vote: Joe Biden\nFollows government and public affairs: Most of the time",
+  "text_events": "State: Texas\nAge: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: Post-graduate degree\nFamily income: $250,000 - $349,999\nReligion: Protestant\nLives in: Suburb\nParty identification: Lean Republican\nIdeology: Moderate\nFollows government and public affairs: Most of the time"
+ },
+ {
+  "id": "Lean Republican / white / No four-year college degree",
+  "party": "I",
+  "weight": 0.04643,
+  "text": "State: Ohio\nAge: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: No high school diploma\nFamily income: $20,000 - $29,999\nReligion: Nothing in particular\nLives in: Other\nParty identification: Lean Republican\nIdeology: Not sure\n2020 presidential vote: Did not vote\nFollows government and public affairs: Hardly at all",
+  "text_events": "State: Ohio\nAge: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: No high school diploma\nFamily income: $20,000 - $29,999\nReligion: Nothing in particular\nLives in: Other\nParty identification: Lean Republican\nIdeology: Not sure\nFollows government and public affairs: Hardly at all"
+ },
+ {
+  "id": "Not very strong Republican / non-white / Four-year college degree or more",
+  "party": "R",
+  "weight": 0.00629,
+  "text": "State: Texas\nAge: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: 4-year degree\nFamily income: $40,000 - $49,999\nReligion: Nothing in particular\nLives in: City\nParty identification: Not very strong Republican\nIdeology: Moderate\n2020 presidential vote: Did not vote\nFollows government and public affairs: Some of the time",
+  "text_events": "State: Texas\nAge: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: 4-year degree\nFamily income: $40,000 - $49,999\nReligion: Nothing in particular\nLives in: City\nParty identification: Not very strong Republican\nIdeology: Moderate\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Not very strong Republican / non-white / No four-year college degree",
+  "party": "R",
+  "weight": 0.0156,
+  "text": "State: Texas\nAge: 18-29\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: High school graduate\nFamily income: $40,000 - $49,999\nReligion: Something else\nLives in: City\nParty identification: Not very strong Republican\nIdeology: Conservative\n2020 presidential vote: Did not vote\nFollows government and public affairs: Some of the time",
+  "text_events": "State: Texas\nAge: 18-29\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: High school graduate\nFamily income: $40,000 - $49,999\nReligion: Something else\nLives in: City\nParty identification: Not very strong Republican\nIdeology: Conservative\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Not very strong Republican / white / Four-year college degree or more",
+  "party": "R",
+  "weight": 0.0238,
+  "text": "State: Ohio\nAge: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: 4-year degree\nFamily income: $120,000 - $149,999\nReligion: Nothing in particular\nLives in: Suburb\nParty identification: Not very strong Republican\nIdeology: Conservative\n2020 presidential vote: Donald Trump\nFollows government and public affairs: Some of the time",
+  "text_events": "State: Ohio\nAge: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: 4-year degree\nFamily income: $120,000 - $149,999\nReligion: Nothing in particular\nLives in: Suburb\nParty identification: Not very strong Republican\nIdeology: Conservative\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Not very strong Republican / white / No four-year college degree",
+  "party": "R",
+  "weight": 0.05041,
+  "text": "State: Ohio\nAge: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: 2-year degree\nFamily income: $30,000 - $39,999\nReligion: Nothing in particular\nLives in: Suburb\nParty identification: Not very strong Republican\nIdeology: Moderate\n2020 presidential vote: Donald Trump\nFollows government and public affairs: Only now and then",
+  "text_events": "State: Ohio\nAge: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: 2-year degree\nFamily income: $30,000 - $39,999\nReligion: Nothing in particular\nLives in: Suburb\nParty identification: Not very strong Republican\nIdeology: Moderate\nFollows government and public affairs: Only now and then"
+ },
+ {
+  "id": "Strong Republican / non-white / Four-year college degree or more",
+  "party": "R",
+  "weight": 0.00849,
+  "text": "State: North Carolina\nAge: 65+\nGender: Woman\nRace/ethnicity: Asian\nEducation: Post-graduate degree\nFamily income: $60,000 - $69,999\nReligion: Protestant\nLives in: Rural area\nParty identification: Strong Republican\nIdeology: Conservative\n2020 presidential vote: Donald Trump\nFollows government and public affairs: Some of the time",
+  "text_events": "State: North Carolina\nAge: 65+\nGender: Woman\nRace/ethnicity: Asian\nEducation: Post-graduate degree\nFamily income: $60,000 - $69,999\nReligion: Protestant\nLives in: Rural area\nParty identification: Strong Republican\nIdeology: Conservative\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Strong Republican / non-white / No four-year college degree",
+  "party": "R",
+  "weight": 0.02669,
+  "text": "State: Texas\nAge: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Some college\nFamily income: $60,000 - $69,999\nReligion: Protestant\nLives in: Rural area\nParty identification: Strong Republican\nIdeology: Conservative\n2020 presidential vote: Donald Trump\nFollows government and public affairs: Most of the time",
+  "text_events": "State: Texas\nAge: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Some college\nFamily income: $60,000 - $69,999\nReligion: Protestant\nLives in: Rural area\nParty identification: Strong Republican\nIdeology: Conservative\nFollows government and public affairs: Most of the time"
+ },
+ {
+  "id": "Strong Republican / white / Four-year college degree or more",
+  "party": "R",
+  "weight": 0.05504,
+  "text": "State: Ohio\nAge: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: 4-year degree\nFamily income: $500,000 or more\nReligion: Roman Catholic\nLives in: Suburb\nParty identification: Strong Republican\nIdeology: Conservative\n2020 presidential vote: Donald Trump\nFollows government and public affairs: Some of the time",
+  "text_events": "State: Ohio\nAge: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: 4-year degree\nFamily income: $500,000 or more\nReligion: Roman Catholic\nLives in: Suburb\nParty identification: Strong Republican\nIdeology: Conservative\nFollows government and public affairs: Some of the time"
+ },
+ {
+  "id": "Strong Republican / white / No four-year college degree",
+  "party": "R",
+  "weight": 0.11034,
+  "text": "State: Ohio\nAge: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: 2-year degree\nFamily income: $100,000 - $119,999\nReligion: Nothing in particular\nLives in: Suburb\nParty identification: Strong Republican\nIdeology: Very conservative\n2020 presidential vote: Donald Trump\nFollows government and public affairs: Most of the time",
+  "text_events": "State: Ohio\nAge: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: 2-year degree\nFamily income: $100,000 - $119,999\nReligion: Nothing in particular\nLives in: Suburb\nParty identification: Strong Republican\nIdeology: Very conservative\nFollows government and public affairs: Most of the time"
+ }
+]

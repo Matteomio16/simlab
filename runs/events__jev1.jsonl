@@ -1,0 +1,19 @@
+{"id": "E01_2012_first_debate", "measured": -4, "measured_party": null, "weight": 0.5, "pred": {"all": -0.08371288233980799, "D": -0.08371288233980799, "R": null, "I": null}}
+{"id": "E02_2016_access_hollywood", "measured": 2, "measured_party": null, "weight": 1.0, "pred": {"all": 0.9914355883009599, "D": 0.9914355883009599, "R": null, "I": null}}
+{"id": "E03_2016_comey_letter", "measured": -3, "measured_party": null, "weight": 0.5, "pred": {"all": 0.17772270596115206, "D": 0.17772270596115206, "R": null, "I": null}}
+{"id": "E05_2019_mueller_summary", "measured": 0, "measured_party": null, "weight": 0.5, "pred": {"all": 0.4165840589417281, "D": 0.4165840589417281, "R": null, "I": null}}
+{"id": "E06_2019_impeachment_inquiry", "measured": 0, "measured_party": null, "weight": 0.5, "pred": {"all": 0.49631167671355214, "D": 0.49631167671355214, "R": null, "I": null}}
+{"id": "E07_2020_covid_emergency", "measured": -5, "measured_party": {"D": -6, "R": -1, "I": -8}, "weight": 1.0, "pred": {"all": 0.29457914713105604, "D": 0.29457914713105604, "R": null, "I": null}}
+{"id": "E09_2021_jan6", "measured": 9, "measured_party": {"D": null, "R": 17, "I": null}, "weight": 0.7, "pred": {"all": 0.6497276177718241, "D": 0.6497276177718241, "R": null, "I": null}}
+{"id": "E10_2021_afghanistan", "measured": -6, "measured_party": {"D": -3, "R": -1, "I": -6}, "weight": 1.0, "pred": {"all": 0.17715338245144008, "D": 0.17715338245144008, "R": null, "I": null}}
+{"id": "E11_2022_dobbs", "measured": 3, "measured_party": null, "weight": 1.0, "pred": {"all": 1.144009823621344, "D": 1.144009823621344, "R": null, "I": null}}
+{"id": "E12_2024_trump_conviction", "measured": 2, "measured_party": null, "weight": 1.0, "pred": {"all": 0.5765840589417282, "D": 0.5765840589417282, "R": null, "I": null}}
+{"id": "E13_2024_biden_trump_debate", "measured": -3, "measured_party": null, "weight": 1.0, "pred": {"all": -0.14571779415048003, "D": -0.14571779415048003, "R": null, "I": null}}
+{"id": "E14_2024_assassination_attempt", "measured": -1, "measured_party": null, "weight": 0.5, "pred": {"all": 0.4099999999999999, "D": 0.4099999999999999, "R": null, "I": null}}
+{"id": "E16_2024_harris_trump_debate", "measured": 0, "measured_party": null, "weight": 1.0, "pred": {"all": 0.4843067649028801, "D": 0.4843067649028801, "R": null, "I": null}}
+{"id": "E17_2025_liberation_day", "measured": 3, "measured_party": null, "weight": 0.7, "pred": {"all": 0.8017325295824961, "D": 0.8017325295824961, "R": null, "I": null}}
+{"id": "E18_2025_epstein_memo", "measured": 3, "measured_party": {"D": -1, "R": 0, "I": 7}, "weight": 0.5, "pred": {"all": 0.3254454119223041, "D": 0.3254454119223041, "R": null, "I": null}}
+{"id": "E19_2025_shutdown", "measured": 2, "measured_party": null, "weight": 0.7, "pred": {"all": 0.4737374413931681, "D": 0.4737374413931681, "R": null, "I": null}}
+{"id": "E20_2026_maduro_capture", "measured": -1.5, "measured_party": null, "weight": 0.7, "pred": {"all": 0.8917325295824963, "D": 0.8917325295824963, "R": null, "I": null}}
+{"id": "E22_2026_iran_strikes", "measured": 0, "measured_party": null, "weight": 1.0, "pred": {"all": 0.328861352980576, "D": 0.328861352980576, "R": null, "I": null}}
+{"id": "E23_2026_fuel_spike", "measured": 4, "measured_party": null, "weight": 1.0, "pred": {"all": -0.06542085286894397, "D": -0.06542085286894397, "R": null, "I": null}}

@@ -1,0 +1,2 @@
+{"persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree", "n": 41, "target": {"true": 0.2852, "false": 0.7148}, "pred": {"true": 0.35, "false": 0.65}, "tvd": 0.06479999999999997}
+{"persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more", "n": 106, "target": {"true": 0.703, "false": 0.297}, "pred": {"true": 0.55, "false": 0.44999999999999996}, "tvd": 0.15299999999999994}

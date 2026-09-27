@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 FIELD_ORDER = ["state", "age", "gender", "race", "education", "income", "religion", "area",
-               "party_id", "ideology", "vote_2020", "news_diet"]
+               "party_id", "ideology", "vote_2020", "interest", "news_diet"]
 LABELS = {"state": "State", "age": "Age", "gender": "Gender", "race": "Race/ethnicity",
           "education": "Education", "income": "Family income", "religion": "Religion", "area": "Lives in",
           "party_id": "Party identification", "ideology": "Ideology", "vote_2020": "2020 presidential vote",
-          "news_diet": "Main news sources"}
+          "interest": "Follows government and public affairs", "news_diet": "Main news sources"}
 
 
 def render(p: dict, drop: tuple = ()) -> str:

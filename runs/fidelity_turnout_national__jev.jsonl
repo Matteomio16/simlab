@@ -1,0 +1,2 @@
+{"persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more", "n": 116, "target": {"true": 0.5056, "false": 0.4944}, "pred": {"true": 0.39, "false": 0.61}, "tvd": 0.11560000000000001}
+{"persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Asian\nEducation: No four-year college degree", "n": 121, "target": {"true": 0.1759, "false": 0.8241}, "pred": {"true": 0.27, "false": 0.73}, "tvd": 0.09410000000000004}

@@ -99,9 +99,9 @@ def make(name: str):
 
 
 def batch(asker, items: list[tuple[str, dict]], tag: str = "", workers: int = 8) -> list[dict]:
-    """items = [(state, question), ...] -> list of prob dicts (order preserved)."""
+    """items = [(state, question), ...] -> list of prob dicts (order preserved). Spend is tagged '<tag>:<asker>'."""
     with ThreadPoolExecutor(workers) as ex:
-        return list(ex.map(lambda it: asker.ask(it[0], it[1], tag), items))
+        return list(ex.map(lambda it: asker.ask(it[0], it[1], f"{tag}:{asker.name}"), items))
 
 
 def expected(probs: dict, values=(-2, -1, 0, 1, 2)) -> float:

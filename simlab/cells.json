@@ -1,0 +1,2284 @@
+{
+ "vote24": {
+  "national": [
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 62,
+    "scope": "national",
+    "target": {
+     "harris": 0.4794,
+     "other": 0.0438,
+     "trump": 0.4768
+    }
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 260,
+    "scope": "national",
+    "target": {
+     "harris": 0.542,
+     "other": 0.0595,
+     "trump": 0.3985
+    }
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 179,
+    "scope": "national",
+    "target": {
+     "harris": 0.5235,
+     "other": 0.0605,
+     "trump": 0.416
+    }
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 54,
+    "scope": "national",
+    "target": {
+     "harris": 0.7824,
+     "other": 0.0067,
+     "trump": 0.2109
+    }
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 54,
+    "scope": "national",
+    "target": {
+     "harris": 0.652,
+     "other": 0.0052,
+     "trump": 0.3429
+    }
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 281,
+    "scope": "national",
+    "target": {
+     "harris": 0.6761,
+     "other": 0.0124,
+     "trump": 0.3115
+    }
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 196,
+    "scope": "national",
+    "target": {
+     "harris": 0.5025,
+     "other": 0.0264,
+     "trump": 0.4711
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 67,
+    "scope": "national",
+    "target": {
+     "harris": 0.5056,
+     "other": 0.1127,
+     "trump": 0.3817
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 53,
+    "scope": "national",
+    "target": {
+     "harris": 0.5553,
+     "other": 0.0158,
+     "trump": 0.429
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 57,
+    "scope": "national",
+    "target": {
+     "harris": 0.5969,
+     "other": 0.0909,
+     "trump": 0.3122
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 132,
+    "scope": "national",
+    "target": {
+     "harris": 0.4791,
+     "other": 0.071,
+     "trump": 0.4499
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 91,
+    "scope": "national",
+    "target": {
+     "harris": 0.5068,
+     "other": 0.0373,
+     "trump": 0.4559
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 59,
+    "scope": "national",
+    "target": {
+     "harris": 0.4768,
+     "other": 0.0122,
+     "trump": 0.5111
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 1329,
+    "scope": "national",
+    "target": {
+     "harris": 0.5924,
+     "other": 0.0308,
+     "trump": 0.3768
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 647,
+    "scope": "national",
+    "target": {
+     "harris": 0.3941,
+     "other": 0.0248,
+     "trump": 0.581
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 63,
+    "scope": "national",
+    "target": {
+     "harris": 0.6807,
+     "other": 0.0775,
+     "trump": 0.2418
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 87,
+    "scope": "national",
+    "target": {
+     "harris": 0.8047,
+     "other": 0.027,
+     "trump": 0.1683
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 113,
+    "scope": "national",
+    "target": {
+     "harris": 0.8205,
+     "other": 0.021,
+     "trump": 0.1585
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 147,
+    "scope": "national",
+    "target": {
+     "harris": 0.6908,
+     "other": 0.0121,
+     "trump": 0.2971
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 141,
+    "scope": "national",
+    "target": {
+     "harris": 0.55,
+     "other": 0.014,
+     "trump": 0.4361
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 55,
+    "scope": "national",
+    "target": {
+     "harris": 0.5684,
+     "other": 0.1422,
+     "trump": 0.2894
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 57,
+    "scope": "national",
+    "target": {
+     "harris": 0.4193,
+     "other": 0.0391,
+     "trump": 0.5416
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 1140,
+    "scope": "national",
+    "target": {
+     "harris": 0.5869,
+     "other": 0.0122,
+     "trump": 0.401
+    }
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 912,
+    "scope": "national",
+    "target": {
+     "harris": 0.3872,
+     "other": 0.0217,
+     "trump": 0.5911
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 116,
+    "scope": "national",
+    "target": {
+     "harris": 0.5691,
+     "other": 0.0338,
+     "trump": 0.3971
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 127,
+    "scope": "national",
+    "target": {
+     "harris": 0.6895,
+     "other": 0.0083,
+     "trump": 0.3022
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 201,
+    "scope": "national",
+    "target": {
+     "harris": 0.7165,
+     "other": 0.0015,
+     "trump": 0.2819
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 249,
+    "scope": "national",
+    "target": {
+     "harris": 0.5973,
+     "other": 0.0186,
+     "trump": 0.3841
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 230,
+    "scope": "national",
+    "target": {
+     "harris": 0.5027,
+     "other": 0.0056,
+     "trump": 0.4917
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 168,
+    "scope": "national",
+    "target": {
+     "harris": 0.4018,
+     "other": 0.0291,
+     "trump": 0.5691
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 134,
+    "scope": "national",
+    "target": {
+     "harris": 0.3899,
+     "other": 0.0099,
+     "trump": 0.6002
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 3027,
+    "scope": "national",
+    "target": {
+     "harris": 0.4634,
+     "other": 0.0165,
+     "trump": 0.5201
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 2677,
+    "scope": "national",
+    "target": {
+     "harris": 0.2848,
+     "other": 0.0109,
+     "trump": 0.7043
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 106,
+    "scope": "national",
+    "target": {
+     "harris": 0.7017,
+     "other": 0.0081,
+     "trump": 0.2902
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 283,
+    "scope": "national",
+    "target": {
+     "harris": 0.8557,
+     "other": 0.0299,
+     "trump": 0.1145
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 443,
+    "scope": "national",
+    "target": {
+     "harris": 0.8856,
+     "other": 0.0099,
+     "trump": 0.1045
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 204,
+    "scope": "national",
+    "target": {
+     "harris": 0.7002,
+     "other": 0.0044,
+     "trump": 0.2954
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 292,
+    "scope": "national",
+    "target": {
+     "harris": 0.6142,
+     "other": 0.0119,
+     "trump": 0.3739
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 96,
+    "scope": "national",
+    "target": {
+     "harris": 0.4577,
+     "other": 0.0388,
+     "trump": 0.5035
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 181,
+    "scope": "national",
+    "target": {
+     "harris": 0.431,
+     "other": 0.0286,
+     "trump": 0.5404
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 1718,
+    "scope": "national",
+    "target": {
+     "harris": 0.417,
+     "other": 0.0086,
+     "trump": 0.5744
+    }
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 3164,
+    "scope": "national",
+    "target": {
+     "harris": 0.3558,
+     "other": 0.0061,
+     "trump": 0.6381
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 65,
+    "scope": "national",
+    "target": {
+     "harris": 0.7283,
+     "other": 0.0247,
+     "trump": 0.247
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 156,
+    "scope": "national",
+    "target": {
+     "harris": 0.8581,
+     "other": 0.0049,
+     "trump": 0.137
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 193,
+    "scope": "national",
+    "target": {
+     "harris": 0.852,
+     "other": 0.0429,
+     "trump": 0.1051
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 169,
+    "scope": "national",
+    "target": {
+     "harris": 0.4733,
+     "other": 0.0316,
+     "trump": 0.495
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 142,
+    "scope": "national",
+    "target": {
+     "harris": 0.4297,
+     "other": 0.0051,
+     "trump": 0.5652
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 178,
+    "scope": "national",
+    "target": {
+     "harris": 0.2672,
+     "other": 0.0166,
+     "trump": 0.7162
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 153,
+    "scope": "national",
+    "target": {
+     "harris": 0.2913,
+     "other": 0.0052,
+     "trump": 0.7034
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 2108,
+    "scope": "national",
+    "target": {
+     "harris": 0.3957,
+     "other": 0.0092,
+     "trump": 0.5951
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 2823,
+    "scope": "national",
+    "target": {
+     "harris": 0.2202,
+     "other": 0.0068,
+     "trump": 0.773
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 328,
+    "scope": "national",
+    "target": {
+     "harris": 0.9222,
+     "other": 0.0077,
+     "trump": 0.0701
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 444,
+    "scope": "national",
+    "target": {
+     "harris": 0.9204,
+     "other": 0.007,
+     "trump": 0.0726
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 115,
+    "scope": "national",
+    "target": {
+     "harris": 0.6688,
+     "other": 0.0139,
+     "trump": 0.3173
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 237,
+    "scope": "national",
+    "target": {
+     "harris": 0.5499,
+     "other": 0.0022,
+     "trump": 0.4478
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 76,
+    "scope": "national",
+    "target": {
+     "harris": 0.5361,
+     "other": 0.0034,
+     "trump": 0.4605
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 150,
+    "scope": "national",
+    "target": {
+     "harris": 0.337,
+     "other": 0.0037,
+     "trump": 0.6593
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 1575,
+    "scope": "national",
+    "target": {
+     "harris": 0.526,
+     "other": 0.0049,
+     "trump": 0.4691
+    }
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 3672,
+    "scope": "national",
+    "target": {
+     "harris": 0.3328,
+     "other": 0.0038,
+     "trump": 0.6633
+    }
+   }
+  ],
+  "Ohio": [
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 64,
+    "scope": "Ohio",
+    "target": {
+     "harris": 0.5145,
+     "other": 0.0194,
+     "trump": 0.4661
+    }
+   },
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 54,
+    "scope": "Ohio",
+    "target": {
+     "harris": 0.2934,
+     "other": 0.0053,
+     "trump": 0.7013
+    }
+   },
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 65,
+    "scope": "Ohio",
+    "target": {
+     "harris": 0.7527,
+     "other": 0.0027,
+     "trump": 0.2446
+    }
+   },
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 61,
+    "scope": "Ohio",
+    "target": {
+     "harris": 0.2894,
+     "trump": 0.7106
+    }
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 211,
+    "scope": "Ohio",
+    "target": {
+     "harris": 0.4286,
+     "other": 0.0006,
+     "trump": 0.5708
+    }
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 256,
+    "scope": "Ohio",
+    "target": {
+     "harris": 0.285,
+     "other": 0.0041,
+     "trump": 0.7109
+    }
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 39,
+    "scope": "Ohio",
+    "target": {
+     "harris": 0.9771,
+     "trump": 0.0229
+    }
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 139,
+    "scope": "Ohio",
+    "target": {
+     "harris": 0.4172,
+     "other": 0.0248,
+     "trump": 0.5579
+    }
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 327,
+    "scope": "Ohio",
+    "target": {
+     "harris": 0.3414,
+     "other": 0.0057,
+     "trump": 0.6529
+    }
+   }
+  ],
+  "North Carolina": [
+   {
+    "persona": "State: North Carolina\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 54,
+    "scope": "North Carolina",
+    "target": {
+     "harris": 0.5781,
+     "other": 0.0042,
+     "trump": 0.4177
+    }
+   },
+   {
+    "persona": "State: North Carolina\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 46,
+    "scope": "North Carolina",
+    "target": {
+     "harris": 0.5382,
+     "other": 0.0017,
+     "trump": 0.46
+    }
+   },
+   {
+    "persona": "State: North Carolina\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 41,
+    "scope": "North Carolina",
+    "target": {
+     "harris": 0.4017,
+     "other": 0.0065,
+     "trump": 0.5919
+    }
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 155,
+    "scope": "North Carolina",
+    "target": {
+     "harris": 0.4312,
+     "other": 0.0013,
+     "trump": 0.5674
+    }
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 170,
+    "scope": "North Carolina",
+    "target": {
+     "harris": 0.259,
+     "other": 0.0007,
+     "trump": 0.7403
+    }
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 34,
+    "scope": "North Carolina",
+    "target": {
+     "harris": 0.8109,
+     "other": 0.0008,
+     "trump": 0.1883
+    }
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 56,
+    "scope": "North Carolina",
+    "target": {
+     "harris": 0.9134,
+     "other": 0.0101,
+     "trump": 0.0766
+    }
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 102,
+    "scope": "North Carolina",
+    "target": {
+     "harris": 0.3506,
+     "other": 0.0004,
+     "trump": 0.649
+    }
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 214,
+    "scope": "North Carolina",
+    "target": {
+     "harris": 0.2027,
+     "other": 0.0004,
+     "trump": 0.7969
+    }
+   }
+  ],
+  "Texas": [
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 32,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.5012,
+     "other": 0.1193,
+     "trump": 0.3795
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 91,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.4353,
+     "other": 0.0261,
+     "trump": 0.5385
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 43,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.4772,
+     "other": 0.0026,
+     "trump": 0.5202
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 36,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.4269,
+     "trump": 0.5731
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 78,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.3846,
+     "other": 0.0042,
+     "trump": 0.6112
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 61,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.5184,
+     "other": 0.0173,
+     "trump": 0.4643
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 30,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.5329,
+     "trump": 0.4671
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 40,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.8471,
+     "trump": 0.1529
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 83,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.4899,
+     "trump": 0.5101
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 61,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.4707,
+     "trump": 0.5293
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 35,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.67,
+     "other": 0.0072,
+     "trump": 0.3228
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 360,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.2919,
+     "other": 0.0082,
+     "trump": 0.6999
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 290,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.1624,
+     "other": 0.0057,
+     "trump": 0.8319
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 48,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.915,
+     "other": 0.0157,
+     "trump": 0.0693
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 74,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.946,
+     "trump": 0.054
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 54,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.5735,
+     "other": 0.0148,
+     "trump": 0.4117
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 98,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.4166,
+     "other": 0.0044,
+     "trump": 0.579
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 216,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.3639,
+     "other": 0.003,
+     "trump": 0.6331
+    }
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 385,
+    "scope": "Texas",
+    "target": {
+     "harris": 0.2119,
+     "other": 0.0021,
+     "trump": 0.786
+    }
+   }
+  ]
+ },
+ "turnout": {
+  "national": [
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 116,
+    "scope": "national",
+    "target": {
+     "true": 0.5056,
+     "false": 0.4944
+    },
+    "raw_true": 0.4039
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Asian\nEducation: No four-year college degree",
+    "n": 121,
+    "scope": "national",
+    "target": {
+     "true": 0.1759,
+     "false": 0.8241
+    },
+    "raw_true": 0.1239
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 85,
+    "scope": "national",
+    "target": {
+     "true": 0.1392,
+     "false": 0.8608
+    },
+    "raw_true": 0.0968
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 369,
+    "scope": "national",
+    "target": {
+     "true": 0.0749,
+     "false": 0.9251
+    },
+    "raw_true": 0.0509
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 171,
+    "scope": "national",
+    "target": {
+     "true": 0.5527,
+     "false": 0.4473
+    },
+    "raw_true": 0.4502
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 494,
+    "scope": "national",
+    "target": {
+     "true": 0.2531,
+     "false": 0.7469
+    },
+    "raw_true": 0.1834
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 81,
+    "scope": "national",
+    "target": {
+     "true": 0.6559,
+     "false": 0.3441
+    },
+    "raw_true": 0.5581
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 131,
+    "scope": "national",
+    "target": {
+     "true": 0.3001,
+     "false": 0.6999
+    },
+    "raw_true": 0.2213
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 719,
+    "scope": "national",
+    "target": {
+     "true": 0.6872,
+     "false": 0.3128
+    },
+    "raw_true": 0.5928
+   },
+   {
+    "persona": "Age: 18-29\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 1173,
+    "scope": "national",
+    "target": {
+     "true": 0.2742,
+     "false": 0.7258
+    },
+    "raw_true": 0.2002
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 131,
+    "scope": "national",
+    "target": {
+     "true": 0.334,
+     "false": 0.666
+    },
+    "raw_true": 0.2494
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Asian\nEducation: No four-year college degree",
+    "n": 172,
+    "scope": "national",
+    "target": {
+     "true": 0.2141,
+     "false": 0.7859
+    },
+    "raw_true": 0.153
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 129,
+    "scope": "national",
+    "target": {
+     "true": 0.5922,
+     "false": 0.4078
+    },
+    "raw_true": 0.4904
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 552,
+    "scope": "national",
+    "target": {
+     "true": 0.133,
+     "false": 0.867
+    },
+    "raw_true": 0.0923
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 215,
+    "scope": "national",
+    "target": {
+     "true": 0.4508,
+     "false": 0.5492
+    },
+    "raw_true": 0.3523
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 699,
+    "scope": "national",
+    "target": {
+     "true": 0.2231,
+     "false": 0.7769
+    },
+    "raw_true": 0.1599
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 67,
+    "scope": "national",
+    "target": {
+     "true": 0.5793,
+     "false": 0.4207
+    },
+    "raw_true": 0.4772
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 206,
+    "scope": "national",
+    "target": {
+     "true": 0.0869,
+     "false": 0.9131
+    },
+    "raw_true": 0.0593
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 916,
+    "scope": "national",
+    "target": {
+     "true": 0.5785,
+     "false": 0.4215
+    },
+    "raw_true": 0.4763
+   },
+   {
+    "persona": "Age: 18-29\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 1853,
+    "scope": "national",
+    "target": {
+     "true": 0.2051,
+     "false": 0.7949
+    },
+    "raw_true": 0.146
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 104,
+    "scope": "national",
+    "target": {
+     "true": 0.8192,
+     "false": 0.1808
+    },
+    "raw_true": 0.7502
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Asian\nEducation: No four-year college degree",
+    "n": 69,
+    "scope": "national",
+    "target": {
+     "true": 0.341,
+     "false": 0.659
+    },
+    "raw_true": 0.2553
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 134,
+    "scope": "national",
+    "target": {
+     "true": 0.6929,
+     "false": 0.3071
+    },
+    "raw_true": 0.5992
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 540,
+    "scope": "national",
+    "target": {
+     "true": 0.2615,
+     "false": 0.7385
+    },
+    "raw_true": 0.1901
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 311,
+    "scope": "national",
+    "target": {
+     "true": 0.7466,
+     "false": 0.2534
+    },
+    "raw_true": 0.6613
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 515,
+    "scope": "national",
+    "target": {
+     "true": 0.3465,
+     "false": 0.6535
+    },
+    "raw_true": 0.26
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 92,
+    "scope": "national",
+    "target": {
+     "true": 0.7166,
+     "false": 0.2834
+    },
+    "raw_true": 0.6263
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 145,
+    "scope": "national",
+    "target": {
+     "true": 0.3459,
+     "false": 0.6541
+    },
+    "raw_true": 0.2595
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 1725,
+    "scope": "national",
+    "target": {
+     "true": 0.8272,
+     "false": 0.1728
+    },
+    "raw_true": 0.7604
+   },
+   {
+    "persona": "Age: 30-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 1354,
+    "scope": "national",
+    "target": {
+     "true": 0.5793,
+     "false": 0.4207
+    },
+    "raw_true": 0.4772
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 151,
+    "scope": "national",
+    "target": {
+     "true": 0.7162,
+     "false": 0.2838
+    },
+    "raw_true": 0.6258
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Asian\nEducation: No four-year college degree",
+    "n": 71,
+    "scope": "national",
+    "target": {
+     "true": 0.2563,
+     "false": 0.7437
+    },
+    "raw_true": 0.1859
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 197,
+    "scope": "national",
+    "target": {
+     "true": 0.6967,
+     "false": 0.3033
+    },
+    "raw_true": 0.6035
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 709,
+    "scope": "national",
+    "target": {
+     "true": 0.2949,
+     "false": 0.7051
+    },
+    "raw_true": 0.2171
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 266,
+    "scope": "national",
+    "target": {
+     "true": 0.7868,
+     "false": 0.2132
+    },
+    "raw_true": 0.7097
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 854,
+    "scope": "national",
+    "target": {
+     "true": 0.2955,
+     "false": 0.7045
+    },
+    "raw_true": 0.2175
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 101,
+    "scope": "national",
+    "target": {
+     "true": 0.7716,
+     "false": 0.2284
+    },
+    "raw_true": 0.6913
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 190,
+    "scope": "national",
+    "target": {
+     "true": 0.425,
+     "false": 0.575
+    },
+    "raw_true": 0.3288
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 1493,
+    "scope": "national",
+    "target": {
+     "true": 0.8392,
+     "false": 0.1608
+    },
+    "raw_true": 0.7757
+   },
+   {
+    "persona": "Age: 30-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 1983,
+    "scope": "national",
+    "target": {
+     "true": 0.5782,
+     "false": 0.4218
+    },
+    "raw_true": 0.476
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 168,
+    "scope": "national",
+    "target": {
+     "true": 0.7779,
+     "false": 0.2221
+    },
+    "raw_true": 0.6989
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Asian\nEducation: No four-year college degree",
+    "n": 59,
+    "scope": "national",
+    "target": {
+     "true": 0.522,
+     "false": 0.478
+    },
+    "raw_true": 0.4198
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 243,
+    "scope": "national",
+    "target": {
+     "true": 0.8186,
+     "false": 0.1814
+    },
+    "raw_true": 0.7494
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 787,
+    "scope": "national",
+    "target": {
+     "true": 0.4417,
+     "false": 0.5583
+    },
+    "raw_true": 0.344
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 427,
+    "scope": "national",
+    "target": {
+     "true": 0.8456,
+     "false": 0.1544
+    },
+    "raw_true": 0.784
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 649,
+    "scope": "national",
+    "target": {
+     "true": 0.5322,
+     "false": 0.4678
+    },
+    "raw_true": 0.4299
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 233,
+    "scope": "national",
+    "target": {
+     "true": 0.8042,
+     "false": 0.1958
+    },
+    "raw_true": 0.7313
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 266,
+    "scope": "national",
+    "target": {
+     "true": 0.633,
+     "false": 0.367
+    },
+    "raw_true": 0.5334
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 3561,
+    "scope": "national",
+    "target": {
+     "true": 0.8956,
+     "false": 0.1044
+    },
+    "raw_true": 0.8505
+   },
+   {
+    "persona": "Age: 45-64\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 4232,
+    "scope": "national",
+    "target": {
+     "true": 0.69,
+     "false": 0.31
+    },
+    "raw_true": 0.596
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 189,
+    "scope": "national",
+    "target": {
+     "true": 0.7482,
+     "false": 0.2518
+    },
+    "raw_true": 0.6632
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Asian\nEducation: No four-year college degree",
+    "n": 85,
+    "scope": "national",
+    "target": {
+     "true": 0.5378,
+     "false": 0.4622
+    },
+    "raw_true": 0.4354
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 469,
+    "scope": "national",
+    "target": {
+     "true": 0.8379,
+     "false": 0.1621
+    },
+    "raw_true": 0.774
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 1308,
+    "scope": "national",
+    "target": {
+     "true": 0.5167,
+     "false": 0.4833
+    },
+    "raw_true": 0.4147
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 378,
+    "scope": "national",
+    "target": {
+     "true": 0.8404,
+     "false": 0.1596
+    },
+    "raw_true": 0.7773
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 1058,
+    "scope": "national",
+    "target": {
+     "true": 0.4662,
+     "false": 0.5338
+    },
+    "raw_true": 0.3666
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 149,
+    "scope": "national",
+    "target": {
+     "true": 0.8784,
+     "false": 0.1216
+    },
+    "raw_true": 0.8272
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 348,
+    "scope": "national",
+    "target": {
+     "true": 0.6503,
+     "false": 0.3497
+    },
+    "raw_true": 0.552
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 2071,
+    "scope": "national",
+    "target": {
+     "true": 0.8991,
+     "false": 0.1009
+    },
+    "raw_true": 0.8552
+   },
+   {
+    "persona": "Age: 45-64\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 5250,
+    "scope": "national",
+    "target": {
+     "true": 0.6799,
+     "false": 0.3201
+    },
+    "raw_true": 0.5847
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 98,
+    "scope": "national",
+    "target": {
+     "true": 0.7658,
+     "false": 0.2342
+    },
+    "raw_true": 0.6842
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 233,
+    "scope": "national",
+    "target": {
+     "true": 0.8763,
+     "false": 0.1237
+    },
+    "raw_true": 0.8243
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 417,
+    "scope": "national",
+    "target": {
+     "true": 0.6309,
+     "false": 0.3691
+    },
+    "raw_true": 0.5312
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 269,
+    "scope": "national",
+    "target": {
+     "true": 0.9469,
+     "false": 0.0531
+    },
+    "raw_true": 0.9219
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 302,
+    "scope": "national",
+    "target": {
+     "true": 0.7387,
+     "false": 0.2613
+    },
+    "raw_true": 0.6519
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 208,
+    "scope": "national",
+    "target": {
+     "true": 0.938,
+     "false": 0.062
+    },
+    "raw_true": 0.9094
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 219,
+    "scope": "national",
+    "target": {
+     "true": 0.8433,
+     "false": 0.1567
+    },
+    "raw_true": 0.781
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 2304,
+    "scope": "national",
+    "target": {
+     "true": 0.9439,
+     "false": 0.0561
+    },
+    "raw_true": 0.9176
+   },
+   {
+    "persona": "Age: 65+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 3975,
+    "scope": "national",
+    "target": {
+     "true": 0.7863,
+     "false": 0.2137
+    },
+    "raw_true": 0.7091
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Asian\nEducation: Four-year college degree or more",
+    "n": 83,
+    "scope": "national",
+    "target": {
+     "true": 0.7316,
+     "false": 0.2684
+    },
+    "raw_true": 0.6437
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 436,
+    "scope": "national",
+    "target": {
+     "true": 0.9217,
+     "false": 0.0783
+    },
+    "raw_true": 0.8864
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 814,
+    "scope": "national",
+    "target": {
+     "true": 0.7158,
+     "false": 0.2842
+    },
+    "raw_true": 0.6253
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 180,
+    "scope": "national",
+    "target": {
+     "true": 0.938,
+     "false": 0.062
+    },
+    "raw_true": 0.9093
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 498,
+    "scope": "national",
+    "target": {
+     "true": 0.7619,
+     "false": 0.2381
+    },
+    "raw_true": 0.6796
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 107,
+    "scope": "national",
+    "target": {
+     "true": 0.8908,
+     "false": 0.1092
+    },
+    "raw_true": 0.844
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 214,
+    "scope": "national",
+    "target": {
+     "true": 0.6993,
+     "false": 0.3007
+    },
+    "raw_true": 0.6065
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 1750,
+    "scope": "national",
+    "target": {
+     "true": 0.9448,
+     "false": 0.0552
+    },
+    "raw_true": 0.919
+   },
+   {
+    "persona": "Age: 65+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 5103,
+    "scope": "national",
+    "target": {
+     "true": 0.7693,
+     "false": 0.2307
+    },
+    "raw_true": 0.6884
+   }
+  ],
+  "Ohio": [
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 41,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.2852,
+     "false": 0.7148
+    },
+    "raw_true": 0.2091
+   },
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 106,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.703,
+     "false": 0.297
+    },
+    "raw_true": 0.6107
+   },
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 163,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.4991,
+     "false": 0.5009
+    },
+    "raw_true": 0.3977
+   },
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 67,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.1634,
+     "false": 0.8366
+    },
+    "raw_true": 0.1146
+   },
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 37,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.0854,
+     "false": 0.9146
+    },
+    "raw_true": 0.0582
+   },
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 116,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.7271,
+     "false": 0.2729
+    },
+    "raw_true": 0.6384
+   },
+   {
+    "persona": "State: Ohio\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 258,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.2104,
+     "false": 0.7896
+    },
+    "raw_true": 0.1501
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 66,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.4241,
+     "false": 0.5759
+    },
+    "raw_true": 0.3279
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 225,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.956,
+     "false": 0.044
+    },
+    "raw_true": 0.9351
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 392,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.7149,
+     "false": 0.2851
+    },
+    "raw_true": 0.6243
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 101,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.5515,
+     "false": 0.4485
+    },
+    "raw_true": 0.449
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 160,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.9355,
+     "false": 0.0645
+    },
+    "raw_true": 0.9057
+   },
+   {
+    "persona": "State: Ohio\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 520,
+    "scope": "Ohio",
+    "target": {
+     "true": 0.6541,
+     "false": 0.3459
+    },
+    "raw_true": 0.5562
+   }
+  ],
+  "North Carolina": [
+   {
+    "persona": "State: North Carolina\nAge: 18-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 40,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.0889,
+     "false": 0.9111
+    },
+    "raw_true": 0.0607
+   },
+   {
+    "persona": "State: North Carolina\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 77,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.78,
+     "false": 0.22
+    },
+    "raw_true": 0.7015
+   },
+   {
+    "persona": "State: North Carolina\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 82,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.301,
+     "false": 0.699
+    },
+    "raw_true": 0.222
+   },
+   {
+    "persona": "State: North Carolina\nAge: 18-44\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 65,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.0874,
+     "false": 0.9126
+    },
+    "raw_true": 0.0597
+   },
+   {
+    "persona": "State: North Carolina\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 74,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.7756,
+     "false": 0.2244
+    },
+    "raw_true": 0.6961
+   },
+   {
+    "persona": "State: North Carolina\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 145,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.3027,
+     "false": 0.6973
+    },
+    "raw_true": 0.2234
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 59,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.5553,
+     "false": 0.4447
+    },
+    "raw_true": 0.4528
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 177,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.8914,
+     "false": 0.1086
+    },
+    "raw_true": 0.8447
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 243,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.738,
+     "false": 0.262
+    },
+    "raw_true": 0.6512
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 53,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.7798,
+     "false": 0.2202
+    },
+    "raw_true": 0.7013
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 140,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.7312,
+     "false": 0.2688
+    },
+    "raw_true": 0.6431
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 123,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.9192,
+     "false": 0.0808
+    },
+    "raw_true": 0.8828
+   },
+   {
+    "persona": "State: North Carolina\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 313,
+    "scope": "North Carolina",
+    "target": {
+     "true": 0.7604,
+     "false": 0.2396
+    },
+    "raw_true": 0.6777
+   }
+  ],
+  "Texas": [
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 95,
+    "scope": "Texas",
+    "target": {
+     "true": 0.1387,
+     "false": 0.8613
+    },
+    "raw_true": 0.0964
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 78,
+    "scope": "Texas",
+    "target": {
+     "true": 0.742,
+     "false": 0.258
+    },
+    "raw_true": 0.6559
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 193,
+    "scope": "Texas",
+    "target": {
+     "true": 0.2125,
+     "false": 0.7875
+    },
+    "raw_true": 0.1517
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 33,
+    "scope": "Texas",
+    "target": {
+     "true": 0.1388,
+     "false": 0.8612
+    },
+    "raw_true": 0.0965
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 142,
+    "scope": "Texas",
+    "target": {
+     "true": 0.7682,
+     "false": 0.2318
+    },
+    "raw_true": 0.6871
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 147,
+    "scope": "Texas",
+    "target": {
+     "true": 0.3842,
+     "false": 0.6158
+    },
+    "raw_true": 0.2925
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 126,
+    "scope": "Texas",
+    "target": {
+     "true": 0.1357,
+     "false": 0.8643
+    },
+    "raw_true": 0.0943
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 73,
+    "scope": "Texas",
+    "target": {
+     "true": 0.5661,
+     "false": 0.4339
+    },
+    "raw_true": 0.4637
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 312,
+    "scope": "Texas",
+    "target": {
+     "true": 0.2931,
+     "false": 0.7069
+    },
+    "raw_true": 0.2155
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 35,
+    "scope": "Texas",
+    "target": {
+     "true": 0.2698,
+     "false": 0.7302
+    },
+    "raw_true": 0.1967
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 53,
+    "scope": "Texas",
+    "target": {
+     "true": 0.2199,
+     "false": 0.7801
+    },
+    "raw_true": 0.1574
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 138,
+    "scope": "Texas",
+    "target": {
+     "true": 0.7927,
+     "false": 0.2073
+    },
+    "raw_true": 0.717
+   },
+   {
+    "persona": "State: Texas\nAge: 18-44\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 195,
+    "scope": "Texas",
+    "target": {
+     "true": 0.4219,
+     "false": 0.5781
+    },
+    "raw_true": 0.326
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 45,
+    "scope": "Texas",
+    "target": {
+     "true": 0.9178,
+     "false": 0.0822
+    },
+    "raw_true": 0.881
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 107,
+    "scope": "Texas",
+    "target": {
+     "true": 0.5096,
+     "false": 0.4904
+    },
+    "raw_true": 0.4078
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 123,
+    "scope": "Texas",
+    "target": {
+     "true": 0.9169,
+     "false": 0.0831
+    },
+    "raw_true": 0.8797
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 183,
+    "scope": "Texas",
+    "target": {
+     "true": 0.5603,
+     "false": 0.4397
+    },
+    "raw_true": 0.4578
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Other\nEducation: Four-year college degree or more",
+    "n": 46,
+    "scope": "Texas",
+    "target": {
+     "true": 0.8016,
+     "false": 0.1984
+    },
+    "raw_true": 0.728
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: Other\nEducation: No four-year college degree",
+    "n": 41,
+    "scope": "Texas",
+    "target": {
+     "true": 0.4374,
+     "false": 0.5626
+    },
+    "raw_true": 0.34
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 415,
+    "scope": "Texas",
+    "target": {
+     "true": 0.9039,
+     "false": 0.0961
+    },
+    "raw_true": 0.8618
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Man\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 465,
+    "scope": "Texas",
+    "target": {
+     "true": 0.708,
+     "false": 0.292
+    },
+    "raw_true": 0.6164
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: Four-year college degree or more",
+    "n": 77,
+    "scope": "Texas",
+    "target": {
+     "true": 0.8044,
+     "false": 0.1956
+    },
+    "raw_true": 0.7316
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Black\nEducation: No four-year college degree",
+    "n": 180,
+    "scope": "Texas",
+    "target": {
+     "true": 0.5194,
+     "false": 0.4806
+    },
+    "raw_true": 0.4173
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: Four-year college degree or more",
+    "n": 102,
+    "scope": "Texas",
+    "target": {
+     "true": 0.8478,
+     "false": 0.1522
+    },
+    "raw_true": 0.7868
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: Hispanic\nEducation: No four-year college degree",
+    "n": 310,
+    "scope": "Texas",
+    "target": {
+     "true": 0.5871,
+     "false": 0.4129
+    },
+    "raw_true": 0.4851
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: Four-year college degree or more",
+    "n": 245,
+    "scope": "Texas",
+    "target": {
+     "true": 0.9051,
+     "false": 0.0949
+    },
+    "raw_true": 0.8634
+   },
+   {
+    "persona": "State: Texas\nAge: 45+\nGender: Woman\nRace/ethnicity: White\nEducation: No four-year college degree",
+    "n": 612,
+    "scope": "Texas",
+    "target": {
+     "true": 0.7146,
+     "false": 0.2854
+    },
+    "raw_true": 0.6239
+   }
+  ]
+ }
+}

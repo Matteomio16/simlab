@@ -71,6 +71,7 @@ simlab/
   simlab/tests.py     fidelity(), null_test(), mirror_test(), events_test() -> metrics + runs/<test>__<model>.jsonl
   simlab/personas.py  structured persona text (survey fields only; NO LLM-written backstories — they drift left)
   simlab/ces.py       CES 2024 download from Harvard Dataverse (doi:10.7910/DVN/X11EP6) + column auto-detection
+  _to_delete/         stray empty dirs; ignore or delete
 ```
 **Written but never run** (the Cowork sandbox had no network). Expect small fixes. Known gaps to handle first:
 - The OpenRouter Decisions API response shape (`answers[qid].probabilities`, `usage.cost`) is assumed from docs and
@@ -86,7 +87,7 @@ simlab/
 
 - `.env` in the parent `Sim Research` folder (core.py also checks `simlab/.env`):
   `OPENROUTER_API_KEY=` (a **separate key capped at $10**), `MODAL_TOKEN_ID=`, `MODAL_TOKEN_SECRET=`. Never print keys.
-- Python 3.13 venv at `simlab/.venv` via `uv sync` (deps in `pyproject.toml`); run with `.venv\Scripts\python -m ...`.
+- Python ≥3.12 (Kev needs 3.12/3.13), `uv`. `pip install requests pandas numpy scipy scikit-learn`.
 - Kev: `git clone https://github.com/jaredpalmer/kev` — fine-tuning recipe in `skills/kev-finetune/`
   (`scripts/kev_modal.py::train|evaluate|compare|teardown`; record format in `references/data-format.md`:
   System One request + `label`, or soft `target` weights). Tear Modal resources down after use.
@@ -120,11 +121,17 @@ simlab/
 
 ## 6. Reference material (read, don't duplicate)
 
-- Plan doc: https://claude.ai/code/artifact/673aa293-22c4-4d3a-806e-6a50c69f82cc
-- Field Guide (expert review: projects, voter-change science, calibration, stack, data, evaluation, ethics, dos &
-  don'ts, possibilities, open tasks): https://claude.ai/code/artifact/c640add2-61d5-4d74-8fa2-c39365d09819
-- Cowork project "Sim Research" docs: `claude/midterm-engine-research-map.md`, `claude/jev-kev-testbench-status.md`.
+Local snapshots (read these; Claude Code cannot open claude.ai links):
+- `docs/field-guide.md` — the expert review: prior projects, voter-change science and priors, starting levels,
+  calibration/assimilation defaults, decision models (Jev/Kev) and routing, stack and costs, data kits, evaluation
+  protocol, publishing rules, dos & don'ts, ranked possibilities, review outcomes and open tasks.
+- `docs/plan.md` — the research map: Hungary scorecard, landscape, engine design, pilot choice, free data stack.
 - Hungary paper: `../The Simulation of Democracy - Final15.pdf`.
+
+The live docs are edited in Claude Cowork (plan: https://claude.ai/code/artifact/673aa293-22c4-4d3a-806e-6a50c69f82cc,
+Field Guide: https://claude.ai/code/artifact/c640add2-61d5-4d74-8fa2-c39365d09819). The snapshots don't update
+themselves: when Matteo says the docs changed, ask him to re-export them from Cowork into `docs/`. Decisions made
+in Claude Code go into this CLAUDE.md (section 5) and a short `docs/CHANGELOG.md`, so Cowork can pick them up.
 
 ## 7. Key data sources (all free)
 

@@ -46,12 +46,15 @@ BUDGET_USD = float(os.environ.get("SIMLAB_BUDGET_USD", "9.0"))  # keep $1 headro
 class Cache:
     def __init__(self, path: Path = RUNS / "cache.sqlite"):
         self.db = sqlite3.connect(path, check_same_thread=False)
+        self.db.execute("pragma journal_mode=wal")
+        self.db.execute("pragma synchronous=normal")
         self.db.execute("create table if not exists c (k text primary key, v text, ts real)")
         self.lock = threading.Lock()
 
     @staticmethod
     def key(*parts) -> str:
-        return hashlib.sha256(json.dumps(parts, sort_keys=True, default=str).encode()).hexdigest()
+        # no sort_keys: option order inside `criteria` is part of the question (we average over it)
+        return hashlib.sha256(json.dumps(parts, default=str).encode()).hexdigest()
 
     def get(self, k):
         with self.lock:
@@ -75,12 +78,21 @@ class BudgetExceeded(RuntimeError):
 class Ledger:
     path = RUNS / "spend.jsonl"
     lock = threading.Lock()
+    _total: float | None = None  # read from the file once per process, then kept in memory
 
     @classmethod
     def total(cls) -> float:
+        if cls._total is None:
+            cls._total = sum(json.loads(l)["usd"] for l in cls.path.read_text().splitlines()
+                             if l.strip()) if cls.path.exists() else 0.0
+        return cls._total
+
+    @classmethod
+    def spent(cls, tag: str, since: float = 0.0) -> float:
         if not cls.path.exists():
             return 0.0
-        return sum(json.loads(l)["usd"] for l in cls.path.read_text().splitlines() if l.strip())
+        return sum(e["usd"] for e in map(json.loads, cls.path.read_text().splitlines())
+                   if e["tag"] == tag and e["ts"] >= since)
 
     @classmethod
     def check(cls):
@@ -90,6 +102,7 @@ class Ledger:
     @classmethod
     def add(cls, model: str, usd: float, tag: str = ""):
         with cls.lock:
+            cls._total = cls.total() + usd
             with cls.path.open("a") as f:
                 f.write(json.dumps({"ts": time.time(), "model": model, "usd": usd, "tag": tag}) + "\n")
 
@@ -98,7 +111,8 @@ class Ledger:
 OR_BASE = "https://openrouter.ai"
 
 
-def _post(url: str, payload: dict, headers: dict, tries: int = 5, timeout: int = 120) -> dict:
+def _post(url: str, payload: dict, headers: dict, tries: int = 8, timeout: int = 120) -> dict:
+    last = None
     for i in range(tries):
         try:
             r = requests.post(url, json=payload, headers=headers, timeout=timeout)
@@ -107,9 +121,10 @@ def _post(url: str, payload: dict, headers: dict, tries: int = 5, timeout: int =
             if r.status_code >= 400:
                 raise ValueError(f"{r.status_code}: {r.text[:500]}")
             return r.json()
-        except (requests.HTTPError, requests.ConnectionError, requests.Timeout):
-            time.sleep(2 ** i + random.random())
-    raise RuntimeError(f"giving up on {url}")
+        except (requests.HTTPError, requests.ConnectionError, requests.Timeout) as e:
+            last = e
+            time.sleep(min(2 ** i, 60) + random.random())
+    raise RuntimeError(f"giving up on {url} after {tries} tries; last error: {str(last)[:300]}")
 
 
 def _or_headers():

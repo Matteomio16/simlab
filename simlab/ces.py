@@ -13,6 +13,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import requests
+from scipy.optimize import brentq
+from scipy.special import expit
 
 from .core import RUNS
 from .personas import render
@@ -49,38 +51,162 @@ def download() -> Path:
     return DATA / csv["filename"]
 
 
-def load(path: Path) -> pd.DataFrame:
-    if path.suffix == ".dta":
-        return pd.read_stata(path, convert_categoricals=True)
-    sep = "\t" if path.suffix == ".tab" else ","
-    return pd.read_csv(path, sep=sep, low_memory=False)
+# Code -> label, checked against CES_2024_GUIDE_vv.pdf by matching every category's count (27 Sep 2026).
+# The guide's listing order is not the code order (e.g. race 8 = Middle Eastern, pid7 lists Strong R third).
+GENDER = {1: "Man", 2: "Woman", 3: "Non-binary", 4: "Other"}
+EDUC = {1: "No high school diploma", 2: "High school graduate", 3: "Some college", 4: "2-year degree",
+        5: "4-year degree", 6: "Post-graduate degree"}
+RACE = {1: "White", 2: "Black", 3: "Hispanic", 4: "Asian", 5: "Native American", 6: "Two or more races",
+        7: "Other", 8: "Middle Eastern"}
+PID7 = {1: "Strong Democrat", 2: "Not very strong Democrat", 3: "Lean Democrat", 4: "Independent",
+        5: "Lean Republican", 6: "Not very strong Republican", 7: "Strong Republican", 8: "Not sure"}
+IDEO5 = {1: "Very liberal", 2: "Liberal", 3: "Moderate", 4: "Conservative", 5: "Very conservative", 6: "Not sure"}
+URBAN = {1: "City", 2: "Suburb", 3: "Town", 4: "Rural area", 5: "Other"}
+RELIG = {1: "Protestant", 2: "Roman Catholic", 3: "Mormon", 4: "Eastern or Greek Orthodox", 5: "Jewish",
+         6: "Muslim", 7: "Buddhist", 8: "Hindu", 9: "Atheist", 10: "Agnostic", 11: "Nothing in particular",
+         12: "Something else"}
+NEWSINT = {1: "Most of the time", 2: "Some of the time", 3: "Only now and then", 4: "Hardly at all"}
+INCOME = dict(enumerate(["Less than $10,000", "$10,000 - $19,999", "$20,000 - $29,999", "$30,000 - $39,999",
+                         "$40,000 - $49,999", "$50,000 - $59,999", "$60,000 - $69,999", "$70,000 - $79,999",
+                         "$80,000 - $99,999", "$100,000 - $119,999", "$120,000 - $149,999",
+                         "$150,000 - $199,999", "$200,000 - $249,999", "$250,000 - $349,999",
+                         "$350,000 - $499,999", "$500,000 or more"], start=1))
+VOTE20 = {1: "Joe Biden", 2: "Donald Trump", 3: "Jo Jorgensen", 4: "Howie Hawkins", 5: "Other", 6: "Did not vote"}
+VOTE24 = {1: "harris", 2: "trump", 3: "other", 4: "other", 5: "other", 6: "other", 8: "other"}  # 9 = no pres vote
+VOTE_OPTIONS = {"harris": "Kamala Harris, the Democratic candidate", "trump": "Donald Trump, the Republican candidate",
+                "other": "Another candidate"}
+
+COLS = ["inputstate", "birthyr", "gender4", "race", "hispanic", "educ", "faminc_new", "pid7", "ideo5", "religpew",
+        "urbancity", "newsint", "presvote20post", "CC24_410", "TS_g2024", "cit1", "commonweight", "vvweight_post"]
+VEP_TURNOUT_2024 = 0.639  # UF Election Lab (McDonald): 2024 turnout, share of the voting-eligible population
 
 
-CANDIDATES = {
-    "state": ["inputstate", "inputstate_post"],
-    "birthyr": ["birthyr"],
-    "gender": ["gender4", "gender"],
-    "race": ["race"],
-    "hispanic": ["hispanic"],
-    "educ": ["educ"],
-    "income": ["faminc_new"],
-    "pid7": ["pid7"],
-    "ideo5": ["ideo5"],
-    "religion": ["religpew"],
-    "urban": ["urbancity"],
-    "vote20": ["presvote20post"],
-    "vote24": ["CC24_410", "presvote24post", "CC24_410a"],
-    "voted_validated": ["TS_g2024", "vv_turnout_gvm", "CL_2024gvm"],
-    "weight": ["commonpostweight", "vvweight_post", "commonweight"],
-}
+def load(path: Path | None = None) -> pd.DataFrame:
+    """Respondent table with derived fields. voted = validated 2024 general vote (TS_g2024 1-6; unmatched
+    respondents count as non-voters, the guide's specification 1)."""
+    df = pd.read_csv(path or next(DATA.glob("CCES24_*.csv")), usecols=COLS, low_memory=False)
+    age = 2024 - df.birthyr
+    df["age4"] = pd.cut(age, [17, 29, 44, 64, 200], labels=["18-29", "30-44", "45-64", "65+"]).astype(str)
+    df["age2"] = np.where(age < 45, "18-44", "45+")
+    df["gender"] = df.gender4.map(GENDER)
+    df["race5"] = np.where(df.hispanic == 1, "Hispanic",
+                           df.race.map({1: "White", 2: "Black", 3: "Hispanic", 4: "Asian"}).fillna("Other"))
+    df["race4"] = df.race5.replace({"Asian": "Other"})
+    df["degree"] = np.where(df.educ >= 5, "Four-year college degree or more", "No four-year college degree")
+    df["state"] = df.inputstate.map(FIPS)
+    df["voted"] = df.TS_g2024.between(1, 6)
+    df["turnout"] = np.where(df.voted, "true", "false")
+    df["vote24"] = df.CC24_410.map(VOTE24).where(df.voted)
+    return df
 
 
-def detect(df: pd.DataFrame) -> dict:
-    found = {}
-    for k, cands in CANDIDATES.items():
-        for c in cands:
-            if c in df.columns:
-                found[k] = c
-                break
-    print("column map:", json.dumps(found, indent=1))
-    return found
+CELL_FIELDS = {"age4": "age", "age2": "age", "gender": "gender", "race5": "race", "race4": "race",
+               "degree": "education"}
+
+
+def _logit(p):
+    p = np.clip(p, 0.005, 0.995)
+    return np.log(p / (1 - p))
+
+
+def turnout_shift(df: pd.DataFrame) -> float:
+    """Logit shift that lifts CES validated turnout (citizens, commonweight) to the official 2024 rate.
+    About a third of respondents weren't matched to a voter file and count as non-voters, so the raw rate
+    (~55%) understates turnout; one shift for every cell keeps each cell's relative position."""
+    g = df[df.cit1 == 1].groupby(["age4", "gender4", "race5", "degree"])
+    p = g.apply(lambda x: np.average(x.voted, weights=x.commonweight))
+    w = g.commonweight.sum()
+    return brentq(lambda c: np.average(expit(_logit(p) + c), weights=w) - VEP_TURNOUT_2024, -5, 5)
+
+
+def cells(df: pd.DataFrame, target: str, state: str | None = None, min_n: int | None = None,
+          shift: float = 0.0) -> list[dict]:
+    """Weighted target shares per demographic cell (persona = the cell's fields only; targets never enter it).
+    target 'vote24': validated voters, vvweight_post. 'turnout': citizens, commonweight, logit-shifted by `shift`.
+    National cells: age4 x gender x race5 x degree; state cells are coarser: age2 x gender x race4 x degree."""
+    by = ["age2", "gender", "race4", "degree"] if state else ["age4", "gender", "race5", "degree"]
+    d = df[df.gender.isin(["Man", "Woman"])]
+    if state:
+        d = d[d.state == state]
+    if target == "vote24":
+        d, w = d[d.vote24.notna() & d.vvweight_post.notna()], "vvweight_post"
+    else:
+        d, w = d[d.cit1 == 1], "commonweight"
+    out = []
+    for key, g in d.groupby(by):
+        if len(g) < (min_n or (30 if state else 50)):
+            continue
+        shares = (g.groupby(target)[w].sum() / g[w].sum()).to_dict()
+        if target == "turnout":
+            raw = shares.get("true", 0.0)
+            shares = {"true": float(expit(_logit(raw) + shift)), "false": float(1 - expit(_logit(raw) + shift)),
+                      "raw_true": raw}
+        fields = {CELL_FIELDS[b]: v for b, v in zip(by, key)}
+        out.append({"persona": render({"state": state, **fields}), "n": len(g), "scope": state or "national",
+                    "target": {k: round(float(v), 4) for k, v in shares.items() if k != "raw_true"},
+                    **({"raw_true": round(float(shares["raw_true"]), 4)} if target == "turnout" else {})})
+    return out
+
+
+def _fields(r) -> dict:
+    return {"state": FIPS.get(r.inputstate), "age": r.age4, "gender": GENDER.get(r.gender4),
+            "race": RACE.get(r.race) if r.race5 == "Other" else r.race5, "education": EDUC.get(r.educ),
+            "income": INCOME.get(r.faminc_new), "religion": RELIG.get(r.religpew), "area": URBAN.get(r.urbancity),
+            "party_id": PID7.get(r.pid7), "ideology": IDEO5.get(r.ideo5), "vote_2020": VOTE20.get(r.presvote20post),
+            "interest": NEWSINT.get(r.newsint)}
+
+
+def archetypes(df: pd.DataFrame, draws: int = 3000, seed: int = 0) -> list[dict]:
+    """28 strata (7-point party ID x white/non-white x degree) weighted by national adult share. Each stratum is
+    represented by one real OH/NC/TX respondent (every persona lives in a state with a 2026 Senate race), drawn
+    with probability proportional to survey weight; of `draws` candidate sets, the one whose weighted gender, age,
+    race and ideology mix is closest to the national mix is kept. text_events drops the year-specific 2020 vote."""
+    d = df.assign(pid=df.pid7.replace({8: 4}), white=df.race5 == "White")
+    total = d.commonweight.sum()
+    strata = [(k, g.commonweight.sum() / total, g[g.inputstate.isin(list(FIPS))])
+              for k, g in d.groupby(["pid", "white", "degree"])]
+    w = np.array([s[1] for s in strata])
+    target = {t: d.groupby(t).commonweight.sum() / total for t in ("gender4", "age4", "race5", "ideo5")}
+    rng = np.random.default_rng(seed)
+    best, best_gap = None, np.inf
+    for _ in range(draws):
+        picks = [pool.iloc[rng.choice(len(pool), p=pool.commonweight / pool.commonweight.sum())]
+                 for _, _, pool in strata]
+        gap = sum(0.5 * sum(abs(w[[p[t] == v for p in picks]].sum() - share) for v, share in target[t].items())
+                  for t in target)
+        if gap < best_gap:
+            best, best_gap = picks, gap
+    print(f"archetype draw: gap {best_gap:.3f} (sum of gender, age, race, ideology TVDs) after {draws} draws")
+    out = []
+    for ((pid, white, deg), wt, _), r in zip(strata, best):
+        f = _fields(r)
+        out.append({"id": f"{PID7[pid]} / {'white' if white else 'non-white'} / {deg}",
+                    "party": "D" if pid in (1, 2) else "R" if pid in (6, 7) else "I",
+                    "weight": round(float(wt), 5), "text": render(f), "text_events": render(f, drop=("vote_2020",))})
+    return out
+
+
+def build() -> None:
+    """Write simlab/archetypes.json and simlab/cells.json from the downloaded CES file."""
+    df = load(download())
+    here = Path(__file__).parent
+    arch = archetypes(df)
+    (here / "archetypes.json").write_text(json.dumps(arch, indent=1))
+    shift = turnout_shift(df)
+    out = {t: {s or "national": cells(df, t, s, shift=shift) for s in (None, *FIPS.values())}
+           for t in ("vote24", "turnout")}
+    (here / "cells.json").write_text(json.dumps(out, indent=1))
+    c = df[df.cit1 == 1]
+    print(f"respondents {len(df)}, citizens' validated turnout {np.average(c.voted, weights=c.commonweight):.3f}, "
+          f"logit shift to {VEP_TURNOUT_2024}: {shift:+.3f}")
+    v = df[df.vote24.notna() & df.vvweight_post.notna()]
+    print("weighted 2024 vote (validated voters):",
+          (v.groupby("vote24").vvweight_post.sum() / v.vvweight_post.sum()).round(3).to_dict())
+    print(f"archetypes: {len(arch)}, weights sum {sum(a['weight'] for a in arch):.3f}, "
+          f"party {pd.Series([a['party'] for a in arch]).value_counts().to_dict()}")
+    for t, scopes in out.items():
+        print(t, {s: (len(c), sum(x['n'] for x in c)) for s, c in scopes.items()})
+
+
+if __name__ == "__main__":
+    build()
