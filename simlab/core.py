@@ -107,7 +107,7 @@ def _post(url: str, payload: dict, headers: dict, tries: int = 5, timeout: int =
             if r.status_code >= 400:
                 raise ValueError(f"{r.status_code}: {r.text[:500]}")
             return r.json()
-        except requests.HTTPError:
+        except (requests.HTTPError, requests.ConnectionError, requests.Timeout):
             time.sleep(2 ** i + random.random())
     raise RuntimeError(f"giving up on {url}")
 
@@ -165,33 +165,20 @@ class Decisions:
             return {"true": p, "false": 1 - p}
         return {str(k): float(v) for k, v in a["probabilities"].items()}
 
-    def choice_avg(self, state, qid: str, question: dict, n_orders: int = 3, seed: int = 0, tag: str = "") -> dict:
-        """Ask one choice/score question under several option orders and average (fixes order bias).
-        Score questions keep their order (it carries meaning), so they're asked once."""
-        if question["type"] != "choice" or n_orders <= 1:
-            return self.probs(self.ask(state, {qid: question}, tag), qid)
-        opts = list(question["criteria"].items())
-        rng = random.Random(seed)
-        acc: dict = {}
-        orders = [opts] + [rng.sample(opts, len(opts)) for _ in range(n_orders - 1)]
-        for o in orders:
-            q = dict(question, criteria=dict(o))
-            for k, v in self.probs(self.ask(state, {qid: q}, tag), qid).items():
-                acc[k] = acc.get(k, 0) + v / len(orders)
-        return acc
-
 
 # ---------------------------------------------------------------- text LLMs asked for a distribution
 class Chat:
-    def __init__(self, model: str, provider_order: list[str] | None = None, temperature: float = 0.0):
+    def __init__(self, model: str, provider_order: list[str] | None = None, temperature: float = 0.0,
+                 reasoning: dict | None = None):
         self.model = model
         self.provider_order = provider_order
         self.temperature = temperature
+        self.reasoning = reasoning or {"enabled": False}
 
     def complete(self, messages: list[dict], tag: str = "", max_tokens: int = 300, json_mode: bool = True) -> str:
         payload = {"model": self.model, "messages": messages, "temperature": self.temperature,
                    "max_tokens": max_tokens, "usage": {"include": True},
-                   "reasoning": {"enabled": False}}
+                   "reasoning": self.reasoning}
         if json_mode:
             payload["response_format"] = {"type": "json_object"}
         if self.provider_order:
@@ -226,8 +213,6 @@ class Chat:
         tot = sum(out.values())
         if tot <= 0:
             return {o: 1 / len(options) for o in options} | {"_parse_error": 1.0}
-        if tot > 1.5:  # percentages
-            tot = tot
         return {o: v / tot for o, v in out.items()}
 
 
@@ -240,3 +225,8 @@ LLMS = {
     "deepseek": "deepseek/deepseek-v4.1-flash",
     "luna": "openai/gpt-6-luna",
 }
+# One host per model so a run never mixes quantisations (cheapest working host, probed 27 Sep 2026;
+# InferenceNet serves GLM at fp4). DeepSeek's own endpoint is excluded by the account's guardrail.
+HOSTS = {"glm": "InferenceNet", "mimo": "Xiaomi", "deepseek": "InferenceNet", "luna": "OpenAI"}
+# GLM can't turn reasoning off; "minimal" used 0 reasoning tokens in the probe. Others: off.
+REASONING = {"glm": {"effort": "minimal"}}

@@ -21,26 +21,32 @@ DATA = RUNS.parent / "data"
 DATA.mkdir(exist_ok=True)
 DOI = "doi:10.7910/DVN/X11EP6"
 DV = "https://dataverse.harvard.edu/api"
+UA = {"User-Agent": "simlab/0.1 (research; +https://scaliastudio.dev)"}  # Dataverse 403s the python-requests default
 
 FIPS = {39: "Ohio", 37: "North Carolina", 48: "Texas"}
 
 
 def download() -> Path:
-    meta = requests.get(f"{DV}/datasets/:persistentId/?persistentId={DOI}", timeout=60).json()
-    files = meta["data"]["latestVersion"]["files"]
-    tabular = [f for f in files if f["dataFile"].get("filename", "").lower().endswith((".csv", ".tab", ".dta"))]
-    for f in files:
-        print(f["dataFile"]["filename"], f["dataFile"].get("filesize"))
-    big = max(tabular, key=lambda f: f["dataFile"].get("filesize", 0))
-    fid, name = big["dataFile"]["id"], big["dataFile"]["filename"]
-    out = DATA / name
-    if not out.exists():
-        with requests.get(f"{DV}/access/datafile/{fid}?format=original", stream=True, timeout=600) as r:
+    """The CSV (175 MB; the .dta is 947 MB) and the CES guide PDF (codebook). Returns the CSV path."""
+    r = requests.get(f"{DV}/datasets/:persistentId/?persistentId={DOI}", headers=UA, timeout=60)
+    r.raise_for_status()
+    files = [f["dataFile"] for f in r.json()["data"]["latestVersion"]["files"]]
+    csv = next(f for f in files if f["filename"].lower().endswith(".csv"))
+    guide = next(f for f in files if f["filename"].lower().endswith(".pdf"))
+    for f in (csv, guide):
+        out = DATA / f["filename"]
+        if out.exists():
+            continue
+        part = out.with_name(out.name + ".part")
+        with requests.get(f"{DV}/access/datafile/{f['id']}", headers=UA, stream=True, timeout=600) as r:
             r.raise_for_status()
-            with out.open("wb") as fh:
+            with part.open("wb") as fh:
                 for chunk in r.iter_content(1 << 20):
                     fh.write(chunk)
-    return out
+        if part.stat().st_size != f["filesize"]:
+            raise IOError(f"{f['filename']}: got {part.stat().st_size} bytes, expected {f['filesize']}")
+        part.replace(out)
+    return DATA / csv["filename"]
 
 
 def load(path: Path) -> pd.DataFrame:
