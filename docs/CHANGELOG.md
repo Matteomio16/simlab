@@ -2,6 +2,31 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-27 (late night): Kev ces-v2 results; Census CPS turnout; ces-v3 test
+
+- Kev `ces-v2` (H100, 2 epochs, 1,000 replay records, ~21 min, $1.52). 1,356 training records from 48 states: 2024
+  demographic cells, party-ID × white/non-white × degree strata and 2020-vote cells (2024 vote), plus 2018/2022
+  turnout and the 2022 House vote from the CES cumulative file. Held-out OH / NC / TX, weighted TVD against real shares
+  at temperature 1.0 (`python -m simlab.kevscore ces-v2`):
+  - 2024 vote, demographic cells: 0.070 / 0.094 / 0.090, worse than ces-v1 on the same cells (0.049 / 0.078 / 0.078).
+  - New no-model baseline, the same cell pooled over the 48 training states: 0.055 / 0.079 / 0.138. It beats Kev in
+    OH and NC; Kev wins in TX (regression baseline 0.047 / 0.093 / 0.138).
+  - Party strata 0.032 / 0.034 / 0.040 (pooled 0.027 / 0.027 / 0.044); 2020-vote cells 0.041 / 0.028 / 0.048 (pooled
+    0.031 / 0.022 / 0.045); 2022 House vote 0.067 / 0.087 / 0.074 (pooled 0.066 / 0.077 / 0.156).
+  - Turnout outputs not used: trained on CES turnout, which tracks voter-file matching.
+- New `simlab/cps.py`: Census CPS November Voting and Registration Supplements 2018, 2022 and 2024 (downloaded by the
+  test-bench session with Matteo's OK) → `cps.respondents(year)`, adult civilian citizens with `ces.load`'s cell
+  fields. Hur and Achen (2013): people who didn't answer the vote question (14% in 2024) are dropped, then voters and
+  non-voters are reweighted per state so every state matches its official VEP turnout. Checks: the 2018 fixed-width
+  reader matches the techdoc's counts; the Census convention reproduces the published 53.4% / 52.2% / 65.3%. Dropping
+  non-answers instead of counting them as non-voters moves groups by 0.03 at most (2024 ages 18-29: 0.488 vs 0.504).
+  `ces.STATE_NAMES` moved from `kevdata.STATES`.
+- Kev `ces-v3a` / `ces-v3b` (running, one after the other, each capped at 3000 s): ces-v2's records with CPS turnout
+  on demographic cells only (v3a) or with no turnout questions (v3b); same records, option orders and split
+  (`python -m simlab.kevdata v3`). If they tie, the extra record types diluted the vote task; if v3b is clearly
+  better, the tasks interfere and per-task fine-tunes may beat one multi-task Kev. Modal spend in September before
+  v3: $4.72 of the $30 credit.
+
 ## 2026-09-27 (night): Kev ces-v1 results; serving and Modal budget rules
 
 - Repos created: `github.com/Matteomio16/simlab` (public, full history, scanned for keys and personal data first) and
