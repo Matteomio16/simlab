@@ -1,0 +1,128 @@
+{
+ "house22|demographic cells|North Carolina": {
+  "cells": 10,
+  "kev": 0.07525598345206397,
+  "pooled": 0.07733524613587979,
+  "regression": NaN
+ },
+ "house22|demographic cells|Ohio": {
+  "cells": 9,
+  "kev": 0.050594508130672976,
+  "pooled": 0.06579406617222194,
+  "regression": NaN
+ },
+ "house22|demographic cells|Texas": {
+  "cells": 23,
+  "kev": 0.06926379099230724,
+  "pooled": 0.155541203287259,
+  "regression": NaN
+ },
+ "pres24|2020-vote cells|North Carolina": {
+  "cells": 9,
+  "kev": 0.02473902084145307,
+  "pooled": 0.022457337626545823,
+  "regression": NaN
+ },
+ "pres24|2020-vote cells|Ohio": {
+  "cells": 7,
+  "kev": 0.028714029661933465,
+  "pooled": 0.03099103862046227,
+  "regression": NaN
+ },
+ "pres24|2020-vote cells|Texas": {
+  "cells": 11,
+  "kev": 0.04886735405890925,
+  "pooled": 0.04454194020138334,
+  "regression": NaN
+ },
+ "pres24|demographic cells|North Carolina": {
+  "cells": 9,
+  "kev": 0.07384951205540226,
+  "pooled": 0.0794746177218327,
+  "regression": 0.09340034403669724
+ },
+ "pres24|demographic cells|Ohio": {
+  "cells": 9,
+  "kev": 0.05430000785447082,
+  "pooled": 0.05500041793672208,
+  "regression": 0.047221340460526305
+ },
+ "pres24|demographic cells|Texas": {
+  "cells": 19,
+  "kev": 0.06625417738772955,
+  "pooled": 0.1376171938696404,
+  "regression": 0.1375923404255319
+ },
+ "pres24|party strata|North Carolina": {
+  "cells": 16,
+  "kev": 0.03133660254852335,
+  "pooled": 0.02655236022188943,
+  "regression": NaN
+ },
+ "pres24|party strata|Ohio": {
+  "cells": 16,
+  "kev": 0.03084261645770447,
+  "pooled": 0.02697236628822394,
+  "regression": NaN
+ },
+ "pres24|party strata|Texas": {
+  "cells": 28,
+  "kev": 0.033069627515599075,
+  "pooled": 0.04356039180159207,
+  "regression": NaN
+ },
+ "turnout18|demographic cells|North Carolina": {
+  "cells": 14,
+  "kev": 0.07515963092528692,
+  "pooled": 0.04396620822993997,
+  "regression": NaN
+ },
+ "turnout18|demographic cells|Ohio": {
+  "cells": 12,
+  "kev": 0.05658807609641213,
+  "pooled": 0.027091481427207152,
+  "regression": NaN
+ },
+ "turnout18|demographic cells|Texas": {
+  "cells": 31,
+  "kev": 0.04719003603750394,
+  "pooled": 0.04629270634853382,
+  "regression": NaN
+ },
+ "turnout22|demographic cells|North Carolina": {
+  "cells": 14,
+  "kev": 0.027964841586958528,
+  "pooled": 0.02782846667332616,
+  "regression": NaN
+ },
+ "turnout22|demographic cells|Ohio": {
+  "cells": 12,
+  "kev": 0.03382928698454991,
+  "pooled": 0.037720006724483966,
+  "regression": NaN
+ },
+ "turnout22|demographic cells|Texas": {
+  "cells": 30,
+  "kev": 0.055991089375945886,
+  "pooled": 0.05007757954494164,
+  "regression": NaN
+ },
+ "turnout24|demographic cells|North Carolina": {
+  "cells": 11,
+  "kev": 0.04057498147548103,
+  "pooled": 0.0564847660873867,
+  "regression": 0.05101591111111112
+ },
+ "turnout24|demographic cells|Ohio": {
+  "cells": 8,
+  "kev": 0.05365354984135252,
+  "pooled": 0.039888155436121335,
+  "regression": 0.04416467513069456
+ },
+ "turnout24|demographic cells|Texas": {
+  "cells": 24,
+  "kev": 0.07836713758735159,
+  "pooled": 0.05505629928310878,
+  "regression": 0.0605524262607041
+ }
+}

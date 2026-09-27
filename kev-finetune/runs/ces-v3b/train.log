@@ -1,0 +1,54 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+delta: warm start from /__modal/volumes/vo-kyTIZ69Vu37wcERidvUtX2/hub/models--jaredpalmer--kev-4b/snapshots/139fdd94f1b6a6ad80cc15e08fcb99cac885a101: 496 lora tensors and the pointer head loaded
+device=cuda world=1 trainable params=33.8M
+fetched v7/decision-v7/train.jsonl from jaredpalmer/kev-suites@a88f56db53
+replay: 1000 of 12576 suite training records mixed with 843 from /runs/ces-v3b/data/train.jsonl
+1843 training requests (holdout=[]), questions by type {'choice': 3747, 'score': 292, 'noul': 396}
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+ep0 step 10/462 loss 0.464 kl 0.000 anchor 0.000 0.206s/rec
+ep0 step 20/462 loss 0.311 kl 0.000 anchor 0.000 0.178s/rec
+ep0 step 30/462 loss 0.336 kl 0.000 anchor 0.000 0.171s/rec
+ep0 step 40/462 loss 0.450 kl 0.000 anchor 0.000 0.166s/rec
+ep0 step 50/462 loss 0.375 kl 0.000 anchor 0.000 0.166s/rec
+ep0 step 60/462 loss 0.218 kl 0.000 anchor 0.000 0.164s/rec
+ep0 step 70/462 loss 0.181 kl 0.000 anchor 0.000 0.163s/rec
+ep0 step 80/462 loss 0.602 kl 0.000 anchor 0.000 0.162s/rec
+ep0 step 90/462 loss 0.425 kl 0.000 anchor 0.000 0.161s/rec
+ep0 step 100/462 loss 0.303 kl 0.000 anchor 0.000 0.161s/rec
+ep0 step 110/462 loss 0.266 kl 0.000 anchor 0.000 0.161s/rec
+ep0 step 120/462 loss 0.314 kl 0.000 anchor 0.000 0.160s/rec
+ep0 step 130/462 loss 0.307 kl 0.000 anchor 0.000 0.160s/rec
+ep0 step 140/462 loss 0.318 kl 0.000 anchor 0.000 0.159s/rec
+ep0 step 150/462 loss 0.271 kl 0.000 anchor 0.000 0.159s/rec
+ep0 step 160/462 loss 0.354 kl 0.000 anchor 0.000 0.159s/rec
+ep0 step 170/462 loss 0.347 kl 0.000 anchor 0.000 0.159s/rec
+ep0 step 180/462 loss 0.515 kl 0.000 anchor 0.000 0.159s/rec
+ep0 step 190/462 loss 0.323 kl 0.000 anchor 0.000 0.158s/rec
+ep0 step 200/462 loss 0.227 kl 0.000 anchor 0.000 0.158s/rec
+ep0 step 210/462 loss 0.539 kl 0.000 anchor 0.000 0.158s/rec
+ep0 step 220/462 loss 0.184 kl 0.000 anchor 0.000 0.157s/rec
+ep0 step 230/462 loss 0.258 kl 0.000 anchor 0.000 0.157s/rec
+ep1 step 240/462 loss 0.282 kl 0.000 anchor 0.000 0.158s/rec
+ep1 step 250/462 loss 0.197 kl 0.000 anchor 0.000 0.157s/rec
+ep1 step 260/462 loss 0.213 kl 0.000 anchor 0.000 0.157s/rec
+ep1 step 270/462 loss 0.157 kl 0.000 anchor 0.000 0.157s/rec
+ep1 step 280/462 loss 0.158 kl 0.000 anchor 0.000 0.157s/rec
+ep1 step 290/462 loss 0.231 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 300/462 loss 0.355 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 310/462 loss 0.299 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 320/462 loss 0.282 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 330/462 loss 0.184 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 340/462 loss 0.265 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 350/462 loss 0.166 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 360/462 loss 0.256 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 370/462 loss 0.321 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 380/462 loss 0.245 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 390/462 loss 0.314 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 400/462 loss 0.164 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 410/462 loss 0.199 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 420/462 loss 0.204 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 430/462 loss 0.247 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 440/462 loss 0.271 kl 0.000 anchor 0.000 0.156s/rec
+ep1 step 450/462 loss 0.247 kl 0.000 anchor 0.000 0.157s/rec
+ep1 step 460/462 loss 0.286 kl 0.000 anchor 0.000 0.156s/rec
+saved /runs/ces-v3b/checkpoint

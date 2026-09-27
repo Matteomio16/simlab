@@ -33,11 +33,21 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   reader matches the techdoc's counts; the Census convention reproduces the published 53.4% / 52.2% / 65.3%. Dropping
   non-answers instead of counting them as non-voters moves groups by 0.03 at most (2024 ages 18-29: 0.488 vs 0.504).
   `ces.STATE_NAMES` moved from `kevdata.STATES`.
-- Kev `ces-v3a` / `ces-v3b` (running, one after the other, each capped at 3000 s): ces-v2's records with CPS turnout
+- Kev `ces-v3a` / `ces-v3b` ($2.22 for both; H100, 2 epochs, 1,000 replay records): ces-v2's records with CPS turnout
   on demographic cells only (v3a) or with no turnout questions (v3b); same records, option orders and split
-  (`python -m simlab.kevdata v3`). If they tie, the extra record types diluted the vote task; if v3b is clearly
-  better, the tasks interfere and per-task fine-tunes may beat one multi-task Kev. Modal spend in September before
-  v3: $4.72 of the $30 credit.
+  (`python -m simlab.kevdata v3`). Held-out cells that every run answers with the same target, OH/NC/TX pooled,
+  weighted TVD, 95% intervals from resampling cells (`python -m simlab.kevscore ces-v1 ces-v2 ces-v3a ces-v3b`):
+  - 2024 vote, demographic cells (37): v3a 0.064, v3b 0.064, v1 0.070, v2 0.085; pooled baseline 0.102. v3a and v3b
+    tie (0.000 [−0.011, +0.011]); both beat v2 (v2 − v3b +0.021 [+0.002, +0.039]); v3 − v1 −0.005, not significant.
+    By state (v3b): 0.052 / 0.085 / 0.063 against pooled 0.055 / 0.079 / 0.138 and regression 0.047 / 0.093 / 0.138.
+  - Party strata (60 cells): v3b 0.031, v3a 0.032, v2 0.037, pooled 0.035. 2022 House vote (42): v3b 0.061, v3a
+    0.065, v2 0.075, pooled 0.112. 2020-vote cells (27): v3b 0.038, v3a 0.038, v2 0.041, pooled 0.036.
+  - Reading: turnout questions don't interfere with the vote task (v3a = v3b), and the extra record types didn't dilute
+    it (v3 at least as good as v1); ces-v2's drop came from the CES turnout targets. One multi-task Kev is fine so
+    far. Single training runs, so run-to-run noise isn't measured.
+  - CPS turnout, 2024 (v3a): 0.054 / 0.041 / 0.078 against pooled 0.040 / 0.056 / 0.055 and regression
+    0.044 / 0.051 / 0.061. Kev doesn't beat the simple baselines on turnout levels.
+  - Modal spend in September: $6.94 of the $30 credit.
 
 ## 2026-09-27 (night): Kev ces-v1 results; serving and Modal budget rules
 
