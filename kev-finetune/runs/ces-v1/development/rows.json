@@ -1,0 +1,5091 @@
+[
+  {
+    "id": "custom/0",
+    "group": "custom/0",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/0",
+    "p": [
+      0.7724350324998805,
+      0.22756496750011942
+    ],
+    "raw_probability_sum": 0.9999999701976776,
+    "zero_count": 0,
+    "logits": [
+      0.47689545154571533,
+      -0.7452167272567749
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/1",
+    "group": "custom/1",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/1",
+    "p": [
+      0.5293506443055419,
+      0.43897054089945414,
+      0.031678814795004
+    ],
+    "raw_probability_sum": 0.9999999888241291,
+    "zero_count": 0,
+    "logits": [
+      0.14969488978385925,
+      -0.0375237762928009,
+      -2.6663079261779785
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/1",
+    "group": "custom/1",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/1",
+    "p": [
+      0.4064471484191291,
+      0.03877253888208477,
+      0.5547803126987861
+    ],
+    "raw_probability_sum": 0.9999999850988388,
+    "zero_count": 0,
+    "logits": [
+      -0.07443171739578247,
+      -2.424173355102539,
+      0.23668664693832397
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/1",
+    "group": "custom/1",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/1",
+    "p": [
+      0.4064471484191291,
+      0.03877253888208477,
+      0.5547803126987861
+    ],
+    "raw_probability_sum": 0.9999999850988388,
+    "zero_count": 0,
+    "logits": [
+      -0.07443171739578247,
+      -2.424173355102539,
+      0.23668664693832397
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/1",
+    "group": "custom/1",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/1",
+    "p": [
+      0.20977360010147095,
+      0.790226399898529
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      -0.8155015110969543,
+      0.5107890367507935
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/2",
+    "group": "custom/2",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/2",
+    "p": [
+      0.43036041144684417,
+      0.5447126091798314,
+      0.024926979373324432
+    ],
+    "raw_probability_sum": 0.9999999888241291,
+    "zero_count": 0,
+    "logits": [
+      -0.0386999249458313,
+      0.19693544507026672,
+      -2.8873722553253174
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/2",
+    "group": "custom/2",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/2",
+    "p": [
+      0.5703106181462385,
+      0.025786713918449607,
+      0.4039026679353119
+    ],
+    "raw_probability_sum": 0.9999999552965164,
+    "zero_count": 0,
+    "logits": [
+      0.37110787630081177,
+      -2.7252140045166016,
+      0.026100635528564453
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/2",
+    "group": "custom/2",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/2",
+    "p": [
+      0.02669909857304111,
+      0.4132482524937462,
+      0.5600526489332127
+    ],
+    "raw_probability_sum": 0.9999999720603228,
+    "zero_count": 0,
+    "logits": [
+      -2.8196310997009277,
+      -0.08021223545074463,
+      0.22376996278762817
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/2",
+    "group": "custom/2",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/2",
+    "p": [
+      0.6012762784957886,
+      0.3987237215042114
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      -0.01610572636127472,
+      -0.4268914759159088
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/3",
+    "group": "custom/3",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/3",
+    "p": [
+      0.7322174906730652,
+      0.2677825093269348
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      0.4118364751338959,
+      -0.5940660238265991
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/4",
+    "group": "custom/4",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/4",
+    "p": [
+      0.6786473191187584,
+      0.3213526808812415
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      0.17063821852207184,
+      -0.576924204826355
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/5",
+    "group": "custom/5",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/5",
+    "p": [
+      0.5858785263227538,
+      0.38882955246147827,
+      0.025291921215767933
+    ],
+    "raw_probability_sum": 0.9999999403953552,
+    "zero_count": 0,
+    "logits": [
+      0.404083251953125,
+      -0.005888104438781738,
+      -2.738544225692749
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/5",
+    "group": "custom/5",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "harris",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/5",
+    "p": [
+      0.38807252121730246,
+      0.5904816996128889,
+      0.021445779169808662
+    ],
+    "raw_probability_sum": 0.9999999981373549,
+    "zero_count": 0,
+    "logits": [
+      -0.04812496900558472,
+      0.3716214597225189,
+      -2.943789482116699
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/5",
+    "group": "custom/5",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/5",
+    "p": [
+      0.028826290043551903,
+      0.38278516200146245,
+      0.5883885479549856
+    ],
+    "raw_probability_sum": 1.000000024214387,
+    "zero_count": 0,
+    "logits": [
+      -2.646759033203125,
+      -0.06057310104370117,
+      0.36934059858322144
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/5",
+    "group": "custom/5",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/5",
+    "p": [
+      0.21359783411026,
+      0.78640216588974
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      -0.7352821826934814,
+      0.5680912733078003
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/6",
+    "group": "custom/6",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/6",
+    "p": [
+      0.5050525655875866,
+      0.47520229131876995,
+      0.019745143093643443
+    ],
+    "raw_probability_sum": 1.0000000018626451,
+    "zero_count": 0,
+    "logits": [
+      0.2484411895275116,
+      0.18751920759677887,
+      -2.993313789367676
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/6",
+    "group": "custom/6",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "harris",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/6",
+    "p": [
+      0.5128721480174627,
+      0.4721616997086622,
+      0.014966152273875051
+    ],
+    "raw_probability_sum": 1.0000000223517418,
+    "zero_count": 0,
+    "logits": [
+      0.3002508282661438,
+      0.21754573285579681,
+      -3.2339847087860107
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/6",
+    "group": "custom/6",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/6",
+    "p": [
+      0.021620709046335722,
+      0.48752199695404624,
+      0.490857293999618
+    ],
+    "raw_probability_sum": 1.0000000186264515,
+    "zero_count": 0,
+    "logits": [
+      -2.9278321266174316,
+      0.18785154819488525,
+      0.19466963410377502
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/6",
+    "group": "custom/6",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/6",
+    "p": [
+      0.5923672914505005,
+      0.4076327085494995
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      0.03911164402961731,
+      -0.3346486985683441
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/7",
+    "group": "custom/7",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/7",
+    "p": [
+      0.47363799810409546,
+      0.5263620018959045
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      -0.3176567256450653,
+      -0.21211084723472595
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/8",
+    "group": "custom/8",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/8",
+    "p": [
+      0.3908744461664454,
+      0.5918552290496514,
+      0.01727032478390322
+    ],
+    "raw_probability_sum": 0.9999999981373549,
+    "zero_count": 0,
+    "logits": [
+      0.033822670578956604,
+      0.44869834184646606,
+      -3.085574150085449
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/8",
+    "group": "custom/8",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/8",
+    "p": [
+      0.020847639263119916,
+      0.39229211576555034,
+      0.5868602449713297
+    ],
+    "raw_probability_sum": 0.9999999906867743,
+    "zero_count": 0,
+    "logits": [
+      -2.9433882236480713,
+      -0.00862210988998413,
+      0.3941577970981598
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/8",
+    "group": "custom/8",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/8",
+    "p": [
+      0.5976256076467632,
+      0.020928183375595294,
+      0.3814462089776415
+    ],
+    "raw_probability_sum": 1.0000000093132257,
+    "zero_count": 0,
+    "logits": [
+      0.4833715856075287,
+      -2.8684961795806885,
+      0.034376949071884155
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/8",
+    "group": "custom/8",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/8",
+    "p": [
+      0.08162867536373881,
+      0.9183713246362611
+    ],
+    "raw_probability_sum": 1.0000000596046448,
+    "zero_count": 0,
+    "logits": [
+      -1.3769824504852295,
+      1.0434386730194092
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/9",
+    "group": "custom/9",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/9",
+    "p": [
+      0.2965177421861313,
+      0.6891430905195317,
+      0.014339167294336975
+    ],
+    "raw_probability_sum": 0.9999999580904841,
+    "zero_count": 0,
+    "logits": [
+      -0.1881055235862732,
+      0.6552363634109497,
+      -3.2172176837921143
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/9",
+    "group": "custom/9",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/9",
+    "p": [
+      0.013426336422302752,
+      0.7082372287989486,
+      0.27833643477874875
+    ],
+    "raw_probability_sum": 1.0000000027939677,
+    "zero_count": 0,
+    "logits": [
+      -3.1926283836364746,
+      0.7729324102401733,
+      -0.1610160768032074
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/9",
+    "group": "custom/9",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/9",
+    "p": [
+      0.013426336422302752,
+      0.7082372287989486,
+      0.27833643477874875
+    ],
+    "raw_probability_sum": 1.0000000027939677,
+    "zero_count": 0,
+    "logits": [
+      -3.1926283836364746,
+      0.7729324102401733,
+      -0.1610160768032074
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/9",
+    "group": "custom/9",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/9",
+    "p": [
+      0.27094229248338064,
+      0.7290577075166194
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      -0.8294571042060852,
+      0.16038987040519714
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/10",
+    "group": "custom/10",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/10",
+    "p": [
+      0.8460388416034597,
+      0.1466619710685016,
+      0.0072991873280387615
+    ],
+    "raw_probability_sum": 0.999999972525984,
+    "zero_count": 0,
+    "logits": [
+      1.5451909303665161,
+      -0.20724399387836456,
+      -3.207611560821533
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/10",
+    "group": "custom/10",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/10",
+    "p": [
+      0.011645312875142538,
+      0.8185206912319078,
+      0.16983399589294956
+    ],
+    "raw_probability_sum": 1.0000000409781933,
+    "zero_count": 0,
+    "logits": [
+      -2.9268908500671387,
+      1.3257043361663818,
+      -0.2469729334115982
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/10",
+    "group": "custom/10",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/10",
+    "p": [
+      0.010652339312884871,
+      0.16932799292515266,
+      0.8200196677619624
+    ],
+    "raw_probability_sum": 1.0000000661239028,
+    "zero_count": 0,
+    "logits": [
+      -2.926161289215088,
+      -0.16010303795337677,
+      1.41738760471344
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/10",
+    "group": "custom/10",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/10",
+    "p": [
+      0.4483082726093612,
+      0.5516917273906388
+    ],
+    "raw_probability_sum": 0.9999999701976776,
+    "zero_count": 0,
+    "logits": [
+      -0.2995593547821045,
+      -0.09205096960067749
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/11",
+    "group": "custom/11",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/11",
+    "p": [
+      0.4422758131007963,
+      0.5435805209365008,
+      0.014143665962702919
+    ],
+    "raw_probability_sum": 1.0000000204890966,
+    "zero_count": 0,
+    "logits": [
+      0.2851884961128235,
+      0.49143266677856445,
+      -3.1574783325195312
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/11",
+    "group": "custom/11",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/11",
+    "p": [
+      0.015737098472499402,
+      0.553271916480865,
+      0.4309909850466356
+    ],
+    "raw_probability_sum": 0.9999999515712261,
+    "zero_count": 0,
+    "logits": [
+      -3.0879979133605957,
+      0.47183090448379517,
+      0.22206836938858032
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/11",
+    "group": "custom/11",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/11",
+    "p": [
+      0.4422758131007963,
+      0.5435805209365008,
+      0.014143665962702919
+    ],
+    "raw_probability_sum": 1.0000000204890966,
+    "zero_count": 0,
+    "logits": [
+      0.2851884961128235,
+      0.49143266677856445,
+      -3.1574783325195312
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/11",
+    "group": "custom/11",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/11",
+    "p": [
+      0.07498309239694752,
+      0.9250169076030524
+    ],
+    "raw_probability_sum": 0.9999999701976776,
+    "zero_count": 0,
+    "logits": [
+      -1.3131471872329712,
+      1.1994023323059082
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/12",
+    "group": "custom/12",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/12",
+    "p": [
+      0.35743796758830926,
+      0.6307824242286711,
+      0.011779608183019593
+    ],
+    "raw_probability_sum": 1.0000000018626451,
+    "zero_count": 0,
+    "logits": [
+      0.09018374979496002,
+      0.6581828594207764,
+      -3.3224081993103027
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/12",
+    "group": "custom/12",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/12",
+    "p": [
+      0.3406070800554667,
+      0.012292107681670298,
+      0.6471008122628631
+    ],
+    "raw_probability_sum": 0.9999999906867743,
+    "zero_count": 0,
+    "logits": [
+      0.054506391286849976,
+      -3.267265796661377,
+      0.6962788701057434
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/12",
+    "group": "custom/12",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/12",
+    "p": [
+      0.35743796758830926,
+      0.6307824242286711,
+      0.011779608183019593
+    ],
+    "raw_probability_sum": 1.0000000018626451,
+    "zero_count": 0,
+    "logits": [
+      0.09018374979496002,
+      0.6581828594207764,
+      -3.3224081993103027
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/12",
+    "group": "custom/12",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/12",
+    "p": [
+      0.26894728726462797,
+      0.731052712735372
+    ],
+    "raw_probability_sum": 1.0000000596046448,
+    "zero_count": 0,
+    "logits": [
+      -0.7391876578330994,
+      0.2607825696468353
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/13",
+    "group": "custom/13",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/13",
+    "p": [
+      0.7780970815107662,
+      0.22190291848923388
+    ],
+    "raw_probability_sum": 1.0000000149011612,
+    "zero_count": 0,
+    "logits": [
+      0.5150935649871826,
+      -0.7395177483558655
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/14",
+    "group": "custom/14",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/14",
+    "p": [
+      0.4784978467729665,
+      0.4881207481284189,
+      0.03338140509861467
+    ],
+    "raw_probability_sum": 1.0000000335276127,
+    "zero_count": 0,
+    "logits": [
+      0.08300986886024475,
+      0.10292094945907593,
+      -2.5796427726745605
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/14",
+    "group": "custom/14",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/14",
+    "p": [
+      0.4784978467729665,
+      0.4881207481284189,
+      0.03338140509861467
+    ],
+    "raw_probability_sum": 1.0000000335276127,
+    "zero_count": 0,
+    "logits": [
+      0.08300986886024475,
+      0.10292094945907593,
+      -2.5796427726745605
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/14",
+    "group": "custom/14",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/14",
+    "p": [
+      0.4784978467729665,
+      0.4881207481284189,
+      0.03338140509861467
+    ],
+    "raw_probability_sum": 1.0000000335276127,
+    "zero_count": 0,
+    "logits": [
+      0.08300986886024475,
+      0.10292094945907593,
+      -2.5796427726745605
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/14",
+    "group": "custom/14",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/14",
+    "p": [
+      0.203374946268273,
+      0.796625053731727
+    ],
+    "raw_probability_sum": 0.9999999552965164,
+    "zero_count": 0,
+    "logits": [
+      -0.8127315044403076,
+      0.5526013374328613
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/15",
+    "group": "custom/15",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/15",
+    "p": [
+      0.5901183310115835,
+      0.40988166898841655
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      -0.018018856644630432,
+      -0.3824734091758728
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/16",
+    "group": "custom/16",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/16",
+    "p": [
+      0.7409381645638298,
+      0.25906183543617023
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      0.4674736261367798,
+      -0.5833767652511597
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/17",
+    "group": "custom/17",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/17",
+    "p": [
+      0.5506949137533873,
+      0.42390070134919206,
+      0.025404384897420598
+    ],
+    "raw_probability_sum": 1.0000000521540642,
+    "zero_count": 0,
+    "logits": [
+      0.4052409529685974,
+      0.14355924725532532,
+      -2.671018123626709
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/17",
+    "group": "custom/17",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/17",
+    "p": [
+      0.026403792792643446,
+      0.5619514710147263,
+      0.4116447361926303
+    ],
+    "raw_probability_sum": 0.9999999776482582,
+    "zero_count": 0,
+    "logits": [
+      -2.606367826461792,
+      0.4515399932861328,
+      0.14028522372245789
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/17",
+    "group": "custom/17",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/17",
+    "p": [
+      0.026403792792643446,
+      0.5619514710147263,
+      0.4116447361926303
+    ],
+    "raw_probability_sum": 0.9999999776482582,
+    "zero_count": 0,
+    "logits": [
+      -2.606367826461792,
+      0.4515399932861328,
+      0.14028522372245789
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/17",
+    "group": "custom/17",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/17",
+    "p": [
+      0.20858387959873498,
+      0.7914161204012651
+    ],
+    "raw_probability_sum": 0.9999999850988388,
+    "zero_count": 0,
+    "logits": [
+      -0.7265369892120361,
+      0.6069456338882446
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/18",
+    "group": "custom/18",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/18",
+    "p": [
+      0.4635291229056881,
+      0.5180295850531083,
+      0.018441292041203716
+    ],
+    "raw_probability_sum": 0.9999999720603228,
+    "zero_count": 0,
+    "logits": [
+      0.23175585269927979,
+      0.3429190516471863,
+      -2.992521047592163
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/18",
+    "group": "custom/18",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "harris",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/18",
+    "p": [
+      0.5659764957672092,
+      0.4210124874588918,
+      0.013011016773898945
+    ],
+    "raw_probability_sum": 1.0000000083819032,
+    "zero_count": 0,
+    "logits": [
+      0.49619054794311523,
+      0.20030049979686737,
+      -3.2765655517578125
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/18",
+    "group": "custom/18",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "harris",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/18",
+    "p": [
+      0.5659764957672092,
+      0.4210124874588918,
+      0.013011016773898945
+    ],
+    "raw_probability_sum": 1.0000000083819032,
+    "zero_count": 0,
+    "logits": [
+      0.49619054794311523,
+      0.20030049979686737,
+      -3.2765655517578125
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/18",
+    "group": "custom/18",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/18",
+    "p": [
+      0.5839311828572263,
+      0.4160688171427737
+    ],
+    "raw_probability_sum": 0.9999999403953552,
+    "zero_count": 0,
+    "logits": [
+      0.06189945340156555,
+      -0.2770330607891083
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/19",
+    "group": "custom/19",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/19",
+    "p": [
+      0.47369269948281945,
+      0.5263073005171806
+    ],
+    "raw_probability_sum": 0.9999999701976776,
+    "zero_count": 0,
+    "logits": [
+      -0.2587169110774994,
+      -0.15339040756225586
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/20",
+    "group": "custom/20",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/20",
+    "p": [
+      0.3409673438215363,
+      0.6420140015291161,
+      0.01701865464934754
+    ],
+    "raw_probability_sum": 1.0000000391155481,
+    "zero_count": 0,
+    "logits": [
+      -0.04911661148071289,
+      0.5837068557739258,
+      -3.046593189239502
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/20",
+    "group": "custom/20",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/20",
+    "p": [
+      0.31942462707542846,
+      0.01445526289226436,
+      0.6661201100323072
+    ],
+    "raw_probability_sum": 0.9999999133870006,
+    "zero_count": 0,
+    "logits": [
+      -0.09553763270378113,
+      -3.191000461578369,
+      0.6394110918045044
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/20",
+    "group": "custom/20",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/20",
+    "p": [
+      0.3409673438215363,
+      0.6420140015291161,
+      0.01701865464934754
+    ],
+    "raw_probability_sum": 1.0000000391155481,
+    "zero_count": 0,
+    "logits": [
+      -0.04911661148071289,
+      0.5837068557739258,
+      -3.046593189239502
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/20",
+    "group": "custom/20",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/20",
+    "p": [
+      0.07696074706082029,
+      0.9230392529391798
+    ],
+    "raw_probability_sum": 0.9999999403953552,
+    "zero_count": 0,
+    "logits": [
+      -1.4044759273529053,
+      1.0799002647399902
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/21",
+    "group": "custom/21",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/21",
+    "p": [
+      0.24975400977019957,
+      0.7369012181691734,
+      0.013344772060626953
+    ],
+    "raw_probability_sum": 1.0000000074505806,
+    "zero_count": 0,
+    "logits": [
+      -0.2909393608570099,
+      0.7910379767417908,
+      -3.2202913761138916
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/21",
+    "group": "custom/21",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/21",
+    "p": [
+      0.22294252425701983,
+      0.011217266907757328,
+      0.7658402088352229
+    ],
+    "raw_probability_sum": 1.000000030733645,
+    "zero_count": 0,
+    "logits": [
+      -0.33584731817245483,
+      -3.3253068923950195,
+      0.8982123136520386
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/21",
+    "group": "custom/21",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/21",
+    "p": [
+      0.22294252425701983,
+      0.011217266907757328,
+      0.7658402088352229
+    ],
+    "raw_probability_sum": 1.000000030733645,
+    "zero_count": 0,
+    "logits": [
+      -0.33584731817245483,
+      -3.3253068923950195,
+      0.8982123136520386
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/21",
+    "group": "custom/21",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/21",
+    "p": [
+      0.23568439749512057,
+      0.7643156025048794
+    ],
+    "raw_probability_sum": 0.999999925494194,
+    "zero_count": 0,
+    "logits": [
+      -0.8918766379356384,
+      0.2846106290817261
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/22",
+    "group": "custom/22",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/22",
+    "p": [
+      0.8543865290796944,
+      0.13648019108220064,
+      0.009133279838105
+    ],
+    "raw_probability_sum": 1.0000000456348062,
+    "zero_count": 0,
+    "logits": [
+      1.530413031578064,
+      -0.30379122495651245,
+      -3.0080456733703613
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/22",
+    "group": "custom/22",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/22",
+    "p": [
+      0.01250936771997641,
+      0.13442500248609582,
+      0.8530656297939277
+    ],
+    "raw_probability_sum": 0.9999999767169356,
+    "zero_count": 0,
+    "logits": [
+      -2.687774658203125,
+      -0.3132460415363312,
+      1.5345840454101562
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/22",
+    "group": "custom/22",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/22",
+    "p": [
+      0.012464729265414198,
+      0.866794177829042,
+      0.12074109290554376
+    ],
+    "raw_probability_sum": 0.9999999897554517,
+    "zero_count": 0,
+    "logits": [
+      -2.6754164695739746,
+      1.5664819478988647,
+      -0.4046710729598999
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/22",
+    "group": "custom/22",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/22",
+    "p": [
+      0.1471088616316832,
+      0.8528911383683168
+    ],
+    "raw_probability_sum": 0.9999999403953552,
+    "zero_count": 0,
+    "logits": [
+      -1.0975120067596436,
+      0.6599470376968384
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/23",
+    "group": "custom/23",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/23",
+    "p": [
+      0.8350079507891545,
+      0.157740992496648,
+      0.007251056714197549
+    ],
+    "raw_probability_sum": 1.000000017695129,
+    "zero_count": 0,
+    "logits": [
+      1.5382091999053955,
+      -0.12827765941619873,
+      -3.208085060119629
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/23",
+    "group": "custom/23",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/23",
+    "p": [
+      0.010026361058050378,
+      0.1865859217180911,
+      0.8033877172238585
+    ],
+    "raw_probability_sum": 0.9999999804422259,
+    "zero_count": 0,
+    "logits": [
+      -2.930206298828125,
+      -0.006532222032546997,
+      1.453413486480713
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/23",
+    "group": "custom/23",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/23",
+    "p": [
+      0.18263034189014066,
+      0.010315325764419653,
+      0.8070543323454397
+    ],
+    "raw_probability_sum": 0.9999999366700649,
+    "zero_count": 0,
+    "logits": [
+      -0.006085783243179321,
+      -2.8799190521240234,
+      1.4798412322998047
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/23",
+    "group": "custom/23",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/23",
+    "p": [
+      0.44925642013549805,
+      0.550743579864502
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      -0.2466174066066742,
+      -0.04294188320636749
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/24",
+    "group": "custom/24",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/24",
+    "p": [
+      0.40505320776843484,
+      0.5815969840995265,
+      0.013349808132038642
+    ],
+    "raw_probability_sum": 0.9999999767169356,
+    "zero_count": 0,
+    "logits": [
+      0.26205718517303467,
+      0.6238164305686951,
+      -3.1504592895507812
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/24",
+    "group": "custom/24",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/24",
+    "p": [
+      0.40505320776843484,
+      0.5815969840995265,
+      0.013349808132038642
+    ],
+    "raw_probability_sum": 0.9999999767169356,
+    "zero_count": 0,
+    "logits": [
+      0.26205718517303467,
+      0.6238164305686951,
+      -3.1504592895507812
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/24",
+    "group": "custom/24",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/24",
+    "p": [
+      0.5884504351119535,
+      0.016069138512401684,
+      0.3954804263756448
+    ],
+    "raw_probability_sum": 0.9999999944120646,
+    "zero_count": 0,
+    "logits": [
+      0.6008886694908142,
+      -2.9997034072875977,
+      0.2034972757101059
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/24",
+    "group": "custom/24",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/24",
+    "p": [
+      0.0732245652401917,
+      0.9267754347598083
+    ],
+    "raw_probability_sum": 1.0000000223517418,
+    "zero_count": 0,
+    "logits": [
+      -1.335632562637329,
+      1.2025477886199951
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/25",
+    "group": "custom/25",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/25",
+    "p": [
+      0.3224722020150307,
+      0.6667346116191455,
+      0.010793186365823841
+    ],
+    "raw_probability_sum": 0.9999999469146132,
+    "zero_count": 0,
+    "logits": [
+      0.06362718343734741,
+      0.7900023460388184,
+      -3.333474636077881
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/25",
+    "group": "custom/25",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/25",
+    "p": [
+      0.3030292582557427,
+      0.010758166752000958,
+      0.6862125749922564
+    ],
+    "raw_probability_sum": 1.0000000353902578,
+    "zero_count": 0,
+    "logits": [
+      0.02304983139038086,
+      -3.3151142597198486,
+      0.8404079675674438
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/25",
+    "group": "custom/25",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/25",
+    "p": [
+      0.3030292582557427,
+      0.010758166752000958,
+      0.6862125749922564
+    ],
+    "raw_probability_sum": 1.0000000353902578,
+    "zero_count": 0,
+    "logits": [
+      0.02304983139038086,
+      -3.3151142597198486,
+      0.8404079675674438
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/25",
+    "group": "custom/25",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/25",
+    "p": [
+      0.23907620848601746,
+      0.7609237915139826
+    ],
+    "raw_probability_sum": 1.0000000149011612,
+    "zero_count": 0,
+    "logits": [
+      -0.7843917608261108,
+      0.3733590841293335
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/26",
+    "group": "custom/26",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/26",
+    "p": [
+      0.7914522165925632,
+      0.20854778340743682
+    ],
+    "raw_probability_sum": 0.9999999403953552,
+    "zero_count": 0,
+    "logits": [
+      0.5428166389465332,
+      -0.790884792804718
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/27",
+    "group": "custom/27",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/27",
+    "p": [
+      0.6132213381942907,
+      0.3532378322893704,
+      0.03354082951633886
+    ],
+    "raw_probability_sum": 1.0000000149011612,
+    "zero_count": 0,
+    "logits": [
+      0.32211679220199585,
+      -0.229467511177063,
+      -2.583845615386963
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/27",
+    "group": "custom/27",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/27",
+    "p": [
+      0.6132213381942907,
+      0.3532378322893704,
+      0.03354082951633886
+    ],
+    "raw_probability_sum": 1.0000000149011612,
+    "zero_count": 0,
+    "logits": [
+      0.32211679220199585,
+      -0.229467511177063,
+      -2.583845615386963
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/27",
+    "group": "custom/27",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/27",
+    "p": [
+      0.6278014475054338,
+      0.03223051347212242,
+      0.33996803902244377
+    ],
+    "raw_probability_sum": 1.0000000484287739,
+    "zero_count": 0,
+    "logits": [
+      0.30996739864349365,
+      -2.6593430042266846,
+      -0.30340489745140076
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/27",
+    "group": "custom/27",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/27",
+    "p": [
+      0.25348758697509766,
+      0.7465124130249023
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      -0.8171123266220093,
+      0.2629849910736084
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/28",
+    "group": "custom/28",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/28",
+    "p": [
+      0.7252749420784397,
+      0.2747250579215603
+    ],
+    "raw_probability_sum": 0.9999999701976776,
+    "zero_count": 0,
+    "logits": [
+      0.2839888334274292,
+      -0.6867910623550415
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/29",
+    "group": "custom/29",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/29",
+    "p": [
+      0.698594868183136,
+      0.301405131816864
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      0.08101670444011688,
+      -0.7595990896224976
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/30",
+    "group": "custom/30",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/30",
+    "p": [
+      0.46800021906197803,
+      0.5030449201442461,
+      0.028954860793775867
+    ],
+    "raw_probability_sum": 0.9999999664723873,
+    "zero_count": 0,
+    "logits": [
+      0.03588443994522095,
+      0.10809516906738281,
+      -2.7468461990356445
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/30",
+    "group": "custom/30",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/30",
+    "p": [
+      0.03351016852487569,
+      0.4804182249479014,
+      0.486071606527223
+    ],
+    "raw_probability_sum": 0.9999999590218067,
+    "zero_count": 0,
+    "logits": [
+      -2.5827364921569824,
+      0.08007180690765381,
+      0.09177069365978241
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/30",
+    "group": "custom/30",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/30",
+    "p": [
+      0.03351016852487569,
+      0.4804182249479014,
+      0.486071606527223
+    ],
+    "raw_probability_sum": 0.9999999590218067,
+    "zero_count": 0,
+    "logits": [
+      -2.5827364921569824,
+      0.08007180690765381,
+      0.09177069365978241
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/30",
+    "group": "custom/30",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/30",
+    "p": [
+      0.1884730933379098,
+      0.8115269066620903
+    ],
+    "raw_probability_sum": 0.9999999850988388,
+    "zero_count": 0,
+    "logits": [
+      -0.9006434679031372,
+      0.5593187808990479
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/31",
+    "group": "custom/31",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/31",
+    "p": [
+      0.3696053887754177,
+      0.6088452878515674,
+      0.021549323373014823
+    ],
+    "raw_probability_sum": 1.0000000093132257,
+    "zero_count": 0,
+    "logits": [
+      -0.16253067553043365,
+      0.33659759163856506,
+      -3.004621982574463
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/31",
+    "group": "custom/31",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/31",
+    "p": [
+      0.3459879018147777,
+      0.019845406642930684,
+      0.6341666915422917
+    ],
+    "raw_probability_sum": 1.0000000409781933,
+    "zero_count": 0,
+    "logits": [
+      -0.19273728132247925,
+      -3.051168441772461,
+      0.4131707549095154
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/31",
+    "group": "custom/31",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "harris",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/31",
+    "p": [
+      0.6454089518365907,
+      0.3413343553543462,
+      0.013256692809063029
+    ],
+    "raw_probability_sum": 0.9999999636784196,
+    "zero_count": 0,
+    "logits": [
+      0.5702915191650391,
+      -0.06673014163970947,
+      -3.3150901794433594
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/31",
+    "group": "custom/31",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/31",
+    "p": [
+      0.6029588996482224,
+      0.39704110035177764
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      -0.018837079405784607,
+      -0.4366462528705597
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/32",
+    "group": "custom/32",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/32",
+    "p": [
+      0.7448242902755737,
+      0.25517570972442627
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      0.45557311177253723,
+      -0.615622878074646
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/33",
+    "group": "custom/33",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/33",
+    "p": [
+      0.24962780623518843,
+      0.7503721937648116
+    ],
+    "raw_probability_sum": 0.9999999701976776,
+    "zero_count": 0,
+    "logits": [
+      -0.7735481262207031,
+      0.3270501494407654
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/34",
+    "group": "custom/34",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/34",
+    "p": [
+      0.6480493863948884,
+      0.3359498535714175,
+      0.01600076003369413
+    ],
+    "raw_probability_sum": 1.0000000428408384,
+    "zero_count": 0,
+    "logits": [
+      0.6820031404495239,
+      0.024998188018798828,
+      -3.0193276405334473
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/34",
+    "group": "custom/34",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/34",
+    "p": [
+      0.6665823770102213,
+      0.02032749081490135,
+      0.31309013217487736
+    ],
+    "raw_probability_sum": 1.0000000428408384,
+    "zero_count": 0,
+    "logits": [
+      0.672404408454895,
+      -2.8177850246429443,
+      -0.08326813578605652
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/34",
+    "group": "custom/34",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/34",
+    "p": [
+      0.6665823770102213,
+      0.02032749081490135,
+      0.31309013217487736
+    ],
+    "raw_probability_sum": 1.0000000428408384,
+    "zero_count": 0,
+    "logits": [
+      0.672404408454895,
+      -2.8177850246429443,
+      -0.08326813578605652
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/34",
+    "group": "custom/34",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/34",
+    "p": [
+      0.7196609377861023,
+      0.2803390622138977
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      0.35864049196243286,
+      -0.5841399431228638
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/35",
+    "group": "custom/35",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/35",
+    "p": [
+      0.30975274174668616,
+      0.6902472582533139
+    ],
+    "raw_probability_sum": 0.9999999701976776,
+    "zero_count": 0,
+    "logits": [
+      -0.7118092179298401,
+      0.08946625888347626
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/36",
+    "group": "custom/36",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/36",
+    "p": [
+      0.6907820495730028,
+      0.30921795042699723
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      0.1755005419254303,
+      -0.6282774806022644
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/37",
+    "group": "custom/37",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/37",
+    "p": [
+      0.5454484224319458,
+      0.43207433819770813,
+      0.02247723937034607
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      0.3793255090713501,
+      0.1463148593902588,
+      -2.809779644012451
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/37",
+    "group": "custom/37",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "harris",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/37",
+    "p": [
+      0.4471759339862638,
+      0.5351959277526985,
+      0.01762813826103764
+    ],
+    "raw_probability_sum": 1.0000000353902578,
+    "zero_count": 0,
+    "logits": [
+      0.14099104702472687,
+      0.3206718862056732,
+      -3.0924646854400635
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/37",
+    "group": "custom/37",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/37",
+    "p": [
+      0.026755937839236594,
+      0.5591653281014957,
+      0.41407873405926776
+    ],
+    "raw_probability_sum": 0.9999999478459358,
+    "zero_count": 0,
+    "logits": [
+      -2.6229617595672607,
+      0.41672712564468384,
+      0.11633814871311188
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/37",
+    "group": "custom/37",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/37",
+    "p": [
+      0.1929446934602364,
+      0.8070553065397637
+    ],
+    "raw_probability_sum": 0.9999999850988388,
+    "zero_count": 0,
+    "logits": [
+      -0.8067762851715088,
+      0.624212384223938
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/38",
+    "group": "custom/38",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/38",
+    "p": [
+      0.46723185207926843,
+      0.5162031785153681,
+      0.016564969405363447
+    ],
+    "raw_probability_sum": 0.9999999739229679,
+    "zero_count": 0,
+    "logits": [
+      0.23391155898571014,
+      0.3335863947868347,
+      -3.105623722076416
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/38",
+    "group": "custom/38",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/38",
+    "p": [
+      0.020002269596013623,
+      0.44447892904512853,
+      0.5355188013588579
+    ],
+    "raw_probability_sum": 0.9999999329447746,
+    "zero_count": 0,
+    "logits": [
+      -2.9417781829833984,
+      0.15927882492542267,
+      0.34561216831207275
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/38",
+    "group": "custom/38",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/38",
+    "p": [
+      0.45906161419402874,
+      0.018312915149746235,
+      0.522625470656225
+    ],
+    "raw_probability_sum": 0.9999999534338713,
+    "zero_count": 0,
+    "logits": [
+      0.2099558711051941,
+      -3.0116219520568848,
+      0.33963650465011597
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/38",
+    "group": "custom/38",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/38",
+    "p": [
+      0.5925058126449585,
+      0.4074941873550415
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      0.053779229521751404,
+      -0.32055479288101196
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/39",
+    "group": "custom/39",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/39",
+    "p": [
+      0.6841331047847893,
+      0.29812135959281,
+      0.017745535622400766
+    ],
+    "raw_probability_sum": 1.000000011175871,
+    "zero_count": 0,
+    "logits": [
+      0.6383348703384399,
+      -0.19231697916984558,
+      -3.013683557510376
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/39",
+    "group": "custom/39",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/39",
+    "p": [
+      0.029144757581679434,
+      0.29228840367080283,
+      0.6785668387475177
+    ],
+    "raw_probability_sum": 0.999999962747097,
+    "zero_count": 0,
+    "logits": [
+      -2.559936285018921,
+      -0.2544705271720886,
+      0.5877715945243835
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/39",
+    "group": "custom/39",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "harris",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/39",
+    "p": [
+      0.2981633652265847,
+      0.6865747224319858,
+      0.015261912341429462
+    ],
+    "raw_probability_sum": 0.9999999636784196,
+    "zero_count": 0,
+    "logits": [
+      -0.2505543529987335,
+      0.5835191607475281,
+      -3.2228355407714844
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/39",
+    "group": "custom/39",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/39",
+    "p": [
+      0.15983233631406712,
+      0.8401676636859329
+    ],
+    "raw_probability_sum": 1.0000000447034836,
+    "zero_count": 0,
+    "logits": [
+      -1.1665785312652588,
+      0.49289751052856445
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/40",
+    "group": "custom/40",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/40",
+    "p": [
+      0.5912333286379778,
+      0.39307493023016077,
+      0.015691741131861423
+    ],
+    "raw_probability_sum": 1.000000074505806,
+    "zero_count": 0,
+    "logits": [
+      0.4311230182647705,
+      0.022912591695785522,
+      -3.197953224182129
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/40",
+    "group": "custom/40",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/40",
+    "p": [
+      0.023271509467248434,
+      0.39647962092222266,
+      0.5802488696105289
+    ],
+    "raw_probability_sum": 1.0000000391155481,
+    "zero_count": 0,
+    "logits": [
+      -2.795260429382324,
+      0.04013437032699585,
+      0.4209668040275574
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/40",
+    "group": "custom/40",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/40",
+    "p": [
+      0.023605765730876912,
+      0.5792797197042411,
+      0.397114514564882
+    ],
+    "raw_probability_sum": 1.0000000018626451,
+    "zero_count": 0,
+    "logits": [
+      -2.7942826747894287,
+      0.40601176023483276,
+      0.028451010584831238
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/40",
+    "group": "custom/40",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/40",
+    "p": [
+      0.48224788904190063,
+      0.5177521109580994
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      -0.2758377194404602,
+      -0.20479944348335266
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/41",
+    "group": "custom/41",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/41",
+    "p": [
+      0.5317710677666296,
+      0.44966966248802587,
+      0.018559269745344442
+    ],
+    "raw_probability_sum": 0.9999999925494194,
+    "zero_count": 0,
+    "logits": [
+      0.357674241065979,
+      0.18997439742088318,
+      -2.9975693225860596
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/41",
+    "group": "custom/41",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/41",
+    "p": [
+      0.5317710677666296,
+      0.44966966248802587,
+      0.018559269745344442
+    ],
+    "raw_probability_sum": 0.9999999925494194,
+    "zero_count": 0,
+    "logits": [
+      0.357674241065979,
+      0.18997439742088318,
+      -2.9975693225860596
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/41",
+    "group": "custom/41",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/41",
+    "p": [
+      0.02785700476595745,
+      0.48956759305096886,
+      0.4825754021830737
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      -2.617572546005249,
+      0.24886570870876312,
+      0.23448030650615692
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/41",
+    "group": "custom/41",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/41",
+    "p": [
+      0.11042205491115276,
+      0.8895779450888472
+    ],
+    "raw_probability_sum": 0.9999999776482582,
+    "zero_count": 0,
+    "logits": [
+      -1.3023600578308105,
+      0.7840771675109863
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/42",
+    "group": "custom/42",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/42",
+    "p": [
+      0.4287324469352929,
+      0.5574363159565231,
+      0.013831237108184062
+    ],
+    "raw_probability_sum": 0.9999999487772584,
+    "zero_count": 0,
+    "logits": [
+      0.17743059992790222,
+      0.4399458169937134,
+      -3.2564730644226074
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/42",
+    "group": "custom/42",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/42",
+    "p": [
+      0.020533674830686723,
+      0.40851100290074377,
+      0.5709553222685695
+    ],
+    "raw_probability_sum": 1.000000024214387,
+    "zero_count": 0,
+    "logits": [
+      -2.892256021499634,
+      0.09819641709327698,
+      0.43298855423927307
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/42",
+    "group": "custom/42",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/42",
+    "p": [
+      0.020533674830686723,
+      0.40851100290074377,
+      0.5709553222685695
+    ],
+    "raw_probability_sum": 1.000000024214387,
+    "zero_count": 0,
+    "logits": [
+      -2.892256021499634,
+      0.09819641709327698,
+      0.43298855423927307
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/42",
+    "group": "custom/42",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/42",
+    "p": [
+      0.4022692024031519,
+      0.5977307975968481
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      -0.5009416341781616,
+      -0.10492269694805145
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/43",
+    "group": "custom/43",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/43",
+    "p": [
+      0.394473923557495,
+      0.5828402833847797,
+      0.022685793057725345
+    ],
+    "raw_probability_sum": 0.9999999664723873,
+    "zero_count": 0,
+    "logits": [
+      -0.07628580927848816,
+      0.3140743374824524,
+      -2.9321000576019287
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/43",
+    "group": "custom/43",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/43",
+    "p": [
+      0.5867362815165018,
+      0.022935715341647855,
+      0.39032800314185034
+    ],
+    "raw_probability_sum": 0.9999999664723873,
+    "zero_count": 0,
+    "logits": [
+      0.35385608673095703,
+      -2.888024091720581,
+      -0.0537320077419281
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/43",
+    "group": "custom/43",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/43",
+    "p": [
+      0.031092346592676096,
+      0.5947826912416038,
+      0.3741249621657201
+    ],
+    "raw_probability_sum": 1.0000000316649675,
+    "zero_count": 0,
+    "logits": [
+      -2.5941617488861084,
+      0.35707247257232666,
+      -0.10653376579284668
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/43",
+    "group": "custom/43",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/43",
+    "p": [
+      0.16751134395599365,
+      0.8324886560440063
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      -1.1605408191680908,
+      0.4428277313709259
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/44",
+    "group": "custom/44",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/44",
+    "p": [
+      0.40673965215682983,
+      0.5932603478431702
+    ],
+    "raw_probability_sum": 1.0,
+    "zero_count": 0,
+    "logits": [
+      -0.5564002990722656,
+      -0.17894023656845093
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/45",
+    "group": "custom/45",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/45",
+    "p": [
+      0.31522247929178365,
+      0.6704509414371788,
+      0.01432657927103758
+    ],
+    "raw_probability_sum": 0.9999999767169356,
+    "zero_count": 0,
+    "logits": [
+      -0.11421829462051392,
+      0.640453577041626,
+      -3.205380439758301
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/45",
+    "group": "custom/45",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/45",
+    "p": [
+      0.31522247929178365,
+      0.6704509414371788,
+      0.01432657927103758
+    ],
+    "raw_probability_sum": 0.9999999767169356,
+    "zero_count": 0,
+    "logits": [
+      -0.11421829462051392,
+      0.640453577041626,
+      -3.205380439758301
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/45",
+    "group": "custom/45",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/45",
+    "p": [
+      0.0162207007813048,
+      0.6858861182500404,
+      0.29789318096865475
+    ],
+    "raw_probability_sum": 0.9999999515712261,
+    "zero_count": 0,
+    "logits": [
+      -3.035252332687378,
+      0.7091709971427917,
+      -0.12480571866035461
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/45",
+    "group": "custom/45",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/45",
+    "p": [
+      0.07554530408639687,
+      0.9244546959136031
+    ],
+    "raw_probability_sum": 0.9999999925494194,
+    "zero_count": 0,
+    "logits": [
+      -1.421443223953247,
+      1.0830283164978027
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/46",
+    "group": "custom/46",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/46",
+    "p": [
+      0.23250826803487834,
+      0.7558032147544829,
+      0.011688517210638794
+    ],
+    "raw_probability_sum": 1.0000000167638063,
+    "zero_count": 0,
+    "logits": [
+      -0.3534157872200012,
+      0.8254395127296448,
+      -3.3437347412109375
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/46",
+    "group": "custom/46",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/46",
+    "p": [
+      0.8079642239603845,
+      0.010873040558754252,
+      0.18116273548086131
+    ],
+    "raw_probability_sum": 1.0000000512227416,
+    "zero_count": 0,
+    "logits": [
+      1.114742398262024,
+      -3.193488836288452,
+      -0.38037967681884766
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/46",
+    "group": "custom/46",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/46",
+    "p": [
+      0.013620541418324653,
+      0.21739251891393913,
+      0.7689869396677362
+    ],
+    "raw_probability_sum": 1.0000000009313226,
+    "zero_count": 0,
+    "logits": [
+      -3.26906681060791,
+      -0.49894145131111145,
+      0.7644279599189758
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/46",
+    "group": "custom/46",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/46",
+    "p": [
+      0.2469416485148177,
+      0.7530583514851823
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      -0.8802419900894165,
+      0.23474861681461334
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/47",
+    "group": "custom/47",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/47",
+    "p": [
+      0.8812407780433165,
+      0.11237597390270078,
+      0.006383248053982738
+    ],
+    "raw_probability_sum": 0.9999999403953552,
+    "zero_count": 0,
+    "logits": [
+      1.7622623443603516,
+      -0.2972184419631958,
+      -3.165391445159912
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/47",
+    "group": "custom/47",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/47",
+    "p": [
+      0.010433706048335998,
+      0.887181803498247,
+      0.10238449045341694
+    ],
+    "raw_probability_sum": 0.999999949708581,
+    "zero_count": 0,
+    "logits": [
+      -2.7282321453094482,
+      1.7147762775421143,
+      -0.44453829526901245
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/47",
+    "group": "custom/47",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/47",
+    "p": [
+      0.010433706048335998,
+      0.887181803498247,
+      0.10238449045341694
+    ],
+    "raw_probability_sum": 0.999999949708581,
+    "zero_count": 0,
+    "logits": [
+      -2.7282321453094482,
+      1.7147762775421143,
+      -0.44453829526901245
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/47",
+    "group": "custom/47",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/47",
+    "p": [
+      0.13318889041526452,
+      0.8668111095847355
+    ],
+    "raw_probability_sum": 0.9999999850988388,
+    "zero_count": 0,
+    "logits": [
+      -1.1675102710723877,
+      0.7055425643920898
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/48",
+    "group": "custom/48",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/48",
+    "p": [
+      0.8608297930129191,
+      0.13377115479259968,
+      0.005399052194481214
+    ],
+    "raw_probability_sum": 0.9999999739229679,
+    "zero_count": 0,
+    "logits": [
+      1.7441136837005615,
+      -0.11765256524085999,
+      -3.32755970954895
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/48",
+    "group": "custom/48",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/48",
+    "p": [
+      0.8785334389017914,
+      0.00667045696645408,
+      0.11479610413175452
+    ],
+    "raw_probability_sum": 0.9999999818392098,
+    "zero_count": 0,
+    "logits": [
+      1.7424064874649048,
+      -3.1381590366363525,
+      -0.29268985986709595
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/48",
+    "group": "custom/48",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/48",
+    "p": [
+      0.16073452490119022,
+      0.008778552827245049,
+      0.8304869222715647
+    ],
+    "raw_probability_sum": 0.9999999655410647,
+    "zero_count": 0,
+    "logits": [
+      -0.05771401524543762,
+      -2.9651565551757812,
+      1.584544062614441
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/48",
+    "group": "custom/48",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/48",
+    "p": [
+      0.44735218741440214,
+      0.5526478125855978
+    ],
+    "raw_probability_sum": 1.0000000298023224,
+    "zero_count": 0,
+    "logits": [
+      -0.286241352558136,
+      -0.07486656308174133
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/49",
+    "group": "custom/49",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/49",
+    "p": [
+      0.6614996096268354,
+      0.3254901718275223,
+      0.01301021854564222
+    ],
+    "raw_probability_sum": 1.0000000149011612,
+    "zero_count": 0,
+    "logits": [
+      0.8928811550140381,
+      0.1837039738893509,
+      -3.035893201828003
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/49",
+    "group": "custom/49",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "harris",
+      "trump"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/49",
+    "p": [
+      0.017379456710195286,
+      0.6946518849013849,
+      0.2879686583884199
+    ],
+    "raw_probability_sum": 1.000000024214387,
+    "zero_count": 0,
+    "logits": [
+      -2.707388401031494,
+      0.9807336330413818,
+      0.10017448663711548
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/49",
+    "group": "custom/49",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/49",
+    "p": [
+      0.3285231286128552,
+      0.016868622942141028,
+      0.6546082484450038
+    ],
+    "raw_probability_sum": 1.0000000018626451,
+    "zero_count": 0,
+    "logits": [
+      0.14560404419898987,
+      -2.823547840118408,
+      0.8350337743759155
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/49",
+    "group": "custom/49",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/49",
+    "p": [
+      0.10160561360145869,
+      0.8983943863985413
+    ],
+    "raw_probability_sum": 0.9999999552965164,
+    "zero_count": 0,
+    "logits": [
+      -1.2608835697174072,
+      0.9186267852783203
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/50",
+    "group": "custom/50",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/50",
+    "p": [
+      0.5794949984900466,
+      0.41062483423621027,
+      0.009880167273743126
+    ],
+    "raw_probability_sum": 0.9999999217689037,
+    "zero_count": 0,
+    "logits": [
+      0.7674224972724915,
+      0.42294543981552124,
+      -3.3042049407958984
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/50",
+    "group": "custom/50",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/50",
+    "p": [
+      0.5903017526402154,
+      0.01295661834343953,
+      0.396741629016345
+    ],
+    "raw_probability_sum": 0.9999999990686774,
+    "zero_count": 0,
+    "logits": [
+      0.7413418292999268,
+      -3.0776853561401367,
+      0.34399324655532837
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/50",
+    "group": "custom/50",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "other",
+      "trump"
+    ],
+    "label": 2,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/50",
+    "p": [
+      0.5903017526402154,
+      0.01295661834343953,
+      0.396741629016345
+    ],
+    "raw_probability_sum": 0.9999999990686774,
+    "zero_count": 0,
+    "logits": [
+      0.7413418292999268,
+      -3.0776853561401367,
+      0.34399324655532837
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/50",
+    "group": "custom/50",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/50",
+    "p": [
+      0.412297588953304,
+      0.5877024110466961
+    ],
+    "raw_probability_sum": 0.9999999701976776,
+    "zero_count": 0,
+    "logits": [
+      -0.38140514492988586,
+      -0.0269298255443573
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/51",
+    "group": "custom/51",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/51",
+    "p": [
+      0.38185736145784055,
+      0.6066605386573207,
+      0.011482099884838705
+    ],
+    "raw_probability_sum": 1.0000000102445483,
+    "zero_count": 0,
+    "logits": [
+      0.20813444256782532,
+      0.6710565686225891,
+      -3.296123504638672
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/51",
+    "group": "custom/51",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/51",
+    "p": [
+      0.013739260297434226,
+      0.6238343889965039,
+      0.36242635070606183
+    ],
+    "raw_probability_sum": 0.9999999720603228,
+    "zero_count": 0,
+    "logits": [
+      -3.1416115760803223,
+      0.674015998840332,
+      0.130952388048172
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/51",
+    "group": "custom/51",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "other",
+      "trump",
+      "harris"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/51",
+    "p": [
+      0.013739260297434226,
+      0.6238343889965039,
+      0.36242635070606183
+    ],
+    "raw_probability_sum": 0.9999999720603228,
+    "zero_count": 0,
+    "logits": [
+      -3.1416115760803223,
+      0.674015998840332,
+      0.130952388048172
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/51",
+    "group": "custom/51",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/51",
+    "p": [
+      0.07205846429088951,
+      0.9279415357091105
+    ],
+    "raw_probability_sum": 0.999999962747097,
+    "zero_count": 0,
+    "logits": [
+      -1.352709412574768,
+      1.2027815580368042
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/52",
+    "group": "custom/52",
+    "question": "vote0",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/52",
+    "p": [
+      0.305595659339525,
+      0.6847617473134008,
+      0.00964259334707424
+    ],
+    "raw_probability_sum": 1.0000000223517418,
+    "zero_count": 0,
+    "logits": [
+      0.007066160440444946,
+      0.8138743042945862,
+      -3.4490063190460205
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/52",
+    "group": "custom/52",
+    "question": "vote1",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "trump",
+      "other",
+      "harris"
+    ],
+    "label": 0,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/52",
+    "p": [
+      0.7345561789650721,
+      0.010719801951055923,
+      0.25472401908387193
+    ],
+    "raw_probability_sum": 1.000000026077032,
+    "zero_count": 0,
+    "logits": [
+      0.9398033618927002,
+      -3.2873706817626953,
+      -0.11928236484527588
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/52",
+    "group": "custom/52",
+    "question": "vote2",
+    "source": "custom",
+    "task": "custom_choice",
+    "type": "choice",
+    "variant": "clean",
+    "keys": [
+      "harris",
+      "trump",
+      "other"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/52",
+    "p": [
+      0.305595659339525,
+      0.6847617473134008,
+      0.00964259334707424
+    ],
+    "raw_probability_sum": 1.0000000223517418,
+    "zero_count": 0,
+    "logits": [
+      0.007066160440444946,
+      0.8138743042945862,
+      -3.4490063190460205
+    ],
+    "inference_temperature": 1.0
+  },
+  {
+    "id": "custom/52",
+    "group": "custom/52",
+    "question": "turnout",
+    "source": "custom",
+    "task": "custom_noul",
+    "type": "noul",
+    "variant": "clean",
+    "keys": [
+      "false",
+      "true"
+    ],
+    "label": 1,
+    "control_id": null,
+    "pair_id": null,
+    "sibling": null,
+    "parent": "custom/52",
+    "p": [
+      0.25058130916468446,
+      0.7494186908353155
+    ],
+    "raw_probability_sum": 1.0000000596046448,
+    "zero_count": 0,
+    "logits": [
+      -0.7734882235527039,
+      0.32202616333961487
+    ],
+    "inference_temperature": 1.0
+  }
+]

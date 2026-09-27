@@ -31,4 +31,5 @@ in `runs/cache.sqlite`, so re-running a test is free and reproducible.
 - `simlab/events.json` – past events with measured shifts (sources in the Field Guide / research notes)
 - `simlab/tests.py` – the four tests and their metrics
 - `simlab/ces.py` – CES 2024 download and demographic cells
-- Kev fine-tuning uses `jaredpalmer/kev` (`skills/kev-finetune/scripts/kev_modal.py`) on Modal, ~$1 per Kev-4B run.
+- `kev-finetune/` – Kev fine-tune kit (from `jaredpalmer/kev`, Apache-2.0; our changes in its SOURCE.md) on Modal,
+  ~$3 per Kev-4B run; training data from `python -m simlab.kevdata`.

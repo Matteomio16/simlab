@@ -91,7 +91,7 @@ simlab/
   `MODAL_TOKEN_*` lines into the environment, where they override the login). `python3` is the Microsoft Store stub
   and `modal.exe` isn't on PATH, so run every Modal command as `python -m modal ...`.
 - Python ≥3.12 (Kev needs 3.12/3.13), `uv`. `pip install requests pandas numpy scipy scikit-learn`.
-- Kev: fine-tune kit at `Sim Research/kev-finetune/` (jaredpalmer/kev @ 5920c5f). Run
+- Kev: fine-tune kit at `kev-finetune/` in this repo (jaredpalmer/kev @ 5920c5f, our changes in its SOURCE.md). Run
   `python -m modal run scripts/kev_modal.py::train|evaluate|compare|teardown` from the kit
   (record format in `references/data-format.md`: System One request + `label`, or soft `target` weights). Pass
   `--timeout` to `train` (the 3 h default bounds a run at $11.85 on an H100; a 4B run on ~1k records takes 12–15 min).

@@ -4,3 +4,4 @@ __pycache__/
 data/
 runs/cache.sqlite*
 runs/spend.jsonl
+kev-finetune/*.log
