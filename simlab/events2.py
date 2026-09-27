@@ -261,6 +261,9 @@ def transfer(models: list[str]) -> None:
     print(f"19 held-out events: always 'no change' error {err(np.zeros_like(y19)):.2f} pts")
     for m in models:
         x2 = predict(m, ev2)
+        (RUNS / f"events2__{m}.jsonl").write_text("\n".join(
+            json.dumps({"id": e["id"], "event_type": e["event_type"], "measured": e["shift_toward_D"],
+                        "z": e["z"], "pred": round(float(x), 4)}) for e, x in zip(ev2, x2)))
         x19 = np.array([json.loads(l)["pred"]["all"] for l in (RUNS / f"events__{m}.jsonl").read_text().splitlines()])
         k = float(np.sum(x2 * y2) / np.sum(x2 * x2))
         kt = {t: float(np.sum(x2[t2 == t] * y2[t2 == t]) / np.sum(x2[t2 == t] ** 2)) for t in set(t2)

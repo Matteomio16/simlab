@@ -2,6 +2,32 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (early morning, test bench): real events (events2), news labels, a correction
+
+- **Correction:** the per-event-type scale does not hold up. Fitted on the 46 new events and applied unchanged to the
+  19 held-out events, it gives no gain over one scale per model (GLM error 3.04 vs 3.05 points; Jev 3.33 vs 3.33;
+  "no change" 3.56). The earlier 2.49 -> 1.91 gain was overfitting to 3-6 events per type. Don't use it.
+- **Models give direction, not size.** On events2, both get the direction right for 92% of events that moved opinion by
+  1 point or more. Jev's predicted size does not track the real size at all (rank correlation -0.03; it predicts
+  the same size for no-effect and clear-effect events). GLM's barely does (0.26). Fitted points-per-unit differ by
+  event set (GLM 3.4 on events2 vs 12.6 on the famous 19), so any fixed scale is unstable. Sizes must come from real
+  data (the filter, per state), and this is where a Kev trained on measured shifts could add something GLM can't.
+- Jev and GLM errors on events2 correlate 0.94 (0.88-0.97 across hosted models on the 19): averaging them does not
+  cancel errors.
+- **events2** (`simlab/events2.json`): 46 events, 45 measured, 10 with |z| >= 1.5; 11 pass the directional filter
+  (|z| >= 1, raw and detrended agree, no confounders) and 15 are no-change (|z| < 0.5). Nationscape party, turnout-intent
+  and vote-margin shifts for 12 events are noise (2 of 96 reach |z| >= 2), so Kev's turnout gets only no-change
+  examples and party responsiveness stays a Field Guide prior.
+- **News labels** (480 stories, Google News RSS, Jev and GLM): same event type 70%, same "helps" 74%. Both change
+  "which side does this help" with the outlet name alone: the same headline attributed to MSNBC instead of Fox News moves
+  P(helps D) - P(helps R) by +0.30 for GLM (top label flips on 41%) and +0.15 for Jev (15%). The engine must strip
+  outlet names; Kev training gets source-swap pairs if a source is ever shown. Model salience does not track coverage
+  breadth (r ~ 0.05; weak test, most stories have 1-3 outlets).
+- **Kev reaction targets** (design agreed with the infrastructure session, awaiting Matteo): 11 directional + 15 no-change
+  events; movers share m = min(0.04 * s * g, 0.5), s in points of people moving toward D, g = Field Guide party
+  responsiveness prior (support only); 4% background movement; rule records (new irrelevant news, new mirror pairs);
+  offline scoring with the test bench's metrics; report Kev's error correlation with GLM.
+
 ## 2026-09-27 (late night, test bench): fidelity turnout targets switched to the Census CPS
 
 - Matteo approved downloading the CPS November supplements (2024, 2022, 2018; census.gov, public, no account); they are
