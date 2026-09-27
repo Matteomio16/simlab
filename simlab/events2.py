@@ -119,18 +119,24 @@ def generic() -> pd.Series:
 
 
 def nationscape() -> pd.DataFrame:
-    """Weekly Trump approval by party identification (pid3: 1 Democrat, 2 Republican, 3 Independent), Nationscape
-    main waves. pres_approval 1-2 = approve; 999 (not sure) counts in the base."""
+    """Weekly Nationscape series by party identification (pid3: 1 Democrat, 2 Republican, 3 Independent) and overall:
+    approve_<g> = % approving of Trump (pres_approval 1-2; not sure stays in the base); intent_<g> = % saying they
+    will vote in November 2020 (vote_intention 1, among 1, 2 and 999; 3 = not eligible is dropped); margin_<g> =
+    Biden minus Trump in the head-to-head (trump_biden 1 = Biden, 2 = Trump, 999 not sure in the base). Bare D/R/I/all
+    columns keep the approval series for older callers."""
     out = []
     for f in sorted(glob.glob(str(HIST / "nationscape" / "ns*.tab"))):
-        d = pd.read_csv(f, sep="\t", usecols=["start_date", "pres_approval", "pid3", "weight"], low_memory=False)
-        d = d.dropna(subset=["weight"])
+        have = set(pd.read_csv(f, sep="\t", nrows=0).columns)  # some waves lack an item
+        use = [c for c in ("start_date", "pres_approval", "vote_intention", "trump_biden", "pid3", "weight") if c in have]
+        d = pd.read_csv(f, sep="\t", usecols=use, low_memory=False).dropna(subset=["weight"])
         row = {"date": pd.to_datetime(d.start_date).min().normalize()}
-        for code, g in (("D", 1), ("R", 2), ("I", 3)):
-            s = d[d.pid3 == g]
-            row[code] = 100 * np.average(s.pres_approval.isin([1, 2]), weights=s.weight)
-        s = d
-        row["all"] = 100 * np.average(s.pres_approval.isin([1, 2]), weights=s.weight)
+        for code, s in (("D", d[d.pid3 == 1]), ("R", d[d.pid3 == 2]), ("I", d[d.pid3 == 3]), ("all", d)):
+            row[f"approve_{code}"] = row[code] = 100 * np.average(s.pres_approval.isin([1, 2]), weights=s.weight)
+            e = s[s.vote_intention.isin([1, 2, 999])] if "vote_intention" in s else s.iloc[:0]
+            row[f"intent_{code}"] = 100 * np.average(e.vote_intention == 1, weights=e.weight) if len(e) else np.nan
+            h = s[s.trump_biden.notna()] if "trump_biden" in s else s.iloc[:0]
+            row[f"margin_{code}"] = (100 * np.average((h.trump_biden == 1).astype(int) - (h.trump_biden == 2),
+                                                      weights=h.weight) if len(h) else np.nan)
         out.append(row)
     return pd.DataFrame(out).set_index("date").sort_index()
 
@@ -167,6 +173,11 @@ def build() -> list[dict]:
     for name, s in (("approval", ap.approve), ("generic", gb)):
         placebo = [shift(s, t) for t in s.index[::3] if min(abs((t - d).days) for d in all_dates) > 21]
         noise[name] = float(np.nanstd(placebo))
+    # Nationscape noise from every week, events included: only 19 event-free weeks exist, and they underestimated it
+    # (Democrats' turnout intention: SD 0.60 on quiet weeks vs 1.48 on all weeks), so all weeks is the safe choice.
+    weeks = [t + pd.Timedelta(days=3) for t in ns.index[2:-3]]
+    ns_noise = {c: float(np.nanstd([weekly_shift(ns, c, t) for t in weeks]))
+                for c in ns.columns if c.startswith(("margin_", "intent_"))}
     out = []
     for eid, date, etype, primary, text in EVENTS2:
         d = pd.Timestamp(date)
@@ -190,12 +201,21 @@ def build() -> list[dict]:
         if ns.index.min() - pd.Timedelta(days=14) <= d <= ns.index.max():
             sign = -1  # Trump approval: a rise is a shift toward the Republicans
             rec["party"] = {g_: round(sign * weekly_shift(ns, g_, d), 2) for g_ in ("D", "R", "I")}
+            rec["nationscape"] = {
+                kind: {g_: {"shift": round(weekly_shift(ns, f"{kind}_{g_}", d), 2),
+                            "z": round(weekly_shift(ns, f"{kind}_{g_}", d) / ns_noise[f"{kind}_{g_}"], 2)}
+                       for g_ in ("D", "R", "I", "all")}
+                for kind in ("margin", "intent")}
         out.append(rec)
     (HERE / "events2.json").write_text(json.dumps(out, indent=1))
     ok = [r for r in out if r["shift_toward_D"] is not None]
     print(f"{len(out)} events, {len(ok)} measured; noise SD approval {noise['approval']:.2f}, generic "
           f"{noise['generic']:.2f} pts; |z| >= 1.5: {sum(abs(r['z']) >= 1.5 for r in ok)}; with party shifts: "
           f"{sum('party' in r for r in out)}")
+    print("Nationscape weekly noise SD (placebo):", {c: round(v, 2) for c, v in ns_noise.items()})
+    for r in (r for r in out if "nationscape" in r):
+        big = {f"{k}_{g}": v for k, gs in r["nationscape"].items() for g, v in gs.items() if abs(v["z"]) >= 2}
+        print(f"  {r['id']:22} |z|>=2: {big or '-'}")
     for r in out:
         print(f"  {r['date']} {r['id']:22} {r['event_type']:13} shift {r['shift_toward_D']!s:>6}  "
               f"detrended {r['shift_detrended']!s:>6}  z {r['z']!s:>6}"
