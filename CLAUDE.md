@@ -86,11 +86,16 @@ simlab/
 ## 4. Setup
 
 - `.env` in the parent `Sim Research` folder (core.py also checks `simlab/.env`):
-  `OPENROUTER_API_KEY=` (a **separate key capped at $10**), `MODAL_TOKEN_ID=`, `MODAL_TOKEN_SECRET=`. Never print keys.
+  `OPENROUTER_API_KEY=` (a **separate key capped at $10**). Never print keys.
+- Modal: logged in via `python -m modal setup`; the token lives in `~/.modal.toml`, not `.env` (core.py would load empty
+  `MODAL_TOKEN_*` lines into the environment, where they override the login). `python3` is the Microsoft Store stub
+  and `modal.exe` isn't on PATH, so run every Modal command as `python -m modal ...`.
 - Python ≥3.12 (Kev needs 3.12/3.13), `uv`. `pip install requests pandas numpy scipy scikit-learn`.
-- Kev: `git clone https://github.com/jaredpalmer/kev` — fine-tuning recipe in `skills/kev-finetune/`
-  (`scripts/kev_modal.py::train|evaluate|compare|teardown`; record format in `references/data-format.md`:
-  System One request + `label`, or soft `target` weights). Tear Modal resources down after use.
+- Kev: fine-tune kit at `Sim Research/kev-finetune/` (jaredpalmer/kev @ 5920c5f). Run
+  `python -m modal run scripts/kev_modal.py::train|evaluate|compare|teardown` from the kit
+  (record format in `references/data-format.md`: System One request + `label`, or soft `target` weights). Pass
+  `--timeout` to `train` (the 3 h default bounds a run at $11.85 on an H100; a 4B run on ~1k records takes 12–15 min).
+  Tear Modal resources down after use.
 - Budget: **$10 total** for the test phase on OpenRouter (code caps at $9 via `SIMLAB_BUDGET_USD`); Modal on the free
   $30/month credit. Overall engine budget target: under $50/month, lowest cost at highest performance.
 - Every response is cached (`runs/cache.sqlite`); spend logged to `runs/spend.jsonl`. Keep both out of git.
