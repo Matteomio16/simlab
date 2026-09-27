@@ -21,11 +21,25 @@ HERE = Path(__file__).parent
 TESTS = ("null", "mirror", "events", "fidelity")
 
 
+class Baseline:
+    """The regression baseline (ces.crossfit) as an asker: returns each cell's precomputed prediction.
+    Fidelity only, no API calls."""
+    name = "regression"
+
+    def __init__(self, cells: dict):
+        self.pred = {(c["persona"], t): c["baseline"] for t, v in cells.items() for cs in v.values() for c in cs}
+
+    def ask(self, state: str, question: dict, tag: str = "") -> dict:
+        return self.pred[(state, "vote24" if question["type"] == "choice" else "turnout")]
+
+
 def run_model(name: str, which: list[str], arch: list[dict], cells: dict) -> list[dict]:
-    asker = make(name)
+    asker = Baseline(cells) if name == "regression" else make(name)
     texts = [p["text"] for p in arch]
     out = []
     for t in which:
+        if name == "regression" and t != "fidelity":
+            continue
         t0 = time.time()
         try:
             if t == "null":

@@ -197,7 +197,7 @@ class Chat:
         if json_mode:
             payload["response_format"] = {"type": "json_object"}
         if self.provider_order:
-            payload["provider"] = {"order": self.provider_order, "allow_fallbacks": False}
+            payload["provider"] = {"only": self.provider_order}
         k = Cache.key("chat", self.model, payload)
         hit = CACHE.get(k)
         if hit is not None:
@@ -240,8 +240,9 @@ LLMS = {
     "deepseek": "deepseek/deepseek-v4.1-flash",
     "luna": "openai/gpt-6-luna",
 }
-# One host per model so a run never mixes quantisations (cheapest working host, probed 27 Sep 2026;
-# InferenceNet serves GLM at fp4). DeepSeek's own endpoint is excluded by the account's guardrail.
-HOSTS = {"glm": "InferenceNet", "mimo": "Xiaomi", "deepseek": "InferenceNet", "luna": "OpenAI"}
+# Allowed hosts per model, all at the same quantisation, so a run never mixes precisions (probed 27 Sep 2026).
+# GLM: InferenceNet fp4 (the Field Guide's price). DeepSeek: InferenceNet was 429ing most calls and DeepSeek's own
+# endpoint is excluded by the account's guardrail, so DeepInfra fp8. MiMo: two fp8 hosts, load-balanced.
+HOSTS = {"glm": ["InferenceNet"], "mimo": ["Xiaomi", "DeepInfra"], "deepseek": ["DeepInfra"], "luna": ["OpenAI"]}
 # GLM can't turn reasoning off; "minimal" used 0 reasoning tokens in the probe. Others: off.
 REASONING = {"glm": {"effort": "minimal"}}

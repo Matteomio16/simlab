@@ -64,7 +64,7 @@ class DecisionAsker:
 
 class LLMAsker:
     def __init__(self, key: str, provider_order: list[str] | None = None, n_orders: int = 3, name: str | None = None):
-        self.chat = Chat(LLMS[key], provider_order or [HOSTS[key]], reasoning=REASONING.get(key))
+        self.chat = Chat(LLMS[key], provider_order or HOSTS[key], reasoning=REASONING.get(key))
         self.n_orders = n_orders
         self.name = name or key
 
@@ -98,7 +98,7 @@ def make(name: str):
     return LLMAsker(base, n_orders=n, name=name)
 
 
-def batch(asker, items: list[tuple[str, dict]], tag: str = "", workers: int = 8) -> list[dict]:
+def batch(asker, items: list[tuple[str, dict]], tag: str = "", workers: int = 16) -> list[dict]:
     """items = [(state, question), ...] -> list of prob dicts (order preserved). Spend is tagged '<tag>:<asker>'."""
     with ThreadPoolExecutor(workers) as ex:
         return list(ex.map(lambda it: asker.ask(it[0], it[1], f"{tag}:{asker.name}"), items))

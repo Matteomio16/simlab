@@ -119,6 +119,16 @@ simlab/
 - Hosting on Cloudflare Pages, linked from scaliastudio.dev. No paid ads/boosts, no campaign coordination
   (Matteo is a non-US national).
 
+Decided in Claude Code, 27 Sep (reasons in `docs/CHANGELOG.md`):
+- Every model gets option-order averaging: scales asked as written and reversed, choices in 3 orders; `<model>1`
+  = single order (cached, free).
+- One pinned host per LLM (GLM and DeepSeek → InferenceNet, MiMo → Xiaomi, Luna → OpenAI); GLM reasoning
+  `effort: minimal` (can't be disabled, 0 reasoning tokens).
+- Fidelity targets: vote among validated voters (`vvweight_post`); turnout = validated vote among citizens,
+  logit-shifted to the official 63.9% (assumption: match failures even across cells).
+- Test personas: 28 party-ID × race × degree strata, one real OH/NC/TX respondent each, balanced on gender, age,
+  race and ideology (`simlab/archetypes.json`, built by `python -m simlab.ces`).
+
 ## 6. Reference material (read, don't duplicate)
 
 Local snapshots (read these; Claude Code cannot open claude.ai links):

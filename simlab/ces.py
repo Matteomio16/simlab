@@ -15,6 +15,7 @@ import pandas as pd
 import requests
 from scipy.optimize import brentq
 from scipy.special import expit
+from sklearn.linear_model import LogisticRegression
 
 from .core import RUNS
 from .personas import render
@@ -119,11 +120,28 @@ def turnout_shift(df: pd.DataFrame) -> float:
     return brentq(lambda c: np.average(expit(_logit(p) + c), weights=w) - VEP_TURNOUT_2024, -5, 5)
 
 
+def crossfit(d: pd.DataFrame, y: str, w: str, folds: int = 5, seed: int = 0) -> pd.DataFrame:
+    """Plain regression baseline (Field Guide): weighted logistic regression on age, gender, race and degree, main
+    effects only, cross-fitted over folds of states, so every respondent is predicted by a model that never saw
+    their state. Returns one probability column per outcome."""
+    states = np.sort(d.inputstate.unique())
+    np.random.default_rng(seed).shuffle(states)
+    fold = d.inputstate.map({s: i % folds for i, s in enumerate(states)})
+    X = pd.get_dummies(d[["age4", "gender4", "race5", "degree"]].astype(str), dtype=float)
+    out = pd.DataFrame(0.0, index=d.index, columns=sorted(d[y].unique()))
+    for k in range(folds):
+        te = fold == k
+        m = LogisticRegression(max_iter=2000).fit(X[~te], d[y][~te], sample_weight=d[w][~te])
+        out.loc[te, list(m.classes_)] = m.predict_proba(X[te])
+    return out
+
+
 def cells(df: pd.DataFrame, target: str, state: str | None = None, min_n: int | None = None,
-          shift: float = 0.0) -> list[dict]:
+          shift: float = 0.0, pred: pd.DataFrame | None = None) -> list[dict]:
     """Weighted target shares per demographic cell (persona = the cell's fields only; targets never enter it).
     target 'vote24': validated voters, vvweight_post. 'turnout': citizens, commonweight, logit-shifted by `shift`.
-    National cells: age4 x gender x race5 x degree; state cells are coarser: age2 x gender x race4 x degree."""
+    National cells: age4 x gender x race5 x degree; state cells are coarser: age2 x gender x race4 x degree.
+    `pred` (respondent-level baseline probabilities) adds each cell's weighted-mean baseline prediction."""
     by = ["age2", "gender", "race4", "degree"] if state else ["age4", "gender", "race5", "degree"]
     d = df[df.gender.isin(["Man", "Woman"])]
     if state:
@@ -142,9 +160,16 @@ def cells(df: pd.DataFrame, target: str, state: str | None = None, min_n: int | 
             shares = {"true": float(expit(_logit(raw) + shift)), "false": float(1 - expit(_logit(raw) + shift)),
                       "raw_true": raw}
         fields = {CELL_FIELDS[b]: v for b, v in zip(by, key)}
-        out.append({"persona": render({"state": state, **fields}), "n": len(g), "scope": state or "national",
-                    "target": {k: round(float(v), 4) for k, v in shares.items() if k != "raw_true"},
-                    **({"raw_true": round(float(shares["raw_true"]), 4)} if target == "turnout" else {})})
+        cell = {"persona": render({"state": state, **fields}), "n": len(g), "scope": state or "national",
+                "target": {k: round(float(v), 4) for k, v in shares.items() if k != "raw_true"},
+                **({"raw_true": round(float(shares["raw_true"]), 4)} if target == "turnout" else {})}
+        if pred is not None:
+            b = dict(zip(pred.columns, np.average(pred.loc[g.index], axis=0, weights=g[w])))
+            if target == "turnout":
+                b = {"true": float(expit(_logit(b["true"]) + shift))}
+                b["false"] = 1 - b["true"]
+            cell["baseline"] = {k: round(float(v), 4) for k, v in b.items()}
+        out.append(cell)
     return out
 
 
@@ -193,7 +218,9 @@ def build() -> None:
     arch = archetypes(df)
     (here / "archetypes.json").write_text(json.dumps(arch, indent=1))
     shift = turnout_shift(df)
-    out = {t: {s or "national": cells(df, t, s, shift=shift) for s in (None, *FIPS.values())}
+    preds = {"vote24": crossfit(df[df.vote24.notna() & df.vvweight_post.notna()], "vote24", "vvweight_post"),
+             "turnout": crossfit(df[df.cit1 == 1], "turnout", "commonweight")}
+    out = {t: {s or "national": cells(df, t, s, shift=shift, pred=preds[t]) for s in (None, *FIPS.values())}
            for t in ("vote24", "turnout")}
     (here / "cells.json").write_text(json.dumps(out, indent=1))
     c = df[df.cit1 == 1]
