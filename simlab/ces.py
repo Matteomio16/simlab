@@ -79,7 +79,7 @@ VOTE_OPTIONS = {"harris": "Kamala Harris, the Democratic candidate", "trump": "D
 
 COLS = ["inputstate", "birthyr", "gender4", "race", "hispanic", "educ", "faminc_new", "pid7", "ideo5", "religpew",
         "urbancity", "newsint", "presvote20post", "CC24_410", "TS_g2024", "cit1", "commonweight", "vvweight_post"]
-VEP_TURNOUT_2024 = 0.639  # UF Election Lab (McDonald): 2024 turnout, share of the voting-eligible population
+TURNOUT_2024 = json.loads((Path(__file__).parent / "turnout2024.json").read_text())["vep_turnout"]  # UF Election Lab v0.4
 
 
 def load(path: Path | None = None) -> pd.DataFrame:
@@ -110,14 +110,19 @@ def _logit(p):
     return np.log(p / (1 - p))
 
 
-def turnout_shift(df: pd.DataFrame) -> float:
-    """Logit shift that lifts CES validated turnout (citizens, commonweight) to the official 2024 rate.
-    About a third of respondents weren't matched to a voter file and count as non-voters, so the raw rate
-    (~55%) understates turnout; one shift for every cell keeps each cell's relative position."""
-    g = df[df.cit1 == 1].groupby(["age4", "gender4", "race5", "degree"])
+def turnout_shift(df: pd.DataFrame, state: str | None = None) -> float:
+    """Logit shift that lifts CES validated turnout (citizens, commonweight) to the official 2024 rate, nationally or
+    for one state (over that state's own cell layout). About a third of respondents weren't matched to a voter file
+    and count as non-voters, and the match rate varies by state (raw validated turnout runs from 0.29 in Utah to 0.74
+    in Montana), so each state gets its own shift; one shift for every cell keeps each cell's relative position."""
+    c = df[df.cit1 == 1]
+    if state:
+        c = c[c.state == state]
+    g = c.groupby(["age2", "gender4", "race4", "degree"] if state else ["age4", "gender4", "race5", "degree"])
     p = g.apply(lambda x: np.average(x.voted, weights=x.commonweight))
     w = g.commonweight.sum()
-    return brentq(lambda c: np.average(expit(_logit(p) + c), weights=w) - VEP_TURNOUT_2024, -5, 5)
+    target = TURNOUT_2024[state or "United States"]
+    return brentq(lambda k: np.average(expit(_logit(p) + k), weights=w) - target, -5, 5)
 
 
 def crossfit(d: pd.DataFrame, y: str, w: str, folds: int = 5, seed: int = 0) -> pd.DataFrame:
@@ -217,15 +222,16 @@ def build() -> None:
     here = Path(__file__).parent
     arch = archetypes(df)
     (here / "archetypes.json").write_text(json.dumps(arch, indent=1))
-    shift = turnout_shift(df)
+    shift = {s: turnout_shift(df, s) for s in (None, *FIPS.values())}
     preds = {"vote24": crossfit(df[df.vote24.notna() & df.vvweight_post.notna()], "vote24", "vvweight_post"),
              "turnout": crossfit(df[df.cit1 == 1], "turnout", "commonweight")}
-    out = {t: {s or "national": cells(df, t, s, shift=shift, pred=preds[t]) for s in (None, *FIPS.values())}
+    out = {t: {s or "national": cells(df, t, s, shift=shift[s], pred=preds[t]) for s in (None, *FIPS.values())}
            for t in ("vote24", "turnout")}
     (here / "cells.json").write_text(json.dumps(out, indent=1))
     c = df[df.cit1 == 1]
-    print(f"respondents {len(df)}, citizens' validated turnout {np.average(c.voted, weights=c.commonweight):.3f}, "
-          f"logit shift to {VEP_TURNOUT_2024}: {shift:+.3f}")
+    print(f"respondents {len(df)}, citizens' validated turnout {np.average(c.voted, weights=c.commonweight):.3f}; "
+          "logit shifts to official 2024 turnout: " + ", ".join(
+              f"{s or 'national'} {TURNOUT_2024[s or 'United States']} ({v:+.3f})" for s, v in shift.items()))
     v = df[df.vote24.notna() & df.vvweight_post.notna()]
     print("weighted 2024 vote (validated voters):",
           (v.groupby("vote24").vvweight_post.sum() / v.vvweight_post.sum()).round(3).to_dict())

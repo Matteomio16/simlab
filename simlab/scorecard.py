@@ -139,7 +139,7 @@ def build() -> str:
                      "party correlation"], rows), ""]
 
     for target, key, label in (("vote24", "harris", "2024 vote (validated voters)"),
-                               ("turnout", "true", "turnout (citizens, shifted to 63.9%)")):
+                               ("turnout", "true", "turnout (citizens, shifted to each state's official 2024 rate; national 64.3%)")):
         rows = []
         for m in models:
             rs = [s.get((f"fidelity_{target}_{sc}", m)) for sc in SCOPES]

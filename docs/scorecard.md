@@ -77,25 +77,25 @@ Weighted total variation distance between predicted and real shares by demograph
 | luna1 | 0.091 | 0.100 | 0.145 | 0.110 | 0.86 | +4 pts |
 | regression | 0.042 | 0.047 | 0.093 | 0.138 | 0.89 | +0 pts |
 
-## Fidelity: turnout (citizens, shifted to 63.9%)
+## Fidelity: turnout (citizens, shifted to each state's official 2024 rate; national 64.3%)
 
 Weighted total variation distance between predicted and real shares by demographic cell (lower is better). Bias = average predicted minus real turnout, national cells.
 
 | model | TVD national | TVD Ohio | TVD North Carolina | TVD Texas | correlation (national) | bias in turnout |
 |---|---|---|---|---|---|---|
-| jev | 0.184 | 0.173 | 0.222 | 0.188 | 0.82 | -14 pts |
-| jev1 | 0.184 | 0.173 | 0.222 | 0.188 | 0.82 | -14 pts |
-| kev | 0.204 | 0.193 | 0.212 | 0.183 | 0.51 | -11 pts |
-| kev1 | 0.204 | 0.193 | 0.212 | 0.183 | 0.51 | -11 pts |
-| glm | 0.116 | 0.144 | 0.134 | 0.116 | 0.76 | +10 pts |
-| glm1 | 0.116 | 0.144 | 0.134 | 0.116 | 0.76 | +10 pts |
-| mimo | 0.098 | 0.118 | 0.127 | 0.126 | 0.89 | -0 pts |
-| mimo1 | 0.098 | 0.118 | 0.127 | 0.126 | 0.89 | -0 pts |
-| deepseek | 0.092 | 0.114 | 0.132 | 0.106 | 0.89 | -1 pts |
-| deepseek1 | 0.092 | 0.114 | 0.132 | 0.106 | 0.89 | -1 pts |
-| luna | 0.127 | 0.167 | 0.101 | 0.130 | 0.86 | +10 pts |
-| luna1 | 0.127 | 0.167 | 0.101 | 0.130 | 0.86 | +10 pts |
-| regression | 0.028 | 0.072 | 0.059 | 0.036 | 0.96 | +0 pts |
+| jev | 0.186 | 0.194 | 0.257 | 0.187 | 0.82 | -15 pts |
+| jev1 | 0.186 | 0.194 | 0.257 | 0.187 | 0.82 | -15 pts |
+| kev | 0.206 | 0.209 | 0.244 | 0.183 | 0.51 | -11 pts |
+| kev1 | 0.206 | 0.209 | 0.244 | 0.183 | 0.51 | -11 pts |
+| glm | 0.114 | 0.114 | 0.083 | 0.116 | 0.76 | +10 pts |
+| glm1 | 0.114 | 0.114 | 0.083 | 0.116 | 0.76 | +10 pts |
+| mimo | 0.099 | 0.121 | 0.158 | 0.125 | 0.89 | -0 pts |
+| mimo1 | 0.099 | 0.121 | 0.158 | 0.125 | 0.89 | -0 pts |
+| deepseek | 0.093 | 0.109 | 0.160 | 0.106 | 0.89 | -1 pts |
+| deepseek1 | 0.093 | 0.109 | 0.160 | 0.106 | 0.89 | -1 pts |
+| luna | 0.125 | 0.136 | 0.102 | 0.132 | 0.86 | +10 pts |
+| luna1 | 0.125 | 0.136 | 0.102 | 0.132 | 0.86 | +10 pts |
+| regression | 0.028 | 0.071 | 0.059 | 0.036 | 0.96 | +0 pts |
 
 ## Cost
 
