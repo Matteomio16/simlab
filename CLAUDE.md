@@ -71,7 +71,6 @@ simlab/
   simlab/tests.py     fidelity(), null_test(), mirror_test(), events_test() -> metrics + runs/<test>__<model>.jsonl
   simlab/personas.py  structured persona text (survey fields only; NO LLM-written backstories — they drift left)
   simlab/ces.py       CES 2024 download from Harvard Dataverse (doi:10.7910/DVN/X11EP6) + column auto-detection
-  _to_delete/         stray empty dirs; ignore or delete
 ```
 **Written but never run** (the Cowork sandbox had no network). Expect small fixes. Known gaps to handle first:
 - The OpenRouter Decisions API response shape (`answers[qid].probabilities`, `usage.cost`) is assumed from docs and
@@ -87,7 +86,7 @@ simlab/
 
 - `.env` in the parent `Sim Research` folder (core.py also checks `simlab/.env`):
   `OPENROUTER_API_KEY=` (a **separate key capped at $10**), `MODAL_TOKEN_ID=`, `MODAL_TOKEN_SECRET=`. Never print keys.
-- Python ≥3.12 (Kev needs 3.12/3.13), `uv`. `pip install requests pandas numpy scipy scikit-learn`.
+- Python 3.13 venv at `simlab/.venv` via `uv sync` (deps in `pyproject.toml`); run with `.venv\Scripts\python -m ...`.
 - Kev: `git clone https://github.com/jaredpalmer/kev` — fine-tuning recipe in `skills/kev-finetune/`
   (`scripts/kev_modal.py::train|evaluate|compare|teardown`; record format in `references/data-format.md`:
   System One request + `label`, or soft `target` weights). Tear Modal resources down after use.

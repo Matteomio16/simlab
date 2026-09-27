@@ -1,0 +1,12 @@
+[project]
+name = "simlab"
+version = "0.1.0"
+description = "Jev / Kev / LLM test bench for the midterm simulation engine"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "requests",
+    "pandas",
+    "numpy",
+    "scipy",
+    "scikit-learn",
+]

@@ -17,7 +17,7 @@ Plus news classification (event type, which side it helps, salience, relevance) 
 ## Setup
 
 1. `.env` in the Sim Research folder: `OPENROUTER_API_KEY=...` (capped key), `MODAL_TOKEN_ID=...`, `MODAL_TOKEN_SECRET=...`
-2. `pip install requests pandas numpy scipy`
+2. `uv sync` (creates `.venv` from `pyproject.toml`)
 3. Network: openrouter.ai, dataverse.harvard.edu, huggingface.co, modal.com must be reachable.
 
 Spend is logged to `runs/spend.jsonl` and hard-capped at `SIMLAB_BUDGET_USD` (default $9). Every response is cached
