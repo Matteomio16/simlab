@@ -120,7 +120,10 @@ def _post(url: str, payload: dict, headers: dict, tries: int = 8, timeout: int =
                 raise requests.HTTPError(f"{r.status_code}: {r.text[:200]}")
             if r.status_code >= 400:
                 raise ValueError(f"{r.status_code}: {r.text[:500]}")
-            return r.json()
+            data = r.json()
+            if isinstance(data, dict) and "error" in data and not ({"choices", "answers"} & data.keys()):
+                raise requests.HTTPError(f"{r.status_code} with an error body: {str(data['error'])[:200]}")
+            return data
         except (requests.HTTPError, requests.ConnectionError, requests.Timeout) as e:
             last = e
             time.sleep(min(2 ** i, 60) + random.random())

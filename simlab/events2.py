@@ -22,6 +22,7 @@ import numpy as np
 import pandas as pd
 
 from .ces import DATA
+from .core import RUNS
 
 HIST = DATA / "history"
 HERE = Path(__file__).parent
@@ -202,5 +203,59 @@ def build() -> list[dict]:
     return out
 
 
+TYPES_19 = {"E01": "debate", "E13": "debate", "E16": "debate", "E02": "scandal_legal", "E03": "scandal_legal",
+            "E05": "scandal_legal", "E06": "scandal_legal", "E12": "scandal_legal", "E18": "scandal_legal",
+            "E07": "shock_crisis", "E09": "shock_crisis", "E10": "shock_crisis", "E17": "economy", "E19": "shock_crisis",
+            "E23": "economy", "E14": "security", "E20": "security", "E22": "security", "E11": "policy_court"}
+
+
+def predict(model: str, events: list[dict]) -> np.ndarray:
+    """Weighted mean expected shift (-2..+2 scale, toward D) over the 28 test personas, as in tests.events_test, but
+    with all order variants of a persona's question in one request (Jev) or one prompt per variant (GLM)."""
+    from concurrent.futures import ThreadPoolExecutor
+    from .askers import DecisionAsker, LLMAsker, expected
+    from .core import JEV
+    from .probes import reaction_state
+    from .tests import EVENT_Q
+    arch = json.loads((HERE / "archetypes.json").read_text())
+    asker = DecisionAsker(JEV, n_orders=2, name="jev") if model == "jev" else LLMAsker(model, n_orders=2, name=model)
+    items = [(e, p) for e in events for p in arch]
+    with ThreadPoolExecutor(16) as ex:
+        preds = list(ex.map(lambda it: asker.ask_many(reaction_state(it[1]["text_events"],
+                                                                     f"({it[0]['date']}) {it[0]['description']}"),
+                                                      {"q": EVENT_Q}, f"events2:{model}")["q"], items))
+    w = np.array([p["weight"] for p in arch])
+    e = np.array([expected(p) for p in preds]).reshape(len(events), len(arch))
+    return e @ w / w.sum()
+
+
+def transfer(models: list[str]) -> None:
+    """Fit each model's points-per-unit scale (one overall, and one per event type) on events2, apply it unchanged to
+    the 19 held-out events: does the per-type calibration found on the 19 hold up when fitted elsewhere?"""
+    ev2 = [e for e in json.loads((HERE / "events2.json").read_text()) if e["shift_toward_D"] is not None]
+    ev19 = json.loads((HERE / "events.json").read_text())
+    y2 = np.array([e["shift_toward_D"] for e in ev2]); t2 = np.array([e["event_type"] for e in ev2])
+    y19 = np.array([e["shift_toward_D"] for e in ev19], float); w19 = np.array([e["weight"] for e in ev19])
+    t19 = np.array([TYPES_19[e["id"][:3]] for e in ev19])
+    err = lambda c: float(np.sqrt(np.average((c - y19) ** 2, weights=w19)))
+    print(f"19 held-out events: always 'no change' error {err(np.zeros_like(y19)):.2f} pts")
+    for m in models:
+        x2 = predict(m, ev2)
+        x19 = np.array([json.loads(l)["pred"]["all"] for l in (RUNS / f"events__{m}.jsonl").read_text().splitlines()])
+        k = float(np.sum(x2 * y2) / np.sum(x2 * x2))
+        kt = {t: float(np.sum(x2[t2 == t] * y2[t2 == t]) / np.sum(x2[t2 == t] ** 2)) for t in set(t2)
+              if (t2 == t).sum() >= 3 and np.sum(x2[t2 == t] ** 2) > 0}
+        typed = np.array([kt.get(t, k) * x for t, x in zip(t19, x19)])
+        from scipy.stats import spearmanr
+        print(f"{m}: events2 rank corr {spearmanr(x2, y2)[0]:.2f}, sign right {np.mean(np.sign(x2) == np.sign(y2)):.0%} "
+              f"(|shift|>=1: {np.mean((np.sign(x2) == np.sign(y2))[np.abs(y2) >= 1]):.0%}) | on the 19: one scale "
+              f"{k:.1f} -> error {err(k * x19):.2f}; per type -> {err(typed):.2f} | scales by type "
+              f"{ {t: round(v, 1) for t, v in sorted(kt.items())} }")
+
+
 if __name__ == "__main__":
-    build()
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "transfer":
+        transfer(sys.argv[2].split(",") if len(sys.argv) > 2 else ["jev", "glm"])
+    else:
+        build()
