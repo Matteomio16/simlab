@@ -125,3 +125,40 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   MiMo 0, DeepSeek −1 points.
 - Cost per 1,000 decisions (both directions): Kev $0.016, GLM $0.030, Jev $0.040, MiMo $0.076, Luna $0.095,
   DeepSeek $0.111 (DeepInfra).
+
+## 2026-09-27 (night, test bench): batching, wider fidelity, GLM controls, turnout data problem
+
+- **Batched asking** (`askers.ask_many`): Jev bills ~430 tokens per request + ~50 per question and answers each
+  question on its own, so all questions and their order variants go in one request (A/B on 30 personas: answers
+  unchanged, ~3× cheaper, 20× faster). GLM gets one compact prompt per order variant (questions first for prompt
+  caching, persona last, percent lists back). Text models read the whole prompt, so vote-choice questions must not
+  share a prompt with turnout ("how did this person vote" implied they voted and pushed turnout answers up).
+- **GLM hosts:** InferenceNet fp4 plus DeepInfra fp4 as overflow (InferenceNet kept returning upstream 429s).
+- **Wider fidelity test** (`docs/fidelity2.md`; 14 CES 2024 items, 132 demographic cells incl. OH/NC/TX and 138
+  national cells with party ID; 3,461 answers per model; Jev $0.024, GLM $0.054):
+  - Average TVD: demographic cells Jev 0.36, GLM 0.14, regression 0.07; party-ID cells Jev 0.25, GLM 0.16,
+    regression 0.05. The regression wins every item, so levels stay statistical.
+  - Jev's multi-option answers are label confidence (approval and economy TVD 0.6–0.8); fine on yes/no items and on
+    vote once party ID is in the persona.
+  - GLM flattens partisan differences on evaluative items: Democrats approving of Biden, real 83% vs GLM 44%
+    (Republicans 4% vs 15%); Democrats saying the economy got better 53% vs 18%. Vote and hot-button issues are close
+    (Democrats voting Harris 96% vs 93%; Republicans backing the wall 93% vs 76%). Party-specific heterogeneity has to
+    come from data (or a Kev trained on it), not from GLM.
+  - Jev and GLM errors correlate 0.6–0.96 on most items; averaging helps only for vote with party ID (errors
+    anti-correlated) and a few yes/no items.
+- **GLM controls (from existing runs):** a fixed order correction removes only ~2/3 of GLM's one-order lean (mirror
+  −0.124 → −0.045 vs −0.006 asked both ways), because the order effect grows with the reaction; keep asking both
+  ways. Jev needs no scale averaging. A points-per-unit scale per event type cuts GLM's leave-one-out event error from
+  2.49 to 1.91 points (shocks/crises ~24 per unit, scandals ~7, debates ~9); the news labels' event type selects it.
+- **All hosted models share the event blind spots:** errors on the 19 events correlate +0.88 to +0.97 and averaging
+  any pair never beats GLM alone; all under-react to structural shocks (COVID rally, Jan 6, Afghanistan, fuel spike)
+  and over-react to media spectacles (Access Hollywood, debates). Matteo's rule: Kev's reaction training comes from
+  real measured shifts and design rules, never from GLM answers, so Kev can be an independent second opinion.
+- **Turnout data problem:** CES validated turnout tracks voter-file match rates (corr 0.99 across cells); 18-29 Black
+  men without a degree: match 0.09, turnout 0.05. Turnout targets in cells.json, cells2.json and Kev ces-v1/v2 inherit
+  it. Proposal pending Matteo's OK: Census CPS November supplements (2018, 2022, 2024), reweighted to official state
+  VEP turnout (`simlab/cps.py`, other session), with CES kept for vote choice and opinions.
+- **Ownership (agreed with the infrastructure session):** this session owns `simlab/events2.json` (expanded real
+  events; the original 19 stay the held-out test) and `simlab/news.py` + `data/news/`; the other owns `cps.py`, Kev
+  datasets and training. AllSides ratings (CC BY-NC 4.0, 2019 community copy) stay in `data/news/`, never in the public
+  repo.
