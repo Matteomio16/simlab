@@ -276,9 +276,67 @@ def transfer(models: list[str]) -> None:
               f"{ {t: round(v, 1) for t, v in sorted(kt.items())} }")
 
 
+EXPOSURE_Q = {"type": "score", "instructions": "How likely is it that this person heard or read about this news "
+               "within a week?", "criteria": ["Almost certainly not", "Probably not", "Maybe", "Probably yes",
+                                              "Almost certainly yes"]}
+LANDING_Q = {"type": "score", "instructions": "If this person heard about this news, how did it change how they feel "
+             "about the two parties, if at all?", "criteria": ["Much more favorable to the Republicans",
+                                                               "Somewhat more favorable to the Republicans",
+                                                               "No change", "Somewhat more favorable to the Democrats",
+                                                               "Much more favorable to the Democrats"]}
+
+
+def exposure(models: list[str]) -> None:
+    """Field Guide rule 5 ("ask who was exposed and how it landed, never 'would this change your vote'"):
+    predicted shift = P(heard about it) x how it landed, vs the direct question, on both event sets."""
+    from concurrent.futures import ThreadPoolExecutor
+    from scipy.stats import spearmanr
+    from .askers import DecisionAsker, LLMAsker, expected
+    from .core import JEV
+    from .probes import reaction_state
+    arch = json.loads((HERE / "archetypes.json").read_text())
+    w = np.array([p["weight"] for p in arch])
+    ev2 = [e for e in json.loads((HERE / "events2.json").read_text()) if e["shift_toward_D"] is not None]
+    ev19 = json.loads((HERE / "events.json").read_text())
+    for m in models:
+        asker = DecisionAsker(JEV, n_orders=2, name="jev") if m == "jev" else LLMAsker(m, n_orders=2, name=m)
+        res = {}
+        for name, evs in (("events2", ev2), ("events19", ev19)):
+            items = [(e, p) for e in evs for p in arch]
+            with ThreadPoolExecutor(16) as ex:
+                preds = list(ex.map(lambda it: asker.ask_many(
+                    reaction_state(it[1]["text_events"], f"({it[0]['date']}) {it[0]['description']}"),
+                    {"exposure": EXPOSURE_Q, "landing": LANDING_Q}, f"exposure:{m}"), items))
+            p_heard = np.array([expected(p["exposure"], values=(0, .25, .5, .75, 1)) for p in preds])
+            landing = np.array([expected(p["landing"]) for p in preds])
+            x = ((p_heard * landing).reshape(len(evs), len(arch)) @ w) / w.sum()
+            heard = (p_heard.reshape(len(evs), len(arch)) @ w) / w.sum()
+            y = np.array([e["shift_toward_D"] for e in evs], float)
+            if name == "events2":
+                direct = np.array([json.loads(l)["pred"] for l in (RUNS / f"events2__{m}.jsonl").read_text()
+                                   .splitlines()])
+            else:
+                direct = np.array([json.loads(l)["pred"]["all"] for l in (RUNS / f"events__{m}.jsonl").read_text()
+                                   .splitlines()])
+            res[name] = (x, y, direct, heard)
+            big = np.abs(y) >= 1
+            print(f"{m} {name}: direction right (|shift|>=1) exposure-framed {np.mean(np.sign(x[big]) == np.sign(y[big])):.0%}"
+                  f" vs direct {np.mean(np.sign(direct[big]) == np.sign(y[big])):.0%}; size-tracking "
+                  f"{spearmanr(np.abs(x), np.abs(y))[0]:.2f} vs {spearmanr(np.abs(direct), np.abs(y))[0]:.2f}; "
+                  f"P(heard) tracks size {spearmanr(heard, np.abs(y))[0]:.2f}")
+        (x2, y2, d2, _), (x19, y19, d19, _) = res["events2"], res["events19"]
+        w19 = np.array([e["weight"] for e in ev19])
+        err = lambda c: float(np.sqrt(np.average((c - y19) ** 2, weights=w19)))
+        k, kd = (x2 @ y2) / (x2 @ x2), (d2 @ y2) / (d2 @ d2)
+        print(f"{m}: scale fitted on events2, error on the 19: exposure-framed {err(k * x19):.2f} vs direct "
+              f"{err(kd * d19):.2f} ('no change' {err(np.zeros_like(y19)):.2f})")
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "transfer":
         transfer(sys.argv[2].split(",") if len(sys.argv) > 2 else ["jev", "glm"])
+    elif len(sys.argv) > 1 and sys.argv[1] == "exposure":
+        exposure(sys.argv[2].split(",") if len(sys.argv) > 2 else ["jev", "glm"])
     else:
         build()

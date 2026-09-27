@@ -12,6 +12,7 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   the same size for no-effect and clear-effect events). GLM's barely does (0.26). Fitted points-per-unit differ by
   event set (GLM 3.4 on events2 vs 12.6 on the famous 19), so any fixed scale is unstable. Sizes must come from real
   data (the filter, per state), and this is where a Kev trained on measured shifts could add something GLM can't.
+- **Exposure wording (Field Guide rule 5) doesn't help:** predicted shift = P(heard about it) x how it landed was slightly worse than the direct question for GLM on every measure (direction on events2 85% vs 92%, size-tracking 0.09 vs 0.26, error on the 19 3.13 vs 3.05); for Jev it helped direction on the famous 19 (87% vs 73%) but not on events2 or size. P(heard) doesn't track event size (-0.19 to 0.33). Keep the direct question. Rules collected in `docs/model-recipes.md`.
 - Jev and GLM errors on events2 correlate 0.94 (0.88-0.97 across hosted models on the 19): averaging them does not
   cancel errors.
 - **events2** (`simlab/events2.json`): 46 events, 45 measured, 10 with |z| >= 1.5; 11 pass the directional filter
