@@ -143,6 +143,8 @@ Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructu
 - No Cloudflare R2 for now: the site hosts post images and JSON; GitHub holds the public archive.
 - One public GitHub repo holds the engine code, the workflows and the published forecasts (unlimited Actions minutes,
   within GitHub's terms); raw data, the model-answer cache and keys stay private (private data repo, GitHub secrets).
+  Repos: `github.com/Matteomio16/simlab` (public; this folder) and `github.com/Matteomio16/simlab-data` (private;
+  local clone at `Sim Research/simlab-data`, rules in its README). No licence chosen yet for the public code.
 - Modal is for GPU work (Kev fine-tuning and serving); daily CPU jobs run on GitHub Actions.
 - Kev fine-tune approved: `ces-v1` (CES cells, soft targets, OH/NC/TX held out), launched 27 Sep on Modal.
 - Daily Claude check at 11:30 UK: desktop scheduled task `midterm-daily-check` (runs while the app is open); emails
