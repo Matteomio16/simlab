@@ -151,6 +151,13 @@ Jev; send weekly bulk jobs (re-tests, backtests, gold labels) through OpenRouter
 
 ### 4.5 Kev: fine-tune and serve
 
+- **First result (`ces-v1`, 27 Sep, $3.08):** on held-out OH/NC/TX cells the fine-tuned Kev's raw probabilities match
+  or beat the regression baseline (vote TVD 0.049 / 0.078 / 0.078 vs 0.047 / 0.093 / 0.138; turnout 0.062 / 0.067 /
+  0.042 vs 0.071 / 0.059 / 0.036), against 0.16–0.26 for base Kev. Serve soft-target runs at temperature 1.0: Kev's
+  own calibration sharpens shares (details in `docs/CHANGELOG.md`).
+- **Serving rules:** one GPU at most, 60 s idle before scaling to zero, one batch of Kev questions a day
+  (`KEV_SERVE_MAX_CONTAINERS`, `KEV_SERVE_IDLE_S`, `KEV_SERVE_TEMPERATURE` in the kit). Modal budget: October keeps
+  at least $18 for serving; fine-tuning uses September's expiring credit first, then at most $12 in October.
 - **Recipe exists:** `skills/kev-finetune/scripts/kev_modal.py` (`validate | train | evaluate | compare | pull |
   publish | teardown`). Start from `--init_from jaredpalmer/kev-4b` (a delta fine-tune; training from scratch did
   much worse). Sizes available: 0.8B, 4B, 9B, 27B.

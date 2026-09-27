@@ -146,7 +146,14 @@ Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructu
   Repos: `github.com/Matteomio16/simlab` (public; this folder) and `github.com/Matteomio16/simlab-data` (private;
   local clone at `Sim Research/simlab-data`, rules in its README). No licence chosen yet for the public code.
 - Modal is for GPU work (Kev fine-tuning and serving); daily CPU jobs run on GitHub Actions.
-- Kev fine-tune approved: `ces-v1` (CES cells, soft targets, OH/NC/TX held out), launched 27 Sep on Modal.
+- Kev fine-tune approved: `ces-v1` (CES cells, soft targets, OH/NC/TX held out), trained 27 Sep on Modal ($3.08).
+- Kev serving (kit settings in `kev-finetune/scripts/kev_modal.py`): at most one GPU (`KEV_SERVE_MAX_CONTAINERS=1`,
+  extra requests queue), 60 s idle before scaling to zero (`KEV_SERVE_IDLE_S`), and one batch of Kev questions per
+  day. Serve soft-target runs with `KEV_SERVE_TEMPERATURE=1.0`: Kev's fitted temperature sharpens the probabilities
+  away from population shares (ces-v1 at its fitted 0.30 triples the share error; raw is already share-calibrated).
+- Modal credit ($30/month, no rollover): October keeps at least $18 for serving; fine-tuning spends September's
+  expiring credit first, then at most $12 in October. Every training run is capped with `--timeout` (≤ 3000 s) and
+  preceded by `python -m modal billing summary`.
 - Daily Claude check at 11:30 UK: desktop scheduled task `midterm-daily-check` (runs while the app is open); emails
   Matteo a digest, and drafts posts once forecasts exist.
 

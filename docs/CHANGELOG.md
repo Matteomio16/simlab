@@ -2,6 +2,23 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-27 (night): Kev ces-v1 results; serving and Modal budget rules
+
+- Repos created: `github.com/Matteomio16/simlab` (public, full history, scanned for keys and personal data first) and
+  `github.com/Matteomio16/simlab-data` (private; first off-laptop copy of the 34,099 cached model answers, the spend
+  ledger and the ces-v1 data).
+- Kev `ces-v1` (H100, 2 epochs, ~27 min, $3.08 including the pre-flight). Held-out OH/NC/TX cells, weighted TVD
+  against real shares, raw probabilities: vote 0.049 / 0.078 / 0.078, turnout 0.062 / 0.067 / 0.042. Regression
+  baseline: vote 0.047 / 0.093 / 0.138, turnout 0.071 / 0.059 / 0.036. Base Kev: 0.16–0.26. Best hosted LLM (GLM):
+  0.08–0.12. Kev's own report: accuracy on the most likely answer 0.73 → 0.84 (significant), no forgetting on its
+  public regression set (0.862 → 0.871).
+- Kev's calibration step fits a temperature to hard labels (0.30 here), which sharpens probabilities away from
+  population shares (TVD 0.13–0.20); fitted against the soft targets the best temperature is 1.02, so the raw model is
+  already share-calibrated. The kit now takes `KEV_SERVE_TEMPERATURE` (1.0 = raw) for serving.
+- Kit serving settings (Matteo's decision): `KEV_SERVE_MAX_CONTAINERS` (default 1) and `KEV_SERVE_IDLE_S` (default
+  60 s, was 300); one batch of Kev questions a day. Modal budget: October keeps at least $18 for serving; fine-tuning
+  uses September's expiring credit first, then at most $12 in October.
+
 ## 2026-09-27 (evening): Matteo's infrastructure decisions; Kev training data
 
 - Decisions recorded in CLAUDE.md section 5: site at `research.scaliastudio.dev/midterms`; no paid publishing tools (X
