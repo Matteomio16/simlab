@@ -241,8 +241,10 @@ LLMS = {
     "luna": "openai/gpt-6-luna",
 }
 # Allowed hosts per model, all at the same quantisation, so a run never mixes precisions (probed 27 Sep 2026).
-# GLM: InferenceNet fp4 (the Field Guide's price). DeepSeek: InferenceNet was 429ing most calls and DeepSeek's own
-# endpoint is excluded by the account's guardrail, so DeepInfra fp8. MiMo: two fp8 hosts, load-balanced.
-HOSTS = {"glm": ["InferenceNet"], "mimo": ["Xiaomi", "DeepInfra"], "deepseek": ["DeepInfra"], "luna": ["OpenAI"]}
+# GLM: InferenceNet fp4 (the Field Guide's price) with DeepInfra fp4 as overflow, because InferenceNet rate-limits
+# upstream. DeepSeek: InferenceNet was 429ing most calls and DeepSeek's own endpoint is excluded by the account's
+# guardrail, so DeepInfra fp8. MiMo: two fp8 hosts, load-balanced.
+HOSTS = {"glm": ["InferenceNet", "DeepInfra"], "mimo": ["Xiaomi", "DeepInfra"], "deepseek": ["DeepInfra"],
+         "luna": ["OpenAI"]}
 # GLM can't turn reasoning off; "minimal" used 0 reasoning tokens in the probe. Others: off.
 REASONING = {"glm": {"effort": "minimal"}}
