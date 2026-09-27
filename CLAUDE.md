@@ -130,9 +130,23 @@ Decided in Claude Code, 27 Sep (reasons in `docs/CHANGELOG.md`):
 - One pinned host per LLM (GLM and DeepSeek → InferenceNet, MiMo → Xiaomi, Luna → OpenAI); GLM reasoning
   `effort: minimal` (can't be disabled, 0 reasoning tokens).
 - Fidelity targets: vote among validated voters (`vvweight_post`); turnout = validated vote among citizens,
-  logit-shifted to the official 63.9% (assumption: match failures even across cells).
+  logit-shifted per state to that state's official 2024 turnout (`simlab/turnout2024.json`, UF Election Lab v0.4;
+  national cells to 64.3%), because CES voter-file match rates vary by state (Matteo, 27 Sep evening; assumption:
+  match failures even across cells within a state).
 - Test personas: 28 party-ID × race × degree strata, one real OH/NC/TX respondent each, balanced on gender, age,
   race and ideology (`simlab/archetypes.json`, built by `python -m simlab.ces`).
+
+Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructure.md`):
+- Site at `research.scaliastudio.dev/midterms` (Cloudflare), linked from scaliastudio.dev.
+- No paid publishing tools: Instagram posting is free (Meta Business Suite by hand, official API later); X by hand or
+  through Buffer's free plan, never paid X API credits. Threads and Bluesky optional. Social accounts created later.
+- No Cloudflare R2 for now: the site hosts post images and JSON; GitHub holds the public archive.
+- One public GitHub repo holds the engine code, the workflows and the published forecasts (unlimited Actions minutes,
+  within GitHub's terms); raw data, the model-answer cache and keys stay private (private data repo, GitHub secrets).
+- Modal is for GPU work (Kev fine-tuning and serving); daily CPU jobs run on GitHub Actions.
+- Kev fine-tune approved: `ces-v1` (CES cells, soft targets, OH/NC/TX held out), launched 27 Sep on Modal.
+- Daily Claude check at 11:30 UK: desktop scheduled task `midterm-daily-check` (runs while the app is open); emails
+  Matteo a digest, and drafts posts once forecasts exist.
 
 ## 6. Reference material (read, don't duplicate)
 

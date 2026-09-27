@@ -10,24 +10,26 @@
 | Layer | Recommended pick | Runs on | Est. $/month |
 | --- | --- | --- | --- |
 | Model gateway | OpenRouter: a dev key and a prod key, each with a spend cap; a guardrail that denies `anthropic/*` and `google/*` | — | see models |
-| Decision questions (news labels, voter reactions) | Jev 1.13 (hosted, pinned slug) now; our fine-tuned Kev-4B if it wins the scorecard | OpenRouter; Modal GPU | $1–8 |
-| Text jobs (event cards, auditor, baselines) | DeepSeek V4.1 Flash; GPT-6 Luna as the one US model; MiMo-V2.6-Flash and GLM-5.3 Flash for diversity and fallback | OpenRouter | $1–5 |
+| Voter reactions | GLM-5.3 Flash + Jev 1.13 blend, calibrated per state; GPT-6 Luna as a spot check; our fine-tuned Kev-4B if it earns a place | OpenRouter; Modal GPU | $10–20 |
+| News labels | Jev 1.13 (hosted, pinned slug) | OpenRouter | ~$3 |
+| Text jobs (event cards, auditor, baselines) | DeepSeek V4.1 Flash or GLM-5.3 Flash; GPT-6 Luna as the one US model; MiMo-V2.6 for the weekly auditor | OpenRouter | $1–5 |
 | Embeddings | Qwen3-Embedding-8B | OpenRouter | < $0.50 |
-| Engine code | Python 3.13 package (uv); OASIS arm in its own Python 3.11 env | Modal CPU (cron) | ~$2, inside free credit |
+| Engine code | Python 3.13 package (uv); OASIS arm in its own Python 3.11 env | GitHub Actions (public repo) | $0 |
 | Kev fine-tune and serving | Kev repo's `kev_modal.py` (train on H100, serve on L40S, scale to zero) | Modal GPU | $5–25, inside free credit |
-| Raw snapshots, cache backups | Modal Volume | Modal | $0 |
-| Public data and post images | Cloudflare R2 bucket on `data.scaliastudio.dev` (or the site's own static files) | Cloudflare | $0 |
-| Website | Cloudflare Worker with static assets at `midterms.scaliastudio.dev`, linked from Scalia | Cloudflare | $0 |
-| Scheduling | Modal Cron (5 slots) for the pipeline; GitHub Actions for site deploys and as a backup | Modal, GitHub | $0 |
+| Raw snapshots, cache exports | a private GitHub data repo (small files; aggregates, not raw voter files) | GitHub | $0 |
+| Public data and post images | served by the site itself (no R2 for now) | Cloudflare | $0 |
+| Website | Cloudflare Worker with static assets at `research.scaliastudio.dev/midterms`, linked from Scalia | Cloudflare | $0 |
+| Scheduling | GitHub Actions in a public repo for the daily CPU jobs (unlimited minutes); Modal for GPU jobs | GitHub, Modal | $0 |
 | Instagram | Meta Business Suite by hand, then the Instagram API with Instagram Login (own account, no app review) | — | $0 |
-| X | x.com's free scheduler by hand, then Buffer's free API or X's pay-per-use API | — | $0–5 |
+| X | x.com's free scheduler by hand, then Buffer's free plan; never paid X API credits | — | $0 |
 | Extra channels | Threads API, Bluesky | — | $0 |
 | Proof of timing | OpenTimestamps daily, signed git tag weekly, OSF pre-registration, Zenodo at milestones, Internet Archive capture | — | $0 |
 | Monitoring | healthchecks.io (20 free checks) → Telegram / ntfy / email | — | $0 |
 | Claude Max 5x | building (Claude Code), research and docs (Cowork), daily review and post drafting, optional routines; never inside the forecast | — | existing subscription |
 
 **New spend:** about $5/month for the 3-state pilot and $15–35/month at full scale (35 Senate + 40 House seats),
-including $0–5 for X. Modal work fits inside its $30/month free credit.
+with every publishing channel free. Modal work fits inside its $30/month free credit. Measured model costs per decision
+are in `docs/scorecard.md`.
 
 ## 2. Ground rules this design keeps
 
@@ -55,20 +57,20 @@ including $0–5 for X. Modal work fits inside its $30/month free credit.
 ## 3. How the pieces fit
 
 ```
-EVERY 3 HOURS   snapshot → raw, immutable, hashed files on the Modal Volume + manifest
+EVERY 3 HOURS   snapshot → raw, immutable, hashed files in the private data repo + manifest
                 polls · markets · news headlines · early-vote files · FEC · ratings · economy · pageviews
 
-DAILY 09:17 UTC (Modal Cron)
-  context       dedup + cluster (embeddings) → race tags → event labels (Jev) → short event cards (DeepSeek)
+DAILY 09:17 UTC (GitHub Actions, public repo; Kev on Modal GPU when used)
+  context       dedup + cluster (embeddings) → race tags → event labels (Jev) → short event cards (DeepSeek or GLM)
   baseline      partisan lean on new maps + national environment + candidates + poll average → starting levels
   electorate    CES archetypes per state, weighted to census, voter files and 2024 results
-  agents        race × archetype × salient event → decision model → support shift + turnout shift
+  agents        race × archetype × salient event → GLM + Jev → support shift + turnout shift
                 → calibration curve → damping / decay / weights (system parameters, learned per state)
   filter        cheap Kalman update from new polls (no model calls)
   monte carlo   40,000 correlated draws → win probabilities, seat counts
   outputs       forecast.json · charts (web + JPEG + MP4) · draft captions · run manifest + hashes
       │                         │                                        │
-  R2 + website        post kit → Matteo reviews with Claude       archive (hashes, timestamps, IA capture)
+  website             post kit → Matteo reviews with Claude       archive (hashes, timestamps, IA capture)
                       → Instagram · X · Threads · Bluesky
 
 WEEKLY (fixed day and hour, US Eastern)
@@ -98,37 +100,23 @@ repeated model calls. That is what keeps the cost flat as the ensemble grows.
 | Dev only | Qwen3.8-27B (`:free`) | free | 262K | open | 20 requests/min; 1,000/day once $10 of credit has ever been bought |
 | Weekly auditor | MiMo-V2.6-Pro ($0.435 / $0.87) or DeepSeek Pro | | | | a few calls a week |
 
-### 4.2 What the tests say so far
+### 4.2 What the tests say
 
-The full test bench (4 tests × 11 model variants) started at 17:29 today and was still running at 18:30 ($0.75 spent of
-the $9 cap). Results for the parts that had finished, computed from the per-item files in `runs/`; the complete
-scorecard lands in `runs/scorecard.jsonl` when the run ends.
+Full results, including measured cost per decision, are in `docs/scorecard.md` (first full run, 27 Sep, $1.03 spent of
+the $9 cap). What matters for routing:
 
-**Null test** (28 personas × 20 irrelevant stories × 2 questions = 1,120 items per model; average probability on
-"no change", pass ≥ 0.90): Jev 0.987 support / 0.999 turnout; MiMo 0.955 / 0.961; Luna 0.954 / 0.942; DeepSeek
-0.950 / 0.949. All pass; GLM and Kev still running.
+| Test | Best | Everyone else |
+| --- | --- | --- |
+| Null: irrelevant news → "no change" (pass ≥ 0.90) | Jev 0.99 | DeepSeek, Luna, MiMo ~0.95; GLM 0.90 (borderline); base Kev fails (0.73–0.77) |
+| Mirror: reaction flips when parties swap | Jev (flip correlation 0.69) | Kev and GLM 0.46, Luna 0.41, DeepSeek 0.32, MiMo 0.07 |
+| Events: 19 real shifts, 2012–2026 | GLM (rank 0.81, right direction on all 13 non-null) | Luna 0.74, MiMo 0.70, DeepSeek 0.63, Jev 0.61, Kev 0.31 |
+| Fidelity: 2024 vote and turnout shares | plain regression | LLMs 0.07–0.17 error, Jev and Kev 0.18–0.33 |
 
-**Mirror test** (448 persona × story pairs; does the reaction flip when the parties are swapped?):
+So: statistics set the levels (as designed); reactions come from a GLM + Jev blend, calibrated and damped per state,
+with Luna as a spot check (it is neutral but costs about three times as much); base Kev is not usable, so Kev enters
+only as our fine-tune. Most events predate the models' training, so the events scores may be partly memory.
 
-| Model | Flip correlation | Sign flips | Lean (+ = pro-D) | Mean reaction size (−2..+2 scale) |
-| --- | --- | --- | --- | --- |
-| Jev | 0.69 | 77% | −0.06 | 0.70 |
-| Luna | 0.41 | 73% | 0.00 | 0.28 |
-
-**Events test, Jev** (19 real events 2012–2026 with measured shifts): rank correlation 0.61; right direction on 85% of
-the non-null events; about 5.4 points of real shift per unit of Jev's scale; error after scaling 3.0 points. It
-under-predicts the big shocks (Jan 6: +9 measured vs +2.4; Afghanistan: −6 vs −0.9), misses the COVID emergency, and
-gets the 2026 fuel spike's direction wrong.
-
-**Fidelity, Jev** (reproduce real 2024 vote and turnout shares by demographic cell; weighted TVD, lower is better):
-vote 0.24–0.33 and turnout 0.17–0.22, against the regression baseline's 0.04–0.14 and 0.03–0.07. Jev's probabilities
-are confidence in a label, not population shares.
-
-What this means for the infrastructure: statistics must set the levels (as designed); Jev is usable for reactions only
-through a fitted calibration curve and learned damping; and a Kev fine-tuned on CES shares (soft targets) is the path
-to a decision model whose probabilities mean shares, which makes the Modal fine-tune worth starting now.
-
-### 4.3 Which model does which job (initial routing; final after the scorecard)
+### 4.3 Which model does which job
 
 | Job | First choice | Fallback | Notes |
 | --- | --- | --- | --- |
@@ -136,7 +124,7 @@ to a decision model whose probabilities mean shares, which makes the Modal fine-
 | Which races a story touches | embedding shortlist, then Jev yes/no | reranker | |
 | Event labels: type, side helped, salience, local vs national | Jev choice + score in one request | DeepSeek | gold labels from GLM + MiMo + Luna agreement, spot-checked by Matteo |
 | Event cards (1–3 neutral sentences per event) | DeepSeek V4.1 Flash | GLM-5.3 Flash | kept short so Kev can read them |
-| Archetype reactions (support shift, turnout shift) | Jev, 2 option orders | fine-tuned Kev on Modal; DeepSeek with cached prefix | decided by mirror, events and fidelity |
+| Archetype reactions (support shift, turnout shift) | GLM-5.3 Flash + Jev blend, 2 option orders, calibrated per state | Luna spot check; fine-tuned Kev on Modal | GLM pinned to two fp4 hosts (InferenceNet rate-limits) |
 | Weekly auditor (explains filter surprises; never updates numbers) | MiMo-V2.6-Pro | DeepSeek Pro | |
 | Plain LLM-forecaster baseline (background) | Luna (flex) | DeepSeek | |
 | OASIS diffusion arm (weekly, if it earns its place) | DeepSeek V4.1 Flash (tool calling) | GLM-5.3 Flash | Python 3.11 env; ~3,400 input tokens per agent per step |
@@ -149,14 +137,14 @@ support and turnout asked in one request; about 500 input tokens per request (Ke
 
 | Job | Pilot (OH, NC, TX) | Full scale | Model | Full $/month |
 | --- | --- | --- | --- | --- |
-| Voter reactions | 1,200 requests/day | ~9,800/day (≈12 competitive + 23 safe Senate states, 40 House districts) | Jev | ~$6 |
+| Voter reactions | ~1,200 decisions/day | ~10,000/day (≈12 competitive + 23 safe Senate states, 40 House districts) | GLM + Jev | ~$10–20 (measured: GLM $8.7, Jev $11.9 per 300k decisions with order averaging) |
 | News dedup and clustering | ~1,000 articles/day | ~3,000/day | Qwen embeddings | < $0.20 |
 | Race tags and event labels | ~300 clusters/day | ~800/day | Jev | ~$3 |
 | Event cards | ~20/day | ~300/day | DeepSeek | ~$1 |
 | Auditor, LLM-forecaster baseline | weekly | weekly | MiMo-Pro, Luna | < $1 |
 | OASIS arm (optional) | 3 states × 200 agents × 10 steps, weekly | same | DeepSeek | ~$4 |
 | Development and re-tests | | | mixed | $2–5 |
-| **OpenRouter total** | **~$3–5** | | | **~$15–20, up to ~$30 with 3 option orders or more archetypes** |
+| **OpenRouter total** | **~$3–5** | | | **~$20–30; adding Luna as a full third member would add ~$15–29** |
 
 If money gets tight: full archetype sets only for competitive races; serve our Kev on Modal's free credit instead of
 Jev; send weekly bulk jobs (re-tests, backtests, gold labels) through OpenRouter's batch API at about half price.
@@ -206,7 +194,7 @@ Jev; send weekly bulk jobs (re-tests, backtests, gold labels) through OpenRouter
 ### 4.7 Reproducibility and the blind track
 
 - The response cache (`runs/cache.sqlite`) is the record of every model answer. Today it lives only on the laptop:
-  back it up daily (Modal Volume plus a private copy).
+  export new answers daily to the private data repo.
 - The post-election blind run needs the same models to exist, unchanged. Closed models (Jev, Luna) can be updated or
   retired; OpenRouter is retiring several DeepSeek and Qwen versions on 28 Sep and 9 Oct, for example. The
   open-weights models (DeepSeek V4.1 Flash, GLM-5.3 Flash, MiMo-V2.6-Flash, Kev) can be pulled from Hugging Face and
@@ -226,7 +214,7 @@ Jev; send weekly bulk jobs (re-tests, backtests, gold labels) through OpenRouter
 | `mc` | 40,000 correlated Student-t draws (national, regional, state, race; correlation floor 0.25) → probabilities and seat distributions | state → forecast | numpy | to build |
 | `evaluate` | Weekly scoring vs snapshotted baselines; divergence-call register | forecasts + baselines → scores | scoringrules | test metrics exist |
 | `publish` | forecast.json, charts (web, JPEG, MP4), caption drafts, site files, post kit, posting clients behind an approval gate | forecast → files and posts | Altair + vl-convert, Pillow, imageio-ffmpeg, requests | to build |
-| `ops` | One entry point per job; run manifest (git SHA, config hash, model slugs, input hashes); heartbeat pings; spend check | — | modal | ledger and cache exist |
+| `ops` | One entry point per job; run manifest (git SHA, config hash, model slugs, input hashes); heartbeat pings; spend check | — | GitHub Actions workflows | ledger and cache exist |
 
 **Python environments.** Main: Python 3.13 via uv (versions checked on PyPI today: numpy 2.5, scipy 1.18, pandas 3.0,
 DuckDB 1.5, Polars 1.44, scoringrules 0.11, DAPPER 1.8, scikit-learn 1.9, statsmodels 0.15, PyMC 6.3, balance 0.23,
@@ -246,37 +234,40 @@ reproducible.
 
 | Job | Where | When | Why |
 | --- | --- | --- | --- |
-| Snapshot | Modal Cron | every 3 hours, at an odd minute | reliable; writes straight to the Volume |
-| Daily pipeline | Modal Cron | 09:17 UTC (11:17 Berlin, 05:17 ET) | a 30-minute, 2-CPU run costs about $0.06 |
-| Weekly filter and scoring | Modal Cron | fixed slot, e.g. Monday 13:17 UTC (09:17 ET) | same hour every week |
-| Token refresh and health | Modal Cron | weekly | Instagram tokens die after 60 days |
-| Kev fine-tune and serving | Modal GPU | on demand; one burst a day | covered by the $30 credit |
-| Site deploys | GitHub Actions (`cloudflare/wrangler-action`) | on push | rare |
-| Backup trigger | GitHub Actions cron | daily | only acts if Modal missed a run |
-| Development, one-off analysis | laptop | — | Windows Task Scheduler only as a last resort (sleep, updates) |
+| Snapshot | GitHub Actions (public repo) | every 3 hours, at an odd minute | free, unlimited minutes |
+| Daily pipeline | GitHub Actions | 09:17 UTC (10:17 UK until 25 Oct, 05:17 ET) | 20–40 minutes on a standard runner |
+| Weekly filter and scoring | GitHub Actions | fixed slot, e.g. Monday 13:17 UTC (09:17 ET) | same hour every week |
+| Token refresh and health | GitHub Actions | weekly | Instagram tokens die after 60 days |
+| Site deploy | GitHub Actions (`cloudflare/wrangler-action`) | after each daily run | ships the day's JSON and images |
+| Kev fine-tune and serving | Modal GPU | on demand; one burst a day when used | GitHub has no GPUs; the $30 credit covers it |
+| Development, one-off analysis | laptop | — | |
 
-Modal Starter limits to remember: 5 deployed crons, 10 GPUs at once, 24 hours max per function, logs kept 1 day (so the
-pipeline writes its own logs to the Volume). GitHub's scheduled runs are best-effort (they can be delayed or dropped,
-and are switched off after 60 days without commits), which is why GitHub is the backup, not the primary.
+GitHub's scheduled runs are best effort: they can start late or, occasionally, be skipped, and scheduled workflows switch
+off after 60 days without commits (the daily archive commit keeps them alive). healthchecks.io alerts on a missed run,
+and any job can be re-run by hand from the Actions tab. Public repos show their run logs to everyone, so jobs print
+summaries, never raw data or keys (GitHub masks stored secrets). The code lives in the same public repo because GitHub's
+terms expect Actions minutes to serve the project in that repo; Modal's scheduler (5 cron slots, about $2/month of
+the credit) is the fallback if GitHub's runners ever fall short.
 
 ### 6.2 Storage
 
 | What | Where | Size by 3 Nov | Public? |
 | --- | --- | --- | --- |
-| Code | GitHub private repo `simlab` (no remote yet) | small | no, until the open-source decision |
-| Forecast history, manifests, timestamp proofs | GitHub public repo, e.g. `midterms-forecast-archive` | < 100 MB | yes: a public, timestamped record without opening the code; also unlimited Actions minutes and Zenodo's GitHub integration |
-| Raw snapshots | Modal Volume (the pricing page lists 1 TiB free, then $0.09/GiB-month) | ~2–5 GB, mostly the weekly NC voter file (~0.85 GB zipped) | no (some sources can't be republished) |
-| Model-response cache and spend ledger | Modal Volume + a daily copy off the machine | < 1 GB | no |
-| Site data and post images | R2 bucket on `data.scaliastudio.dev` (free: 10 GB, zero egress), or the site's static files | < 1 GB | yes (Instagram needs a public JPEG URL) |
+| Engine code and workflows | the public repo | small | yes |
+| Forecast history, manifests, timestamp proofs, site source | the public repo | < 100 MB | yes: a public, timestamped record; also Zenodo's GitHub integration |
+| Raw snapshots (headlines, polls, markets, early-vote files, FEC) | private data repo; voter files only as aggregates | ~1–2 GB (GitHub: 100 MB per file, keep repos under a few GB) | no (some sources can't be republished; voter records never) |
+| Model-response cache and spend ledger | private data repo, exported daily as compressed JSON lines | < 300 MB | no |
+| Kev checkpoints | Modal Volume | ~1 GB per run | no |
+| Site data and post images | shipped with the site as Cloudflare static files (20,000 files, 25 MiB each) | < 1 GB | yes (Instagram needs a public JPEG URL) |
 
-R2 may ask for a payment method on activation even though our usage stays free *(check in the dashboard)*. If that is
-unwelcome, ship JSON and images as the Worker's static files instead (redeployed daily; limits are 20,000 files and
-25 MiB per file).
+Cloudflare R2 (file storage with public links, 10 GB free) is only needed if the site's own static files stop being
+enough.
 
 ### 6.3 Website
 
 A Cloudflare Worker with static assets (Cloudflare's current advice for new static sites; Pages still works) on the
-subdomain `midterms.scaliastudio.dev`, in the existing zone and linked from scaliastudio.dev (which already deploys from
+subdomain `research.scaliastudio.dev`, with the forecast under `/midterms`, in the existing zone and linked from
+scaliastudio.dev (which already deploys from
 `Matteomio16/scaliastudio` through Cloudflare). Plain HTML plus vega-embed reading `forecast.json`: overview (Senate
 map, House control), race pages, methods ("simulation-based forecast, not a poll", sources, models and versions, what
 the agents change), track record and scoring, changelog, archive. Cloudflare Web Analytics is free and cookieless.
@@ -284,10 +275,10 @@ Free-plan limits (100,000 Worker requests a day; static file requests are free) 
 
 ### 6.4 Secrets
 
-Local `.env` (never printed); Modal Secrets for scheduled jobs; GitHub Actions secrets for deploys. Keys: OpenRouter
-(dev key capped at $10, prod key with a monthly cap), Modal tokens, a Cloudflare API token limited to Workers and R2, R2
-access keys, the Instagram long-lived token and user ID, X OAuth 1.0a tokens or the Buffer API key, a Bluesky app
-password, free keys for FEC, Census, FRED and EIA, and healthchecks ping URLs.
+Local `.env` (never printed); GitHub Actions secrets for the scheduled jobs; Modal Secrets for GPU jobs. Keys: OpenRouter
+(dev key capped at $10, prod key with a monthly cap), Modal tokens, a Cloudflare API token limited to Workers, a token
+with write access to the private data repo, the Instagram long-lived token and user ID, the Buffer API key, a Bluesky
+app password, free keys for FEC, Census, FRED and EIA, and healthchecks ping URLs.
 
 ### 6.5 Proof of timing (daily routine)
 
@@ -380,15 +371,12 @@ and posts say "no meaningful change" when that is true.
   if the post contains a link. The old v1.1 media upload shut down in June 2025, and tweepy has no v2 media upload.
 - **Now, by hand:** x.com's composer schedules single posts for free (desktop web); threads go out by hand. X Premium
   isn't needed, and X Pro (the old TweetDeck) now requires Premium+ at $40/month.
-- **Later, automated, cheapest first:**
-  1. **Buffer's free plan:** 3 channels (X, Instagram, Threads and Bluesky are all supported), 10 queued posts per
-     channel, and 1 API key with 3,000 requests a month (official pricing page, last updated Nov 2025). Buffer absorbs
-     X's API cost. Its GraphQL API (`api.buffer.com`, bearer key) has a `createPost` mutation with an `assets` field for
-     images and video, `addToQueue` or `customScheduled` (with `dueAt`) timing, and threads for X, Bluesky and Threads
-     through `metadata` *(whether media goes in as a URL or an upload: check on first use)*.
-  2. **Direct X API:** OAuth 1.0a user tokens (they don't expire), `requests` + `requests-oauthlib`, chunked v2 media
-     upload, then `POST /2/tweets`. About 90 posts a month ≈ $1.50–5. Keep links out of post bodies (put the site in
-     the bio or a reply). Test one image post first: there is an open report of 403 errors after a few media posts.
+- **Later, automated (decided: free only):** Buffer's free plan: 3 channels (X, Threads and Bluesky; Instagram goes
+  through its own free API), 10 queued posts per channel, and 1 API key with 3,000 requests a month (official pricing
+  page, last updated Nov 2025; paid plans are $5 or $10 per channel per month and aren't needed). Buffer absorbs X's API
+  cost. Its GraphQL API (`api.buffer.com`, bearer key) has a `createPost` mutation with an `assets` field for images and
+  video, `addToQueue` or `customScheduled` (with `dueAt`) timing, and threads for X, Bluesky and Threads through
+  `metadata` *(whether media goes in as a URL or an upload: check on first use)*. The direct X API is not used (paid).
 - **Rules:** scheduling your own content is explicitly allowed. Once posting is unattended, turn on the "Automated" label
   and name the human operator in the bio. The civic-integrity policy targets false voting information and the
   synthetic-media policy targets fake depictions of real people, so labelled forecast charts are fine. No AI images of
@@ -397,14 +385,17 @@ and posts say "no meaningful change" when that is true.
 ### 8.4 Free extras
 
 Threads (same Meta app; 250 posts per 24 hours) and Bluesky (app password, no review, images uploaded directly, up to 4
-per post; a domain handle such as `@midterms.scaliastudio.dev` needs one DNS record). Both reuse the post kit at no cost.
+per post; a domain handle such as `@research.scaliastudio.dev` needs one DNS record). Both reuse the post kit at no cost.
+Threads is Meta's X-style app attached to the Instagram account (extra reach for no extra work). Bluesky is an
+independent X-style network with an open, free API; its audience leans towards journalists, academics and election-data
+people. Both optional.
 
-### 8.5 Daily rhythm (Berlin time)
+### 8.5 Daily rhythm (UK time)
 
-11:17 the pipeline runs → ~12:00 the post kit is ready and an alert goes out → Matteo reviews with Claude (numbers,
-wording, rules checklist) → approves → posts go out 13:00–15:00 (07:00–09:00 ET). Once posting is automated, approving
-flips a flag and the posting job publishes to every channel; nothing publishes without it. Times shift by an hour when
-Europe changes clocks (25 Oct) and again when the US does (1 Nov).
+10:17 the pipeline runs → ~11:00 the post kit is ready and an alert goes out → Matteo reviews with Claude (numbers,
+wording, rules checklist) → approves → posts go out 12:00–14:00 (07:00–09:00 ET). Once posting is automated, approving
+flips a flag and the posting job publishes to every channel; nothing publishes without it. UK clocks change on 25 Oct
+and US clocks on 1 Nov, so the ET times shift by an hour in the last week.
 
 ## 9. Claude Max 5x: where it fits
 
@@ -426,11 +417,11 @@ publishes no exact numbers (see claude.ai/settings/usage).
 
 | Item | Pilot | Full scale |
 | --- | --- | --- |
-| OpenRouter (engine models) | $3–5 | $15–30 |
-| Modal (pipeline CPU ~$2, Kev fine-tunes and serving) | $0, inside the $30 credit | $0, inside the credit |
-| X posting | $0 (by hand or Buffer) | $0–5 (direct API) |
-| Cloudflare, GitHub, healthchecks, OSF, Zenodo, OpenTimestamps, Meta, Bluesky | $0 | $0 |
-| **Total new spend** | **~$5** | **~$15–35** |
+| OpenRouter (engine models) | $3–5 | $20–30 |
+| Modal (Kev fine-tunes and serving; daily jobs too if the code stays private) | $0, inside the $30 credit | $0, inside the credit |
+| Publishing (Instagram, X via Buffer free, Threads, Bluesky) | $0 | $0 |
+| Cloudflare, GitHub, healthchecks, OSF, Zenodo, OpenTimestamps | $0 | $0 |
+| **Total new spend** | **~$5** | **~$20–30** |
 | Claude Max 5x | existing | existing |
 
 ## 11. Risks and fallbacks
@@ -440,11 +431,11 @@ publishes no exact numbers (see claude.ai/settings/usage).
 | Jev: alpha API, 12 days old, one host | reaction layer stalls or drifts | cache; self-hosted Kev behind the same interface; text-LLM path |
 | Upstream rate limits (GLM through InferenceNet) | slow runs | pin two hosts where the quantisation matches; run early; retries resume from the cache |
 | A model is updated or retired before the blind run | blind track can't be re-run | cache everything; open weights on Modal; pinned slugs |
-| GitHub drops a scheduled run | a missed day | Modal Cron as primary; healthchecks alert |
+| GitHub delays or skips a scheduled run | a late or missed day | healthchecks alert; re-run by hand from the Actions tab |
 | Instagram token expires (60 days) | posting stops | weekly refresh job + alert |
-| X API costs or 403 errors | automation fails | Buffer's free plan; the free scheduler by hand |
+| Buffer's free plan changes or its X link breaks | X automation stops | the free x.com scheduler by hand |
 | A scraper breaks (Wikipedia layout, bot walls) | stale inputs | VoteHub as primary poll feed; daily freshness report; manual routes for OH and TX early vote |
-| Laptop asleep | nothing runs | the pipeline lives on Modal; the laptop is for development |
+| Laptop asleep | nothing runs | the pipeline lives on GitHub Actions; the laptop is for development |
 | Spend runaway | budget blown | per-key caps, the ledger's hard cap, a daily spend line |
 | Output mistaken for a poll, or an error goes out | reputation | labels in every image, caption rules, human approval gate, public corrections |
 | Kev kernels break after an image rebuild | the fine-tune can't serve | build the image once, pin versions, keep the Jev path live |
@@ -452,11 +443,11 @@ publishes no exact numbers (see claude.ai/settings/usage).
 
 ## 12. Build order (infrastructure view)
 
-1. **27–28 Sep:** push `simlab` to a private GitHub repo; snapshotter live on Modal Cron (VoteHub, Wikipedia pages and
-   ratings, markets, GDELT and RSS headlines, FEC, BLS and EIA, pageviews, NCSBE); the download-now list; register the
-   free keys; create the Instagram, X and Bluesky accounts; back up the cache.
-2. **By 30 Sep:** full scorecard from the running bench → routing decision; first Kev fine-tune on CES vote and turnout
-   (soft targets) on Modal.
+1. **27–29 Sep:** create the GitHub repos (the public repo for workflows, archive and site, plus the private data repo);
+   snapshotter live on GitHub Actions (VoteHub, Wikipedia pages and ratings, markets, GDELT and RSS headlines, FEC, BLS
+   and EIA, pageviews, NCSBE); the download-now list; register the free keys; export the cache.
+2. **By 30 Sep:** routing from the scorecard (done: GLM + Jev); first Kev fine-tune (`ces-v1`, data ready) on Modal
+   as soon as Modal is set up. Social accounts any time before 12 Oct.
 3. **By 4 Oct:** baseline, archetypes and context layer for OH, NC and TX.
 4. **By 10 Oct:** agent layer, daily Kalman update, Monte Carlo; site skeleton on Cloudflare; chart factory and post
    kit; methods page; OSF pre-registration; public archive repo with OpenTimestamps.
@@ -466,17 +457,19 @@ publishes no exact numbers (see claude.ai/settings/usage).
 7. **20 Oct–3 Nov:** daily operations, weekly scoring, divergence calls.
 8. **After 3 Nov:** results, scoring, and the blind track on the frozen snapshots.
 
-## 13. Decisions for Matteo
+## 13. Decisions
 
-1. **Repos:** a private code repo plus a public archive repo for forecasts and timestamp proofs? (recommended)
-2. **Site address:** `midterms.scaliastudio.dev` (recommended) or a path on scaliastudio.dev?
-3. **X automation:** Buffer's free plan (recommended), the direct pay-per-use API (~$1.50–5/month), or by hand only?
-4. **Handles:** names for the Instagram, X and Bluesky accounts; creating them now gives them time to warm up.
-5. **R2:** fine to activate (it may ask for a payment method; usage stays free)? Otherwise images and JSON ship with
-   the site.
-6. **Scheduler:** Modal Cron as the primary? (recommended)
-7. **Kev:** start the first fine-tune now, in parallel with the scorecard? (recommended; about $1–6 of Modal credit)
-8. **Claude routines:** a daily scheduled check that drafts the post kit and emails it to you?
+Decided by Matteo on 27 Sep (also in CLAUDE.md section 5):
+- Site at `research.scaliastudio.dev/midterms`.
+- Publishing is free only: Instagram by hand then its official API; X by hand then Buffer's free plan; Threads and
+  Bluesky optional; accounts created later.
+- No R2 for now. One public repo holds the engine code, workflows and published forecasts (unlimited free minutes,
+  within GitHub's terms); raw data, the model-answer cache and keys stay private. Modal is for GPU work.
+- Kev fine-tune approved and launched (`ces-v1`, 27 Sep).
+- Daily Claude check at 11:30 UK (desktop scheduled task `midterm-daily-check`).
+- Turnout targets shifted per state to each state's official 2024 turnout (fixes CES voter-file matching differences).
+
+Nothing is open right now; the next decisions come with the Kev results and the first pilot forecast.
 
 ## Sources
 
@@ -491,8 +484,8 @@ publishes no exact numbers (see claude.ai/settings/usage).
   [timeouts](https://modal.com/docs/guide/timeouts)
 - Cloudflare: [Workers static assets](https://developers.cloudflare.com/workers/static-assets/);
   [Workers limits](https://developers.cloudflare.com/workers/platform/limits/);
-  [R2 pricing](https://developers.cloudflare.com/r2/pricing/);
-  [R2 public buckets](https://developers.cloudflare.com/r2/buckets/public-buckets/)
+  [R2 pricing](https://developers.cloudflare.com/r2/pricing/)
+- GitHub terms: [Actions section of the additional product terms](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features)
 - GitHub Actions: [billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions);
   [limits](https://docs.github.com/en/actions/reference/limits)
 - Instagram and Meta: [Instagram Platform](https://developers.facebook.com/docs/instagram-platform);
