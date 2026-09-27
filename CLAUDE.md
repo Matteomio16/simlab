@@ -137,6 +137,8 @@ Local snapshots (read these; Claude Code cannot open claude.ai links):
   protocol, publishing rules, dos & don'ts, ranked possibilities, review outcomes and open tasks.
 - `docs/plan.md` — the research map: Hungary scorecard, landscape, engine design, pilot choice, free data stack.
 - Hungary paper: `../The Simulation of Democracy - Final15.pdf`.
+- `docs/infrastructure.md` — infrastructure blueprint (27 Sep): model roster and routing, engine modules, where each
+  job runs, data feeds, Instagram/X publishing, Claude Max 5x role, budget, risks, open decisions.
 
 The live docs are edited in Claude Cowork (plan: https://claude.ai/code/artifact/673aa293-22c4-4d3a-806e-6a50c69f82cc,
 Field Guide: https://claude.ai/code/artifact/c640add2-61d5-4d74-8fa2-c39365d09819). The snapshots don't update

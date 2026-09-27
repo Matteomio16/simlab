@@ -2,6 +2,15 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-27: infrastructure blueprint (research only, no decisions)
+
+- New `docs/infrastructure.md`: model roster and routing, engine modules, where each job runs, data feeds, Instagram and
+  X publishing, the Claude Max 5x role, budget, risks, build order, and 8 open decisions for Matteo.
+- Findings that change earlier assumptions: X ended its free API tier on 6 Feb 2026 (API posting is pay-per-use; Buffer's
+  free plan is the free automated route); OpenRouter's Decisions API is alpha and has no batch mode; a fine-tuned Kev
+  needs short inputs (state under ~384 tokens); VoteHub's free API has race-level Senate and House polls (CC BY 4.0);
+  the Census API now needs a key; Kalshi's API host moved to `api.elections.kalshi.com`.
+
 ## 2026-09-27: test bench made runnable
 
 **Setup**
@@ -57,3 +66,18 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   stored as `baseline` in `simlab/cells.json` and scored as the pseudo-model `regression`. Weighted TVD: vote
   national 0.042, OH 0.047, NC 0.093, TX 0.138; turnout national 0.028, OH 0.072, NC 0.059, TX 0.036. This is the
   bar a model must beat on levels.
+
+**First scorecard** (`docs/scorecard.md`, regenerate with `python -m simlab.scorecard`; GLM and Kev null/mirror
+were re-running when this was written, the rest is final)
+- Null: Jev 0.99 / 1.00 "no change"; MiMo, DeepSeek, Luna 0.94–0.96; untuned Kev fails (0.77).
+- Mirror: Luna has no lean (−1% of its reaction size); Jev −9% but mirrors most consistently (flip correlation 0.69);
+  DeepSeek −16%; MiMo +27% and barely mirrors (0.07). Averaging both scale directions removes most of the text
+  models' apparent lean (DeepSeek −65% → −16%, MiMo +70% → +27%); for Jev it changes little.
+- Events (19): GLM ranks best (0.81, 90% interval 0.64–0.90; 13/13 directions; 2.3 pts error vs 3.6 for "no
+  change"), then Luna 0.74, MiMo 0.70, DeepSeek 0.63, Jev 0.61, Kev 0.31. Intervals overlap except Kev's; most
+  events predate the models' cutoffs (possible leakage). No model gets party-level shifts right.
+- Fidelity: the regression beats every model nationally; text models beat it in Texas (and GLM in NC). Jev and Kev
+  give label confidence, not shares (vote TVD 0.24–0.33); turnout bias: Jev −14, Kev −11, GLM +10, Luna +10,
+  MiMo 0, DeepSeek −1 points.
+- Cost per 1,000 decisions (both directions): Kev $0.016, GLM $0.030, Jev $0.040, MiMo $0.076, Luna $0.095,
+  DeepSeek $0.111 (DeepInfra).
