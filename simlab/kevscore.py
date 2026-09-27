@@ -6,6 +6,7 @@ Baselines: the same cell pooled over the training states (no model at all) and, 
 regression baseline of the fidelity test. Kev's own report scores hard labels, which is not what the engine needs.
 
     python -m simlab.kevscore ces-v2 [--temperature 1.0]
+    python -m simlab.kevscore ces-v1 ces-v2 ces-v3a ces-v3b     # paired comparison on the cells all runs answer
 """
 from __future__ import annotations
 
@@ -15,6 +16,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 from scipy.special import softmax
 
 from .ces import DATA
@@ -28,8 +30,11 @@ def jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
+V1 = {"vote0": "pres24", "vote1": "pres24", "vote2": "pres24", "turnout": "turnout24"}   # ces-v1 question ids
+
+
 def qtype(qid: str) -> str:
-    return qid.rsplit("_", 1)[0] if qid[-2:-1] == "_" else qid
+    return V1.get(qid) or (qid.rsplit("_", 1)[0] if qid[-2:-1] == "_" else qid)
 
 
 def kind(persona: str) -> str:
@@ -41,10 +46,13 @@ def tvd(p: dict, t: dict) -> float:
     return 0.5 * sum(abs(p.get(k, 0.0) - t.get(k, 0.0)) for k in p.keys() | t.keys())
 
 
-def score(run: str, data: str | None = None, temperature: float = 1.0) -> dict:
+def cell_errors(run: str, data: str | None = None, temperature: float = 1.0) -> pd.DataFrame:
+    """One row per held-out (cell, question type): respondents behind the target and the TVD of Kev, the pooled
+    same-cell baseline and the regression baseline. ces-v1 has no sizes.json; its cells are ces-v2's."""
     folder = DATA / "kev" / (data or run)
     dev, rest = jsonl(folder / "development.jsonl"), jsonl(folder / "train.jsonl") + jsonl(folder / "calibration.jsonl")
-    sizes = json.loads((folder / "sizes.json").read_text())
+    sizes = json.loads(next(f for f in (folder / "sizes.json", DATA / "kev" / "ces-v2" / "sizes.json")
+                            if f.exists()).read_text())
     fidelity = json.loads((HERE / "cells.json").read_text())
     regression = {(c["persona"], "pres24" if t == "vote24" else "turnout24"): c["baseline"]
                   for t in ("vote24", "turnout") for s in HELD_OUT for c in fidelity[t][s]}
@@ -57,50 +65,75 @@ def score(run: str, data: str | None = None, temperature: float = 1.0) -> dict:
     pooled = defaultdict(lambda: [defaultdict(float), 0.0])   # cell without its state line -> summed shares, weight
     for r in rest:
         cell = r["state"].split("\n", 1)[1]
-        for qid, q in r["questions"].items():
-            if qid.endswith("_1") or qid.endswith("_2"):
-                continue
-            w = sizes[r["state"]][qtype(qid)]
-            acc = pooled[(cell, qtype(qid))]
+        for qt, q in {qtype(qid): q for qid, q in r["questions"].items()}.items():
+            w = sizes[r["state"]][qt]
+            acc = pooled[(cell, qt)]
             for k, v in q["target"].items():
                 acc[0][k] += w * v
             acc[1] += w
 
-    out = defaultdict(lambda: defaultdict(list))
+    rows = []
     for (i, qt), dists in pred.items():
         rec = dev[i]
         state, cell = rec["state"].split("\n", 1)
-        state = state.removeprefix("State: ")
         target = next(q["target"] for qid, q in rec["questions"].items() if qtype(qid) == qt)
         p = {k: float(np.mean([d[k] for d in dists])) for k in dists[0]}
-        w = sizes[rec["state"]][qt]
-        row = out[(qt, kind(rec["state"]))][state]
-        base = pooled.get((cell, qt))
-        pooled_p = {k: v / base[1] for k, v in base[0].items()} if base else None
-        reg = regression.get((rec["state"], qt))
-        row.append((w, tvd(p, target), tvd(pooled_p, target) if pooled_p else np.nan, tvd(reg, target) if reg else np.nan))
+        base, reg = pooled.get((cell, qt)), regression.get((rec["state"], qt))
+        rows.append({"question": qt, "records": kind(rec["state"]), "state": state.removeprefix("State: "),
+                     "persona": rec["state"], "target": json.dumps(target, sort_keys=True),
+                     "weight": sizes[rec["state"]][qt], "kev": tvd(p, target),
+                     "pooled": tvd({k: v / base[1] for k, v in base[0].items()}, target) if base else np.nan,
+                     "regression": tvd(reg, target) if reg else np.nan})
+    return pd.DataFrame(rows)
 
+
+def wmean(d: pd.DataFrame, col: str) -> float:
+    ok = d[col].notna()
+    return float(np.average(d[col][ok], weights=d.weight[ok])) if ok.any() else float("nan")
+
+
+def score(run: str, data: str | None = None, temperature: float = 1.0) -> dict:
     report = {}
     print(f"{run} at temperature {temperature}: weighted TVD vs real shares on held-out states (lower is better)")
     print(f"{'question':10} {'records':18} {'state':15} {'cells':>5} {'kev':>6} {'pooled':>7} {'regression':>10}")
-    for (qt, kd), states in sorted(out.items()):
-        for state in HELD_OUT:
-            rows = np.array(states.get(state, []), dtype=float)
-            if not len(rows):
-                continue
-            avg = lambda col: float(np.average(rows[~np.isnan(rows[:, col]), col], weights=rows[~np.isnan(rows[:, col]), 0])) \
-                if (~np.isnan(rows[:, col])).any() else float("nan")
-            kev, pool, reg = avg(1), avg(2), avg(3)
-            report[f"{qt}|{kd}|{state}"] = {"cells": len(rows), "kev": kev, "pooled": pool, "regression": reg}
-            print(f"{qt:10} {kd:18} {state:15} {len(rows):5d} {kev:6.3f} {pool:7.3f} {reg:10.3f}")
+    for (qt, kd, state), d in cell_errors(run, data, temperature).groupby(["question", "records", "state"]):
+        kev, pool, reg = wmean(d, "kev"), wmean(d, "pooled"), wmean(d, "regression")
+        report[f"{qt}|{kd}|{state}"] = {"cells": len(d), "kev": kev, "pooled": pool, "regression": reg}
+        print(f"{qt:10} {kd:18} {state:15} {len(d):5d} {kev:6.3f} {pool:7.3f} {reg:10.3f}")
     (RUNS / run / f"share_scores_T{temperature:g}.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
     return report
 
 
+def compare(runs: list[str], temperature: float = 1.0, draws: int = 2000, seed: int = 0) -> None:
+    """Runs on the held-out cells they all answer with the same target, OH/NC/TX pooled: weighted TVD per run, and
+    each run minus the first with a 95% interval from resampling cells (dev-set noise only; a second training seed
+    would add run noise)."""
+    frames = {r: cell_errors(r).set_index(["question", "records", "persona"]) for r in runs}
+    common = frames[runs[0]].index
+    for f in frames.values():
+        common = common.intersection(f.index)
+    common = common[[len({frames[r].loc[i, "target"] for r in runs}) == 1 for i in common]]   # same target in every run
+    rng = np.random.default_rng(seed)
+    print(f"weighted TVD on shared held-out cells at temperature {temperature}; delta = run - {runs[0]} [95% interval]")
+    for (qt, kd), idx in pd.DataFrame(index=common).groupby(level=[0, 1]):
+        first = frames[runs[0]].loc[idx.index]
+        w = first.weight.to_numpy()
+        boot = rng.choice(len(w), (draws, len(w)))
+        line = [f"{qt} {kd} ({len(w)} cells): pooled {wmean(first, 'pooled'):.3f}"]
+        for r in runs:
+            e = frames[r].loc[idx.index, "kev"].to_numpy()
+            line.append(f"{r} {np.average(e, weights=w):.3f}")
+            if r != runs[0]:
+                diff = e - first.kev.to_numpy()
+                lo, hi = np.percentile([np.average(diff[b], weights=w[b]) for b in boot], [2.5, 97.5])
+                line[-1] += f" ({np.average(diff, weights=w):+.3f} [{lo:+.3f}, {hi:+.3f}])"
+        print("; ".join(line))
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("run")
+    ap.add_argument("runs", nargs="+", help="one run to score, or several to compare (the first is the reference)")
     ap.add_argument("--data", default=None, help="training data folder under data/kev (default: the run name)")
     ap.add_argument("--temperature", type=float, default=1.0)
     a = ap.parse_args()
-    score(a.run, a.data, a.temperature)
+    score(a.runs[0], a.data, a.temperature) if len(a.runs) == 1 else compare(a.runs, a.temperature)
