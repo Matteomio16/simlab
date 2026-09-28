@@ -267,18 +267,33 @@ def select(events: list[dict], per_race: int = 5, national: int = 3) -> None:
 
 CARD_SYSTEM = (
     "You write short, neutral summaries of news events for a research simulation of voters. Use only the headlines "
-    "given. In 1 to 3 plain sentences, say what happened and who was involved. Do not name any news outlet or website. "
-    "Do not use the words poll, polls, polling, pollster, survey or surveys. No opinions and no predictions. "
-    "If the headlines do not describe a specific news event (for example a news round-up, a TV listing, a schedule, "
-    'or nothing beyond the race itself), reply {"card": "", "event": false}. '
-    'Otherwise reply with JSON only: {"card": "...", "event": true}')
+    "given. In 1 to 3 plain sentences, say what happened and who was involved: actions, statements, decisions. Never "
+    "say or imply who the news helps or hurts, or its effect on voters, parties, candidates' chances or the election; "
+    "readers judge that themselves. Do not name any news outlet or website. Do not use the words poll, polls, polling, "
+    "pollster, survey or surveys. No opinions and no predictions. "
+    "If the headlines do not report a specific news event (for example a news round-up, a TV listing, a schedule, "
+    "nothing beyond the race itself, or analysis and commentary about who is winning, losing, helped or hurt), reply "
+    '{"card": "", "event": false}. Otherwise reply with JSON only: {"card": "...", "event": true}')
 FORBIDDEN = re.compile(r"\b(poll|polls|polling|pollsters?|surveys?)\b", re.I)
+# A sentence that pairs an effect word with a party or election word asserts an electoral effect (28 Sep: a card said
+# Republicans "are facing negative effects in the 2026 midterm elections").
+EFFECT = re.compile(r"\b(help(s|ed|ing)?|hurt(s|ing)?|boost(s|ed|ing)?|drag(s|ged|ging)?|benefit(s|ed|ing)?|"
+                    r"damag(e|es|ed|ing)|harm(s|ed|ing)?|effects?|impact(s|ed|ing)?|advantages?|disadvantages?|"
+                    r"backfir(e|es|ed|ing)|at risk|in trouble)\b", re.I)
+ELECTORAL = re.compile(r"\b(republicans?|democrats?|gop|part(y|ies)|midterms?|elections?|chances|voters?|races?|"
+                       r"electoral|campaigns?)\b", re.I)
 
 
 def card_ok(card: str, outlet_names: list[str]) -> bool:
     low = card.lower()
-    return (0 < len(card) <= 450 and not FORBIDDEN.search(card)
+    claims_effect = any(EFFECT.search(s) and ELECTORAL.search(s) for s in re.split(r"(?<=[.!?])\s+", card))
+    return (0 < len(card) <= 450 and not FORBIDDEN.search(card) and not claims_effect
             and not any(n.lower() in low for n in outlet_names if len(n) >= 3))
+
+
+def valid_card(card: str, outlet_names: list[str]) -> str:
+    """An earlier day's card, kept only if it passes today's rules (else it is written again)."""
+    return card if card and card_ok(card, outlet_names) else ""
 
 
 def write_card(story: dict, chats: list) -> str:
@@ -440,7 +455,7 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
                        "scope": "national" if national else "race",
                        "races": PILOT + ["US"] if national else [s["race_id"]], **labels,
                        "attention": attention(s, spike_ratio(views, s["race_id"])),
-                       "card": (k or {}).get("card", "")})
+                       "card": valid_card((k or {}).get("card", ""), s["outlet_names"])})
         private.append({"schema": SCHEMA, "date": f"{day}", "event_id": s["event_id"], "race_id": s["race_id"],
                         "titles": s["titles"], "outlet_names": s["outlet_names"], "outlets": s["outlets"],
                         "urls": s["urls"], "days_seen": s["days_seen"]})
@@ -459,7 +474,7 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         days = sorted(set(k["days_seen"]) | set(p["days_seen"]))
         e.update({f: k[f] for f in LABEL_FIELDS})
         e["event_id"], e["first_seen"] = k["event_id"], min(k["first_seen"], e["first_seen"])
-        e["card"] = k.get("card") or e["card"]
+        e["card"] = valid_card(k.get("card", ""), s["outlet_names"]) or e["card"]
         s["event_id"], s["days_seen"] = k["event_id"], days
         p["event_id"], p["days_seen"] = k["event_id"], days
         e["attention"] = attention(s, spike_ratio(views, s["race_id"]))

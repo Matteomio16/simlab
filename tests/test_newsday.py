@@ -207,6 +207,17 @@ class Cards(unittest.TestCase):
     def test_no_valid_card_gives_empty(self):
         self.assertEqual(newsday.write_card(self.story, [FakeChat(["not json", "{}"])]), "")
 
+    def test_cards_that_claim_an_electoral_effect_are_rejected(self):
+        bad = ["Republicans are facing negative effects in the 2026 midterm elections due to a conflict between "
+               "President Trump and Iran.",
+               "The ad could help Democrats in the Senate race.",
+               "Trump's visit is expected to boost Husted's chances."]
+        good = ["Trump will travel to Ohio to campaign for Republican Senator Jon Husted.",
+                "Cooper promised to lower costs for families.",
+                "Former Senator Joe Manchin said voters cannot support Ken Paxton if character matters."]
+        self.assertEqual([newsday.card_ok(c, []) for c in bad], [False, False, False])
+        self.assertEqual([newsday.card_ok(c, []) for c in good], [True, True, True])
+
     def test_headlines_that_are_not_an_event_get_no_card(self):
         chat = FakeChat(['{"card": "", "event": false}', '{"card": "%s", "event": true}' % GOOD])
         self.assertEqual(newsday.write_card(self.story, [chat]), "")
@@ -321,6 +332,21 @@ class Run(unittest.TestCase):
         self.assertEqual(private[0]["event_id"], first["event_id"])
         self.assertEqual(private[0]["days_seen"], ["2026-09-28", "2026-09-29"])
         self.assertEqual(summary["continued"], 1)
+
+    def test_an_old_card_that_breaks_todays_rules_is_rewritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
+            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO.replace("20260928", "20260929")})
+            newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [FakeChat(['{"card": "%s"}' % GOOD] * 5)])
+            p = derived / "2026-09-28" / "events.jsonl"
+            bad = "Republicans are facing negative effects in the midterm elections."
+            rows = [{**e, "card": bad} for e in newsday._jsonl(p)]
+            p.write_text("\n".join(json.dumps(r) for r in rows) + "\n", encoding="utf-8")
+            newsday.run(date(2026, 9, 29), snap, derived, "d2", FakeAsker(), [FakeChat(['{"card": "%s"}' % GOOD] * 5)])
+            day2 = newsday._jsonl(derived / "2026-09-29" / "events.jsonl")
+        self.assertTrue(all(e["card"] != bad for e in day2))
+        self.assertTrue(all(e["card"] == GOOD for e in day2 if e["selected"]))
 
     def test_second_day_reuses_labels_and_id(self):
         with tempfile.TemporaryDirectory() as tmp:
