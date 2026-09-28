@@ -48,6 +48,13 @@ class ReadDay(unittest.TestCase):
     def test_bad_gdelt_json_is_skipped(self):
         self.assertEqual(newsday.parse_gdelt(b'{"articles": [ {bad', "TX"), [])
 
+    def test_headlines_under_four_words_are_dropped(self):
+        stub = RSS.replace("Brown and Husted clash over tariffs - Cleveland.com", "GOP-ABC News - ABC News")
+        with tempfile.TemporaryDirectory() as tmp:
+            snapshot(Path(tmp), "2026-09-28", "0036", {"googlenews-ohio": stub.encode()})
+            arts = newsday.read_day(Path(tmp), date(2026, 9, 28))
+        self.assertEqual([a["title"] for a in arts], ["Crypto PAC to spend $30M against Sherrod Brown"])
+
 
 def art(race, title, seen, domain="a.com", outlet="A"):
     return {"race_id": race, "title": title, "url": f"https://{domain}/{title[:24]}", "outlet": outlet,
@@ -184,6 +191,50 @@ class Cards(unittest.TestCase):
 
     def test_no_valid_card_gives_empty(self):
         self.assertEqual(newsday.write_card(self.story, [FakeChat(["not json", "{}"])]), "")
+
+    def test_headlines_that_are_not_an_event_get_no_card(self):
+        chat = FakeChat(['{"card": "", "event": false}', '{"card": "%s", "event": true}' % GOOD])
+        self.assertEqual(newsday.write_card(self.story, [chat]), "")
+        self.assertEqual(chat.calls, 1)
+
+
+class Scopes(unittest.TestCase):
+    def test_national_copy_of_a_race_story_does_not_count_twice_for_that_race(self):
+        race = {"event_id": "OH-S-1", "scope": "race", "races": ["OH-S"], "gate": {"OH-S": 0.9}}
+        nat = {"event_id": "US-1", "scope": "national", "races": ["OH-S", "NC", "TX", "US"],
+               "gate": {"OH-S": 0.9, "NC": 0.8, "TX": 0.2, "US": 0.9}}
+        stories = {"OH-S-1": {"race_id": "OH-S", "titles": ["Trump to travel to Ohio to stump for Sen. Jon Husted"]},
+                   "US-1": {"race_id": "US", "titles": ["Trump to travel to Ohio to stump for Jon Husted"]}}
+        newsday.dedupe_scopes([race, nat], stories)
+        self.assertEqual(nat["gate"], {"OH-S": 0.0, "NC": 0.8, "TX": 0.2, "US": 0.9})
+        self.assertEqual(nat["covered_by"], {"OH-S": "OH-S-1"})
+        self.assertEqual(race["gate"], {"OH-S": 0.9})
+
+    def test_same_event_in_other_words_counts_once(self):
+        def ev(eid, a):
+            return {"event_id": eid, "scope": "race", "races": ["OH-S"], "gate": {"OH-S": 0.9}, "type": "other",
+                    "salience": 1.0, "attention": {"a": a}, "first_seen": "2026-09-28T07:00:00+00:00"}
+        evs = [ev("OH-S-1", 0.8), ev("OH-S-2", 0.2), ev("OH-S-3", 0.5)]
+        stories = {"OH-S-1": {"titles": ["Trump to travel to Ohio to stump for Sen. Jon Husted"], "outlet_names": []},
+                   "OH-S-2": {"titles": ["President Donald Trump to visit Ohio as campaign season heats up"],
+                              "outlet_names": []},
+                   "OH-S-3": {"titles": ["Brown visits Mahoning Valley"], "outlet_names": []}}
+        # pairs are checked in attention order against stories already kept: OH-S-3 vs OH-S-1, then OH-S-2 vs OH-S-1
+        chat = FakeChat(['{"same": false}', '{"same": true}'])
+        newsday.merge_same_events(evs, stories, [chat])
+        self.assertEqual(evs[1]["gate"]["OH-S"], 0.0)
+        self.assertEqual(evs[1]["same_as"], {"OH-S": "OH-S-1"})
+        self.assertEqual(evs[0]["gate"]["OH-S"], 0.9)
+        self.assertEqual(evs[2]["gate"]["OH-S"], 0.9)
+        self.assertEqual(chat.calls, 2)
+
+    def test_stories_without_a_usable_card_are_never_selected(self):
+        evs = [{"event_id": "OH-S-1", "scope": "race", "gate": {"OH-S": 0.9}, "type": "other", "salience": 1.0,
+                "attention": {"a": 0.9}, "usable": False},
+               {"event_id": "OH-S-2", "scope": "race", "gate": {"OH-S": 0.9}, "type": "other", "salience": 1.0,
+                "attention": {"a": 0.1}}]
+        newsday.select(evs)
+        self.assertEqual([e["selected"] for e in evs], [{}, {"OH-S": True}])
 
 
 REQUIRED = ["schema", "date", "run_id", "event_id", "first_seen", "last_seen", "scope", "races", "gate", "type",

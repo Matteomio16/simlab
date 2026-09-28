@@ -75,7 +75,7 @@ def read_day(snap_root: Path, day: date) -> list[dict]:
             for a in PARSERS[kind](gzip.decompress((manifest.parent / f["file"]).read_bytes()), SNAP_RACES[slug]):
                 a["title"] = _clean(a["title"])
                 key = (a["race_id"], a["url"] or f"{a['title'].lower()}|{a['domain']}")
-                if a["title"] and (key not in best or a["seen"] < best[key]["seen"]):
+                if len(a["title"].split()) >= 4 and (key not in best or a["seen"] < best[key]["seen"]):
                     best[key] = a
     return sorted(best.values(), key=lambda a: (a["race_id"], a["seen"]))
 
@@ -257,9 +257,7 @@ def select(events: list[dict], per_race: int = 5, national: int = 3) -> None:
         e["selected"] = {}
     for r in PILOT + ["US"]:
         for scope, cap in (("race", per_race), ("national", national)):
-            pool = [e for e in events if e["scope"] == scope and e["gate"].get(r, 0.0) >= 0.5 and e["type"] != "poll"]
-            pool.sort(key=lambda e: (-e["attention"]["a"], -e["salience"], e["event_id"]))
-            for e in pool[:cap]:
+            for e in [e for e in candidates(events, r, top=len(events)) if e["scope"] == scope][:cap]:
                 e["selected"][r] = True
 
 
@@ -267,7 +265,9 @@ CARD_SYSTEM = (
     "You write short, neutral summaries of news events for a research simulation of voters. Use only the headlines "
     "given. In 1 to 3 plain sentences, say what happened and who was involved. Do not name any news outlet or website. "
     "Do not use the words poll, polls, polling, pollster, survey or surveys. No opinions and no predictions. "
-    'Reply with JSON only: {"card": "..."}')
+    "If the headlines do not describe a specific news event (for example a news round-up, a TV listing, a schedule, "
+    'or nothing beyond the race itself), reply {"card": "", "event": false}. '
+    'Otherwise reply with JSON only: {"card": "...", "event": true}')
 FORBIDDEN = re.compile(r"\b(poll|polls|polling|pollsters?|surveys?)\b", re.I)
 
 
@@ -278,19 +278,88 @@ def card_ok(card: str, outlet_names: list[str]) -> bool:
 
 
 def write_card(story: dict, chats: list) -> str:
-    """1-3 neutral sentences from the first model that follows the rules (two tries each); '' if none does."""
+    """1-3 neutral sentences from the first model that follows the rules (two tries each); '' if none does, or at once
+    if the model says the headlines aren't a specific event (round-ups, listings)."""
     user = story_text(story, story["race_id"])
     for chat in chats:
         for note in ("", "\nYour previous answer broke a rule. Follow every rule exactly."):
             try:
                 text = chat.complete([{"role": "system", "content": CARD_SYSTEM},
                                       {"role": "user", "content": user + note}], tag="newsday:card", max_tokens=200)
-                card = str(json.loads(text[text.index("{"): text.rindex("}") + 1]).get("card", "")).strip()
-            except (ValueError, RuntimeError):
+                reply = json.loads(text[text.index("{"): text.rindex("}") + 1])
+                if reply.get("event") is False:
+                    return ""
+                card = str(reply.get("card", "")).strip()
+            except (ValueError, RuntimeError, AttributeError):
                 card = ""
             if card_ok(card, story["outlet_names"]):
                 return card
     return ""
+
+
+POOL = 10
+SAME_SYSTEM = (
+    "You check whether two news headlines report the same specific event: the same action by the same people at about "
+    "the same time, such as two reports of one rally, one ad or one lawsuit. Headlines about the same topic or the same "
+    'candidate but about different events are different. Reply with JSON only: {"same": true} or {"same": false}.')
+
+
+def candidates(events: list[dict], race_id: str, top: int = POOL) -> list[dict]:
+    """The race's best candidates for reactions: usable, past the gate (p >= 0.5), not about polls (polls enter
+    through the filter), ranked by attention, then salience."""
+    return sorted((e for e in events if e.get("usable", True) and e["gate"].get(race_id, 0.0) >= 0.5
+                   and e["type"] != "poll"), key=lambda e: (-e["attention"]["a"], -e["salience"], e["event_id"]))[:top]
+
+
+def same_event(a: tuple[str, str], b: tuple[str, str], chats: list) -> bool:
+    """(headline, date) pairs; False unless a model says they are the same specific event."""
+    user = f"A ({a[1][:10]}): {a[0]}\nB ({b[1][:10]}): {b[0]}"
+    for chat in chats:
+        try:
+            text = chat.complete([{"role": "system", "content": SAME_SYSTEM}, {"role": "user", "content": user}],
+                                 tag="newsday:same", max_tokens=20)
+            return json.loads(text[text.index("{"): text.rindex("}") + 1]).get("same") is True
+        except (ValueError, RuntimeError, AttributeError):
+            continue
+    return False
+
+
+def merge_same_events(events: list[dict], stories: dict, chats: list, top: int = POOL) -> None:
+    """Per race, each top candidate is checked against the better-covered candidates already kept; a story that
+    reports the same event in other words loses its gate for that race and `same_as` names the kept story."""
+    def head(e):
+        s = stories[e["event_id"]]
+        return strip_outlets(s["titles"][0], s["outlet_names"]), e["first_seen"]
+    for r in PILOT + ["US"]:
+        kept: list = []
+        for e in candidates(events, r, top):
+            dup = next((k for k in kept if same_event(head(k), head(e), chats)), None)
+            if dup:
+                e["gate"][r] = 0.0
+                e.setdefault("same_as", {})[r] = dup["event_id"]
+            else:
+                kept.append(e)
+
+
+def dedupe_scopes(events: list[dict], stories: dict, sim: float = 0.55) -> None:
+    """A national story that repeats a race's own story (similar headlines) doesn't count again for that race: its gate
+    there drops to 0 and `covered_by` names the race story."""
+    for nat in (e for e in events if e["scope"] == "national"):
+        for r in PILOT:
+            local = [e for e in events if e["scope"] == "race" and e["races"] == [r]]
+            if not local:
+                continue
+            docs = [" ".join(stories[nat["event_id"]]["titles"])] + [" ".join(stories[e["event_id"]]["titles"])
+                                                                   for e in local]
+            try:
+                X = TfidfVectorizer(stop_words="english", ngram_range=(1, 2)).fit_transform(docs)
+            except ValueError:
+                continue
+            sims = (X[0] @ X[1:].T).toarray()[0]
+            j = int(np.argmax(sims))
+            if sims[j] >= sim:
+                nat["gate"][r] = 0.0
+                nat.setdefault("covered_by", {})[r] = local[j]["event_id"]
 
 
 def _jsonl(path: Path) -> list[dict]:
@@ -335,14 +404,18 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         private.append({"schema": SCHEMA, "date": f"{day}", "event_id": s["event_id"], "race_id": s["race_id"],
                         "titles": s["titles"], "outlet_names": s["outlet_names"], "outlets": s["outlets"],
                         "urls": s["urls"], "days_seen": s["days_seen"]})
-    select(events)
     by_id = {s["event_id"]: s for s in stories}
-    todo = [e for e in events if e["selected"] and not e["card"]]
+    dedupe_scopes(events, by_id)
+    pool = {e["event_id"]: e for r in PILOT + ["US"] for scope in ("race", "national")
+            for e in [c for c in candidates(events, r, top=len(events)) if c["scope"] == scope][:POOL]}
+    todo = [e for e in pool.values() if not e["card"]]
     with ThreadPoolExecutor(8) as ex:
         for e, card in zip(todo, ex.map(lambda e: write_card(by_id[e["event_id"]], chats), todo)):
             e["card"] = card
-            if not card:
-                e["selected"] = {}
+    for e in events:
+        e["usable"] = bool(e["card"])  # only stories with a card can be selected (the pool is the top 10 per race)
+    merge_same_events(events, by_id, chats)
+    select(events)
     written, failed = sum(bool(e["card"]) for e in todo), sum(not e["card"] for e in todo)
     out = derived_root / f"{day:%Y-%m-%d}"
     out.mkdir(parents=True, exist_ok=True)
