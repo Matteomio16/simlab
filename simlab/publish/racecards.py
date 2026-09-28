@@ -14,7 +14,7 @@ from .frame import MARGIN, Slide, Theme, pt, typeset
 from .themes import LAB, RISO
 
 DAY = date(2026, 10, 12)
-RACE = {"state": "Ohio", "office": "Senate", "p": 0.58, "lo": -4.7, "mid": 0.9, "hi": 6.5, "poll": "D+1.5",
+RACE = {"state": "Ohio", "usps": "OH", "code": "OH-SEN", "run": "a3f9c1e", "office": "Senate", "p": 0.58, "lo": -4.7, "mid": 0.9, "hi": 6.5, "poll": "D+1.5",
         "market": 0.55, "cook": "Toss-up", "change": "No meaningful change this week"}
 
 
@@ -36,6 +36,13 @@ def draws(r: dict, n: int = 100) -> np.ndarray:
     return norm.ppf((np.arange(n) + 0.5) / n, r["mid"], sd)
 
 
+def tag(s: Slide, r: dict, box: float = 210) -> float:
+    """The state of simulated voters at the top right; returns the width left for the headline."""
+    from . import charts
+    charts.state_voters(s, r["usps"], r["code"], r["p"], s.w - MARGIN - box, s.y + 6, box)
+    return s.width - box - 40
+
+
 def benchmarks(s: Slide, r: dict, px: int = 60):
     from . import charts
     charts.stats(s, [(f"{r['market']:.0%}", "market, Dem"), (r["poll"], "poll average"), (r["cook"], "Cook")],
@@ -52,9 +59,10 @@ def stamp(s: Slide, x: float, y: float, text: str, px: int = 96, rot: float = 8)
 
 def split(t: Theme, r: dict = RACE) -> Slide:
     """The Split: one full-width bar cut where the simulations split, the toss-up zone marked above it."""
-    s = Slide(DAY, "RACE CARD · EXAMPLE", t)
-    s.headline(f"{r['state']} {r['office']}", px=104)
-    s.dek(f"{verdict(r['p'])}. {r['change']}.", px=36)
+    s = Slide(DAY, "RACE CARD · EXAMPLE", t, run=r["run"])
+    hw = tag(s, r)
+    s.headline(f"{r['state']} {r['office']}", px=104, width=hw)
+    s.dek(f"{verdict(r['p'])}. {r['change']}.", px=36, width=hw)
     s.hero(MARGIN, s.y, f"{round(r['p'] * 10)} in 10", 180)
     s.y += 180 * 1.02
     s.text("simulations won by the Democrat", px=36, color=t.ink2, after=1.2)
@@ -79,9 +87,10 @@ def split(t: Theme, r: dict = RACE) -> Slide:
 
 def ladder(t: Theme, r: dict = RACE) -> Slide:
     """Where everyone stands: one 0–100% scale with our number, the market and Cook placed on it."""
-    s = Slide(DAY, "RACE CARD · EXAMPLE", t)
-    s.headline(f"{r['state']} {r['office']}", px=104)
-    s.dek("Where everyone puts it: the Democrat's chance of winning.", px=36)
+    s = Slide(DAY, "RACE CARD · EXAMPLE", t, run=r["run"])
+    hw = tag(s, r)
+    s.headline(f"{r['state']} {r['office']}", px=104, width=hw)
+    s.dek("Where everyone puts it: the Democrat's chance of winning.", px=36, width=hw)
     x0, w = MARGIN + 44, s.width - 88
     X = lambda p: x0 + w * p
     y = s.y + 330
@@ -112,8 +121,9 @@ def ladder(t: Theme, r: dict = RACE) -> Slide:
 
 def futures(t: Theme, r: dict = RACE) -> Slide:
     """100 futures: a dot histogram of simulated margins, one dot per simulation, coloured by the winner."""
-    s = Slide(DAY, "RACE CARD · EXAMPLE", t)
-    s.headline(f"{r['state']} {r['office']}", px=88)
+    s = Slide(DAY, "RACE CARD · EXAMPLE", t, run=r["run"])
+    hw = tag(s, r)
+    s.headline(f"{r['state']} {r['office']}", px=88, width=hw)
     d = draws(r)
     n_dem = int((d > 0).sum())
     s.hero(MARGIN, s.y, f"{n_dem} of 100", 124)
@@ -144,15 +154,20 @@ def futures(t: Theme, r: dict = RACE) -> Slide:
 
 def stamped(t: Theme, r: dict = RACE) -> Slide:
     """The Stamp: the state as a masthead, the verdict stamped across it, a ledger of every number."""
-    r = r | {"state": "North Carolina"}
-    s = Slide(DAY, "RACE CARD · EXAMPLE", t)
+    r = r | {"state": "North Carolina", "usps": "NC", "code": "NC-SEN"}
+    s = Slide(DAY, "RACE CARD · EXAMPLE", t, run=r["run"])
     s._put(MARGIN, s.y, "SENATE", "mono", 600, 30, t.ink2, va="top")
     s.y += 50
     s.text(r["state"], "serif", t.head_weight, 136, t.ink, leading=0.98, after=0.2)
-    stamp(s, s.w - MARGIN - 200, s.y + 40, verdict(r["p"]), px=76, rot=-6)
-    s.y += 120
-    rows = [("Simulations won", f"D {r['p'] * 100:.0f}  ·  R {(1 - r['p']) * 100:.0f}"),
-            ("Middle 80% of margins", f"{margin_txt(r['lo'])} to {margin_txt(r['hi'])}"),
+    from . import charts
+    top = s.y
+    charts.state_voters(s, r["usps"], r["code"], r["p"], MARGIN, top, 500, n=520, box_h=260)
+    s._put(MARGIN + 580, top + 40, f"{r['p'] * 100:.0f}", "hero", t.hero_weight, 150, t.ink, va="top")
+    s._put(MARGIN + 580, top + 200, "of 100 simulations", "sans", 400, 30, t.ink2, va="top")
+    s._put(MARGIN + 580, top + 240, "won by the Democrat", "sans", 400, 30, t.ink2, va="top")
+    stamp(s, MARGIN + 420, top + 210, verdict(r["p"]), px=56, rot=-8)
+    s.y = max(top + 330, s.tag_bottom)
+    rows = [("Middle 80% of margins", f"{margin_txt(r['lo'])} to {margin_txt(r['hi'])}"),
             ("Poll average", r["poll"]), ("Market (Dem)", f"{r['market']:.0%}"), ("Cook", r["cook"]),
             ("This week", "No meaningful change")]
     for label, value in rows:
@@ -167,20 +182,21 @@ def stamped(t: Theme, r: dict = RACE) -> Slide:
 
 def tape(t: Theme, r: dict = RACE) -> Slide:
     """Tale of the tape: Democrat and Republican side by side, the same rows for both, the verdict in the middle."""
-    s = Slide(DAY, "RACE CARD · EXAMPLE", t)
-    s.headline(f"{r['state']} {r['office']}", px=104)
+    s = Slide(DAY, "RACE CARD · EXAMPLE", t, run=r["run"])
+    hw = tag(s, r)
+    s.headline(f"{r['state']} {r['office']}", px=104, width=hw)
     mid = s.w / 2
     colw = s.width / 2 - 20
-    top = s.y + 10
+    top = max(s.y + 10, s.tag_bottom)
     for x, name, col in ((MARGIN, "DEMOCRAT", t.dem), (mid + 20, "REPUBLICAN", t.rep)):
         s.ax.add_patch(plt.Rectangle((x, top), colw, 14, color=col, lw=0))
         s._put(x, top + 34, name, "mono", 600, 28, t.ink, va="top")
     y = top + 90
     for x, v in ((MARGIN, r["p"]), (mid + 20, 1 - r["p"])):
-        s.hero(x, y, f"{v * 100:.0f}", 200)
-    s._put(mid, y + 210, "OF 100 SIMULATIONS WON", "mono", 500, 24, t.ink2, ha="center", va="top")
-    s.ax.plot([mid, mid], [top, y + 190], color=t.hairline, lw=pt(2))
-    s.y = y + 270
+        s.hero(x, y, f"{v * 100:.0f}", 170)
+    s._put(mid, y + 180, "OF 100 SIMULATIONS WON", "mono", 500, 24, t.ink2, ha="center", va="top")
+    s.ax.plot([mid, mid], [top, y + 160], color=t.hairline, lw=pt(2))
+    s.y = y + 232
     rows = [("Market", f"{r['market']:.0%}", f"{1 - r['market']:.0%}"),
             ("Poll average", r["poll"].replace("D", "") + " lead" if r["poll"].startswith("D") else "", ""),
             ("Best 1-in-10 outcome", margin_txt(r["hi"]), margin_txt(r["lo"]))]

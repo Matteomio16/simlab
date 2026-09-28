@@ -5,7 +5,7 @@ card and a frame of the 9:16 "every future" video. Rebuild with `python -m simla
 `kits/directions/board-1.jpg` to `board-5.jpg` (the last two posts use invented example numbers, stamped EXAMPLE).
 Themes live in `simlab/publish/themes.py`; switching direction changes one line.
 
-**Fixed in every direction:** the black-or-ink label strip "AI-SIMULATED VOTERS, NOT A POLL" with the date; party blue
+**Fixed in every direction:** the black-or-ink label strip with the date (now "SOCIAL SIMULATION, NOT A POLL"); party blue
 and red (Republican red leans vermilion so colour-blind readers can tell it from blue); one colour reserved for the
 simulation's own contribution ("AI" below); independents in a labelled neutral grey. Every palette's blue, red and AI
 colour pass the dataviz validator's colour-blind checks on its own background. Fonts are all free (SIL OFL); none of

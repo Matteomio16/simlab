@@ -15,8 +15,13 @@ plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing)
   `#eda100` for independents (low contrast, so always labelled). Violet `#4a3aa7` marks the simulation's own
   contribution; graphite `#3B3A36` marks real data and statistics. Blue, red and violet pass the dataviz validator's
   colour-blind checks on the paper colour, all pairs.
-- **Every image:** kicker and wordmark at the top; the black strip "AI-SIMULATED VOTERS, NOT A POLL" with the date at
-  the bottom; a source line above it. The strip is drawn by the canvas itself, so no image can leave without it.
+- **Theme:** Lab Notebook by default, Riso Print now and then (`simlab/publish/themes.py`; Matteo, 28 Sep).
+- **Every image:** the logomark (a ballot box holding a 3x3 grid of simulated voters) and wordmark at the top; the
+  strip "SOCIAL SIMULATION, NOT A POLL" with the date at the bottom; a source line above it. The strip is drawn by the
+  canvas itself, so no image can leave without it.
+- **Forecast images** also carry the run stamp ("RUN <hash> · 40,000 SIMULATED ELECTIONS") and the race tag: the
+  state outline filled with simulated voters, exactly the race's share of them blue, with the race code (OH-SEN).
+  Outlines: Census 2024 cartographic boundaries, 1:20m, public domain (`geo.py` → `states.json`).
 
 ## Code (`simlab/publish/`)
 

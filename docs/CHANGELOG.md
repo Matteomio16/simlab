@@ -2,6 +2,17 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Content & site): label line, visual identity, race cards
+
+- **Label line (Matteo):** every image and caption now says "Social simulation, not a poll" instead of "AI-simulated
+  voters, not a poll". Captions still say in the body that the voters are AI (the Axios/Aaru lesson). The Field Guide
+  and infrastructure snapshots still show the old wording.
+- **Visual identity (Matteo):** Lab Notebook by default, Riso Print now and then (`docs/creative-directions.md`).
+- New recurring elements: the logomark (a ballot box holding a grid of simulated voters), the run stamp with the
+  forecast's hash, and the race tag (the state outline filled with simulated voters in the race's split). Five race-card
+  layouts drafted (`simlab/publish/racecards.py`), layout choice pending. State outlines from the Census Bureau's 2024
+  1:20m boundary file (downloaded with Matteo's OK; raw file in `data/`, outlines in `simlab/publish/states.json`).
+
 ## 2026-09-28 (Statistics session): no correction for the polls' recent Democratic lean; poll table started
 
 - Decided by Matteo: no fixed correction for the polls' recent Democratic lean. The backtest's margins leaned D by

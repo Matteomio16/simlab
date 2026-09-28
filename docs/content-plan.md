@@ -49,7 +49,7 @@ news hooks (F).
 | E | **Lab notes** | One finding, one chart: what we tested, what we found, what we changed | Epoch AI's one-chart posts; AI Village and Claude Plays Pokémon (the struggle is the story) | Test-bench numbers; I draft, you approve | none / 20 min a post | Daily 3–11 Oct, then Fridays | IG carousel; X thread; Bluesky; Threads |
 | F | **Early-vote watch** | Real ballots, not AI: NC and TX early votes against 2022 by party and age, and where turnout runs ahead of the simulation | VoteHub and Election Twitter's trackers | Bars from the early-vote files the engine downloads | ½ day / 5 min a post | Tuesdays and Saturdays from 15 Oct | X, Bluesky, Threads; a slide in the IG daily post |
 
-Every format: "AI-simulated voters, not a poll" inside the image and in the caption; any forecast number sits beside the
+Every format: "Social simulation, not a poll" inside the image and in the caption (Matteo, 28 Sep; captions still say the voters are AI); any forecast number sits beside the
 poll average, market and Cook; ranges and "wins X in 10 simulations" before percentages; 35–65% called a toss-up; a
 source line on every chart (the Integrity Index habit, without its donation asks); you approve every post.
 

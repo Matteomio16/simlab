@@ -16,7 +16,8 @@ from PIL import Image
 from ..core import RUNS
 from ..scorecard import latest
 from . import charts, text
-from .frame import BROADSHEET, LABEL, Slide, Theme
+from .frame import LABEL, Slide, Theme
+from .themes import LAB
 
 KITS = RUNS.parent / "kits" / "labnotes"
 LIMITS = {"instagram": 2200, "thread": 280}
@@ -39,7 +40,7 @@ def closing(s: Slide):
     s.text("The forecast goes public on Monday 12 October.", px=36)
 
 
-def ep01(theme: Theme = BROADSHEET) -> Post:
+def ep01(theme: Theme = LAB) -> Post:
     s, day = latest(), date(2026, 10, 3)
     null_jev = min(s[("null", "jev")]["support_p_no_change"], s[("null", "jev")]["turnout_p_no_change"])
     null_kev = 1 - s[("null", "kev")]["support_p_no_change"]
@@ -133,7 +134,7 @@ Total cost of these tests: $1.52. The forecast goes public on Monday 12 October.
     ])
 
 
-def ep02(theme: Theme = BROADSHEET) -> Post:
+def ep02(theme: Theme = LAB) -> Post:
     day, k = date(2026, 10, 4), "LAB NOTES 02"
     gap = {"GLM": 0.30, "Jev": 0.15}
     flips = {"GLM": 0.41, "Jev": 0.15}
@@ -199,7 +200,7 @@ Lab notes 02 of the making-of. The forecast goes public on Monday 12 October.
     ])
 
 
-def ep03(theme: Theme = BROADSHEET) -> Post:
+def ep03(theme: Theme = LAB) -> Post:
     s, day, k = latest(), date(2026, 10, 5), "LAB NOTES 03"
     lean = lambda m: s[("mirror", m)]["mean_asymmetry"] / s[("mirror", m)]["mean_abs_reaction"]
     order = ["glm", "deepseek", "mimo", "luna", "jev", "kev"]
@@ -283,7 +284,7 @@ def contact_sheet(paths: list[Path], out: Path, scale: float = 0.4, gap: int = 1
     return out
 
 
-def write(n: int, theme: Theme = BROADSHEET) -> Path:
+def write(n: int, theme: Theme = LAB) -> Path:
     post = EPISODES[n](theme)
     out = KITS / f"{n:02d}"
     lines = [f"# {post.title}", "", f"Draft for Matteo's approval. Planned date: {post.day:%a %d %b %Y}.", ""]

@@ -24,7 +24,7 @@ from matplotlib.font_manager import FontProperties
 from matplotlib.text import Text
 from PIL import Image, ImageFont
 
-LABEL = "AI-simulated voters, not a poll"
+LABEL = "Social simulation, not a poll"
 SITE = "research.scaliastudio.dev/midterms"
 
 DPI = 100
@@ -158,7 +158,8 @@ class Slide:
     """Top-to-bottom layout: a header (kicker, wordmark), content placed at the cursor `y`, and a footer (source line,
     label strip with the date). `size` can be (1080, 1920) for video frames and stories."""
 
-    def __init__(self, day: date, kicker: str, theme: Theme = BROADSHEET, size: tuple[int, int] = (W, H)):
+    def __init__(self, day: date, kicker: str, theme: Theme = BROADSHEET, size: tuple[int, int] = (W, H),
+                 run: str | None = None):
         self.t, (self.w, self.h) = theme, size
         t = theme
         self.fig = plt.figure(figsize=(self.w / DPI, self.h / DPI), dpi=DPI)
@@ -177,6 +178,7 @@ class Slide:
             self.ax.add_patch(plt.Rectangle((0, T), self.w, 128, color=t.ink, lw=0, zorder=1))
             self._put(MARGIN, T + 64, kicker, "mono", 500, 30, t.paper, va="center", zorder=2)
             self._put(self.w - MARGIN, T + 64, "NotAPoll", "serif", 800, 40, t.paper, ha="right", va="center", zorder=2)
+            self.logomark(self.w - MARGIN - self.pil("serif", 800, 40).getlength("NotAPoll") - 58, T + 42, 44, t.paper)
             self.y = T + 184
         else:
             if t.header == "chip":
@@ -186,10 +188,15 @@ class Slide:
                           va="center", zorder=2)
             else:
                 self._put(MARGIN, T + 64, kicker, "mono", 500, 30, t.ink2, va="center")
-            self._put(self.w - MARGIN, T + 64, "NotAPoll", "serif", 800 if t.head_upper else 700, 40, t.ink, ha="right",
-                      va="center")
+            wm = 800 if t.head_upper else 700
+            self._put(self.w - MARGIN, T + 64, "NotAPoll", "serif", wm, 40, t.ink, ha="right", va="center")
+            self.logomark(self.w - MARGIN - self.pil("serif", wm, 40).getlength("NotAPoll") - 58, T + 42, 44, t.ink)
             self.ax.plot([MARGIN, self.w - MARGIN], [T + 110, T + 110], color=t.ink, lw=pt(2), solid_capstyle="butt")
             self.y = T + 164
+        if run:
+            self._put(self.w - MARGIN, self.y - 22, f"RUN {run} · 40,000 SIMULATED ELECTIONS", "mono", 500, 20, t.ink2,
+                      ha="right", va="center")
+            self.y += 14
         self.ax.add_patch(plt.Rectangle((0, self.foot - STRIP), self.w, STRIP, color=t.strip_bg, lw=0, zorder=1))
         mid = self.foot - STRIP / 2
         self._put(MARGIN, mid, LABEL.upper(), "mono", 600, 30, t.strip_fg, va="center", gid="footer", zorder=2)
@@ -236,13 +243,22 @@ class Slide:
         self.y += px * after
         return self
 
-    def headline(self, s: str, px: int = 88):
+    def headline(self, s: str, px: int = 88, width: float | None = None):
         t = self.t
         return self.text(s.upper() if t.head_upper else s, "serif", t.head_weight, px, t.ink,
-                         leading=t.head_leading, after=0.45)
+                         leading=t.head_leading, after=0.45, width=width)
 
-    def dek(self, s: str, px: int = 40):
-        return self.text(s, "sans", 400, px, self.t.ink2, leading=1.3, after=0.9)
+    def dek(self, s: str, px: int = 40, width: float | None = None):
+        return self.text(s, "sans", 400, px, self.t.ink2, leading=1.3, after=0.9, width=width)
+
+    def logomark(self, x: float, y: float, size: float, color: str):
+        """The NotAPoll mark: a ballot box holding a 3x3 grid of simulated voters instead of a tick."""
+        self.ax.add_patch(plt.Rectangle((x, y), size, size, fill=False, ec=color, lw=pt(size / 14), zorder=3))
+        step, r = size / 4, size * 0.085
+        for i in range(3):
+            for j in range(3):
+                c = self.t.ai if (i, j) == (1, 1) else color
+                self.ax.add_patch(plt.Circle((x + step * (j + 1), y + step * (i + 1)), r, color=c, lw=0, zorder=3))
 
     def rule(self, color: str | None = None, after: float = 36):
         self.ax.plot([MARGIN, self.w - MARGIN], [self.y, self.y], color=color or self.t.hairline, lw=pt(1))

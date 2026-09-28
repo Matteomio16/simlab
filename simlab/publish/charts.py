@@ -149,3 +149,39 @@ def dot_grid(s: Slide, n_dem: int, n: int = 100, cols: int = 10, size: float = 6
                                   color=t.dem if k < n_dem else t.rep, lw=0, zorder=2))
     s.y += rows_ * (size + gap) + 20
     return s
+
+
+def state_voters(s: Slide, usps: str, code: str, p_dem: float, x: float, y: float, box: float, n: int = 420,
+                 box_h: float | None = None):
+    """The race's state drawn as a field of simulated voters: dots inside the state outline, exactly p_dem of them
+    blue, scattered at random (seeded by the state), with the race code under it."""
+    import numpy as np
+    from matplotlib.path import Path as MPath
+
+    from .geo import outline
+    t = s.t
+    rings = [np.array(r) for r in outline(usps)]
+    pts = np.vstack(rings)
+    (x0, y0), (x1, y1) = pts.min(0), pts.max(0)
+    bw, bh = box, box_h or box
+    k = min(bw / (x1 - x0), bh / (y1 - y0))
+    ox, oy = x + (bw - (x1 - x0) * k) / 2, y + (bh - (y1 - y0) * k) / 2
+    rings = [np.column_stack([ox + (r[:, 0] - x0) * k, oy + (r[:, 1] - y0) * k]) for r in rings]
+    area = sum(abs(np.dot(r[:, 0], np.roll(r[:, 1], 1)) - np.dot(r[:, 1], np.roll(r[:, 0], 1))) / 2 for r in rings)
+    step = (area / n) ** 0.5
+    gx, gy = np.meshgrid(np.arange(x, x + bw, step) + step / 2, np.arange(y, y + bh, step) + step / 2)
+    grid = np.column_stack([gx.ravel(), gy.ravel()])
+    inside = np.zeros(len(grid), bool)
+    for r in rings:
+        inside |= MPath(r).contains_points(grid)
+    dots = grid[inside]
+    rng = np.random.default_rng(sum(map(ord, usps)))
+    blue = np.zeros(len(dots), bool)
+    blue[rng.permutation(len(dots))[:round(p_dem * len(dots))]] = True
+    s.ax.scatter(dots[:, 0], dots[:, 1], s=pt(step * 0.72) ** 2, c=np.where(blue, t.dem, t.rep), lw=0, zorder=3)
+    for r in rings:
+        s.ax.fill(r[:, 0], r[:, 1], fill=False, ec=t.ink, lw=pt(2), zorder=2)
+    bottom = oy + (y1 - y0) * k
+    s._put(x + bw / 2, bottom + 18, code, "mono", 600, 26, t.ink, ha="center", va="top")
+    s.tag_bottom = bottom + 60
+    return len(dots)
