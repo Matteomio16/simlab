@@ -1,0 +1,174 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NotAPoll Logo Round 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F5F3EE;--sheet:#FBFAF7;--ink:#111110;--muted:#67635B;--rule:#DAD6CC;--accent:#4A3AA7;--chip:#ECE8F6;
+  --indigo:#2A2152;--lilac:#B98DD6;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;--sans:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#16122B;--sheet:#1E1938;--ink:#F1EEF7;--muted:#A8A2C2;--rule:#322A56;--accent:#C4A0E0;--chip:#2C2452;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#16122B;--sheet:#1E1938;--ink:#F1EEF7;--muted:#A8A2C2;--rule:#322A56;--accent:#C4A0E0;--chip:#2C2452;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:15px/1.55 var(--sans);padding-inline:clamp(16px,4vw,48px);padding-block:32px 80px}
+main{max-width:1180px;margin:0 auto;display:grid;gap:56px}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:600;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(34px,5vw,56px);letter-spacing:-.01em}
+h2{font-size:30px}h3{font-size:21px}h4{font-size:18px}
+p{margin:0;max-width:68ch}
+.lbl,.code,.eyebrow{font:500 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.code{color:var(--accent);font-size:13px}
+.intro{display:grid;gap:18px}
+.intro .wmhero{font:600 clamp(40px,7vw,76px)/1 var(--serif);letter-spacing:-.01em}
+.wmhero .tld,.wm .tld{color:var(--accent)}
+.principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.principles div{background:var(--sheet);padding:16px;display:grid;gap:6px;align-content:start}
+.principles b{font-family:var(--serif);font-size:17px;font-weight:600}
+.principles span{color:var(--muted);font-size:14px}
+.dir{display:grid;gap:20px}
+.dir-head{display:grid;gap:6px;border-top:2px solid var(--ink);padding-top:14px}
+.dir-head p{color:var(--muted)}
+.cand{display:grid;grid-template-columns:220px 1fr;gap:20px;padding:18px 0;border-top:1px solid var(--rule)}
+.cand header{display:grid;gap:6px;align-content:start}
+.cand header p{color:var(--muted);font-size:14px}
+.tests{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+.cell{margin:0;display:grid;gap:6px;justify-items:center}
+.cell svg{width:150px;height:150px;display:block}
+.cell.round svg{border-radius:50%}
+.cell:first-child svg{outline:1px solid var(--rule)}
+.smalls{display:grid;gap:12px;align-content:start;padding-top:4px}
+.px{display:grid;gap:4px}
+.px-row{display:flex;gap:8px;align-items:center}
+.px-row span{display:block}
+.px-row span svg{width:100%;height:100%;display:block}
+.px-row span:nth-child(n+2) svg{border-radius:50%}
+.locks{display:grid;gap:8px;align-content:start;flex:1 1 260px}
+.lockup{display:inline-flex;align-items:center;gap:.32em;font:600 30px/1 var(--serif);padding:14px 18px;width:max-content;max-width:100%}
+.lockup.on-light{background:#F5F3EE;color:#111110}
+.lockup.on-light .tld{color:#4A3AA7}
+.lockup.on-dark{background:#2A2152;color:#F5F3EE}
+.lockup.on-dark .tld{color:#B98DD6}
+.lk-mark svg{width:1.15em;height:1.15em;display:block}
+.poses{background:var(--sheet);border:1px solid var(--rule);padding:18px;display:grid;gap:12px}
+.pose-row{display:flex;flex-wrap:wrap;gap:14px}
+.pose-row figure{margin:0;display:grid;gap:6px;width:120px}
+.pose-row svg{width:120px;height:120px;display:block}
+.aside{color:var(--muted);font-size:14px}
+.ctx{display:grid;gap:20px}
+.lineup{display:flex;flex-wrap:wrap;gap:10px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--paper);padding:10px 0;z-index:2;border-bottom:1px solid var(--rule)}
+.lu{all:unset;cursor:pointer;display:grid;justify-items:center;gap:4px;padding:4px;border-radius:8px}
+.lu svg{width:48px;height:48px;display:block;border-radius:50%}
+.lu[aria-pressed="true"]{background:var(--chip);outline:2px solid var(--accent)}
+.lu:focus-visible{outline:2px solid var(--accent)}
+.mocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:24px;align-items:start}
+.mock{display:grid;gap:8px}
+.phone{background:#fff;color:#111;border:1px solid var(--rule);border-radius:22px;padding:18px 0 0;font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:400px;overflow:hidden}
+.ig-top{display:flex;gap:22px;align-items:center;padding:0 16px}
+.ig-av{width:86px;height:86px;flex:none}
+.ig-av svg,.xav svg{width:100%;height:100%;display:block;border-radius:50%}
+.ig-stats{display:flex;gap:18px;text-align:center;font-size:13px}
+.ig-stats b{display:block;font-size:16px}
+.ig-bio{padding:10px 16px 12px;font-size:13.5px}
+.ig-bio b{display:block}
+.ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.ig-grid img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.xfeed{background:#fff;color:#0F1419;border:1px solid var(--rule);font:15px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:560px}
+.xfeed.dark{background:#000;color:#E7E9EA}
+.xpost{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid #EFF3F4}
+.xfeed.dark .xpost{border-color:#2F3336}
+.xav{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;font:700 14px/1 Georgia,serif;overflow:hidden}
+.xmeta span{color:#536471}
+.xbody{display:grid;gap:4px;min-width:0}
+.xbody img{border-radius:14px;border:1px solid #CFD9DE;max-width:260px}
+.slidebox{position:relative;max-width:540px}
+.slidebox img{width:100%;display:block}
+.patch{position:absolute;background:#F7F7F2;display:grid;place-items:center}
+.patch svg{width:100%;height:100%;display:block}
+.crop{overflow-x:auto;border:1px solid var(--rule);max-width:100%}
+.crop-inner{position:relative;width:560px;height:130px;overflow:hidden}
+.crop-inner img{width:1080px;max-width:none;display:block;margin-left:-520px}
+.note{font-size:13px;color:var(--muted)}
+.pick{background:var(--sheet);border:1px solid var(--rule);padding:20px;display:grid;gap:10px}
+.pick ol{margin:0;padding-left:20px;display:grid;gap:8px;max-width:80ch}
+@media (max-width:720px){.cand{grid-template-columns:1fr}.cell svg{width:120px;height:120px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<main>
+  <section class="intro">
+    <span class="eyebrow">Logo round 3 · 28 Sep 2026 · for Matteo</span>
+    <div class="wmhero">NotAPoll<span class="tld">.org</span></div>
+    <p>Round 1 and 2 were dots without a hook. Here each direction gets one idea you can say in a sentence, 3 or 4
+      versions of it, and the same tests: 32 and 16 px, a circle crop, paper and indigo, the lockup with the wordmark,
+      then in context below. Pick one or two to take to final.</p>
+    <div class="principles">
+      <div><b>One sentence</b><span>538's fox, the NYT needle: each mark carries a story you can retell. "A person made of voters" beats "a grid".</span></div>
+      <div><b>A silhouette, not a detail</b><span>Polymarket, Kalshi and The Economist read as a blob at 16 px. Detail only rewards people who already know you.</span></div>
+      <div><b>Own a colour</b><span>The Economist's red box, Kalshi's green. Ours is purple, the colour neither party owns.</span></div>
+      <div><b>It can move</b><span>The fox had poses; the needle twitched all night. A mark that can react gets reused in every post.</span></div>
+      <div><b>It shows the method</b><span>Our World in Data's plain box says "reference". A mark made of voters says "we simulate people".</span></div>
+    </div>
+    <div class="pick"><span class="code">My read</span>
+      <ol>
+        <li><b>Logo: B2, the swing N.</b> It is a letter, so it works as a monogram the way the NYT's T does. It shows the method in one look: voters crossing from one column to the other and changing colour on the way. And it is the only candidate that makes the purple mean something: purple is what blue turns into on its way to red.</li>
+        <li><b>Character: A2, Nota, inside the posts rather than as the logo.</b> At profile size a head-and-shoulders figure on a circle looks like the default "no photo" avatar. In posts, leaning, rising or fading with the news, it becomes our 538 fox.</li>
+        <li><b>Pie and overlap:</b> clear, but they read as a chart icon and a Venn diagram. C1 is the most striking of the two at large size; neither holds up in the feed.</li>
+      </ol>
+    </div>
+  </section>
+
+  %SECTIONS%
+
+  <section class="ctx" id="context">
+    <div class="dir-head"><span class="code">In context</span><h2>At profile size, beside the neighbours</h2>
+      <p>Tap a mark to put it in every mock-up. The row itself is the line-up test: 48 px, circle crop, indigo.</p></div>
+    <div class="lineup" role="group" aria-label="Choose a mark">%LINEUP%</div>
+    <div class="mocks">
+      <div class="mock"><span class="lbl">Instagram profile</span>
+        <div class="phone">
+          <div class="ig-top"><div class="ig-av" data-slot="dark"></div>
+            <div class="ig-stats"><div><b>9</b>posts</div><div><b>0</b>followers</div><div><b>1</b>following</div></div></div>
+          <div class="ig-bio"><b>NotAPoll.org</b>Democracy, rehearsed.<br>The 2026 midterms, simulated every day by synthetic voters.<br>Not a poll. By Scalia Studio</div>
+          <div class="ig-grid">%TILES%</div>
+        </div>
+      </div>
+      <div class="mock"><span class="lbl">X feed, light and dark</span>
+        <div class="xfeed">
+          <div class="xpost"><span class="xav" data-slot="dark"></span><div class="xbody"><div class="xmeta"><b>NotAPoll.org</b> <span>@notapoll · 2h</span></div>
+            <p>Lab notes 01. Before forecasting the midterms, we tested six models as synthetic voters.</p></div></div>
+          %STANDINS%
+        </div>
+        <div class="xfeed dark">
+          <div class="xpost"><span class="xav" data-slot="dark"></span><div class="xbody"><div class="xmeta"><b>NotAPoll.org</b> <span>@notapoll · 2h</span></div>
+            <p>Same headline, Fox News or MSNBC: the model changed its answer.</p></div></div>
+          <div class="xpost"><span class="xav" data-slot="light"></span><div class="xbody"><div class="xmeta"><b>NotAPoll.org</b> <span>paper avatar</span></div>
+            <p>The same mark on a paper-coloured avatar, for comparison.</p></div></div>
+        </div>
+        <p class="note">The neighbours are stand-ins: each brand's initials in its colours, not its real logo.</p>
+      </div>
+      <div class="mock"><span class="lbl">Lab notes slide, mark swapped in</span>
+        <div class="slidebox" id="slidebox"><img src="%SLIDE%" alt="Lab notes 01 slide">
+          <div class="patch" data-slot="bare_light" style="left:65.2%;top:2.7%;width:5.2%;height:4.2%"></div></div>
+        <span class="lbl">Header at full size (right half of the 1080 px slide)</span>
+        <div class="crop"><div class="crop-inner"><img src="%SLIDE%" alt="">
+          <div class="patch" data-slot="bare_light" style="left:184px;top:36px;width:56px;height:56px;padding:3px"></div></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const MARKS = %DATA%;
+function show(k){
+  document.querySelectorAll("[data-slot]").forEach(el => { el.innerHTML = MARKS[k][el.dataset.slot]; });
+  document.querySelectorAll(".lu").forEach(b => b.setAttribute("aria-pressed", b.dataset.k === k));
+  try { localStorage.setItem("mark", k); } catch (e) {}
+}
+document.querySelectorAll(".lu").forEach(b => b.addEventListener("click", () => show(b.dataset.k)));
+let first = "A2";
+try { const s = localStorage.getItem("mark"); if (s && MARKS[s]) first = s; } catch (e) {}
+show(first);
+</script>
