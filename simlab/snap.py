@@ -6,8 +6,9 @@ Each run writes <out>/YYYY-MM-DD/HHMM/<source>/<name>.gz (gzip with a fixed head
 byte-identical and git stores it once) and <out>/YYYY-MM-DD/HHMM/manifest.json: per file the URL, UTC fetch time,
 HTTP status, raw size and SHA-256 of the raw content, or the error. Sources, all free and keyless:
 - polls: VoteHub API, every poll (CC BY 4.0).
-- wikipedia: the 35 Senate race pages, the Senate and House overview pages (ratings, generic ballot) and the approval
-  polling page; raw wikitext with revision ids (CC BY-SA).
+- wikipedia: the 35 Senate race pages, the 50 states' House election pages (candidates, district polls), the Senate
+  and House overview pages (ratings, generic ballot) and the approval polling page; raw wikitext with revision ids
+  (CC BY-SA).
 - markets, benchmark only (never assimilated): PredictIt (all markets), Kalshi and Polymarket (Senate and House
   control, every Senate race).
 - news: GDELT headlines for each pilot race and the national midterms (news.RACES queries). GDELT allows one request
@@ -43,11 +44,20 @@ REGULAR = {"AL": "Alabama", "AK": "Alaska", "AR": "Arkansas", "CO": "Colorado", 
            "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "VA": "Virginia", "WV": "West Virginia",
            "WY": "Wyoming"}
 SPECIAL = {"OH": "Ohio", "FL": "Florida"}
+AT_LARGE = ["Alaska", "Delaware", "North Dakota", "South Dakota", "Vermont", "Wyoming"]
+MULTI_DISTRICT = ["Alabama", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Florida", "Georgia",
+                  "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine",
+                  "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+                  "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina",
+                  "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "Tennessee", "Texas",
+                  "Utah", "Virginia", "Washington", "West Virginia", "Wisconsin"]
 WIKI_API = "https://en.wikipedia.org/w/api.php"
 WIKI_PAGES = ["2026 United States Senate elections", "2026 United States House of Representatives elections",
               "Opinion polling on the second Trump presidency",
               *(f"2026 United States Senate election in {s}" for s in REGULAR.values()),
-              *(f"2026 United States Senate special election in {s}" for s in SPECIAL.values())]
+              *(f"2026 United States Senate special election in {s}" for s in SPECIAL.values()),
+              *(f"2026 United States House of Representatives elections in {s}" for s in MULTI_DISTRICT),
+              *(f"2026 United States House of Representatives election in {s}" for s in AT_LARGE)]
 KALSHI = "https://api.elections.kalshi.com/trade-api/v2/events"
 KALSHI_SERIES = ["CONTROLS", "CONTROLH", *(f"SENATE{c}" for c in REGULAR), *(f"SENATE{c}S" for c in SPECIAL)]
 GAMMA = "https://gamma-api.polymarket.com/events"
