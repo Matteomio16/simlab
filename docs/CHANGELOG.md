@@ -2,6 +2,26 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (night): Kev reaction fine-tune react-v1 (Matteo's go-ahead)
+
+- Data (`python -m simlab.kevreact`, design agreed with the test-bench session; full rules in the module docstring):
+  1,632 training + 288 calibration records. 11 events2 events with a clear shift and 15 with none, 40 real CES
+  respondents each; 60 new irrelevant news items; 20 new party-swap templates. Targets: 4% background movers, plus
+  m = min(0.04 × points × g, 0.5) moving toward the side the event helps. g is a Field Guide prior by party ID
+  (strong 0.2, not very strong 0.6, lean 1.0, independent 1.6, weighted mean 1). Turnout: no-change examples only.
+  Development = the null, mirror and events tests' exact items, scored offline through a lookup asker.
+- Run: H100, 2 epochs, 1,000 replay records, 23 min, about $2.30. No forgetting on Kev's public checks (0.862).
+- Results, raw probabilities (temperature 1):
+  - Null test: P(no change) 0.961 support / 0.964 turnout, mean |shift| 0.003 / 0.006. Base Kev failed it (0.77).
+  - Mirror test: flip correlation 0.961, sign flips 100%, lean +0.002. Best of any model (Jev 0.69, GLM 0.45).
+  - Events test (19 held-out): rank correlation 0.53 and signs right on 10 of 13 clear events; GLM 0.81 and 13 of 13.
+    Size-tracking (|pred| vs |measured|) 0.00, against GLM 0.29 and Jev 0.28. Error after one fitted scale 3.26 points
+    (GLM 2.32). Errors correlate 0.75 with GLM's; averaging with GLM makes it worse (2.61).
+  - Reading: from a few hundred records Kev learns clean rules and applies them to unseen items (irrelevant news means
+    no change; swapping the party flips the reaction). 11 noisy real events can't teach which new events matter or
+    how much, so on real events it predicts almost no movement. Reactions stay with GLM + Jev.
+- Modal spend in September: $8.45 of the $30 credit (the summary API revised the earlier $6.94 reading to $6.15).
+
 ## 2026-09-28 (early morning, test bench): real events (events2), news labels, a correction
 
 - **Correction:** the per-event-type scale does not hold up. Fitted on the 46 new events and applied unchanged to the

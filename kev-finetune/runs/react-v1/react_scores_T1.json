@@ -1,0 +1,43 @@
+{
+ "null": {
+  "test": "null",
+  "model": "kev-react-v1",
+  "n": 1120,
+  "support_p_no_change": 0.9612359730990777,
+  "support_mean_abs_shift": 0.0030813354364287314,
+  "support_argmax_not_nochange": 0.0,
+  "turnout_p_no_change": 0.9639153733707112,
+  "turnout_mean_abs_shift": 0.005959915771607792,
+  "turnout_argmax_not_nochange": 0.0
+ },
+ "mirror": {
+  "test": "mirror",
+  "model": "kev-react-v1",
+  "pairs": 448,
+  "flip_corr": 0.9612529691155727,
+  "sign_flip_rate": 1.0,
+  "mean_asymmetry": 0.001820584561299729,
+  "mean_abs_reaction": 0.10942016372929815
+ },
+ "events": {
+  "test": "events",
+  "model": "kev-react-v1",
+  "events": 19,
+  "spearman": 0.5298727560871523,
+  "sign_accuracy_nonnull": 0.7692307692307693,
+  "null_events_mean_abs_pred": 0.0114533039439602,
+  "scale_points_per_unit": 54.27311866871378,
+  "rmse_after_scaling": 3.2593213172126543,
+  "party_corr": 0.6455979346538612
+ },
+ "second_opinion": {
+  "size_spearman_glm": 0.287,
+  "size_spearman_jev": 0.277,
+  "size_spearman_kev-react-v1": 0.001,
+  "rmse_after_scaling_glm": 2.32,
+  "rmse_after_scaling_jev": 3.015,
+  "rmse_after_scaling_kev-react-v1": 3.259,
+  "error_corr_with_glm": 0.75,
+  "rmse_kev_glm_average": 2.611
+ }
+}
