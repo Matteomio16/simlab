@@ -1,0 +1,7447 @@
+{
+ "fitted": "2026-09-28, python -m simlab.groups --fit",
+ "method": "stats-groundwork \u00a75.5. n: CPS 2024 citizen adults by white/non-white x degree, times the CES 2022-25 party mix within cell (shrunk state -> division -> nation), tilted by exp(theta x party position) to the state's 2024 two-party presidential margin; t: CPS 2022 turnout by cell (official-corrected), spread by party with CES 2018/2022 validated-turnout odds ratios; d0: CES 2018/2022 validated voters' two-party Senate vote (House vote for US), shrunk the same way",
+ "shrinkage": {
+  "pseudo_count": 50
+ },
+ "states": {
+  "CT": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01826,
+    "t": 0.5505,
+    "d0": 0.9974
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.05356,
+    "t": 0.4578,
+    "d0": 0.9945
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.09237,
+    "t": 0.747,
+    "d0": 0.9652
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.07312,
+    "t": 0.566,
+    "d0": 0.9198
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01175,
+    "t": 0.3706,
+    "d0": 0.9513
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.02108,
+    "t": 0.2943,
+    "d0": 0.904
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.05107,
+    "t": 0.5928,
+    "d0": 0.917
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02854,
+    "t": 0.3563,
+    "d0": 0.4923
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00527,
+    "t": 0.4482,
+    "d0": 0.96
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01415,
+    "t": 0.2923,
+    "d0": 0.9727
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.0582,
+    "t": 0.6942,
+    "d0": 0.9368
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02945,
+    "t": 0.4421,
+    "d0": 0.9452
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02046,
+    "t": 0.2674,
+    "d0": 0.3326
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.06151,
+    "t": 0.1416,
+    "d0": 0.3278
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.05685,
+    "t": 0.5408,
+    "d0": 0.0627
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.09466,
+    "t": 0.1999,
+    "d0": -0.405
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00156,
+    "t": 0.4849,
+    "d0": -0.6163
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00923,
+    "t": 0.3624,
+    "d0": -0.6894
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02397,
+    "t": 0.7096,
+    "d0": -0.9156
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05327,
+    "t": 0.5039,
+    "d0": -0.8773
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00088,
+    "t": 0.3506,
+    "d0": -0.5077
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01423,
+    "t": 0.2961,
+    "d0": -0.5552
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02797,
+    "t": 0.5805,
+    "d0": -0.7006
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.03472,
+    "t": 0.4063,
+    "d0": -0.8057
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00733,
+    "t": 0.4923,
+    "d0": -0.7891
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01461,
+    "t": 0.4002,
+    "d0": -0.6227
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.05564,
+    "t": 0.7206,
+    "d0": -0.9677
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.06628,
+    "t": 0.5732,
+    "d0": -0.9882
+   }
+  },
+  "ME": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00689,
+    "t": 0.6726,
+    "d0": 0.9966
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00817,
+    "t": 0.5043,
+    "d0": 0.9929
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.1117,
+    "t": 0.8404,
+    "d0": 0.9675
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.10548,
+    "t": 0.6872,
+    "d0": 0.9646
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00343,
+    "t": 0.4968,
+    "d0": 0.9464
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00508,
+    "t": 0.3343,
+    "d0": 0.8927
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02846,
+    "t": 0.7219,
+    "d0": 0.9047
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.04466,
+    "t": 0.4826,
+    "d0": 0.6233
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00206,
+    "t": 0.5766,
+    "d0": 0.956
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.005,
+    "t": 0.3322,
+    "d0": 0.9689
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.04709,
+    "t": 0.8019,
+    "d0": 0.9589
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.06396,
+    "t": 0.5718,
+    "d0": 0.8876
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00536,
+    "t": 0.3798,
+    "d0": 0.2679
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.01407,
+    "t": 0.1657,
+    "d0": 0.2294
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03809,
+    "t": 0.6774,
+    "d0": 0.0052
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.1569,
+    "t": 0.2963,
+    "d0": -0.3753
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00194,
+    "t": 0.6122,
+    "d0": -0.6486
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00359,
+    "t": 0.4065,
+    "d0": -0.6832
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02514,
+    "t": 0.8133,
+    "d0": -0.9041
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.08641,
+    "t": 0.6312,
+    "d0": -0.9018
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00099,
+    "t": 0.4752,
+    "d0": -0.488
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00251,
+    "t": 0.3363,
+    "d0": -0.5581
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02127,
+    "t": 0.7115,
+    "d0": -0.7169
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.07312,
+    "t": 0.5356,
+    "d0": -0.8087
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00161,
+    "t": 0.6192,
+    "d0": -0.768
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.00306,
+    "t": 0.4456,
+    "d0": -0.6872
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.03538,
+    "t": 0.8214,
+    "d0": -0.9634
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.09855,
+    "t": 0.6936,
+    "d0": -0.9718
+   }
+  },
+  "MA": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02179,
+    "t": 0.5962,
+    "d0": 0.9974
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03564,
+    "t": 0.3664,
+    "d0": 0.9942
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.14054,
+    "t": 0.7106,
+    "d0": 0.9809
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.06157,
+    "t": 0.5603,
+    "d0": 0.9825
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01416,
+    "t": 0.4151,
+    "d0": 0.953
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01561,
+    "t": 0.2221,
+    "d0": 0.8947
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0451,
+    "t": 0.5475,
+    "d0": 0.8949
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02414,
+    "t": 0.351,
+    "d0": 0.6278
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01216,
+    "t": 0.4947,
+    "d0": 0.9593
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01665,
+    "t": 0.2205,
+    "d0": 0.9731
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.07906,
+    "t": 0.6537,
+    "d0": 0.9645
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.04627,
+    "t": 0.4364,
+    "d0": 0.8829
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02149,
+    "t": 0.3056,
+    "d0": 0.291
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.04838,
+    "t": 0.1015,
+    "d0": 0.2444
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.06144,
+    "t": 0.4947,
+    "d0": -0.0478
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.08991,
+    "t": 0.1963,
+    "d0": -0.3269
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.0038,
+    "t": 0.5315,
+    "d0": -0.6621
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00898,
+    "t": 0.2802,
+    "d0": -0.6832
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.04034,
+    "t": 0.6701,
+    "d0": -0.907
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05165,
+    "t": 0.4981,
+    "d0": -0.8608
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00271,
+    "t": 0.3942,
+    "d0": -0.517
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00387,
+    "t": 0.2237,
+    "d0": -0.5495
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03272,
+    "t": 0.5349,
+    "d0": -0.676
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.02259,
+    "t": 0.4008,
+    "d0": -0.8241
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00607,
+    "t": 0.5389,
+    "d0": -0.7351
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.00594,
+    "t": 0.3137,
+    "d0": -0.6479
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.04421,
+    "t": 0.682,
+    "d0": -0.9702
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.04321,
+    "t": 0.5676,
+    "d0": -0.9855
+   }
+  },
+  "NH": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00614,
+    "t": 0.6602,
+    "d0": 0.9968
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01846,
+    "t": 0.3492,
+    "d0": 0.9929
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.10781,
+    "t": 0.7968,
+    "d0": 0.9844
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.07708,
+    "t": 0.6079,
+    "d0": 0.9722
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00189,
+    "t": 0.4829,
+    "d0": 0.9464
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00446,
+    "t": 0.2095,
+    "d0": 0.8905
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03152,
+    "t": 0.659,
+    "d0": 0.9133
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02487,
+    "t": 0.3969,
+    "d0": 0.6255
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00307,
+    "t": 0.5629,
+    "d0": 0.9585
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00415,
+    "t": 0.2079,
+    "d0": 0.9695
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.07224,
+    "t": 0.7509,
+    "d0": 0.9693
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.06023,
+    "t": 0.4852,
+    "d0": 0.9281
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00417,
+    "t": 0.3667,
+    "d0": 0.3232
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.01361,
+    "t": 0.0949,
+    "d0": 0.2294
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.04616,
+    "t": 0.61,
+    "d0": -0.0491
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.12574,
+    "t": 0.2291,
+    "d0": -0.2997
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00264,
+    "t": 0.5989,
+    "d0": -0.6621
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.0056,
+    "t": 0.2654,
+    "d0": -0.6894
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.04613,
+    "t": 0.7644,
+    "d0": -0.9124
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.09264,
+    "t": 0.547,
+    "d0": -0.8546
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00146,
+    "t": 0.4613,
+    "d0": -0.4589
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00588,
+    "t": 0.2109,
+    "d0": -0.5405
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02318,
+    "t": 0.6475,
+    "d0": -0.7169
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.05062,
+    "t": 0.4487,
+    "d0": -0.7235
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00108,
+    "t": 0.606,
+    "d0": -0.768
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.0019,
+    "t": 0.2978,
+    "d0": -0.6809
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.0513,
+    "t": 0.774,
+    "d0": -0.9634
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.11598,
+    "t": 0.615,
+    "d0": -0.9824
+   }
+  },
+  "RI": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02057,
+    "t": 0.5815,
+    "d0": 0.9967
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03977,
+    "t": 0.3751,
+    "d0": 0.9929
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.10771,
+    "t": 0.6988,
+    "d0": 0.982
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04934,
+    "t": 0.503,
+    "d0": 0.967
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00815,
+    "t": 0.4004,
+    "d0": 0.9485
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01736,
+    "t": 0.2286,
+    "d0": 0.8927
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.04191,
+    "t": 0.5335,
+    "d0": 0.9083
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03232,
+    "t": 0.3005,
+    "d0": 0.6269
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01162,
+    "t": 0.4795,
+    "d0": 0.956
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01112,
+    "t": 0.2269,
+    "d0": 0.9683
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.06174,
+    "t": 0.6408,
+    "d0": 0.9626
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03234,
+    "t": 0.3808,
+    "d0": 0.9269
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02015,
+    "t": 0.2928,
+    "d0": 0.2679
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.07317,
+    "t": 0.1049,
+    "d0": 0.254
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.05297,
+    "t": 0.4806,
+    "d0": 0.0063
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.10539,
+    "t": 0.1625,
+    "d0": -0.3333
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00235,
+    "t": 0.5164,
+    "d0": -0.6486
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.0117,
+    "t": 0.2878,
+    "d0": -0.6832
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02809,
+    "t": 0.6576,
+    "d0": -0.8527
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.06965,
+    "t": 0.4408,
+    "d0": -0.846
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00317,
+    "t": 0.3798,
+    "d0": -0.488
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00725,
+    "t": 0.2302,
+    "d0": -0.5405
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03851,
+    "t": 0.5209,
+    "d0": -0.7
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.0197,
+    "t": 0.3469,
+    "d0": -0.7903
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00471,
+    "t": 0.5238,
+    "d0": -0.768
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01392,
+    "t": 0.3217,
+    "d0": -0.6809
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.05753,
+    "t": 0.6696,
+    "d0": -0.9634
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.05778,
+    "t": 0.5104,
+    "d0": -0.9788
+   }
+  },
+  "VT": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00561,
+    "t": 0.6775,
+    "d0": 0.9968
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01632,
+    "t": 0.3934,
+    "d0": 0.9928
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.13557,
+    "t": 0.788,
+    "d0": 0.9807
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.10762,
+    "t": 0.5798,
+    "d0": 0.9652
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00401,
+    "t": 0.5025,
+    "d0": 0.9475
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00575,
+    "t": 0.2426,
+    "d0": 0.8905
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.04894,
+    "t": 0.6468,
+    "d0": 0.9066
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03501,
+    "t": 0.3694,
+    "d0": 0.6374
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00344,
+    "t": 0.5821,
+    "d0": 0.956
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00613,
+    "t": 0.2408,
+    "d0": 0.9695
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.0967,
+    "t": 0.7407,
+    "d0": 0.9651
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.08012,
+    "t": 0.4561,
+    "d0": 0.9294
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00553,
+    "t": 0.3851,
+    "d0": 0.2115
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.01766,
+    "t": 0.1124,
+    "d0": 0.2686
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.07534,
+    "t": 0.5971,
+    "d0": 0.0371
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.09751,
+    "t": 0.2092,
+    "d0": -0.3957
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00055,
+    "t": 0.6176,
+    "d0": -0.6555
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00218,
+    "t": 0.3039,
+    "d0": -0.6832
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03147,
+    "t": 0.7546,
+    "d0": -0.9124
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.04484,
+    "t": 0.518,
+    "d0": -0.8932
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0004,
+    "t": 0.4808,
+    "d0": -0.4981
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00432,
+    "t": 0.2442,
+    "d0": -0.5405
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03037,
+    "t": 0.6352,
+    "d0": -0.7058
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.05259,
+    "t": 0.4201,
+    "d0": -0.7862
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00113,
+    "t": 0.6245,
+    "d0": -0.768
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.00197,
+    "t": 0.3389,
+    "d0": -0.6872
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.03057,
+    "t": 0.7645,
+    "d0": -0.9197
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.05835,
+    "t": 0.5871,
+    "d0": -0.9799
+   }
+  },
+  "NJ": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.05618,
+    "t": 0.5631,
+    "d0": 0.9955
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.05811,
+    "t": 0.3516,
+    "d0": 0.9991
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.07618,
+    "t": 0.6842,
+    "d0": 0.9943
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04588,
+    "t": 0.463,
+    "d0": 0.9696
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02245,
+    "t": 0.3825,
+    "d0": 0.8899
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03708,
+    "t": 0.2112,
+    "d0": 0.8103
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02811,
+    "t": 0.5165,
+    "d0": 0.8201
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02406,
+    "t": 0.2679,
+    "d0": 0.6073
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01475,
+    "t": 0.4607,
+    "d0": 0.9651
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.02266,
+    "t": 0.2096,
+    "d0": 0.9562
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02978,
+    "t": 0.6249,
+    "d0": 0.9607
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02459,
+    "t": 0.3438,
+    "d0": 0.9839
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.03896,
+    "t": 0.2775,
+    "d0": 0.2139
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.06744,
+    "t": 0.0957,
+    "d0": 0.3302
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03445,
+    "t": 0.4636,
+    "d0": -0.0938
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.05583,
+    "t": 0.1418,
+    "d0": -0.1845
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01377,
+    "t": 0.4976,
+    "d0": -0.7369
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00796,
+    "t": 0.2674,
+    "d0": -0.7681
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03365,
+    "t": 0.642,
+    "d0": -0.9424
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.02761,
+    "t": 0.4017,
+    "d0": -0.9645
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0183,
+    "t": 0.3622,
+    "d0": -0.4264
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01087,
+    "t": 0.2126,
+    "d0": -0.3996
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03014,
+    "t": 0.5038,
+    "d0": -0.7237
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.04505,
+    "t": 0.3115,
+    "d0": -0.6104
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01195,
+    "t": 0.505,
+    "d0": -0.8459
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.02504,
+    "t": 0.2999,
+    "d0": -0.8098
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.05598,
+    "t": 0.6543,
+    "d0": -0.974
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.08319,
+    "t": 0.4704,
+    "d0": -0.9479
+   }
+  },
+  "NY": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.04295,
+    "t": 0.5653,
+    "d0": 0.9889
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.05553,
+    "t": 0.3795,
+    "d0": 0.9997
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0983,
+    "t": 0.6831,
+    "d0": 0.9788
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04932,
+    "t": 0.5138,
+    "d0": 0.9725
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02542,
+    "t": 0.3847,
+    "d0": 0.8508
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03777,
+    "t": 0.2319,
+    "d0": 0.7772
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03492,
+    "t": 0.5151,
+    "d0": 0.7767
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02669,
+    "t": 0.3097,
+    "d0": 0.6593
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01619,
+    "t": 0.463,
+    "d0": 0.9485
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01578,
+    "t": 0.2302,
+    "d0": 0.9398
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.0329,
+    "t": 0.6237,
+    "d0": 0.995
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02211,
+    "t": 0.391,
+    "d0": 0.9927
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.03905,
+    "t": 0.2794,
+    "d0": 0.0185
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.07416,
+    "t": 0.1067,
+    "d0": 0.1951
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03723,
+    "t": 0.4623,
+    "d0": -0.1142
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.07357,
+    "t": 0.1684,
+    "d0": -0.2208
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00601,
+    "t": 0.4999,
+    "d0": -0.6001
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00998,
+    "t": 0.2916,
+    "d0": -0.7956
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.0224,
+    "t": 0.6408,
+    "d0": -0.9365
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.03461,
+    "t": 0.4515,
+    "d0": -0.9569
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01498,
+    "t": 0.3643,
+    "d0": -0.2729
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01103,
+    "t": 0.2335,
+    "d0": -0.349
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03281,
+    "t": 0.5024,
+    "d0": -0.7105
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.03799,
+    "t": 0.3567,
+    "d0": -0.6993
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00864,
+    "t": 0.5073,
+    "d0": -0.7784
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01551,
+    "t": 0.3258,
+    "d0": -0.7365
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.04815,
+    "t": 0.6531,
+    "d0": -0.969
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.07598,
+    "t": 0.5212,
+    "d0": -0.9659
+   }
+  },
+  "PA": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01661,
+    "t": 0.7218,
+    "d0": 0.9935
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.04115,
+    "t": 0.568,
+    "d0": 0.9996
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.08664,
+    "t": 0.7803,
+    "d0": 0.9813
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.06756,
+    "t": 0.6009,
+    "d0": 0.9613
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01094,
+    "t": 0.555,
+    "d0": 0.9202
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.02626,
+    "t": 0.3936,
+    "d0": 0.795
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03191,
+    "t": 0.6365,
+    "d0": 0.8235
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.04449,
+    "t": 0.39,
+    "d0": 0.7695
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00556,
+    "t": 0.6324,
+    "d0": 0.9672
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01129,
+    "t": 0.3914,
+    "d0": 0.964
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03454,
+    "t": 0.732,
+    "d0": 0.9736
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03434,
+    "t": 0.4778,
+    "d0": 0.9769
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00947,
+    "t": 0.4361,
+    "d0": 0.2068
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.04168,
+    "t": 0.2043,
+    "d0": 0.2075
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.0309,
+    "t": 0.5862,
+    "d0": -0.0825
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.09445,
+    "t": 0.224,
+    "d0": 0.0516
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00325,
+    "t": 0.666,
+    "d0": -0.7542
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00542,
+    "t": 0.4695,
+    "d0": -0.7797
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02667,
+    "t": 0.7461,
+    "d0": -0.9157
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.04002,
+    "t": 0.5398,
+    "d0": -0.9034
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00261,
+    "t": 0.5334,
+    "d0": -0.3338
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01057,
+    "t": 0.3958,
+    "d0": -0.341
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03342,
+    "t": 0.6246,
+    "d0": -0.6772
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.06865,
+    "t": 0.4415,
+    "d0": -0.5758
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00407,
+    "t": 0.6725,
+    "d0": -0.8686
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01082,
+    "t": 0.5096,
+    "d0": -0.824
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.0676,
+    "t": 0.7563,
+    "d0": -0.9885
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.13912,
+    "t": 0.6081,
+    "d0": -0.9235
+   }
+  },
+  "IL": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03551,
+    "t": 0.5852,
+    "d0": 0.9994
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.06264,
+    "t": 0.4123,
+    "d0": 0.9896
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.09208,
+    "t": 0.761,
+    "d0": 0.9992
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04683,
+    "t": 0.5059,
+    "d0": 0.9912
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0174,
+    "t": 0.4041,
+    "d0": 0.9766
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03498,
+    "t": 0.2573,
+    "d0": 0.84
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03061,
+    "t": 0.6107,
+    "d0": 0.8743
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.0371,
+    "t": 0.3029,
+    "d0": 0.827
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01177,
+    "t": 0.4833,
+    "d0": 0.9697
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01839,
+    "t": 0.2555,
+    "d0": 0.8741
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03226,
+    "t": 0.7099,
+    "d0": 0.9893
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03009,
+    "t": 0.3836,
+    "d0": 0.9279
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01912,
+    "t": 0.296,
+    "d0": 0.4114
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.06273,
+    "t": 0.1205,
+    "d0": 0.0001
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.04255,
+    "t": 0.5594,
+    "d0": -0.0976
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.08159,
+    "t": 0.1641,
+    "d0": -0.0772
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00869,
+    "t": 0.5202,
+    "d0": -0.78
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01313,
+    "t": 0.3208,
+    "d0": -0.7981
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02829,
+    "t": 0.7248,
+    "d0": -0.8217
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.03826,
+    "t": 0.4436,
+    "d0": -0.8828
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01094,
+    "t": 0.3834,
+    "d0": -0.4159
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.0111,
+    "t": 0.259,
+    "d0": -0.5298
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03011,
+    "t": 0.5986,
+    "d0": -0.7314
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.04756,
+    "t": 0.3495,
+    "d0": -0.7368
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00532,
+    "t": 0.5276,
+    "d0": -0.8721
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01119,
+    "t": 0.3567,
+    "d0": -0.768
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.05156,
+    "t": 0.7355,
+    "d0": -0.9773
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.0882,
+    "t": 0.5133,
+    "d0": -0.9555
+   }
+  },
+  "IN": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00901,
+    "t": 0.5886,
+    "d0": 0.9991
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03623,
+    "t": 0.2884,
+    "d0": 0.9295
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.05399,
+    "t": 0.645,
+    "d0": 0.9991
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.05332,
+    "t": 0.4441,
+    "d0": 0.9748
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00554,
+    "t": 0.4075,
+    "d0": 0.9727
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01419,
+    "t": 0.1667,
+    "d0": 0.8459
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02236,
+    "t": 0.4725,
+    "d0": 0.7487
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03827,
+    "t": 0.2532,
+    "d0": 0.6634
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00413,
+    "t": 0.4868,
+    "d0": 0.966
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01036,
+    "t": 0.1654,
+    "d0": 0.9525
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02582,
+    "t": 0.5828,
+    "d0": 0.9916
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.04197,
+    "t": 0.3268,
+    "d0": 0.765
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00628,
+    "t": 0.299,
+    "d0": 0.429
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.04783,
+    "t": 0.0734,
+    "d0": 0.0669
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02958,
+    "t": 0.4202,
+    "d0": -0.0297
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.12167,
+    "t": 0.1328,
+    "d0": -0.2384
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.0014,
+    "t": 0.5237,
+    "d0": -0.8034
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.0115,
+    "t": 0.2144,
+    "d0": -0.781
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.0301,
+    "t": 0.6006,
+    "d0": -0.8998
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.06215,
+    "t": 0.3835,
+    "d0": -0.8655
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00331,
+    "t": 0.3867,
+    "d0": -0.371
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00844,
+    "t": 0.168,
+    "d0": -0.5118
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03015,
+    "t": 0.4599,
+    "d0": -0.7033
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.07708,
+    "t": 0.2954,
+    "d0": -0.7253
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00255,
+    "t": 0.5311,
+    "d0": -0.8768
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01042,
+    "t": 0.2426,
+    "d0": -0.6915
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.07081,
+    "t": 0.6135,
+    "d0": -0.9895
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.17155,
+    "t": 0.4514,
+    "d0": -0.9754
+   }
+  },
+  "MI": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01124,
+    "t": 0.7686,
+    "d0": 0.9991
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.05895,
+    "t": 0.6,
+    "d0": 0.9859
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.06481,
+    "t": 0.8644,
+    "d0": 0.9989
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.08709,
+    "t": 0.6484,
+    "d0": 0.9616
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00683,
+    "t": 0.6149,
+    "d0": 0.9567
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01964,
+    "t": 0.4255,
+    "d0": 0.865
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02442,
+    "t": 0.7586,
+    "d0": 0.8688
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.04232,
+    "t": 0.4391,
+    "d0": 0.751
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00923,
+    "t": 0.6877,
+    "d0": 0.9642
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01297,
+    "t": 0.4232,
+    "d0": 0.957
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03355,
+    "t": 0.8306,
+    "d0": 0.989
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.04612,
+    "t": 0.5284,
+    "d0": 0.8203
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00775,
+    "t": 0.4975,
+    "d0": 0.4314
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.03797,
+    "t": 0.2266,
+    "d0": 0.078
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03719,
+    "t": 0.7177,
+    "d0": 0.0411
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.10888,
+    "t": 0.2611,
+    "d0": -0.2682
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.0036,
+    "t": 0.7185,
+    "d0": -0.7961
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01087,
+    "t": 0.5025,
+    "d0": -0.7359
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02983,
+    "t": 0.8407,
+    "d0": -0.9043
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.06092,
+    "t": 0.5895,
+    "d0": -0.8919
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00277,
+    "t": 0.5941,
+    "d0": -0.4341
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00786,
+    "t": 0.4277,
+    "d0": -0.489
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02253,
+    "t": 0.7492,
+    "d0": -0.742
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.06602,
+    "t": 0.4918,
+    "d0": -0.68
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00281,
+    "t": 0.7245,
+    "d0": -0.8671
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01776,
+    "t": 0.5425,
+    "d0": -0.7594
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.04993,
+    "t": 0.8478,
+    "d0": -0.9875
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.11612,
+    "t": 0.6551,
+    "d0": -0.98
+   }
+  },
+  "OH": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01592,
+    "t": 0.6377,
+    "d0": 0.9994
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0332,
+    "t": 0.4222,
+    "d0": 0.9717
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.06061,
+    "t": 0.7732,
+    "d0": 0.9914
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.06623,
+    "t": 0.5265,
+    "d0": 0.9882
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00843,
+    "t": 0.4583,
+    "d0": 0.9784
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.017,
+    "t": 0.2651,
+    "d0": 0.8124
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02226,
+    "t": 0.627,
+    "d0": 0.8841
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.0351,
+    "t": 0.3206,
+    "d0": 0.7848
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01035,
+    "t": 0.5385,
+    "d0": 0.9488
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01063,
+    "t": 0.2633,
+    "d0": 0.9639
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02921,
+    "t": 0.7239,
+    "d0": 0.9526
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03206,
+    "t": 0.4032,
+    "d0": 0.9048
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01213,
+    "t": 0.3441,
+    "d0": 0.4846
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.05139,
+    "t": 0.1249,
+    "d0": 0.2103
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03324,
+    "t": 0.5763,
+    "d0": 0.2966
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.11238,
+    "t": 0.1757,
+    "d0": -0.0276
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00475,
+    "t": 0.5749,
+    "d0": -0.8068
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01134,
+    "t": 0.3297,
+    "d0": -0.7238
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02842,
+    "t": 0.7383,
+    "d0": -0.9137
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.06142,
+    "t": 0.4641,
+    "d0": -0.9084
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.003,
+    "t": 0.4368,
+    "d0": -0.4222
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00728,
+    "t": 0.2669,
+    "d0": -0.466
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03632,
+    "t": 0.615,
+    "d0": -0.6887
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.0702,
+    "t": 0.3685,
+    "d0": -0.6529
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00391,
+    "t": 0.5822,
+    "d0": -0.8941
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.0129,
+    "t": 0.3661,
+    "d0": -0.6289
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.06466,
+    "t": 0.7487,
+    "d0": -0.9668
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.14567,
+    "t": 0.5339,
+    "d0": -0.9632
+   }
+  },
+  "WI": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00638,
+    "t": 0.6932,
+    "d0": 0.9991
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.02052,
+    "t": 0.4545,
+    "d0": 0.9833
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.08473,
+    "t": 0.8655,
+    "d0": 0.9993
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.09608,
+    "t": 0.663,
+    "d0": 0.9281
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00195,
+    "t": 0.5206,
+    "d0": 0.9703
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01529,
+    "t": 0.2915,
+    "d0": 0.8439
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03212,
+    "t": 0.7603,
+    "d0": 0.9362
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.05269,
+    "t": 0.4551,
+    "d0": 0.8499
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00238,
+    "t": 0.5997,
+    "d0": 0.9628
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00958,
+    "t": 0.2896,
+    "d0": 0.9549
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03896,
+    "t": 0.8319,
+    "d0": 0.9919
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.04914,
+    "t": 0.5446,
+    "d0": 0.9557
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00548,
+    "t": 0.4024,
+    "d0": 0.2803
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.02035,
+    "t": 0.14,
+    "d0": 0.0037
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03777,
+    "t": 0.7196,
+    "d0": 0.1374
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.11754,
+    "t": 0.2738,
+    "d0": 0.0894
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00291,
+    "t": 0.6345,
+    "d0": -0.7449
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00429,
+    "t": 0.3594,
+    "d0": -0.7693
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03999,
+    "t": 0.8419,
+    "d0": -0.8881
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05628,
+    "t": 0.6051,
+    "d0": -0.8921
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0016,
+    "t": 0.4989,
+    "d0": -0.4341
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00628,
+    "t": 0.2934,
+    "d0": -0.5073
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03431,
+    "t": 0.7509,
+    "d0": -0.7127
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.07203,
+    "t": 0.508,
+    "d0": -0.7256
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00228,
+    "t": 0.6414,
+    "d0": -0.8811
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.0043,
+    "t": 0.3971,
+    "d0": -0.7721
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.04314,
+    "t": 0.849,
+    "d0": -0.9632
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.14164,
+    "t": 0.6696,
+    "d0": -0.9879
+   }
+  },
+  "IA": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00604,
+    "t": 0.6044,
+    "d0": 0.9971
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01679,
+    "t": 0.4201,
+    "d0": 0.9949
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.07441,
+    "t": 0.7894,
+    "d0": 0.9995
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.07473,
+    "t": 0.6015,
+    "d0": 0.9948
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00208,
+    "t": 0.4235,
+    "d0": 0.8863
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0094,
+    "t": 0.2635,
+    "d0": 0.8076
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0209,
+    "t": 0.6488,
+    "d0": 0.951
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.04194,
+    "t": 0.3905,
+    "d0": 0.5681
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00201,
+    "t": 0.5033,
+    "d0": 0.9398
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01079,
+    "t": 0.2616,
+    "d0": 0.971
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02999,
+    "t": 0.7424,
+    "d0": 0.9528
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.0557,
+    "t": 0.4784,
+    "d0": 0.9394
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.0039,
+    "t": 0.3129,
+    "d0": 0.4046
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.0346,
+    "t": 0.124,
+    "d0": 0.2686
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.04262,
+    "t": 0.5992,
+    "d0": 0.0158
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.12569,
+    "t": 0.2244,
+    "d0": -0.2821
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00078,
+    "t": 0.5401,
+    "d0": -0.7782
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00578,
+    "t": 0.3278,
+    "d0": -0.6965
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03934,
+    "t": 0.7562,
+    "d0": -0.8479
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.08015,
+    "t": 0.5403,
+    "d0": -0.9239
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00091,
+    "t": 0.4024,
+    "d0": -0.5269
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01057,
+    "t": 0.2652,
+    "d0": -0.5274
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03828,
+    "t": 0.6372,
+    "d0": -0.7656
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.07184,
+    "t": 0.442,
+    "d0": -0.8497
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00233,
+    "t": 0.5475,
+    "d0": -0.8171
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.0068,
+    "t": 0.3641,
+    "d0": -0.8632
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.06199,
+    "t": 0.766,
+    "d0": -0.9921
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.12963,
+    "t": 0.6086,
+    "d0": -0.9887
+   }
+  },
+  "KS": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00987,
+    "t": 0.6968,
+    "d0": 0.997
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01895,
+    "t": 0.5095,
+    "d0": 0.9952
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.05995,
+    "t": 0.7569,
+    "d0": 0.9993
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.05376,
+    "t": 0.5388,
+    "d0": 0.9922
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00655,
+    "t": 0.5248,
+    "d0": 0.8303
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01623,
+    "t": 0.339,
+    "d0": 0.7509
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02133,
+    "t": 0.6055,
+    "d0": 0.9526
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.04366,
+    "t": 0.3315,
+    "d0": 0.6809
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00355,
+    "t": 0.6037,
+    "d0": 0.9386
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01356,
+    "t": 0.3369,
+    "d0": 0.9705
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03131,
+    "t": 0.7054,
+    "d0": 0.8648
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03337,
+    "t": 0.4152,
+    "d0": 0.8635
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01218,
+    "t": 0.4065,
+    "d0": 0.4395
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.06378,
+    "t": 0.1687,
+    "d0": 0.1888
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.04326,
+    "t": 0.554,
+    "d0": -0.0347
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.12523,
+    "t": 0.183,
+    "d0": -0.269
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00302,
+    "t": 0.6385,
+    "d0": -0.7825
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.0218,
+    "t": 0.4116,
+    "d0": -0.6848
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03546,
+    "t": 0.7204,
+    "d0": -0.8627
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.032,
+    "t": 0.4764,
+    "d0": -0.9567
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00288,
+    "t": 0.5031,
+    "d0": -0.5269
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00694,
+    "t": 0.341,
+    "d0": -0.5274
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03765,
+    "t": 0.5933,
+    "d0": -0.7313
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.07818,
+    "t": 0.3801,
+    "d0": -0.8495
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00581,
+    "t": 0.6453,
+    "d0": -0.8273
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.00648,
+    "t": 0.4509,
+    "d0": -0.8632
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.08508,
+    "t": 0.7312,
+    "d0": -0.9916
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.12814,
+    "t": 0.5462,
+    "d0": -0.9887
+   }
+  },
+  "MN": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01554,
+    "t": 0.7305,
+    "d0": 0.9974
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0183,
+    "t": 0.5045,
+    "d0": 0.9953
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.10732,
+    "t": 0.8632,
+    "d0": 0.9996
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.08961,
+    "t": 0.6436,
+    "d0": 0.996
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01306,
+    "t": 0.5657,
+    "d0": 0.8905
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0204,
+    "t": 0.3345,
+    "d0": 0.8113
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03354,
+    "t": 0.7567,
+    "d0": 0.9684
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03457,
+    "t": 0.434,
+    "d0": 0.8006
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00557,
+    "t": 0.6425,
+    "d0": 0.9461
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.02656,
+    "t": 0.3324,
+    "d0": 0.9716
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.04046,
+    "t": 0.8291,
+    "d0": 0.915
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.0398,
+    "t": 0.5233,
+    "d0": 0.9419
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00906,
+    "t": 0.4468,
+    "d0": 0.4803
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.03958,
+    "t": 0.1659,
+    "d0": 0.2969
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.04004,
+    "t": 0.7156,
+    "d0": 0.1332
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.07309,
+    "t": 0.2572,
+    "d0": -0.2646
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00201,
+    "t": 0.6756,
+    "d0": -0.7825
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.0139,
+    "t": 0.4067,
+    "d0": -0.618
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03269,
+    "t": 0.8393,
+    "d0": -0.7786
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05871,
+    "t": 0.5845,
+    "d0": -0.9188
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00276,
+    "t": 0.5443,
+    "d0": -0.5269
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00384,
+    "t": 0.3365,
+    "d0": -0.5274
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03198,
+    "t": 0.7472,
+    "d0": -0.6968
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.05483,
+    "t": 0.4866,
+    "d0": -0.6929
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00486,
+    "t": 0.6821,
+    "d0": -0.8206
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.0121,
+    "t": 0.4459,
+    "d0": -0.8756
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.0554,
+    "t": 0.8464,
+    "d0": -0.9931
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.12043,
+    "t": 0.6504,
+    "d0": -0.9705
+   }
+  },
+  "MO": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01651,
+    "t": 0.66,
+    "d0": 0.9978
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03087,
+    "t": 0.5341,
+    "d0": 0.9971
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0731,
+    "t": 0.7164,
+    "d0": 0.9998
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.05323,
+    "t": 0.5624,
+    "d0": 0.9812
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00434,
+    "t": 0.4827,
+    "d0": 0.8959
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0133,
+    "t": 0.3615,
+    "d0": 0.7744
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0244,
+    "t": 0.5546,
+    "d0": 0.9251
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02589,
+    "t": 0.353,
+    "d0": 0.8051
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00332,
+    "t": 0.5627,
+    "d0": 0.9442
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01505,
+    "t": 0.3593,
+    "d0": 0.9735
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03196,
+    "t": 0.6601,
+    "d0": 0.9749
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02521,
+    "t": 0.4386,
+    "d0": 0.9642
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.0133,
+    "t": 0.3665,
+    "d0": 0.4629
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.03618,
+    "t": 0.183,
+    "d0": 0.2499
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03639,
+    "t": 0.5018,
+    "d0": 0.0144
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.11859,
+    "t": 0.1977,
+    "d0": -0.3794
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00372,
+    "t": 0.5987,
+    "d0": -0.7983
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00756,
+    "t": 0.4356,
+    "d0": -0.7222
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03976,
+    "t": 0.6764,
+    "d0": -0.8582
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05062,
+    "t": 0.5003,
+    "d0": -0.9666
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0016,
+    "t": 0.461,
+    "d0": -0.5386
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00633,
+    "t": 0.3635,
+    "d0": -0.5541
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.04061,
+    "t": 0.542,
+    "d0": -0.777
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.06671,
+    "t": 0.4028,
+    "d0": -0.8515
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00405,
+    "t": 0.6058,
+    "d0": -0.808
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.00917,
+    "t": 0.4754,
+    "d0": -0.884
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.06767,
+    "t": 0.6881,
+    "d0": -0.9967
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.18057,
+    "t": 0.5697,
+    "d0": -0.9866
+   }
+  },
+  "NE": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01008,
+    "t": 0.6301,
+    "d0": 0.9968
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01461,
+    "t": 0.3576,
+    "d0": 0.995
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.06929,
+    "t": 0.7495,
+    "d0": 0.9992
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.0542,
+    "t": 0.52,
+    "d0": 0.9914
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00814,
+    "t": 0.4502,
+    "d0": 0.8863
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.02036,
+    "t": 0.2156,
+    "d0": 0.8038
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02189,
+    "t": 0.5959,
+    "d0": 0.9483
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03313,
+    "t": 0.315,
+    "d0": 0.7442
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00468,
+    "t": 0.5304,
+    "d0": 0.8936
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01718,
+    "t": 0.214,
+    "d0": 0.9699
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.04166,
+    "t": 0.697,
+    "d0": 0.9482
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02573,
+    "t": 0.3969,
+    "d0": 0.925
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00944,
+    "t": 0.3367,
+    "d0": 0.4503
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.03159,
+    "t": 0.0981,
+    "d0": 0.1828
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03512,
+    "t": 0.544,
+    "d0": -0.1185
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.09912,
+    "t": 0.1719,
+    "d0": -0.2072
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00275,
+    "t": 0.5669,
+    "d0": -0.7782
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00394,
+    "t": 0.2726,
+    "d0": -0.6722
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.05323,
+    "t": 0.7123,
+    "d0": -0.8672
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05783,
+    "t": 0.4576,
+    "d0": -0.9443
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00478,
+    "t": 0.4288,
+    "d0": -0.5269
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00673,
+    "t": 0.2171,
+    "d0": -0.5274
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.04105,
+    "t": 0.5836,
+    "d0": -0.7099
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.06167,
+    "t": 0.3624,
+    "d0": -0.7847
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00444,
+    "t": 0.5742,
+    "d0": -0.8134
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01165,
+    "t": 0.3055,
+    "d0": -0.8632
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.08508,
+    "t": 0.7232,
+    "d0": -0.9916
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.17064,
+    "t": 0.5274,
+    "d0": -0.9882
+   }
+  },
+  "ND": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00505,
+    "t": 0.5939,
+    "d0": 0.9968
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.011,
+    "t": 0.2639,
+    "d0": 0.9948
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.04409,
+    "t": 0.6235,
+    "d0": 0.9992
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.03012,
+    "t": 0.5089,
+    "d0": 0.9914
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00263,
+    "t": 0.4128,
+    "d0": 0.8817
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0059,
+    "t": 0.1504,
+    "d0": 0.8113
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01407,
+    "t": 0.4494,
+    "d0": 0.951
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02839,
+    "t": 0.3055,
+    "d0": 0.7091
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00271,
+    "t": 0.4923,
+    "d0": 0.9386
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00963,
+    "t": 0.1492,
+    "d0": 0.9687
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.04491,
+    "t": 0.5601,
+    "d0": 0.949
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03923,
+    "t": 0.3864,
+    "d0": 0.8622
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00613,
+    "t": 0.3036,
+    "d0": 0.4283
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.01627,
+    "t": 0.0654,
+    "d0": 0.2126
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03749,
+    "t": 0.3977,
+    "d0": -0.0203
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.12249,
+    "t": 0.1657,
+    "d0": -0.336
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.0018,
+    "t": 0.5292,
+    "d0": -0.7867
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01053,
+    "t": 0.1944,
+    "d0": -0.6722
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.06054,
+    "t": 0.5781,
+    "d0": -0.7934
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.06911,
+    "t": 0.4466,
+    "d0": -0.9553
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00129,
+    "t": 0.3919,
+    "d0": -0.5174
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00504,
+    "t": 0.1515,
+    "d0": -0.5274
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.04229,
+    "t": 0.4369,
+    "d0": -0.7516
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.11199,
+    "t": 0.3523,
+    "d0": -0.843
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0031,
+    "t": 0.5365,
+    "d0": -0.8134
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01151,
+    "t": 0.2208,
+    "d0": -0.8632
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.0852,
+    "t": 0.5912,
+    "d0": -0.9907
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.17748,
+    "t": 0.5164,
+    "d0": -0.9792
+   }
+  },
+  "SD": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00518,
+    "t": 0.5959,
+    "d0": 0.9968
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00958,
+    "t": 0.3874,
+    "d0": 0.9948
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.08402,
+    "t": 0.7879,
+    "d0": 0.999
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.05223,
+    "t": 0.5906,
+    "d0": 0.9912
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00194,
+    "t": 0.4148,
+    "d0": 0.8817
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00724,
+    "t": 0.238,
+    "d0": 0.8038
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02184,
+    "t": 0.6468,
+    "d0": 0.951
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.01455,
+    "t": 0.3797,
+    "d0": 0.7303
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0012,
+    "t": 0.4944,
+    "d0": 0.9386
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00588,
+    "t": 0.2362,
+    "d0": 0.9687
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02261,
+    "t": 0.7407,
+    "d0": 0.9436
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02998,
+    "t": 0.4671,
+    "d0": 0.8523
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00344,
+    "t": 0.3053,
+    "d0": 0.4283
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.03294,
+    "t": 0.1099,
+    "d0": 0.1888
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03085,
+    "t": 0.5971,
+    "d0": -0.0564
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.13218,
+    "t": 0.2166,
+    "d0": -0.3273
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00204,
+    "t": 0.5313,
+    "d0": -0.7825
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00624,
+    "t": 0.2986,
+    "d0": -0.6787
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02417,
+    "t": 0.7546,
+    "d0": -0.8412
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05683,
+    "t": 0.529,
+    "d0": -0.9489
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00159,
+    "t": 0.3939,
+    "d0": -0.5174
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00342,
+    "t": 0.2396,
+    "d0": -0.5274
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.04634,
+    "t": 0.6351,
+    "d0": -0.7485
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.08916,
+    "t": 0.4308,
+    "d0": -0.8164
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00415,
+    "t": 0.5386,
+    "d0": -0.8171
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.00644,
+    "t": 0.3332,
+    "d0": -0.8684
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.08103,
+    "t": 0.7645,
+    "d0": -0.9909
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.22292,
+    "t": 0.5977,
+    "d0": -0.9683
+   }
+  },
+  "DE": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03583,
+    "t": 0.6196,
+    "d0": 0.9972
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.07735,
+    "t": 0.3631,
+    "d0": 0.9947
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.08951,
+    "t": 0.687,
+    "d0": 0.9972
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.06306,
+    "t": 0.5259,
+    "d0": 0.9709
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0286,
+    "t": 0.4392,
+    "d0": 0.9095
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03035,
+    "t": 0.2196,
+    "d0": 0.8112
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01736,
+    "t": 0.5197,
+    "d0": 0.8895
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03348,
+    "t": 0.3201,
+    "d0": 0.5866
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01362,
+    "t": 0.5193,
+    "d0": 0.9075
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.0186,
+    "t": 0.218,
+    "d0": 0.8736
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02164,
+    "t": 0.6279,
+    "d0": 0.9621
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.04514,
+    "t": 0.4027,
+    "d0": 0.9016
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.03091,
+    "t": 0.3269,
+    "d0": 0.3615
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.07412,
+    "t": 0.1002,
+    "d0": 0.2975
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.0417,
+    "t": 0.4668,
+    "d0": -0.1773
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.06659,
+    "t": 0.1754,
+    "d0": -0.2841
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00432,
+    "t": 0.556,
+    "d0": -0.7921
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00467,
+    "t": 0.2773,
+    "d0": -0.794
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02382,
+    "t": 0.6449,
+    "d0": -0.6937
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.04046,
+    "t": 0.4635,
+    "d0": -0.94
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00847,
+    "t": 0.4179,
+    "d0": -0.6293
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01827,
+    "t": 0.2212,
+    "d0": -0.6177
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03173,
+    "t": 0.507,
+    "d0": -0.7663
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.04007,
+    "t": 0.368,
+    "d0": -0.8496
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00536,
+    "t": 0.5633,
+    "d0": -0.8482
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01931,
+    "t": 0.3106,
+    "d0": -0.9247
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.05172,
+    "t": 0.6572,
+    "d0": -0.9804
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.06393,
+    "t": 0.5333,
+    "d0": -0.9834
+   }
+  },
+  "DC": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.17359,
+    "t": 0.4566,
+    "d0": 0.997
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.17256,
+    "t": 0.3425,
+    "d0": 0.9944
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.31969,
+    "t": 0.5393,
+    "d0": 0.9965
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.0166,
+    "t": 0.4569,
+    "d0": 0.981
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03848,
+    "t": 0.2877,
+    "d0": 0.9077
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.04922,
+    "t": 0.2046,
+    "d0": 0.8178
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.05363,
+    "t": 0.3659,
+    "d0": 0.8829
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.00279,
+    "t": 0.2631,
+    "d0": 0.6084
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01375,
+    "t": 0.3578,
+    "d0": 0.9075
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00877,
+    "t": 0.203,
+    "d0": 0.9111
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03316,
+    "t": 0.4737,
+    "d0": 0.9591
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.0063,
+    "t": 0.3383,
+    "d0": 0.8918
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02254,
+    "t": 0.2003,
+    "d0": 0.331
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.03831,
+    "t": 0.0923,
+    "d0": 0.2835
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.01032,
+    "t": 0.3183,
+    "d0": -0.2008
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.00673,
+    "t": 0.1389,
+    "d0": -0.274
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00337,
+    "t": 0.3924,
+    "d0": -0.7921
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00463,
+    "t": 0.2596,
+    "d0": -0.794
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.00415,
+    "t": 0.4921,
+    "d0": -0.8375
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.00146,
+    "t": 0.3959,
+    "d0": -0.9364
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0019,
+    "t": 0.2702,
+    "d0": -0.6293
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00085,
+    "t": 0.206,
+    "d0": -0.6177
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.00452,
+    "t": 0.3542,
+    "d0": -0.757
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.00173,
+    "t": 0.3063,
+    "d0": -0.8376
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00314,
+    "t": 0.3994,
+    "d0": -0.8482
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.00119,
+    "t": 0.2916,
+    "d0": -0.9247
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.00466,
+    "t": 0.5056,
+    "d0": -0.9772
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.00196,
+    "t": 0.4643,
+    "d0": -0.9772
+   }
+  },
+  "FL": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02888,
+    "t": 0.6147,
+    "d0": 0.9993
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.06388,
+    "t": 0.4758,
+    "d0": 0.9894
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0463,
+    "t": 0.774,
+    "d0": 0.9996
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.05069,
+    "t": 0.5805,
+    "d0": 0.9798
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01689,
+    "t": 0.434,
+    "d0": 0.889
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03312,
+    "t": 0.3094,
+    "d0": 0.776
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01784,
+    "t": 0.628,
+    "d0": 0.8783
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02542,
+    "t": 0.37,
+    "d0": 0.55
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01083,
+    "t": 0.514,
+    "d0": 0.9046
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01916,
+    "t": 0.3074,
+    "d0": 0.881
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.01784,
+    "t": 0.7247,
+    "d0": 0.9513
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02066,
+    "t": 0.4568,
+    "d0": 0.8003
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02581,
+    "t": 0.3222,
+    "d0": 0.2754
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.07759,
+    "t": 0.1506,
+    "d0": 0.3157
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02717,
+    "t": 0.5773,
+    "d0": -0.2655
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.0649,
+    "t": 0.2096,
+    "d0": -0.3331
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01011,
+    "t": 0.5508,
+    "d0": -0.7921
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01399,
+    "t": 0.3793,
+    "d0": -0.8282
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02959,
+    "t": 0.7392,
+    "d0": -0.8783
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.03677,
+    "t": 0.5187,
+    "d0": -0.9453
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01236,
+    "t": 0.4128,
+    "d0": -0.6982
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.02327,
+    "t": 0.3113,
+    "d0": -0.6271
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.0358,
+    "t": 0.616,
+    "d0": -0.8045
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.04592,
+    "t": 0.4207,
+    "d0": -0.8812
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.02053,
+    "t": 0.5581,
+    "d0": -0.8934
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.04502,
+    "t": 0.4177,
+    "d0": -0.946
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.07054,
+    "t": 0.7494,
+    "d0": -0.9766
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.10913,
+    "t": 0.5877,
+    "d0": -0.981
+   }
+  },
+  "GA": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.06067,
+    "t": 0.7223,
+    "d0": 0.9986
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.09187,
+    "t": 0.5296,
+    "d0": 0.9983
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.04217,
+    "t": 0.8034,
+    "d0": 0.9988
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.03484,
+    "t": 0.5711,
+    "d0": 0.9913
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03479,
+    "t": 0.5556,
+    "d0": 0.9321
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03354,
+    "t": 0.3573,
+    "d0": 0.8392
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0141,
+    "t": 0.6682,
+    "d0": 0.9139
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.01219,
+    "t": 0.3611,
+    "d0": 0.6654
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01997,
+    "t": 0.633,
+    "d0": 0.9266
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.02562,
+    "t": 0.3551,
+    "d0": 0.9259
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02012,
+    "t": 0.7585,
+    "d0": 0.9061
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.01734,
+    "t": 0.4472,
+    "d0": 0.9259
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02564,
+    "t": 0.4367,
+    "d0": 0.2237
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.08417,
+    "t": 0.1803,
+    "d0": 0.3346
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03134,
+    "t": 0.6197,
+    "d0": -0.1724
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.05788,
+    "t": 0.2033,
+    "d0": -0.185
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00783,
+    "t": 0.6665,
+    "d0": -0.8001
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01642,
+    "t": 0.4312,
+    "d0": -0.8161
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.0249,
+    "t": 0.7718,
+    "d0": -0.8485
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.03055,
+    "t": 0.5091,
+    "d0": -0.9336
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00636,
+    "t": 0.5341,
+    "d0": -0.6568
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.0138,
+    "t": 0.3593,
+    "d0": -0.6142
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02962,
+    "t": 0.6569,
+    "d0": -0.7764
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.05265,
+    "t": 0.4113,
+    "d0": -0.8296
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00827,
+    "t": 0.6731,
+    "d0": -0.8645
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.02418,
+    "t": 0.4708,
+    "d0": -0.9327
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.05668,
+    "t": 0.7812,
+    "d0": -0.975
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.1225,
+    "t": 0.5783,
+    "d0": -0.9895
+   }
+  },
+  "MD": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.06712,
+    "t": 0.6295,
+    "d0": 0.9987
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.09783,
+    "t": 0.3971,
+    "d0": 0.998
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.10517,
+    "t": 0.73,
+    "d0": 0.9907
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.03794,
+    "t": 0.4913,
+    "d0": 0.9567
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.04065,
+    "t": 0.4495,
+    "d0": 0.9049
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.04325,
+    "t": 0.2454,
+    "d0": 0.7991
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0365,
+    "t": 0.5713,
+    "d0": 0.8804
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02142,
+    "t": 0.2908,
+    "d0": 0.577
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02668,
+    "t": 0.5297,
+    "d0": 0.9292
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01728,
+    "t": 0.2436,
+    "d0": 0.9151
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.0362,
+    "t": 0.6752,
+    "d0": 0.9717
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.021,
+    "t": 0.3698,
+    "d0": 0.9249
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.04298,
+    "t": 0.3362,
+    "d0": 0.4323
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.0634,
+    "t": 0.114,
+    "d0": 0.2834
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.0362,
+    "t": 0.5188,
+    "d0": -0.0934
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.04364,
+    "t": 0.1562,
+    "d0": -0.1933
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01596,
+    "t": 0.5663,
+    "d0": -0.811
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01314,
+    "t": 0.3072,
+    "d0": -0.7638
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02622,
+    "t": 0.6911,
+    "d0": -0.7634
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.02328,
+    "t": 0.4293,
+    "d0": -0.9252
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0092,
+    "t": 0.4282,
+    "d0": -0.5688
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00594,
+    "t": 0.247,
+    "d0": -0.6584
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02046,
+    "t": 0.5588,
+    "d0": -0.6217
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.03216,
+    "t": 0.3364,
+    "d0": -0.8681
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00501,
+    "t": 0.5735,
+    "d0": -0.7754
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.0107,
+    "t": 0.3423,
+    "d0": -0.9303
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.0374,
+    "t": 0.7025,
+    "d0": -0.9887
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.06328,
+    "t": 0.4987,
+    "d0": -0.9734
+   }
+  },
+  "NC": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03204,
+    "t": 0.697,
+    "d0": 0.9985
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0669,
+    "t": 0.4205,
+    "d0": 0.9976
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.06391,
+    "t": 0.7388,
+    "d0": 0.999
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04426,
+    "t": 0.5521,
+    "d0": 0.992
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01457,
+    "t": 0.5251,
+    "d0": 0.9279
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0264,
+    "t": 0.2638,
+    "d0": 0.8511
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01867,
+    "t": 0.5823,
+    "d0": 0.888
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02382,
+    "t": 0.3435,
+    "d0": 0.6734
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0085,
+    "t": 0.604,
+    "d0": 0.9266
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.02017,
+    "t": 0.2619,
+    "d0": 0.9259
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03966,
+    "t": 0.685,
+    "d0": 0.981
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03041,
+    "t": 0.4283,
+    "d0": 0.9399
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02683,
+    "t": 0.4068,
+    "d0": 0.3763
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.06171,
+    "t": 0.1241,
+    "d0": 0.2255
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03209,
+    "t": 0.53,
+    "d0": -0.2648
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.08795,
+    "t": 0.1911,
+    "d0": -0.2806
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01368,
+    "t": 0.6387,
+    "d0": -0.8238
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00942,
+    "t": 0.3282,
+    "d0": -0.8193
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03497,
+    "t": 0.7006,
+    "d0": -0.8712
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.04946,
+    "t": 0.4898,
+    "d0": -0.9679
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00477,
+    "t": 0.5034,
+    "d0": -0.6708
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00917,
+    "t": 0.2655,
+    "d0": -0.6324
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02018,
+    "t": 0.5699,
+    "d0": -0.7884
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.04958,
+    "t": 0.3928,
+    "d0": -0.867
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00676,
+    "t": 0.6455,
+    "d0": -0.8594
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.02227,
+    "t": 0.3644,
+    "d0": -0.9393
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.05927,
+    "t": 0.7118,
+    "d0": -0.9896
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.12257,
+    "t": 0.5595,
+    "d0": -0.9762
+   }
+  },
+  "SC": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03176,
+    "t": 0.6185,
+    "d0": 0.9979
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.07488,
+    "t": 0.4505,
+    "d0": 0.9969
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03268,
+    "t": 0.7303,
+    "d0": 0.9784
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.03362,
+    "t": 0.4442,
+    "d0": 0.9875
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01338,
+    "t": 0.4379,
+    "d0": 0.8214
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.04006,
+    "t": 0.2882,
+    "d0": 0.8429
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01476,
+    "t": 0.5717,
+    "d0": 0.8224
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02178,
+    "t": 0.2533,
+    "d0": 0.5649
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01049,
+    "t": 0.518,
+    "d0": 0.8051
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01131,
+    "t": 0.2863,
+    "d0": 0.9192
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.0337,
+    "t": 0.6756,
+    "d0": 0.9531
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03376,
+    "t": 0.3269,
+    "d0": 0.9168
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01434,
+    "t": 0.3258,
+    "d0": 0.2727
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.05538,
+    "t": 0.138,
+    "d0": 0.3261
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02375,
+    "t": 0.5193,
+    "d0": -0.283
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.08452,
+    "t": 0.1328,
+    "d0": -0.3635
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00712,
+    "t": 0.5547,
+    "d0": -0.8238
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01178,
+    "t": 0.3557,
+    "d0": -0.8093
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03791,
+    "t": 0.6915,
+    "d0": -0.8467
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05595,
+    "t": 0.3836,
+    "d0": -0.9612
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00424,
+    "t": 0.4167,
+    "d0": -0.6366
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01362,
+    "t": 0.29,
+    "d0": -0.6411
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02801,
+    "t": 0.5592,
+    "d0": -0.8014
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.06215,
+    "t": 0.2955,
+    "d0": -0.8252
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00569,
+    "t": 0.562,
+    "d0": -0.854
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01463,
+    "t": 0.3932,
+    "d0": -0.9276
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.07488,
+    "t": 0.7029,
+    "d0": -0.9878
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.15385,
+    "t": 0.4515,
+    "d0": -0.9906
+   }
+  },
+  "VA": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.04215,
+    "t": 0.6035,
+    "d0": 0.9899
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.07212,
+    "t": 0.452,
+    "d0": 0.9971
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.08791,
+    "t": 0.7557,
+    "d0": 0.9991
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04076,
+    "t": 0.4876,
+    "d0": 0.9917
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01969,
+    "t": 0.4225,
+    "d0": 0.9267
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03263,
+    "t": 0.2894,
+    "d0": 0.8576
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02439,
+    "t": 0.6039,
+    "d0": 0.8864
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.01765,
+    "t": 0.2877,
+    "d0": 0.6828
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01628,
+    "t": 0.5023,
+    "d0": 0.9241
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01586,
+    "t": 0.2874,
+    "d0": 0.9192
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.04522,
+    "t": 0.704,
+    "d0": 0.9803
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.0261,
+    "t": 0.3664,
+    "d0": 0.9332
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02317,
+    "t": 0.3121,
+    "d0": 0.3691
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.06811,
+    "t": 0.1387,
+    "d0": 0.2141
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.04658,
+    "t": 0.5523,
+    "d0": -0.1566
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.0616,
+    "t": 0.1542,
+    "d0": -0.3207
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00697,
+    "t": 0.5392,
+    "d0": -0.7731
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01254,
+    "t": 0.357,
+    "d0": -0.8041
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.04119,
+    "t": 0.7191,
+    "d0": -0.8974
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.04324,
+    "t": 0.4256,
+    "d0": -0.9365
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00545,
+    "t": 0.4015,
+    "d0": -0.6599
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01221,
+    "t": 0.2912,
+    "d0": -0.6463
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02688,
+    "t": 0.5917,
+    "d0": -0.7048
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.03909,
+    "t": 0.3331,
+    "d0": -0.8606
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00979,
+    "t": 0.5465,
+    "d0": -0.854
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01441,
+    "t": 0.3946,
+    "d0": -0.9315
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.06007,
+    "t": 0.7299,
+    "d0": -0.9607
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.08792,
+    "t": 0.495,
+    "d0": -0.9747
+   }
+  },
+  "WV": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0055,
+    "t": 0.5584,
+    "d0": 0.997
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00767,
+    "t": 0.3219,
+    "d0": 0.9949
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03885,
+    "t": 0.6623,
+    "d0": 0.9976
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.03363,
+    "t": 0.4119,
+    "d0": 0.9864
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00433,
+    "t": 0.378,
+    "d0": 0.9095
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00521,
+    "t": 0.1899,
+    "d0": 0.8178
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01299,
+    "t": 0.4915,
+    "d0": 0.8916
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.0523,
+    "t": 0.2291,
+    "d0": 0.5908
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00205,
+    "t": 0.4561,
+    "d0": 0.9075
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00107,
+    "t": 0.1884,
+    "d0": 0.9129
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.01702,
+    "t": 0.6012,
+    "d0": 0.9606
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03662,
+    "t": 0.2985,
+    "d0": 0.9051
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00461,
+    "t": 0.2737,
+    "d0": 0.3049
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.01305,
+    "t": 0.0848,
+    "d0": 0.2108
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.01931,
+    "t": 0.4389,
+    "d0": -0.1769
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.20169,
+    "t": 0.1183,
+    "d0": -0.198
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.0027,
+    "t": 0.4929,
+    "d0": -0.7921
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00221,
+    "t": 0.2422,
+    "d0": -0.794
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.04007,
+    "t": 0.6187,
+    "d0": -0.7152
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.07028,
+    "t": 0.3529,
+    "d0": -0.8611
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00099,
+    "t": 0.3579,
+    "d0": -0.6293
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00298,
+    "t": 0.1912,
+    "d0": -0.6177
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02563,
+    "t": 0.4788,
+    "d0": -0.7462
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.10411,
+    "t": 0.2688,
+    "d0": -0.6493
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00251,
+    "t": 0.5003,
+    "d0": -0.8482
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.00309,
+    "t": 0.2728,
+    "d0": -0.9261
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.07482,
+    "t": 0.6314,
+    "d0": -0.9828
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.2147,
+    "t": 0.4191,
+    "d0": -0.9423
+   }
+  },
+  "AL": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02688,
+    "t": 0.6241,
+    "d0": 0.9977
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.07886,
+    "t": 0.4833,
+    "d0": 0.9975
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02158,
+    "t": 0.6299,
+    "d0": 0.8966
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.02004,
+    "t": 0.3959,
+    "d0": 0.8941
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00958,
+    "t": 0.4439,
+    "d0": 0.9389
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03828,
+    "t": 0.316,
+    "d0": 0.9222
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.00778,
+    "t": 0.4562,
+    "d0": 0.7233
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.0176,
+    "t": 0.2176,
+    "d0": 0.6019
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00755,
+    "t": 0.524,
+    "d0": 0.9539
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01899,
+    "t": 0.3139,
+    "d0": 0.9646
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.01304,
+    "t": 0.5669,
+    "d0": 0.9871
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02386,
+    "t": 0.2848,
+    "d0": 0.9517
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.0125,
+    "t": 0.3311,
+    "d0": 0.3949
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.07019,
+    "t": 0.1545,
+    "d0": 0.0833
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02861,
+    "t": 0.4044,
+    "d0": -0.2565
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.10106,
+    "t": 0.1116,
+    "d0": -0.3599
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00299,
+    "t": 0.5607,
+    "d0": -0.782
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00842,
+    "t": 0.3864,
+    "d0": -0.6964
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03462,
+    "t": 0.5848,
+    "d0": -0.8982
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05206,
+    "t": 0.3379,
+    "d0": -0.9704
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0016,
+    "t": 0.4226,
+    "d0": -0.462
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01328,
+    "t": 0.3179,
+    "d0": -0.499
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.04447,
+    "t": 0.4437,
+    "d0": -0.798
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.07312,
+    "t": 0.2559,
+    "d0": -0.8626
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0035,
+    "t": 0.5679,
+    "d0": -0.8171
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01422,
+    "t": 0.4251,
+    "d0": -0.858
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.08312,
+    "t": 0.5979,
+    "d0": -0.9728
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.1722,
+    "t": 0.403,
+    "d0": -0.9939
+   }
+  },
+  "KY": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00949,
+    "t": 0.6237,
+    "d0": 0.9971
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.02757,
+    "t": 0.342,
+    "d0": 0.9967
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.05484,
+    "t": 0.728,
+    "d0": 0.9379
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.05951,
+    "t": 0.5114,
+    "d0": 0.9857
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00339,
+    "t": 0.4434,
+    "d0": 0.9441
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01261,
+    "t": 0.2042,
+    "d0": 0.9222
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0217,
+    "t": 0.5688,
+    "d0": 0.8224
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.05057,
+    "t": 0.3076,
+    "d0": 0.3971
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00294,
+    "t": 0.5236,
+    "d0": 0.9548
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00629,
+    "t": 0.2027,
+    "d0": 0.9653
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.01706,
+    "t": 0.6729,
+    "d0": 0.9873
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02523,
+    "t": 0.3887,
+    "d0": 0.9474
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00705,
+    "t": 0.3307,
+    "d0": 0.4123
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.02816,
+    "t": 0.0921,
+    "d0": 0.1104
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02014,
+    "t": 0.5163,
+    "d0": -0.2622
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.13096,
+    "t": 0.1671,
+    "d0": -0.3739
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00495,
+    "t": 0.5602,
+    "d0": -0.7779
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00633,
+    "t": 0.2592,
+    "d0": -0.7251
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.03079,
+    "t": 0.6889,
+    "d0": -0.8569
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.06244,
+    "t": 0.4491,
+    "d0": -0.9711
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00201,
+    "t": 0.4221,
+    "d0": -0.4725
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00429,
+    "t": 0.2056,
+    "d0": -0.499
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03648,
+    "t": 0.5563,
+    "d0": -0.757
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.07158,
+    "t": 0.3545,
+    "d0": -0.8753
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00254,
+    "t": 0.5675,
+    "d0": -0.8098
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01114,
+    "t": 0.2911,
+    "d0": -0.8524
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.07789,
+    "t": 0.7004,
+    "d0": -0.9708
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.21206,
+    "t": 0.5188,
+    "d0": -0.9951
+   }
+  },
+  "MS": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02281,
+    "t": 0.6208,
+    "d0": 0.9975
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.12556,
+    "t": 0.3775,
+    "d0": 0.9973
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01349,
+    "t": 0.5671,
+    "d0": 0.9025
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.02018,
+    "t": 0.387,
+    "d0": 0.9743
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01236,
+    "t": 0.4403,
+    "d0": 0.9441
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.04353,
+    "t": 0.2304,
+    "d0": 0.9207
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.00615,
+    "t": 0.3924,
+    "d0": 0.8502
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.00911,
+    "t": 0.2114,
+    "d0": 0.5863
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00735,
+    "t": 0.5205,
+    "d0": 0.9539
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.02662,
+    "t": 0.2288,
+    "d0": 0.9653
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.00825,
+    "t": 0.5018,
+    "d0": 0.9842
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.0082,
+    "t": 0.2773,
+    "d0": 0.8789
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01037,
+    "t": 0.3279,
+    "d0": 0.4007
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.10377,
+    "t": 0.1059,
+    "d0": 0.1321
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.01326,
+    "t": 0.3432,
+    "d0": -0.2066
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.09034,
+    "t": 0.1079,
+    "d0": -0.37
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00512,
+    "t": 0.5571,
+    "d0": -0.7779
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00939,
+    "t": 0.2899,
+    "d0": -0.7251
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02586,
+    "t": 0.5202,
+    "d0": -0.8894
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.04204,
+    "t": 0.3296,
+    "d0": -0.962
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00229,
+    "t": 0.4191,
+    "d0": -0.4725
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00972,
+    "t": 0.232,
+    "d0": -0.499
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02551,
+    "t": 0.3803,
+    "d0": -0.7681
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.07684,
+    "t": 0.2489,
+    "d0": -0.8573
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00684,
+    "t": 0.5644,
+    "d0": -0.8205
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.03441,
+    "t": 0.324,
+    "d0": -0.8524
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.07366,
+    "t": 0.5337,
+    "d0": -0.9697
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.16697,
+    "t": 0.3941,
+    "d0": -0.9919
+   }
+  },
+  "TN": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01279,
+    "t": 0.5635,
+    "d0": 0.9974
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03858,
+    "t": 0.3636,
+    "d0": 0.9968
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.04922,
+    "t": 0.5668,
+    "d0": 0.9749
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04746,
+    "t": 0.3545,
+    "d0": 0.9871
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00796,
+    "t": 0.3829,
+    "d0": 0.943
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.02669,
+    "t": 0.22,
+    "d0": 0.9331
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0112,
+    "t": 0.3921,
+    "d0": 0.8766
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02457,
+    "t": 0.1891,
+    "d0": 0.6331
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00484,
+    "t": 0.4612,
+    "d0": 0.9565
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00912,
+    "t": 0.2184,
+    "d0": 0.9659
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02369,
+    "t": 0.5015,
+    "d0": 0.9903
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02824,
+    "t": 0.2503,
+    "d0": 0.9643
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01115,
+    "t": 0.2778,
+    "d0": 0.4185
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.05245,
+    "t": 0.1004,
+    "d0": 0.1849
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03421,
+    "t": 0.3429,
+    "d0": -0.1307
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.10748,
+    "t": 0.0953,
+    "d0": -0.2883
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.0068,
+    "t": 0.498,
+    "d0": -0.7588
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01321,
+    "t": 0.2778,
+    "d0": -0.7251
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.06225,
+    "t": 0.5199,
+    "d0": -0.8475
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05097,
+    "t": 0.2996,
+    "d0": -0.9583
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00034,
+    "t": 0.3626,
+    "d0": -0.4725
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00752,
+    "t": 0.2215,
+    "d0": -0.499
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03406,
+    "t": 0.38,
+    "d0": -0.7286
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.06966,
+    "t": 0.2238,
+    "d0": -0.8226
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00685,
+    "t": 0.5054,
+    "d0": -0.8171
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01047,
+    "t": 0.311,
+    "d0": -0.8632
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.09277,
+    "t": 0.5333,
+    "d0": -0.9054
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.15545,
+    "t": 0.3614,
+    "d0": -0.9889
+   }
+  },
+  "AR": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0165,
+    "t": 0.6983,
+    "d0": 0.9803
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03653,
+    "t": 0.3305,
+    "d0": 0.975
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.05003,
+    "t": 0.7396,
+    "d0": 0.9873
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.03494,
+    "t": 0.4742,
+    "d0": 0.9887
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01137,
+    "t": 0.5267,
+    "d0": 0.9521
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.02197,
+    "t": 0.196,
+    "d0": 0.909
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0105,
+    "t": 0.5833,
+    "d0": 0.9427
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03113,
+    "t": 0.2768,
+    "d0": 0.5502
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00386,
+    "t": 0.6055,
+    "d0": 0.9704
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00985,
+    "t": 0.1945,
+    "d0": 0.9782
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.01596,
+    "t": 0.6859,
+    "d0": 0.954
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03151,
+    "t": 0.354,
+    "d0": 0.9777
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01467,
+    "t": 0.4083,
+    "d0": 0.3219
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.05795,
+    "t": 0.0879,
+    "d0": 0.2156
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02791,
+    "t": 0.5311,
+    "d0": 0.0764
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.12275,
+    "t": 0.1474,
+    "d0": -0.4342
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00475,
+    "t": 0.6402,
+    "d0": -0.7723
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.02037,
+    "t": 0.2494,
+    "d0": -0.83
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.0331,
+    "t": 0.7015,
+    "d0": -0.902
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.06568,
+    "t": 0.4126,
+    "d0": -0.9588
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00225,
+    "t": 0.505,
+    "d0": -0.5379
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00524,
+    "t": 0.1974,
+    "d0": -0.6581
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.0296,
+    "t": 0.5709,
+    "d0": -0.6974
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.05387,
+    "t": 0.3213,
+    "d0": -0.8901
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00286,
+    "t": 0.647,
+    "d0": -0.8795
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01742,
+    "t": 0.2806,
+    "d0": -0.9128
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.06308,
+    "t": 0.7127,
+    "d0": -0.9878
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.20432,
+    "t": 0.4816,
+    "d0": -0.9915
+   }
+  },
+  "LA": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02244,
+    "t": 0.6799,
+    "d0": 0.8905
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.10403,
+    "t": 0.5266,
+    "d0": 0.9869
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02813,
+    "t": 0.6627,
+    "d0": 0.9713
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.02296,
+    "t": 0.4764,
+    "d0": 0.9878
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0108,
+    "t": 0.5052,
+    "d0": 0.9562
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.04082,
+    "t": 0.3545,
+    "d0": 0.8953
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.00942,
+    "t": 0.492,
+    "d0": 0.9427
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.01562,
+    "t": 0.2786,
+    "d0": 0.5416
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01116,
+    "t": 0.5848,
+    "d0": 0.9731
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01943,
+    "t": 0.3523,
+    "d0": 0.9787
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.01774,
+    "t": 0.6017,
+    "d0": 0.8988
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.01472,
+    "t": 0.3561,
+    "d0": 0.9762
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01727,
+    "t": 0.3877,
+    "d0": 0.3745
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.09164,
+    "t": 0.1785,
+    "d0": 0.3025
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.01969,
+    "t": 0.4393,
+    "d0": 0.0488
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.10904,
+    "t": 0.1485,
+    "d0": -0.4109
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00412,
+    "t": 0.6201,
+    "d0": -0.7344
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.02637,
+    "t": 0.4282,
+    "d0": -0.8171
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02245,
+    "t": 0.6191,
+    "d0": -0.9004
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.04772,
+    "t": 0.4148,
+    "d0": -0.9536
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00259,
+    "t": 0.4835,
+    "d0": -0.5379
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00514,
+    "t": 0.3565,
+    "d0": -0.6771
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.0227,
+    "t": 0.4793,
+    "d0": -0.7446
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.0535,
+    "t": 0.3232,
+    "d0": -0.8901
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00927,
+    "t": 0.6271,
+    "d0": -0.8863
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.02489,
+    "t": 0.4678,
+    "d0": -0.9112
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.06368,
+    "t": 0.6318,
+    "d0": -0.9895
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.16265,
+    "t": 0.4839,
+    "d0": -0.9926
+   }
+  },
+  "OK": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01225,
+    "t": 0.6589,
+    "d0": 0.9796
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0257,
+    "t": 0.3375,
+    "d0": 0.9857
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.04022,
+    "t": 0.7419,
+    "d0": 0.9896
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04514,
+    "t": 0.4774,
+    "d0": 0.9894
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01127,
+    "t": 0.4815,
+    "d0": 0.9115
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01451,
+    "t": 0.201,
+    "d0": 0.9072
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01658,
+    "t": 0.5863,
+    "d0": 0.9467
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.01991,
+    "t": 0.2794,
+    "d0": 0.6726
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00356,
+    "t": 0.5616,
+    "d0": 0.9715
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01139,
+    "t": 0.1995,
+    "d0": 0.9787
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.01465,
+    "t": 0.6885,
+    "d0": 0.8851
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02289,
+    "t": 0.357,
+    "d0": 0.9748
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01146,
+    "t": 0.3654,
+    "d0": 0.3627
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.09497,
+    "t": 0.0905,
+    "d0": 0.2146
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02643,
+    "t": 0.5341,
+    "d0": 0.0056
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.10319,
+    "t": 0.149,
+    "d0": -0.3929
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00547,
+    "t": 0.5975,
+    "d0": -0.754
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.0308,
+    "t": 0.2554,
+    "d0": -0.8238
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.01997,
+    "t": 0.704,
+    "d0": -0.8925
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.053,
+    "t": 0.4157,
+    "d0": -0.9581
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.0057,
+    "t": 0.4599,
+    "d0": -0.5557
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.03068,
+    "t": 0.2024,
+    "d0": -0.683
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03169,
+    "t": 0.5739,
+    "d0": -0.7417
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.06028,
+    "t": 0.3241,
+    "d0": -0.8942
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01422,
+    "t": 0.6046,
+    "d0": -0.8924
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.04282,
+    "t": 0.287,
+    "d0": -0.9189
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.06753,
+    "t": 0.7152,
+    "d0": -0.9775
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.16372,
+    "t": 0.4848,
+    "d0": -0.9689
+   }
+  },
+  "TX": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03609,
+    "t": 0.6643,
+    "d0": 0.9912
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.06314,
+    "t": 0.3987,
+    "d0": 0.9792
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.04262,
+    "t": 0.7268,
+    "d0": 0.9818
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.03084,
+    "t": 0.4906,
+    "d0": 0.9789
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02411,
+    "t": 0.4875,
+    "d0": 0.9681
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.04978,
+    "t": 0.2467,
+    "d0": 0.926
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01575,
+    "t": 0.5674,
+    "d0": 0.963
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.01885,
+    "t": 0.2902,
+    "d0": 0.6865
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01477,
+    "t": 0.5675,
+    "d0": 0.9826
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.0243,
+    "t": 0.2449,
+    "d0": 0.9869
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.0198,
+    "t": 0.6717,
+    "d0": 0.9756
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.01605,
+    "t": 0.3692,
+    "d0": 0.9881
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.03415,
+    "t": 0.371,
+    "d0": 0.4615
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.11039,
+    "t": 0.1147,
+    "d0": 0.3628
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02451,
+    "t": 0.5148,
+    "d0": 0.0216
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.05348,
+    "t": 0.1558,
+    "d0": -0.4073
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01338,
+    "t": 0.6033,
+    "d0": -0.7959
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.02027,
+    "t": 0.3086,
+    "d0": -0.8615
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02608,
+    "t": 0.6877,
+    "d0": -0.875
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.03323,
+    "t": 0.4286,
+    "d0": -0.9474
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01207,
+    "t": 0.4659,
+    "d0": -0.6094
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.02959,
+    "t": 0.2483,
+    "d0": -0.7106
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02357,
+    "t": 0.5549,
+    "d0": -0.8188
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.041,
+    "t": 0.3358,
+    "d0": -0.8987
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01862,
+    "t": 0.6104,
+    "d0": -0.9256
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.04597,
+    "t": 0.3438,
+    "d0": -0.9342
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.05953,
+    "t": 0.6992,
+    "d0": -0.9909
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.09808,
+    "t": 0.4981,
+    "d0": -0.9948
+   }
+  },
+  "AZ": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02451,
+    "t": 0.7039,
+    "d0": 0.9988
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.04493,
+    "t": 0.4335,
+    "d0": 0.9987
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.06452,
+    "t": 0.8007,
+    "d0": 0.9981
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.05154,
+    "t": 0.6052,
+    "d0": 0.9973
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01213,
+    "t": 0.5333,
+    "d0": 0.9398
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03915,
+    "t": 0.2742,
+    "d0": 0.8698
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01933,
+    "t": 0.6644,
+    "d0": 0.8891
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02449,
+    "t": 0.3942,
+    "d0": 0.86
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00877,
+    "t": 0.6118,
+    "d0": 0.9487
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.02335,
+    "t": 0.2723,
+    "d0": 0.9797
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03077,
+    "t": 0.7554,
+    "d0": 0.974
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.02699,
+    "t": 0.4823,
+    "d0": 0.9716
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02574,
+    "t": 0.4147,
+    "d0": 0.016
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.11077,
+    "t": 0.13,
+    "d0": 0.149
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02613,
+    "t": 0.6156,
+    "d0": 0.0241
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.06178,
+    "t": 0.2271,
+    "d0": -0.0421
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01539,
+    "t": 0.6463,
+    "d0": -0.8827
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.02639,
+    "t": 0.34,
+    "d0": -0.298
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02395,
+    "t": 0.7687,
+    "d0": -0.8782
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.03348,
+    "t": 0.5442,
+    "d0": -0.9587
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00525,
+    "t": 0.5116,
+    "d0": -0.4689
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.02591,
+    "t": 0.276,
+    "d0": -0.5225
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02952,
+    "t": 0.653,
+    "d0": -0.6284
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.04215,
+    "t": 0.4459,
+    "d0": -0.82
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01271,
+    "t": 0.653,
+    "d0": -0.807
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.04181,
+    "t": 0.3768,
+    "d0": -0.9096
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.07217,
+    "t": 0.7782,
+    "d0": -0.9881
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.07638,
+    "t": 0.6123,
+    "d0": -0.8953
+   }
+  },
+  "CO": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01541,
+    "t": 0.6471,
+    "d0": 0.9985
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03479,
+    "t": 0.4028,
+    "d0": 0.9981
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.12099,
+    "t": 0.8045,
+    "d0": 0.9963
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.05741,
+    "t": 0.695,
+    "d0": 0.9947
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00582,
+    "t": 0.4685,
+    "d0": 0.9354
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01883,
+    "t": 0.2498,
+    "d0": 0.8748
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03888,
+    "t": 0.6698,
+    "d0": 0.9058
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02451,
+    "t": 0.4916,
+    "d0": 0.8613
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01182,
+    "t": 0.5487,
+    "d0": 0.9655
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01682,
+    "t": 0.2481,
+    "d0": 0.978
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.06566,
+    "t": 0.7598,
+    "d0": 0.9813
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.0395,
+    "t": 0.5806,
+    "d0": 0.9751
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01363,
+    "t": 0.3534,
+    "d0": -0.0525
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.05445,
+    "t": 0.1164,
+    "d0": 0.0831
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.05121,
+    "t": 0.6214,
+    "d0": -0.0956
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.0814,
+    "t": 0.3039,
+    "d0": -0.024
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00945,
+    "t": 0.585,
+    "d0": -0.8583
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01,
+    "t": 0.3123,
+    "d0": -0.4849
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.04212,
+    "t": 0.773,
+    "d0": -0.8738
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.0509,
+    "t": 0.6396,
+    "d0": -0.9136
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00323,
+    "t": 0.447,
+    "d0": -0.5209
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00723,
+    "t": 0.2515,
+    "d0": -0.4855
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.0288,
+    "t": 0.6584,
+    "d0": -0.7414
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.04002,
+    "t": 0.5446,
+    "d0": -0.8546
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00706,
+    "t": 0.5921,
+    "d0": -0.8401
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01977,
+    "t": 0.3477,
+    "d0": -0.9075
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.06613,
+    "t": 0.7823,
+    "d0": -0.9896
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.06416,
+    "t": 0.7012,
+    "d0": -0.9709
+   }
+  },
+  "ID": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00667,
+    "t": 0.5747,
+    "d0": 0.9979
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01417,
+    "t": 0.2881,
+    "d0": 0.9971
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03356,
+    "t": 0.6689,
+    "d0": 0.9927
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.03297,
+    "t": 0.5026,
+    "d0": 0.9909
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00268,
+    "t": 0.3937,
+    "d0": 0.929
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01669,
+    "t": 0.1666,
+    "d0": 0.865
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01023,
+    "t": 0.499,
+    "d0": 0.8435
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03425,
+    "t": 0.3001,
+    "d0": 0.8559
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00268,
+    "t": 0.4725,
+    "d0": 0.9155
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.0058,
+    "t": 0.1652,
+    "d0": 0.9746
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02696,
+    "t": 0.6084,
+    "d0": 0.9135
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.06339,
+    "t": 0.3804,
+    "d0": 0.9604
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00844,
+    "t": 0.2871,
+    "d0": 0.0711
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.02876,
+    "t": 0.0733,
+    "d0": 0.0752
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.04141,
+    "t": 0.4462,
+    "d0": -0.0342
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.07839,
+    "t": 0.1622,
+    "d0": -0.1382
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00446,
+    "t": 0.5094,
+    "d0": -0.8472
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01256,
+    "t": 0.2141,
+    "d0": -0.4937
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.04537,
+    "t": 0.6258,
+    "d0": -0.9034
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.06332,
+    "t": 0.4404,
+    "d0": -0.9522
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00131,
+    "t": 0.3732,
+    "d0": -0.473
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01871,
+    "t": 0.1678,
+    "d0": -0.5341
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.05188,
+    "t": 0.4863,
+    "d0": -0.7272
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.09219,
+    "t": 0.3465,
+    "d0": -0.7756
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00894,
+    "t": 0.5168,
+    "d0": -0.8178
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.02564,
+    "t": 0.2423,
+    "d0": -0.9023
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.1047,
+    "t": 0.6383,
+    "d0": -0.9859
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.16386,
+    "t": 0.51,
+    "d0": -0.9451
+   }
+  },
+  "MT": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00386,
+    "t": 0.6735,
+    "d0": 0.9979
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00867,
+    "t": 0.4882,
+    "d0": 0.9973
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.06565,
+    "t": 0.7975,
+    "d0": 0.9941
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.06957,
+    "t": 0.5498,
+    "d0": 0.9662
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0014,
+    "t": 0.4979,
+    "d0": 0.929
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.0073,
+    "t": 0.3202,
+    "d0": 0.8623
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01904,
+    "t": 0.66,
+    "d0": 0.8791
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03657,
+    "t": 0.3414,
+    "d0": 0.8559
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00248,
+    "t": 0.5776,
+    "d0": 0.9547
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00442,
+    "t": 0.3181,
+    "d0": 0.9751
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.05409,
+    "t": 0.7517,
+    "d0": 0.9686
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03506,
+    "t": 0.4259,
+    "d0": 0.9649
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00459,
+    "t": 0.3807,
+    "d0": 0.0711
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.02449,
+    "t": 0.157,
+    "d0": 0.1058
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.05958,
+    "t": 0.611,
+    "d0": -0.1266
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.09374,
+    "t": 0.1896,
+    "d0": -0.13
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00387,
+    "t": 0.6132,
+    "d0": -0.8501
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00436,
+    "t": 0.391,
+    "d0": -0.4739
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.04722,
+    "t": 0.7652,
+    "d0": -0.9052
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05475,
+    "t": 0.4874,
+    "d0": -0.9559
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00087,
+    "t": 0.4762,
+    "d0": -0.473
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.0072,
+    "t": 0.3221,
+    "d0": -0.5248
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.0271,
+    "t": 0.6485,
+    "d0": -0.6992
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.07561,
+    "t": 0.3905,
+    "d0": -0.8317
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00376,
+    "t": 0.6202,
+    "d0": -0.8178
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01025,
+    "t": 0.4298,
+    "d0": -0.8985
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.07297,
+    "t": 0.7748,
+    "d0": -0.9616
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.20155,
+    "t": 0.5571,
+    "d0": -0.9385
+   }
+  },
+  "NV": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02499,
+    "t": 0.633,
+    "d0": 0.9985
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.06522,
+    "t": 0.4135,
+    "d0": 0.9983
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.0395,
+    "t": 0.7944,
+    "d0": 0.9958
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.06375,
+    "t": 0.6086,
+    "d0": 0.9955
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0122,
+    "t": 0.4533,
+    "d0": 0.9124
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.05866,
+    "t": 0.2582,
+    "d0": 0.8924
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01726,
+    "t": 0.6557,
+    "d0": 0.9122
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03031,
+    "t": 0.3976,
+    "d0": 0.8641
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00707,
+    "t": 0.5335,
+    "d0": 0.9595
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.0314,
+    "t": 0.2564,
+    "d0": 0.9784
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.01224,
+    "t": 0.7482,
+    "d0": 0.9741
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03702,
+    "t": 0.4858,
+    "d0": 0.9482
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01731,
+    "t": 0.3396,
+    "d0": 0.0715
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.09493,
+    "t": 0.121,
+    "d0": 0.0967
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03616,
+    "t": 0.6065,
+    "d0": -0.111
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.06419,
+    "t": 0.2296,
+    "d0": -0.1182
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01145,
+    "t": 0.57,
+    "d0": -0.8593
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.02408,
+    "t": 0.3219,
+    "d0": -0.5121
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.01849,
+    "t": 0.7618,
+    "d0": -0.9252
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.04161,
+    "t": 0.5477,
+    "d0": -0.966
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00324,
+    "t": 0.4319,
+    "d0": -0.4833
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01901,
+    "t": 0.2599,
+    "d0": -0.5517
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.01692,
+    "t": 0.6442,
+    "d0": -0.7128
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.04307,
+    "t": 0.4494,
+    "d0": -0.8475
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01552,
+    "t": 0.5773,
+    "d0": -0.8289
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.04477,
+    "t": 0.3578,
+    "d0": -0.9178
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.03941,
+    "t": 0.7714,
+    "d0": -0.9899
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.1102,
+    "t": 0.6157,
+    "d0": -0.9728
+   }
+  },
+  "NM": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03678,
+    "t": 0.6946,
+    "d0": 0.9981
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.08494,
+    "t": 0.4665,
+    "d0": 0.9975
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.05573,
+    "t": 0.8028,
+    "d0": 0.9668
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.02577,
+    "t": 0.655,
+    "d0": 0.9903
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01219,
+    "t": 0.5222,
+    "d0": 0.933
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.06818,
+    "t": 0.3016,
+    "d0": 0.8005
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02312,
+    "t": 0.6673,
+    "d0": 0.8521
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.01191,
+    "t": 0.4463,
+    "d0": 0.8123
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01408,
+    "t": 0.6013,
+    "d0": 0.9564
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.02869,
+    "t": 0.2996,
+    "d0": 0.9741
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02384,
+    "t": 0.7578,
+    "d0": 0.9676
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.01621,
+    "t": 0.5357,
+    "d0": 0.9484
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02778,
+    "t": 0.404,
+    "d0": 0.0629
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.1624,
+    "t": 0.1459,
+    "d0": 0.0882
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02519,
+    "t": 0.6188,
+    "d0": -0.0623
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.05945,
+    "t": 0.2668,
+    "d0": -0.0302
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01109,
+    "t": 0.6361,
+    "d0": -0.853
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.03329,
+    "t": 0.3706,
+    "d0": -0.484
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.01693,
+    "t": 0.771,
+    "d0": -0.9068
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.02576,
+    "t": 0.5966,
+    "d0": -0.9545
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00843,
+    "t": 0.5006,
+    "d0": -0.473
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.03591,
+    "t": 0.3034,
+    "d0": -0.5431
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.01088,
+    "t": 0.656,
+    "d0": -0.7115
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.02607,
+    "t": 0.4991,
+    "d0": -0.8488
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01724,
+    "t": 0.6429,
+    "d0": -0.8313
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.04193,
+    "t": 0.4087,
+    "d0": -0.9041
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.03877,
+    "t": 0.7805,
+    "d0": -0.9743
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.05746,
+    "t": 0.6617,
+    "d0": -0.9618
+   }
+  },
+  "UT": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.0063,
+    "t": 0.5838,
+    "d0": 0.998
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01484,
+    "t": 0.2931,
+    "d0": 0.9973
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.04607,
+    "t": 0.7602,
+    "d0": 0.9838
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04531,
+    "t": 0.5276,
+    "d0": 0.9733
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00223,
+    "t": 0.4027,
+    "d0": 0.9304
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01483,
+    "t": 0.1699,
+    "d0": 0.8701
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02707,
+    "t": 0.6097,
+    "d0": 0.7845
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.03674,
+    "t": 0.3216,
+    "d0": 0.8475
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00476,
+    "t": 0.4819,
+    "d0": 0.9564
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01291,
+    "t": 0.1686,
+    "d0": 0.9751
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.04054,
+    "t": 0.709,
+    "d0": 0.8729
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.04921,
+    "t": 0.4043,
+    "d0": 0.9139
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00675,
+    "t": 0.2948,
+    "d0": 0.0501
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.04045,
+    "t": 0.0749,
+    "d0": 0.0633
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.04528,
+    "t": 0.5583,
+    "d0": -0.1669
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.10174,
+    "t": 0.1763,
+    "d0": -0.192
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00382,
+    "t": 0.5188,
+    "d0": -0.853
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01346,
+    "t": 0.2182,
+    "d0": -0.484
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.04316,
+    "t": 0.724,
+    "d0": -0.9241
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05809,
+    "t": 0.4652,
+    "d0": -0.9613
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00454,
+    "t": 0.382,
+    "d0": -0.512
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00804,
+    "t": 0.1712,
+    "d0": -0.5341
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.05895,
+    "t": 0.5976,
+    "d0": -0.7237
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.06303,
+    "t": 0.3695,
+    "d0": -0.8744
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00803,
+    "t": 0.5261,
+    "d0": -0.8281
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01747,
+    "t": 0.2468,
+    "d0": -0.9004
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.09516,
+    "t": 0.7347,
+    "d0": -0.9885
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.13122,
+    "t": 0.535,
+    "d0": -0.9666
+   }
+  },
+  "WY": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00297,
+    "t": 0.6197,
+    "d0": 0.9979
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.00754,
+    "t": 0.3552,
+    "d0": 0.9971
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02993,
+    "t": 0.7554,
+    "d0": 0.9919
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.02423,
+    "t": 0.4786,
+    "d0": 0.9896
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00146,
+    "t": 0.4392,
+    "d0": 0.929
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01049,
+    "t": 0.2139,
+    "d0": 0.8258
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01274,
+    "t": 0.6036,
+    "d0": 0.8744
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.02356,
+    "t": 0.2804,
+    "d0": 0.8446
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00423,
+    "t": 0.5193,
+    "d0": 0.9538
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.00384,
+    "t": 0.2123,
+    "d0": 0.9741
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.03468,
+    "t": 0.7037,
+    "d0": 0.9626
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.04283,
+    "t": 0.3581,
+    "d0": 0.958
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.00549,
+    "t": 0.3269,
+    "d0": 0.0711
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.02103,
+    "t": 0.0972,
+    "d0": 0.1058
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.04391,
+    "t": 0.5519,
+    "d0": 0.0298
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.07817,
+    "t": 0.1496,
+    "d0": -0.0565
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00411,
+    "t": 0.556,
+    "d0": -0.8441
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.01084,
+    "t": 0.2706,
+    "d0": -0.484
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02752,
+    "t": 0.7188,
+    "d0": -0.8959
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.0919,
+    "t": 0.4169,
+    "d0": -0.8972
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00257,
+    "t": 0.4179,
+    "d0": -0.4441
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01085,
+    "t": 0.2154,
+    "d0": -0.5248
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.03465,
+    "t": 0.5914,
+    "d0": -0.6666
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.09512,
+    "t": 0.3251,
+    "d0": -0.797
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00531,
+    "t": 0.5633,
+    "d0": -0.8213
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.03578,
+    "t": 0.3033,
+    "d0": -0.8964
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.08555,
+    "t": 0.7296,
+    "d0": -0.9846
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.24869,
+    "t": 0.486,
+    "d0": -0.9557
+   }
+  },
+  "AK": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01285,
+    "t": 0.698,
+    "d0": 0.9934
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.02442,
+    "t": 0.4565,
+    "d0": 0.9324
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.05526,
+    "t": 0.7947,
+    "d0": 0.9105
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.02996,
+    "t": 0.6813,
+    "d0": 0.9473
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00685,
+    "t": 0.5263,
+    "d0": 0.9524
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03367,
+    "t": 0.2932,
+    "d0": 0.9261
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01242,
+    "t": 0.6561,
+    "d0": 0.9591
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.01671,
+    "t": 0.4757,
+    "d0": 0.7577
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00941,
+    "t": 0.6051,
+    "d0": 0.9265
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01347,
+    "t": 0.2912,
+    "d0": 0.9665
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.05037,
+    "t": 0.7485,
+    "d0": 0.7184
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.03759,
+    "t": 0.565,
+    "d0": 0.7431
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.02003,
+    "t": 0.4079,
+    "d0": 0.2708
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.10299,
+    "t": 0.1409,
+    "d0": 0.2841
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.0454,
+    "t": 0.6069,
+    "d0": -0.0527
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.13456,
+    "t": 0.2907,
+    "d0": -0.1192
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00367,
+    "t": 0.6398,
+    "d0": -0.5313
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.02674,
+    "t": 0.3612,
+    "d0": -0.4745
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.01684,
+    "t": 0.7621,
+    "d0": -0.6674
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05324,
+    "t": 0.6248,
+    "d0": -0.7734
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00262,
+    "t": 0.5046,
+    "d0": -0.2069
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.01735,
+    "t": 0.295,
+    "d0": -0.3583
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.02492,
+    "t": 0.6446,
+    "d0": -0.3785
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.03042,
+    "t": 0.5287,
+    "d0": -0.4401
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00455,
+    "t": 0.6466,
+    "d0": -0.5155
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.06414,
+    "t": 0.399,
+    "d0": -0.6535
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.05475,
+    "t": 0.7717,
+    "d0": -0.6773
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.09481,
+    "t": 0.6877,
+    "d0": -0.6959
+   }
+  },
+  "CA": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.05372,
+    "t": 0.578,
+    "d0": 0.9925
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.07515,
+    "t": 0.4073,
+    "d0": 0.9766
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.07973,
+    "t": 0.743,
+    "d0": 0.9958
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.04042,
+    "t": 0.5803,
+    "d0": 0.9851
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03636,
+    "t": 0.397,
+    "d0": 0.9732
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.06666,
+    "t": 0.2534,
+    "d0": 0.9399
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.02361,
+    "t": 0.5876,
+    "d0": 0.9711
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.0179,
+    "t": 0.3698,
+    "d0": 0.8512
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02369,
+    "t": 0.476,
+    "d0": 0.9571
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.02734,
+    "t": 0.2516,
+    "d0": 0.9876
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.02306,
+    "t": 0.6897,
+    "d0": 0.9564
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.0167,
+    "t": 0.4566,
+    "d0": 0.9861
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.03742,
+    "t": 0.2899,
+    "d0": 0.4305
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.11468,
+    "t": 0.1183,
+    "d0": 0.4207
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.02699,
+    "t": 0.5355,
+    "d0": 0.1794
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.04414,
+    "t": 0.2095,
+    "d0": 0.154
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01231,
+    "t": 0.5129,
+    "d0": -0.3021
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.02072,
+    "t": 0.3163,
+    "d0": -0.371
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.0171,
+    "t": 0.7052,
+    "d0": -0.3832
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.01996,
+    "t": 0.5185,
+    "d0": -0.4619
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01507,
+    "t": 0.3765,
+    "d0": -0.0935
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.02603,
+    "t": 0.2551,
+    "d0": -0.1609
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.01678,
+    "t": 0.5753,
+    "d0": -0.0008
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.02373,
+    "t": 0.4205,
+    "d0": -0.1644
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01389,
+    "t": 0.5203,
+    "d0": -0.3689
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.04248,
+    "t": 0.352,
+    "d0": -0.5292
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.0377,
+    "t": 0.7163,
+    "d0": -0.381
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.04669,
+    "t": 0.5875,
+    "d0": -0.3887
+   }
+  },
+  "HI": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.05756,
+    "t": 0.7337,
+    "d0": 0.9947
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.071,
+    "t": 0.4543,
+    "d0": 0.9759
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03819,
+    "t": 0.6661,
+    "d0": 0.9954
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.02104,
+    "t": 0.5364,
+    "d0": 0.9884
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.05154,
+    "t": 0.5698,
+    "d0": 0.8709
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.10028,
+    "t": 0.2913,
+    "d0": 0.9384
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.01813,
+    "t": 0.4958,
+    "d0": 0.8971
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.00676,
+    "t": 0.3293,
+    "d0": 0.8224
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.02356,
+    "t": 0.6463,
+    "d0": 0.9598
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.04076,
+    "t": 0.2893,
+    "d0": 0.9517
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.01886,
+    "t": 0.6053,
+    "d0": 0.9519
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.00812,
+    "t": 0.4128,
+    "d0": 0.9449
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.06987,
+    "t": 0.4509,
+    "d0": 0.3484
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.17059,
+    "t": 0.1398,
+    "d0": 0.3069
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.01418,
+    "t": 0.4431,
+    "d0": 0.0379
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.02851,
+    "t": 0.1815,
+    "d0": 0.0221
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.01299,
+    "t": 0.6793,
+    "d0": -0.5739
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.0599,
+    "t": 0.3591,
+    "d0": -0.4193
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.00697,
+    "t": 0.6228,
+    "d0": -0.6798
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.0073,
+    "t": 0.474,
+    "d0": -0.7734
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.02802,
+    "t": 0.5484,
+    "d0": -0.3063
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.06326,
+    "t": 0.2931,
+    "d0": -0.4156
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.00786,
+    "t": 0.4831,
+    "d0": -0.4015
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.00696,
+    "t": 0.3778,
+    "d0": -0.4508
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.01862,
+    "t": 0.6857,
+    "d0": -0.5424
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.0185,
+    "t": 0.3968,
+    "d0": -0.6535
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.01569,
+    "t": 0.6354,
+    "d0": -0.6714
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.01499,
+    "t": 0.5437,
+    "d0": -0.6959
+   }
+  },
+  "OR": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01555,
+    "t": 0.6777,
+    "d0": 0.9949
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.02532,
+    "t": 0.4816,
+    "d0": 0.9784
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.12384,
+    "t": 0.8948,
+    "d0": 0.9977
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.09136,
+    "t": 0.7145,
+    "d0": 0.995
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01143,
+    "t": 0.5027,
+    "d0": 0.9597
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.01761,
+    "t": 0.3145,
+    "d0": 0.934
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03305,
+    "t": 0.8075,
+    "d0": 0.9727
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.04981,
+    "t": 0.5151,
+    "d0": 0.8614
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.00772,
+    "t": 0.5823,
+    "d0": 0.9605
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01295,
+    "t": 0.3124,
+    "d0": 0.9701
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.04342,
+    "t": 0.8674,
+    "d0": 0.9681
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.05041,
+    "t": 0.6033,
+    "d0": 0.9696
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01007,
+    "t": 0.3853,
+    "d0": 0.4261
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.03911,
+    "t": 0.1536,
+    "d0": 0.294
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03223,
+    "t": 0.7724,
+    "d0": 0.065
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.12348,
+    "t": 0.3242,
+    "d0": -0.0042
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00512,
+    "t": 0.6178,
+    "d0": -0.566
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00981,
+    "t": 0.3848,
+    "d0": -0.5032
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.02075,
+    "t": 0.8757,
+    "d0": -0.6998
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.0599,
+    "t": 0.6609,
+    "d0": -0.8079
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00193,
+    "t": 0.481,
+    "d0": -0.1508
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00399,
+    "t": 0.3164,
+    "d0": -0.3583
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.01462,
+    "t": 0.7995,
+    "d0": -0.2986
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.04723,
+    "t": 0.5677,
+    "d0": -0.4959
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00211,
+    "t": 0.6247,
+    "d0": -0.5507
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.0132,
+    "t": 0.4234,
+    "d0": -0.6728
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.03596,
+    "t": 0.8814,
+    "d0": -0.7351
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.09801,
+    "t": 0.7205,
+    "d0": -0.827
+   }
+  },
+  "WA": {
+   "Strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.03795,
+    "t": 0.598,
+    "d0": 0.9963
+   },
+   "Strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03564,
+    "t": 0.3677,
+    "d0": 0.9832
+   },
+   "Strong Democrat / white / Four-year college degree or more": {
+    "n": 0.11006,
+    "t": 0.8701,
+    "d0": 0.9973
+   },
+   "Strong Democrat / white / No four-year college degree": {
+    "n": 0.08672,
+    "t": 0.6151,
+    "d0": 0.9914
+   },
+   "Not very strong Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01837,
+    "t": 0.4169,
+    "d0": 0.9679
+   },
+   "Not very strong Democrat / non-white / No four-year college degree": {
+    "n": 0.03039,
+    "t": 0.2231,
+    "d0": 0.9053
+   },
+   "Not very strong Democrat / white / Four-year college degree or more": {
+    "n": 0.03255,
+    "t": 0.7675,
+    "d0": 0.9805
+   },
+   "Not very strong Democrat / white / No four-year college degree": {
+    "n": 0.04481,
+    "t": 0.4042,
+    "d0": 0.7781
+   },
+   "Lean Democrat / non-white / Four-year college degree or more": {
+    "n": 0.01121,
+    "t": 0.4965,
+    "d0": 0.9684
+   },
+   "Lean Democrat / non-white / No four-year college degree": {
+    "n": 0.01703,
+    "t": 0.2215,
+    "d0": 0.9369
+   },
+   "Lean Democrat / white / Four-year college degree or more": {
+    "n": 0.04446,
+    "t": 0.8373,
+    "d0": 0.9648
+   },
+   "Lean Democrat / white / No four-year college degree": {
+    "n": 0.04179,
+    "t": 0.4927,
+    "d0": 0.9397
+   },
+   "Independent / non-white / Four-year college degree or more": {
+    "n": 0.01902,
+    "t": 0.3072,
+    "d0": 0.3358
+   },
+   "Independent / non-white / No four-year college degree": {
+    "n": 0.05028,
+    "t": 0.102,
+    "d0": 0.1263
+   },
+   "Independent / white / Four-year college degree or more": {
+    "n": 0.03963,
+    "t": 0.7276,
+    "d0": -0.0423
+   },
+   "Independent / white / No four-year college degree": {
+    "n": 0.08068,
+    "t": 0.2345,
+    "d0": 0.0314
+   },
+   "Lean Republican / non-white / Four-year college degree or more": {
+    "n": 0.00819,
+    "t": 0.5334,
+    "d0": -0.6394
+   },
+   "Lean Republican / non-white / No four-year college degree": {
+    "n": 0.00831,
+    "t": 0.2814,
+    "d0": -0.4293
+   },
+   "Lean Republican / white / Four-year college degree or more": {
+    "n": 0.0268,
+    "t": 0.8471,
+    "d0": -0.8216
+   },
+   "Lean Republican / white / No four-year college degree": {
+    "n": 0.05801,
+    "t": 0.5545,
+    "d0": -0.8989
+   },
+   "Not very strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00331,
+    "t": 0.396,
+    "d0": -0.2518
+   },
+   "Not very strong Republican / non-white / No four-year college degree": {
+    "n": 0.00821,
+    "t": 0.2247,
+    "d0": -0.4272
+   },
+   "Not very strong Republican / white / Four-year college degree or more": {
+    "n": 0.0277,
+    "t": 0.7583,
+    "d0": -0.6014
+   },
+   "Not very strong Republican / white / No four-year college degree": {
+    "n": 0.02861,
+    "t": 0.4561,
+    "d0": -0.6617
+   },
+   "Strong Republican / non-white / Four-year college degree or more": {
+    "n": 0.00547,
+    "t": 0.5407,
+    "d0": -0.4929
+   },
+   "Strong Republican / non-white / No four-year college degree": {
+    "n": 0.01621,
+    "t": 0.3149,
+    "d0": -0.7546
+   },
+   "Strong Republican / white / Four-year college degree or more": {
+    "n": 0.03537,
+    "t": 0.854,
+    "d0": -0.8326
+   },
+   "Strong Republican / white / No four-year college degree": {
+    "n": 0.07324,
+    "t": 0.6221,
+    "d0": -0.8915
+   }
+  }
+ },
+ "US": {
+  "Strong Democrat / non-white / Four-year college degree or more": {
+   "n": 0.03038,
+   "t": 0.6467,
+   "d0": 0.9829
+  },
+  "Strong Democrat / non-white / No four-year college degree": {
+   "n": 0.05531,
+   "t": 0.4447,
+   "d0": 0.9751
+  },
+  "Strong Democrat / white / Four-year college degree or more": {
+   "n": 0.07121,
+   "t": 0.7663,
+   "d0": 0.9812
+  },
+  "Strong Democrat / white / No four-year college degree": {
+   "n": 0.05204,
+   "t": 0.5626,
+   "d0": 0.9568
+  },
+  "Not very strong Democrat / non-white / Four-year college degree or more": {
+   "n": 0.01721,
+   "t": 0.468,
+   "d0": 0.8734
+  },
+  "Not very strong Democrat / non-white / No four-year college degree": {
+   "n": 0.0339,
+   "t": 0.2834,
+   "d0": 0.8946
+  },
+  "Not very strong Democrat / white / Four-year college degree or more": {
+   "n": 0.02405,
+   "t": 0.6178,
+   "d0": 0.8665
+  },
+  "Not very strong Democrat / white / No four-year college degree": {
+   "n": 0.02835,
+   "t": 0.3532,
+   "d0": 0.6784
+  },
+  "Lean Democrat / non-white / Four-year college degree or more": {
+   "n": 0.0117,
+   "t": 0.5482,
+   "d0": 0.9382
+  },
+  "Lean Democrat / non-white / No four-year college degree": {
+   "n": 0.01779,
+   "t": 0.2815,
+   "d0": 0.9313
+  },
+  "Lean Democrat / white / Four-year college degree or more": {
+   "n": 0.03078,
+   "t": 0.716,
+   "d0": 0.9473
+  },
+  "Lean Democrat / white / No four-year college degree": {
+   "n": 0.02878,
+   "t": 0.4388,
+   "d0": 0.8852
+  },
+  "Independent / non-white / Four-year college degree or more": {
+   "n": 0.02209,
+   "t": 0.353,
+   "d0": 0.2257
+  },
+  "Independent / non-white / No four-year college degree": {
+   "n": 0.06998,
+   "t": 0.1353,
+   "d0": 0.1867
+  },
+  "Independent / white / Four-year college degree or more": {
+   "n": 0.03337,
+   "t": 0.5667,
+   "d0": -0.0595
+  },
+  "Independent / white / No four-year college degree": {
+   "n": 0.08189,
+   "t": 0.1978,
+   "d0": -0.2676
+  },
+  "Lean Republican / non-white / Four-year college degree or more": {
+   "n": 0.0079,
+   "t": 0.5845,
+   "d0": -0.8265
+  },
+  "Lean Republican / non-white / No four-year college degree": {
+   "n": 0.01365,
+   "t": 0.3503,
+   "d0": -0.8541
+  },
+  "Lean Republican / white / Four-year college degree or more": {
+   "n": 0.02943,
+   "t": 0.7307,
+   "d0": -0.888
+  },
+  "Lean Republican / white / No four-year college degree": {
+   "n": 0.04307,
+   "t": 0.5005,
+   "d0": -0.9207
+  },
+  "Not very strong Republican / non-white / Four-year college degree or more": {
+   "n": 0.00709,
+   "t": 0.4465,
+   "d0": -0.495
+  },
+  "Not very strong Republican / non-white / No four-year college degree": {
+   "n": 0.01426,
+   "t": 0.2852,
+   "d0": -0.5409
+  },
+  "Not very strong Republican / white / Four-year college degree or more": {
+   "n": 0.02868,
+   "t": 0.6057,
+   "d0": -0.7771
+  },
+  "Not very strong Republican / white / No four-year college degree": {
+   "n": 0.04942,
+   "t": 0.403,
+   "d0": -0.8088
+  },
+  "Strong Republican / non-white / Four-year college degree or more": {
+   "n": 0.00912,
+   "t": 0.5916,
+   "d0": -0.8724
+  },
+  "Strong Republican / non-white / No four-year college degree": {
+   "n": 0.02314,
+   "t": 0.3876,
+   "d0": -0.916
+  },
+  "Strong Republican / white / Four-year college degree or more": {
+   "n": 0.05807,
+   "t": 0.7412,
+   "d0": -0.975
+  },
+  "Strong Republican / white / No four-year college degree": {
+   "n": 0.10735,
+   "t": 0.5699,
+   "d0": -0.9755
+  }
+ },
+ "theta": {
+  "CT": -0.039,
+  "ME": -0.008,
+  "MA": -0.027,
+  "NH": -0.055,
+  "RI": -0.098,
+  "VT": 0.022,
+  "NJ": -0.032,
+  "NY": -0.055,
+  "PA": -0.018,
+  "IL": -0.024,
+  "IN": -0.034,
+  "MI": 0.004,
+  "OH": -0.03,
+  "WI": 0.028,
+  "IA": -0.029,
+  "KS": -0.033,
+  "MN": -0.004,
+  "MO": -0.035,
+  "NE": -0.031,
+  "ND": -0.082,
+  "SD": -0.007,
+  "DE": 0.001,
+  "DC": 0.382,
+  "FL": -0.028,
+  "GA": -0.016,
+  "MD": -0.003,
+  "NC": 0.001,
+  "SC": -0.003,
+  "VA": -0.007,
+  "WV": -0.07,
+  "AL": -0.038,
+  "KY": -0.027,
+  "MS": -0.089,
+  "TN": -0.02,
+  "AR": -0.03,
+  "LA": -0.023,
+  "OK": -0.045,
+  "TX": -0.021,
+  "AZ": 0.002,
+  "CO": 0.02,
+  "ID": -0.08,
+  "MT": -0.052,
+  "NV": -0.043,
+  "NM": -0.024,
+  "UT": -0.039,
+  "WY": -0.175,
+  "AK": -0.058,
+  "CA": -0.035,
+  "HI": -0.01,
+  "OR": 0.046,
+  "WA": 0.019,
+  "US": -0.017
+ }
+}

@@ -1,8 +1,8 @@
 """Statistics step of the daily job: python -m simlab.statsday --date YYYY-MM-DD --data <path to simlab-data>
 
 Reads the day's latest snapshot run (or --snapshot HHMM) and writes to derived/<date>/: polls.csv, races.json,
-levels.json, forecast.json and draws.json (engine-design §7). Voter groups, moves and the filter join as they are
-built; until then the headline and the stats-only twin run on the same levels. Exits 1 on failure; the last stdout line
+levels.json, groups.json, forecast.json and draws.json (engine-design §7). Moves and the filter join as they are built;
+until then the headline and the stats-only twin run on the same levels. Exits 1 on failure; the last stdout line
 is a one-line JSON summary, which holds no forecast numbers.
 """
 from __future__ import annotations
@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import levels, montecarlo, polls
+from . import groups, levels, montecarlo, polls
 from .polls import OVERVIEW_PAGE, Race, slug
 
 RCV = {"AK", "ME"}
@@ -87,6 +87,8 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     _write(out / "races.json", meta | races)
     lv = levels.compute(t, day, run_id)
     sha = {"levels.json": _write(out / "levels.json", lv)}
+    base, pimu = (json.loads(f.read_text(encoding="utf-8")) for f in (groups.BASE, groups.PIMU))
+    _write(out / "groups.json", groups.build(lv, base, pimu, day.isoformat(), run_id))
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
     forecast, draws = montecarlo.build(lv, lv, {k: v["left_party"] for k, v in races.items()}, params, day, run_id,
                                        benchmarks=benchmarks(snap, t["race_list"]))
@@ -96,7 +98,7 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     return {"ok": True, "date": day.isoformat(), "run_id": run_id, "snapshot": t["snapshot"], "races": len(races),
             "with_polls": sum(r["n_polls"] > 0 for r in lv["races"].values()), "draws": forecast["draws"],
             "floor_lifted_pairs": forecast["floor_lifted_pairs"],
-            "files": ["polls.csv", "races.json", "levels.json", "forecast.json", "draws.json"]}
+            "files": ["polls.csv", "races.json", "levels.json", "groups.json", "forecast.json", "draws.json"]}
 
 
 def main() -> int:
