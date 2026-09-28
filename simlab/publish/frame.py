@@ -25,7 +25,7 @@ from matplotlib.text import Text
 from PIL import Image, ImageFont
 
 LABEL = "Social simulation, not a poll"
-SITE = "research.scaliastudio.dev/midterms"
+SITE = "notapoll.org"  # Matteo, 28 Sep (relayed by the roadmap session): images show the domain
 
 DPI = 100
 W, H = 1080, 1350
@@ -190,8 +190,7 @@ class Slide:
         if t.header == "bar":
             self.ax.add_patch(plt.Rectangle((0, T), self.w, 128, color=t.ink, lw=0, zorder=1))
             self._put(MARGIN, T + 64, kicker, "mono", 500, 30, t.paper, va="center", zorder=2)
-            self._put(self.w - MARGIN, T + 64, "NotAPoll", "serif", 800, 40, t.paper, ha="right", va="center", zorder=2)
-            self.logomark(self.w - MARGIN - self.pil("serif", 800, 40).getlength("NotAPoll") - 58, T + 42, 44, t.paper)
+            self.wordmark(T + 64, 800, t.paper, t.paper)
             self.y = T + 184
         else:
             if t.header == "chip":
@@ -201,9 +200,7 @@ class Slide:
                           va="center", zorder=2)
             else:
                 self._put(MARGIN, T + 64, kicker, "mono", 500, 30, t.ink2, va="center")
-            wm = 800 if t.head_upper else 700
-            self._put(self.w - MARGIN, T + 64, "NotAPoll", "serif", wm, 40, t.ink, ha="right", va="center")
-            self.logomark(self.w - MARGIN - self.pil("serif", wm, 40).getlength("NotAPoll") - 58, T + 42, 44, t.ink)
+            self.wordmark(T + 64, 800 if t.head_upper else 700, t.ink, t.ai)
             self.ax.plot([MARGIN, self.w - MARGIN], [T + 110, T + 110], color=t.ink, lw=pt(2), solid_capstyle="butt")
             self.y = T + 164
         if run:
@@ -267,6 +264,14 @@ class Slide:
 
     def dek(self, s: str, px: int = 40, width: float | None = None):
         return self.text(s, "sans", 400, px, self.t.ink2, leading=1.3, after=0.9, width=width)
+
+    def wordmark(self, y: float, weight: int, color: str, tld: str):
+        """Logomark and "NotAPoll.org" at the top right; the ".org" in the simulation colour doubles as the address."""
+        f = self.pil("serif", weight, 40)
+        self._put(self.w - MARGIN, y, ".org", "serif", weight, 40, tld, ha="right", va="center", zorder=2)
+        right = self.w - MARGIN - f.getlength(".org")
+        self._put(right, y, "NotAPoll", "serif", weight, 40, color, ha="right", va="center", zorder=2)
+        self.logomark(right - f.getlength("NotAPoll") - 58, y - 22, 44, color)
 
     def logomark(self, x: float, y: float, size: float, color: str):
         """The NotAPoll mark: a ballot box holding a 3x3 grid of simulated voters instead of a tick."""

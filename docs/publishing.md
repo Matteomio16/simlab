@@ -5,8 +5,12 @@ plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing)
 
 ## Brand
 
-- **Name:** NotAPoll. Handles in `docs/content-plan.md` §1. Images show the wordmark and
-  research.scaliastudio.dev/midterms (a Scalia domain; no notapoll.org), never "notapoll.org".
+- **Name:** NotAPoll.org. Handles in `docs/content-plan.md` §1. Every image's header wordmark reads "NotAPoll.org", the
+  ".org" in the simulation purple, so the address travels with every screenshot (`frame.SITE`).
+- **Profile images and pinned post:** `python -m simlab.publish.brand` → `kits/brand/`: avatar (1080×1080, the
+  logomark on indigo), X header (1500×500), Bluesky banner (3000×1000), the "Start here" carousel and `post.md` with
+  the bios (Instagram 150, X 160, Bluesky 256 characters, counted by the script). The avatar alone carries no label:
+  at profile size it can't.
 - **Type** (SIL Open Font License, unmodified files in `simlab/publish/fonts/`, from Google Fonts' repository):
   Newsreader for headlines and the wordmark, Libre Franklin for text and numbers, IBM Plex Mono for kickers, sources and
   the label strip. The static weights matplotlib needs are cut from the variable fonts on first use

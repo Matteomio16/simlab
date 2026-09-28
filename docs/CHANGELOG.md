@@ -40,6 +40,17 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 - Gap before the GitHub Actions rehearsals (3 Oct): the levels read the MIT files, which are gitignored. Their fixed
   inputs (lean, candidate records, the national House vote by year) need to be frozen into a committed file.
 
+## 2026-09-28 (Content & site): notapoll.org on every image; profile kit
+
+Matteo's decisions, relayed by the roadmap session (evening): he bought notapoll.org; images and videos show it; the
+site comes later and the social accounts first; Instagram Creator @notapoll.org with Threads, X @notapoll, Bluesky
+@notapoll.org via a `_atproto` TXT record; scheduling on Buffer's free plan (X, Threads, Bluesky) and Instagram's own
+scheduler. This reverses the earlier "never notapoll.org" rule and today's "Scalia domain" answer.
+- The header wordmark on every image now reads "NotAPoll.org" (`frame.SITE = "notapoll.org"`).
+- `simlab/publish/brand.py`: avatar, X header, Bluesky banner, the pinned "Start here" carousel, bios.
+- `docs/accounts-setup.md`: the setup checklist for Matteo.
+- Open: labs.scaliastudio.dev or research.scaliastudio.dev for the Scalia-side address (unchanged until Matteo says).
+
 ## 2026-09-28 (Content & site): layouts picked, election purple, special editions, Scalia domain
 
 Matteo's answers, later on 28 Sep:

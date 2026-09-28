@@ -13,12 +13,15 @@ Decided by Matteo, 28 Sep:
 - On camera twice (launch on 12 Oct, results on 4 Nov); Matteo's voice over the weekly Reels. No AI presenters or AI
   voices.
 - Channels: Instagram, X, Threads and Bluesky only (no TikTok, YouTube Shorts or LinkedIn).
-- Name: **NotAPoll.org**. Handles: @notapoll.org on Instagram and Threads, @notapoll on X, @notapoll.bsky.social on
-  Bluesky. Images show the wordmark "NotAPoll" and the real address research.scaliastudio.dev/midterms, never
-  "notapoll.org".
-- Domain (Matteo, 28 Sep, later that day): no notapoll.org; the project lives on a Scalia domain,
-  research.scaliastudio.dev/midterms. Bluesky can use a Scalia subdomain as its handle (for example
-  notapoll.scaliastudio.dev) once Matteo adds one DNS record.
+- Name: **NotAPoll.org**. Handles: @notapoll.org on Instagram (Creator account) and Threads, @notapoll on X,
+  @notapoll.org on Bluesky (verified with a `_atproto` TXT record in Cloudflare).
+- Domain (Matteo, 28 Sep, evening; relayed by the roadmap session): Matteo bought notapoll.org on his Cloudflare
+  account. Images and videos show "notapoll.org" (the header wordmark reads NotAPoll.org). The website comes later; the
+  social accounts come first, for making-of posts from about 3 Oct. The Scalia-side address stays
+  research.scaliastudio.dev/midterms until Matteo decides on labs.scaliastudio.dev. Setup steps:
+  `docs/accounts-setup.md`.
+- Scheduling: free only. Buffer's free plan (3 channels, 10 queued posts each) for X, Threads and Bluesky; Instagram
+  through its own scheduler (the app or Meta Business Suite).
 
 The shortlist it came from, checked 28 Sep against the domain registries and public profile pages (a handle that looks
 free can still be held by a deactivated account):
