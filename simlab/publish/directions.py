@@ -69,7 +69,7 @@ def board(t: Theme, paths: list[Path], n: int) -> Path:
     faces = sorted({t.faces[r] for r in ("serif", "sans", "mono")}, key=list(t.faces.values()).index)
     dr.text((gap, 118), "Type: " + " / ".join(faces), font=small, fill="#3A3833")
     x = gap
-    for name, col in [("paper", t.paper), ("ink", t.ink), ("Dem", t.dem), ("Rep", t.rep), ("AI", t.ai),
+    for name, col in [("paper", t.paper), ("ink", t.ink), ("Dem", t.dem), ("Rep", t.rep), ("sim", t.ai),
                       ("strip", t.strip_bg)]:
         dr.rectangle((x, 166, x + 44, 210), fill=col, outline="#141414")
         dr.text((x + 54, 172), f"{name} {col}", font=small, fill="#3A3833")

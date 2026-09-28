@@ -68,6 +68,12 @@ class TextCheckTest(unittest.TestCase):
     def test_allowed_poll_phrases(self):
         self.assertEqual(text.check(f"{frame.LABEL}. The poll average and polls close at 7. Not a poll."), [])
 
+    def test_style_notes_flag_ai_wording(self):
+        notes = " ".join(text.style("Our AI voters and bots, an LLM, 500 respondents"))
+        for w in ("AI", "bot", "LLM", "respondents"):
+            self.assertIn(w, notes)
+        self.assertEqual(text.style("Synthetic voters in a social simulation"), [])
+
     def test_allow_list_for_real_surveys(self):
         self.assertEqual(text.check(f"The survey's own data. {frame.LABEL}", allow=("survey",)), [])
 

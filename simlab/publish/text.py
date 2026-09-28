@@ -14,6 +14,16 @@ BANNED = {"poll": r"\bpoll(s|ed|ing|ster|sters)?\b", "survey": r"\bsurvey(s|ed)?
           "% of voters": r"%\s+of\s+voters"}
 
 
+STYLE = {"AI": r"\bAIs?\b|artificial intelligence", "bot": r"\bbots?\b", "LLM": r"\bLLMs?\b",
+         "respondents": r"\brespondents?\b"}
+
+
+def style(s: str) -> list[str]:
+    """Voice notes, not rule failures (Matteo, 28 Sep): say social simulation, synthetic or simulated voters; keep
+    "AI" for the methods page; "respondents" implies real people."""
+    return [f'style: "{w}" (prefer synthetic or simulated voters)' for w, pat in STYLE.items() if re.search(pat, s)]
+
+
 def check(s: str, *, caption: bool = True, allow: tuple[str, ...] = ()) -> list[str]:
     out, low = [], s.lower()
     if caption and LABEL.lower() not in low:

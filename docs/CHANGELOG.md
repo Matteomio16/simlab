@@ -2,6 +2,14 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Content & site): human, social voice
+
+- **Matteo:** mention AI as little as possible; say "social simulation", "synthetic voters", "simulated voters". Model
+  names and "AI" stay on the methods page and in Lab notes about a specific model. Every post still says "synthetic"
+  or "simulated", so nobody takes the voters for real people. "Virtual interactions" waits until voters actually
+  interact (no social-network layer yet). Lab notes 1–3 rewritten; caption checker now adds style notes. Vocabulary
+  in `docs/publishing.md`.
+
 ## 2026-09-28 (Statistics session): starting levels for 2026 (roadmap A3), built to engine-design.md
 
 - The engine design approved by Matteo arrived (commit e5df5e9). Statistics' review asked for three clarifications,

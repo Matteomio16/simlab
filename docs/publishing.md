@@ -23,6 +23,19 @@ plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing)
   state outline filled with simulated voters, exactly the race's share of them blue, with the race code (OH-SEN).
   Outlines: Census 2024 cartographic boundaries, 1:20m, public domain (`geo.py` → `states.json`).
 
+## Voice: human and social (Matteo, 28 Sep)
+
+We simulate human behaviour, so posts sound close to people, not machines. Keep "AI" and model names for the methods
+page and for Lab notes that are about a specific model; `text.style()` flags them elsewhere as notes, not failures.
+
+| Say | Avoid | Never (rules) |
+| --- | --- | --- |
+| social simulation, synthetic voters, simulated voters, the simulated electorate, simulated elections, the simulation | AI voters, bots, LLM, agents, AI-simulated | poll, survey, voters say, % of voters, respondents, anything implying real people answered |
+
+"Virtual interactions" only once voters actually interact: today each group reacts on its own (no social-network layer
+in `docs/engine-design.md`). "Synthetic" or "simulated" must stay in every post, so no reader mistakes the voters for
+real people.
+
 ## Code (`simlab/publish/`)
 
 | File | Job |
