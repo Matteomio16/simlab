@@ -39,6 +39,12 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   nation, each a fraction of a point.
 - **Rehearsal gap closed:** the levels read their fixed inputs from `simlab/levels_inputs.json`, frozen from the MIT and
   538 files with `python -m simlab.levels --freeze`; the output is identical. The daily job needs no gitignored file.
+- **Poll table (A3 leftovers):**
+  - Every row now carries `first_seen`, the snapshot where our engine first saw it, carried day to day.
+  - Two VoteHub entries for Montana listed Bodnar 50, Alme 50: placeholders, now dropped.
+  - Alaska's polls are head-to-heads, so they need no transfer rule.
+  - Montana stays two-way (Bodnar v Alme) for the pilot although Bankhead polls about 25%; Alme leads both by about
+    20 points (stats-groundwork §7).
 - **Known limits:**
   - Race-specific story effects reach only races with polls, scaled by the poll weight. Races without polls move only
     with the nation, through the fundamentals.
