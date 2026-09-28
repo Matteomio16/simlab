@@ -94,6 +94,10 @@ The terms:
 Each story's contribution fades with a half-life that depends on the event type. The prior is 10 days, and the weekly
 filter tunes it. `t` stays within [0, 1] and `d` within [−1, 1].
 
+Each event counts once. Its effect starts at `first_seen` and then fades:
+- The harness asks each event once per race. If an event is asked again, the earliest reactions are used.
+- `a_e` is read fresh each day, so a story that keeps spreading grows its effect.
+
 The race's move comes from the formula in stats-groundwork §5.5:
 
 ```
@@ -107,7 +111,9 @@ national-scope reactions (§5).
 ### 3.3 Filter, Monte Carlo, stats-only twin
 
 As stats-groundwork §5.6–5.8:
-- **Daily Kalman update:** `N ← N + k_N·Δ_N` and `R_r ← R_r + k_s·(Δ_r − Δ_N)`, then new polls update the state.
+- **Daily Kalman update:** `N ← N + Δ_N` and `R_r ← R_r + (Δ_r − Δ_N)`, then new polls update the state. `Δ`
+  already includes the dials (§3.2), so they are not applied twice. `moves.json` also carries `delta_margin_base`
+  (dials = 1) for the weekly re-tuning.
 - **Weekly re-tuning of the dials from 12 Oct.** Because the dials are linear, this is an exact Kalman update. Ensembles
   are used only if a non-linear parameter is added.
 - **Monte Carlo:** 40,000 draws with Student-t errors (8 degrees of freedom) and a correlation floor of 0.25. A fixed
@@ -199,10 +205,10 @@ Special elections and ranked-choice voting are also fields in `races.json`.
 | --- | --- | --- | --- |
 | `races.json` (static) | Statistics | all | `race_id → {state, office, district, special, rcv, candidates}` |
 | `polls.csv` | Statistics | Statistics, scoring | one row per poll version (stats-groundwork §5.1) |
-| `events.jsonl` | Engine | Statistics, Content | `{event_id, first_seen, last_seen, scope, races, gate: {race_id: p}, type, helps_face, fires_up: {D, R}, puts_off: {D, R}, attention: {outlets, articles, days, pageviews, a}, card}`; raw headlines kept separately in `news_private.jsonl` |
+| `events.jsonl` | Engine | Statistics, Content | `{event_id, first_seen (UTC ISO), last_seen, scope, races, gate: {race_id: p}, type, helps_face, fires_up: {D, R}, puts_off: {D, R}, attention: {outlets, articles, days, pageviews, a}, card}`; raw headlines kept separately in `news_private.jsonl` |
 | `reactions.jsonl` | Engine | Statistics, scoring | one row per race × event × group × model: `{race_id, event_id, group, model, shadow, wording, support, turnout}` (expected values, −2..+2) |
-| `groups.json` | Statistics | Statistics, Content | `{race_id: {group: {n, t, d, pi, mu}}}` |
-| `moves.json` | Statistics | filter, Content, scoring | `{race_id: {delta_margin, delta_turnout, by_group: {group: {dd, dt}}, by_event: {event_id: delta}}}` for GLM, plus the same under `shadow` for Kev |
+| `groups.json` | Statistics | Statistics, Content | `{units, race_id: {group: {n, t, d, pi, mu}}}`, all fractions (`d` from −1 to 1, the rest from 0 to 1), including a `US` entry |
+| `moves.json` | Statistics | filter, Content, scoring | `{units, race_id: {delta_margin, delta_margin_base, delta_turnout, by_group: {group: {dd, dt}}, by_event: {event_id: today's change}, by_event_effect: {event_id: total effect so far}}}` for GLM, plus the same under `shadow` for Kev. Margins in points of two-party margin; turnout in percentage points. `movers` in `forecast.json` read `by_event_effect` |
 | `params.json` (weekly) | Statistics | Statistics, Engine | `{c_s, c_t, dials: {state: {k_s, k_t}}, half_life_days: {type: days}, fitted_on}` |
 | `levels.json`, `filter_state.json` | Statistics | Statistics | stats-groundwork §9 |
 | `forecast.json` (public) | Statistics | Content | `{races: {race_id: {p_dem_win, margin: {p10, p50, p90}, stats_only: {p_dem_win, margin}, benchmarks: {poll_avg, market, cook}, movers: [{event_id, card, delta}]}}, senate: {p_r_50plus, seats}, house: {p_d_majority, seats}}` |
