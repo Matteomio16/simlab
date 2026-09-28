@@ -2,6 +2,14 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): no correction for the polls' recent Democratic lean; poll table started
+
+- Decided by Matteo: no fixed correction for the polls' recent Democratic lean. The backtest's margins leaned D by
+  +2.0, +3.9, +0.9 and +3.3 in 2018–2024, but Senate polls' yearly misses swing both ways over 1998–2022, and the
+  national error term covers a miss of that size. Summarised in CLAUDE.md §5.
+- Matteo OK'd building the poll table now, before the engine design is agreed. It reads the snapshots and is built
+  test-first; its output format will be aligned with `docs/engine-design.md` when that lands.
+
 ## 2026-09-28 (Statistics session): backtest extended to 2024
 
 - With Matteo's OK, `simlab.statsdata` fetched 538's 2024 generic-ballot poll list from the Wayback Machine (3 Dec 2024

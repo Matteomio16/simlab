@@ -168,6 +168,8 @@ Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.m
   presidential margin, and 0.38 of the nominee's last statewide over-performance. The generic ballot is lowered by its
   historical 2.8-point overstatement of Democrats where it feeds the fundamentals.
 - The versions of one poll are averaged.
+- No fixed correction for the polls' recent Democratic lean: the national error term (SD about 3) covers a miss of
+  that size.
 - A published poll table built on Wikipedia data is CC BY-SA.
 
 ## 6. Reference material (read, don't duplicate)

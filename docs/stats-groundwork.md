@@ -581,8 +581,9 @@ means races where a model in the comparison gave between 10% and 90%.
   - 2022: 0.023 v 0.044, better. 538 deluxe leaned 2.9 points Republican that year.
   - 2024: 0.034.
 - **Our margin bias:** it leaned Democratic every year: +2.0 (2018), +3.9 (2020), +0.9 (2022), +3.3 (2024). It
-  inherits the polls' recent tilt. Recommend not correcting for it: Senate polls' yearly misses swing both ways over
-  1998–2022 (from −3.7 to +6.3). The national error term (SD 3) is there to cover a miss of that size.
+  inherits the polls' recent tilt. Matteo decided on 28 Sep not to correct for it: Senate polls' yearly misses swing
+  both ways over 1998–2022 (from −3.7 to +6.3), and the national error term (SD 3) is there to cover a miss of that
+  size.
 - **Calibration** (all cycles and dates pooled):
   - races we gave 10–30% went 0 of 27, and 30–50% went 23% (predicted 42%);
   - 50–70% went 59% (predicted 60%), 70–90% went 74% (predicted 81%).
