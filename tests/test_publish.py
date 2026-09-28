@@ -77,6 +77,12 @@ class TextCheckTest(unittest.TestCase):
     def test_allow_list_for_real_surveys(self):
         self.assertEqual(text.check(f"The survey's own data. {frame.LABEL}", allow=("survey",)), [])
 
+    def test_special_editions_render(self):
+        from simlab.publish import specials
+        with tempfile.TemporaryDirectory() as tmp:
+            for name, fn in specials.LAYOUTS.items():
+                self.assertTrue(fn().save(Path(tmp) / f"{name}.jpg").exists(), name)
+
 
 if __name__ == "__main__":
     unittest.main()

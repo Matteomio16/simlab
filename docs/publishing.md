@@ -5,17 +5,21 @@ plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing)
 
 ## Brand
 
-- **Name:** NotAPoll. Handles in `docs/content-plan.md` §1. Until the domain is bought, images show the wordmark and
-  research.scaliastudio.dev/midterms, never "notapoll.org".
+- **Name:** NotAPoll. Handles in `docs/content-plan.md` §1. Images show the wordmark and
+  research.scaliastudio.dev/midterms (a Scalia domain; no notapoll.org), never "notapoll.org".
 - **Type** (SIL Open Font License, unmodified files in `simlab/publish/fonts/`, from Google Fonts' repository):
   Newsreader for headlines and the wordmark, Libre Franklin for text and numbers, IBM Plex Mono for kickers, sources and
   the label strip. The static weights matplotlib needs are cut from the variable fonts on first use
   (`fonts/_static/`, not committed).
 - **Colours and type per theme:** `simlab/publish/themes.py` and `docs/creative-directions.md`. Lab Notebook: graph
-  paper `#F7F7F2`, navy ink `#1C2A4A`, Dem `#2F6DB5`, Rep `#D1432F`, ochre `#D4A017` for the simulation's own
-  contribution, highlighter `#F3E27A`, IBM Plex Sans and Plex Mono. Independents use a labelled neutral grey. Each
+  paper `#F7F7F2` with lilac rules, navy ink `#1C2A4A`, Dem `#2F6DB5`, Rep `#D1432F`, and election purple `#6D2E8C`
+  for the simulation's own number and for toss-ups (zone fill `#EEE6F7`, lilac highlighter `#E6DAF3`, verdict stamps
+  purple for toss-ups, blue or red otherwise); deep indigo label strip `#2A2152`; IBM Plex Sans and Plex Mono. Independents use a labelled neutral grey. Each
   theme's party and simulation colours pass the dataviz validator's colour-blind checks on its paper, all pairs.
-- **Theme:** Lab Notebook by default, Riso Print now and then (`simlab/publish/themes.py`; Matteo, 28 Sep).
+- **Theme:** Lab Notebook every day. Riso Print is retired (Matteo, 28 Sep, later that day); Sundays and special days
+  use the special editions below.
+- **Swing band:** every theme draws a blue, purple, red band along the top of the label strip: the brand's election
+  signature.
 - **Every image:** the logomark (a ballot box holding a 3x3 grid of simulated voters) and wordmark at the top; the
   strip "SOCIAL SIMULATION, NOT A POLL" with the date at the bottom; a source line above it. The strip is drawn by the
   canvas itself, so no image can leave without it.
@@ -43,17 +47,34 @@ real people.
 | `frame.py` | The canvas (1080×1350), fonts, typesetting (curly apostrophes, minus signs), line breaks. `save()` refuses a missing glyph, text outside the margins, content running into the footer, or the wrong size |
 | `charts.py` | Stat tiles, question rows, horizontal bars, dumbbells |
 | `text.py` | Rule check for captions and posts: the label, and no "poll", "survey", "voters say" or "% of voters" for model outputs |
+| `specials.py` | The five special editions: `python -m simlab.publish.specials` → `kits/specials/` |
 | `labnotes.py` | The making-of series: `python -m simlab.publish.labnotes 1 2 3` → `kits/labnotes/NN/` (slides, contact sheet, `post.md`) |
 | to build | `kit.py` (the daily kit from the forecast file), `reel.py` (the 9:16 video) |
 
 Tests: `python -m unittest tests.test_publish`.
+
+## Special editions (Sundays and special days)
+
+Each has its own layout and palette (`themes.SPECIALS`; party blue, red and purple validated on each paper). Names and
+numbers only: no photos or drawings of candidates. Race numbers still sit beside the poll average, market and Cook.
+
+| Edition | Focus | Palette | Memorable element |
+| --- | --- | --- | --- |
+| The Ballot | a race's two candidates | ballot white, black, Franklin Gothic (the typeface of real US ballots) | a specimen ballot "counted 40,000 times"; each oval pencilled in as far as that candidate's share of simulated wins |
+| The Main Event | a race's two candidates | deep purple night, condensed Archivo | fight-card poster: surnames as tall as the page, the score (58–42), the days left |
+| The Seismograph | one race's fortnight | chart-paper cream, Plex | the forecast as a seismograph trace; numbered tremors tied to the neutral event cards |
+| The Chamber | Senate control | marble cream, Newsreader | all 100 seats in a half circle, seats not up pale, toss-ups purple, the 50-seat line |
+| The Map | all 35 races | night navy, Plex | one tile per state; a ring marks each race where Cook disagrees with us |
+
+Layouts are examples until Matteo picks; they need `races.json` candidates, the forecast history, Senate holdover
+seats and the Senate-control market price from the engine before they can run daily.
 
 ## The daily kit (due Sun 4 Oct)
 
 Command for the daily job (roadmap A8): `python -m simlab.publish.kit --date YYYY-MM-DD --data <simlab-data>`. It
 writes `derived/<date>/post-kit/`, exits 1 if the kit can't be built, and prints a one-line JSON summary last
 (`ok`, `races`, `slides`, `problems`, `approvable`, `out`). Before 12 Oct every slide's kicker says "PILOT · INTERNAL,
-NOT FOR POSTING". Layouts are provisional (The Stamp, Where everyone stands, 100 futures) until Matteo picks. A slide
+NOT FOR POSTING". Layouts: The Stamp, Where everyone stands, 100 futures (Matteo, 28 Sep). A slide
 takes about 1 s to render; from 12 Oct the kit features a few selected races a day, not all 75, so posts stay
 short. Tests:
 `python -m unittest tests.test_kit`.

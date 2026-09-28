@@ -14,8 +14,11 @@ Decided by Matteo, 28 Sep:
   voices.
 - Channels: Instagram, X, Threads and Bluesky only (no TikTok, YouTube Shorts or LinkedIn).
 - Name: **NotAPoll.org**. Handles: @notapoll.org on Instagram and Threads, @notapoll on X, @notapoll.bsky.social on
-  Bluesky until the domain is bought (Matteo: "maybe later"), then @notapoll.org. Until then, images show the wordmark
-  "NotAPoll" and the real address research.scaliastudio.dev/midterms, never "notapoll.org".
+  Bluesky. Images show the wordmark "NotAPoll" and the real address research.scaliastudio.dev/midterms, never
+  "notapoll.org".
+- Domain (Matteo, 28 Sep, later that day): no notapoll.org; the project lives on a Scalia domain,
+  research.scaliastudio.dev/midterms. Bluesky can use a Scalia subdomain as its handle (for example
+  notapoll.scaliastudio.dev) once Matteo adds one DNS record.
 
 The shortlist it came from, checked 28 Sep against the domain registries and public profile pages (a handle that looks
 free can still be held by a deactivated account):

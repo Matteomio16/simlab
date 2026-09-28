@@ -75,6 +75,8 @@ class Theme:
     header: str = "rule"  # "rule", "bar" (filled top bar) or "chip" (kicker in an accent box)
     highlight: str | None = None  # colour drawn behind hero numbers
     overprint: str | None = None  # second ink offset behind hero numbers (riso)
+    tossup: str | None = None  # fill for the 35–65% toss-up zone; hairline when None
+    swing_band: bool = False  # blue, purple, red band along the top of the label strip
 
 
 BROADSHEET = Theme("broadsheet")
@@ -198,6 +200,10 @@ class Slide:
                       ha="right", va="center")
             self.y += 14
         self.ax.add_patch(plt.Rectangle((0, self.foot - STRIP), self.w, STRIP, color=t.strip_bg, lw=0, zorder=1))
+        if t.swing_band:
+            for i, c in enumerate((t.dem, t.ai, t.rep)):
+                self.ax.add_patch(plt.Rectangle((self.w * i / 3, self.foot - STRIP - 10), self.w / 3, 10, color=c,
+                                                lw=0, zorder=1))
         mid = self.foot - STRIP / 2
         self._put(MARGIN, mid, LABEL.upper(), "mono", 600, 30, t.strip_fg, va="center", gid="footer", zorder=2)
         self._put(self.w - MARGIN, mid, fmt_day(day), "mono", 400, 28, t.strip_fg, ha="right", va="center",

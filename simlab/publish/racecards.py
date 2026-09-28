@@ -25,6 +25,10 @@ def verdict(p: float) -> str:
     return f"Likely {lean}" if max(p, 1 - p) >= 0.8 else f"Leans {lean}"
 
 
+def verdict_color(t: Theme, p: float) -> str:
+    return t.ai if 0.35 <= p <= 0.65 else t.dem if p > 0.65 else t.rep
+
+
 def margin_txt(x: float) -> str:
     return "Even" if abs(x) < 0.05 else f"{'D' if x > 0 else 'R'}+{abs(x):.1f}"
 
@@ -82,9 +86,9 @@ def benchmarks(s: Slide, r: dict, px: int = 60):
                  px=px, rule=True)
 
 
-def stamp(s: Slide, x: float, y: float, text: str, px: int = 96, rot: float = 8):
+def stamp(s: Slide, x: float, y: float, text: str, px: int = 96, rot: float = 8, color: str | None = None):
     t = s.t
-    color = t.overprint or t.ink
+    color = color or t.overprint or t.ink
     s.ax.text(x, y, typeset(text.upper()), rotation=rot, ha="center", va="center", color=color, zorder=5,
               fontproperties=s.font("hero", t.hero_weight, px), alpha=0.92,
               bbox=dict(boxstyle="square,pad=0.32", fc=t.highlight or "none", ec=color, lw=pt(7), alpha=0.92))
@@ -129,8 +133,8 @@ def ladder(t: Theme, r: dict = RACE) -> Slide:
     x0, w = MARGIN + 44, s.width - 88
     X = lambda p: x0 + w * p
     y = s.y + 330
-    s.ax.add_patch(plt.Rectangle((X(0.35), y - 250), X(0.65) - X(0.35), 470, color=t.hairline, lw=0, zorder=0,
-                                 alpha=0.8))
+    s.ax.add_patch(plt.Rectangle((X(0.35), y - 250), X(0.65) - X(0.35), 470, color=t.tossup or t.hairline, lw=0,
+                                 zorder=0, alpha=0.8))
     s._put(X(0.5), y - 260, "TOSS-UP", "mono", 600, 28, t.ink2, ha="center", va="bottom")
     s.ax.plot([X(0), X(1)], [y, y], color=t.ink, lw=pt(3), zorder=2, solid_capstyle="butt")
     for p in (0, 0.25, 0.5, 0.75, 1):
@@ -210,7 +214,7 @@ def stamped(t: Theme, r: dict = RACE) -> Slide:
         spx -= 4
     half = (s.pil("hero", t.hero_weight, spx).getlength(label.upper()) + spx * 1.3) / 2
     cx = min(max((bx0 + bx1) / 2, MARGIN + half + 10), MARGIN + 560 - half)
-    stamp(s, cx, by1 - 56, label, px=spx, rot=-8)
+    stamp(s, cx, by1 - 56, label, px=spx, rot=-8, color=None if t.overprint else verdict_color(t, r["p"]))
     s.y = max(top + 300, s.tag_bottom)
     rows = [("Middle 80% of margins", f"{margin_txt(r['lo'])} to {margin_txt(r['hi'])}"),
             ("Poll average", r["poll"]), ("Market (Dem)", pct_txt(r["market"])), ("Cook", r["cook"]),

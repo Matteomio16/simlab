@@ -2,6 +2,20 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Content & site): layouts picked, election purple, special editions, Scalia domain
+
+Matteo's answers, later on 28 Sep:
+- **Daily race cards:** The Stamp, Where everyone stands, 100 futures (the kit's default).
+- **Palette:** Lab Notebook stays the daily theme but takes more of the election colours: purple `#6D2E8C` replaces
+  ochre as the simulation's own colour and marks toss-ups (zone fill, lilac highlighter, purple verdict stamps), the
+  label strip goes deep indigo, and a blue-purple-red swing band runs along it. Purple passes the colour-blind check
+  beside the party blue and red (deutan ΔE 9.5); lighter violets failed it.
+- **Riso Print retired.** Sundays and special days get five special editions instead, each with its own layout and
+  palette (`simlab/publish/specials.py`, `docs/publishing.md`): The Ballot, The Main Event, The Seismograph, The Chamber,
+  The Map. Drafts with invented numbers, for Matteo to pick from.
+- **Domain:** no notapoll.org; the project stays on research.scaliastudio.dev/midterms.
+- **Bio tagline:** Matteo wants it more epic and iconic; options proposed.
+
 ## 2026-09-28 (Content & site): human, social voice
 
 - **Matteo:** mention AI as little as possible; say "social simulation", "synthetic voters", "simulated voters". Model
