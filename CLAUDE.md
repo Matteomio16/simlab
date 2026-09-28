@@ -138,7 +138,10 @@ Decided in Claude Code, 27 Sep (reasons in `docs/CHANGELOG.md`):
   race and ideology (`simlab/archetypes.json`, built by `python -m simlab.ces`).
 
 Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructure.md`):
-- Site at `research.scaliastudio.dev/midterms` (Cloudflare), linked from scaliastudio.dev.
+- Site at `labs.scaliastudio.dev/midterms` (Cloudflare), linked from scaliastudio.dev (was research.; Matteo, 28 Sep).
+  Brand domain notapoll.org, shown on every image; its own site comes later. Handles: Instagram and Threads
+  @notapoll.org, X @notapoll, Bluesky @notapoll.org. Scheduling on free tools only: Buffer Free for X, Threads and
+  Bluesky; Instagram's own scheduler.
 - No paid publishing tools: Instagram posting is free (Meta Business Suite by hand, official API later); X by hand or
   through Buffer's free plan, never paid X API credits. Threads and Bluesky optional. Social accounts created later.
 - No Cloudflare R2 for now: the site hosts post images and JSON; GitHub holds the public archive.
