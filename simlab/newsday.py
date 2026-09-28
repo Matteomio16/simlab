@@ -11,6 +11,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import re
 import xml.etree.ElementTree as ET
 from datetime import date, datetime, timezone
 from email.utils import parsedate_to_datetime
@@ -21,6 +22,7 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from .news import RACES, _clean
+from .probes import NEWS_QUESTIONS
 
 SCHEMA = 1
 SNAP_RACES = {"ohio": "OH-S", "north-carolina": "NC", "texas": "TX", "national": "US"}
@@ -160,3 +162,51 @@ def carry_over(stories: list[dict], known: list[dict], sim: float = 0.5) -> list
         else:
             s["event_id"] = event_id(s["race_id"], s["first_seen"], s["title"])
     return stories
+
+
+SIDES = {"democrats": "Democratic voters", "republicans": "Republican voters", "both": "Voters on both sides",
+         "neither": "Neither side's voters"}
+LABEL_QS = {
+    "type": NEWS_QUESTIONS["type"],
+    "helps_face": NEWS_QUESTIONS["helps"],
+    "fires_up": {"type": "choice", "criteria": SIDES,
+                 "instructions": "Whose voters might this news fire up, making them more motivated to vote?"},
+    "puts_off": {"type": "choice", "criteria": SIDES,
+                 "instructions": "Whose voters might this news put off, making them less keen on their candidate or "
+                                 "less likely to vote?"},
+    "salience": NEWS_QUESTIONS["salience"],
+}
+GATE_Q = {"relevant": NEWS_QUESTIONS["relevant"]}
+LABEL_FIELDS = ("gate", "type", "helps_face", "fires_up", "puts_off", "salience")
+
+
+def strip_outlets(title: str, names: list[str]) -> str:
+    for n in sorted((n for n in names if len(n) >= 3), key=len, reverse=True):
+        title = re.sub(rf"\b{re.escape(n)}\b", "", title, flags=re.I)
+    return re.sub(r"\s{2,}", " ", title).strip(" -|:–—")
+
+
+def story_text(story: dict, race_id: str) -> str:
+    heads = [strip_outlets(t, story["outlet_names"]) for t in story["titles"][:5]]
+    return f"RACE: {RACE_TEXT[race_id]}\nHEADLINES:\n" + "\n".join(f"- {h}" for h in heads if h)
+
+
+def _top(p: dict) -> str:
+    return max((k for k in p if not k.startswith("_")), key=p.get)
+
+
+def _sides(p: dict) -> dict:
+    return {"D": round(p.get("democrats", 0.0) + p.get("both", 0.0), 3),
+            "R": round(p.get("republicans", 0.0) + p.get("both", 0.0), 3)}
+
+
+def label(story: dict, asker) -> dict:
+    """Jev's labels, asked with outlet names removed: the gate for each race the story could matter to, then the
+    story's own labels (type, who it helps on its face, whose voters it fires up or puts off, salience)."""
+    races = [story["race_id"]] if story["race_id"] != "US" else PILOT + ["US"]
+    gate = {r: round(asker.ask_many(story_text(story, r), GATE_Q, "newsday:gate")["relevant"].get("true", 0.0), 3)
+            for r in races}
+    a = asker.ask_many(story_text(story, story["race_id"]), LABEL_QS, "newsday:labels")
+    return {"gate": gate, "type": _top(a["type"]), "helps_face": _top(a["helps_face"]),
+            "fires_up": _sides(a["fires_up"]), "puts_off": _sides(a["puts_off"]),
+            "salience": round(sum(int(k) * v for k, v in a["salience"].items() if k.isdigit()), 3)}

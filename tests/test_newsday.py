@@ -84,5 +84,47 @@ class Stories(unittest.TestCase):
         self.assertIsNone(s[0]["known"])
 
 
+class FakeAsker:
+    def __init__(self):
+        self.states = []
+
+    def ask_many(self, state, questions, tag=""):
+        self.states.append(state)
+        out = {}
+        for qid, q in questions.items():
+            if qid == "relevant":
+                out[qid] = {"true": 0.8, "false": 0.2}
+            elif qid == "salience":
+                out[qid] = {"0": 0.0, "1": 0.5, "2": 0.5, "3": 0.0, "4": 0.0}
+            elif qid in ("fires_up", "puts_off"):
+                out[qid] = {"democrats": 0.6, "republicans": 0.1, "both": 0.2, "neither": 0.1}
+            else:
+                keys = list(q["criteria"])
+                out[qid] = {k: (0.7 if i == 0 else 0.3 / (len(keys) - 1)) for i, k in enumerate(keys)}
+        return out
+
+
+class Labels(unittest.TestCase):
+    def story(self, race="OH-S"):
+        return {"race_id": race, "title": "Fox News: Brown leads in new ad war",
+                "titles": ["Fox News: Brown leads in new ad war"], "outlet_names": ["Fox News"],
+                "outlets": ["foxnews.com"]}
+
+    def test_maps_answers_and_hides_outlets(self):
+        fake = FakeAsker()
+        lab = newsday.label(self.story(), fake)
+        self.assertEqual(lab["gate"], {"OH-S": 0.8})
+        self.assertEqual(lab["type"], "scandal")
+        self.assertEqual(lab["helps_face"], "democrat")
+        self.assertEqual(lab["fires_up"], {"D": 0.8, "R": 0.3})
+        self.assertAlmostEqual(lab["salience"], 1.5)
+        self.assertTrue(all("Fox News" not in s for s in fake.states))
+        self.assertIn("- Brown leads in new ad war", fake.states[0])
+
+    def test_national_story_gets_a_gate_per_race(self):
+        lab = newsday.label(self.story("US"), FakeAsker())
+        self.assertEqual(sorted(lab["gate"]), ["NC", "OH-S", "TX", "US"])
+
+
 if __name__ == "__main__":
     unittest.main()
