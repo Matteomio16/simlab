@@ -43,29 +43,34 @@ Checkpoints and fallbacks:
   - a prototype for labelling news
   - both GitHub repos, with the model-answer cache exported
   - the content research (`docs/research/`)
-- **In progress:** Kev trained on real news reactions (react-v1, Kev session).
-- **Overdue:** daily snapshots of live data. They feed the forecast and are the only input the blind track may use
-  after the election. Some sources can't be recovered later: news feeds, and early-vote and voter files, which are
-  overwritten.
+  - since 28 Sep: snapshots every 3 hours (A1), Senate starting levels (A3), the news pipeline (A4), the GLM harness
+    (A5) and the daily job (A8)
+  - Kev react-v1 (B1) and its verdict (B2): it failed as a second opinion on reactions, so GLM gives them alone
+  - the Monte Carlo (A7), with the statistics step of the daily job (`simlab/statsday.py`)
+  - the daily filter (A6), voter groups for all states and the persuadable and mobilisable shares (`simlab/pimu.json`)
+- **Next on the critical path:** the Ohio end-to-end run for the 2 Oct checkpoint, and the 3–4 Oct rehearsals (A10).
+  The snapshots still lack FEC, economy and early-vote files; early-vote and voter files are overwritten, so they
+  can't be recovered later.
 - **Also missing:** the free API keys (only OpenRouter's key exists) and the social accounts.
 
 ## Track A: the engine
 
 | # | Piece | What it does | Owner | Due | Status |
 | --- | --- | --- | --- | --- | --- |
-| A1 | Snapshots | Every 3 hours, saves raw polls, headlines, ratings, markets (benchmark only), early-vote files, FEC and economy data to the private data repo, with hashes | Kev (taken over 28 Sep at Matteo's request) | Tue 29 Sep | `simlab/snap.py` and the 3-hourly GitHub Actions job live since 28 Sep; FEC, economy and early-vote files join later |
-| A2 | Download-now list | 538 poll histories, this week's NC and OH voter files, new House maps, 2024 results by new district | Engine | Wed 30 Sep | partly (538 approval and generic ballot) |
-| A3 | Starting levels | Each race's starting vote and range: fundamentals plus a poll average with pollster house effects. Also the stats-only forecast the simulation must beat | Statistics | Thu 1 Oct (Senate) | in progress: groundwork, calibration, 2018–24 backtest and poll table done (28 Sep) |
+| A1 | Snapshots | Every 3 hours, saves raw polls, headlines, ratings, markets (benchmark only), early-vote files, FEC and economy data to the private data repo, with hashes | Kev (taken over 28 Sep at Matteo's request) | Tue 29 Sep | `simlab/snap.py` and the 3-hourly GitHub Actions job live since 28 Sep; GitHub dropped 3 of the first 4 scheduled runs, trigger being fixed; FEC, economy and early-vote files join later |
+| A2 | Download-now list | 538 poll histories, this week's NC and OH voter files, new House maps, 2024 results by new district | Engine | Wed 30 Sep | partly (538 approval and generic ballot); House maps and results next, A11 needs them |
+| A3 | Starting levels | Each race's starting vote and range: fundamentals plus a poll average with pollster house effects. Also the stats-only forecast the simulation must beat | Statistics | Thu 1 Oct (Senate) | Senate built 28 Sep (`simlab/levels.py`, 35 races, 28 with polls); left: Alaska ranked-choice, Montana three-way, first-seen dates |
 | A4 | News pipeline | Daily headlines → stories → which race → Jev asks "does this change anything?" → labels → a neutral 1–3 sentence event card, outlet names removed | Engine | Thu 1 Oct | built 28 Sep (`simlab/newsday.py`; GDELT, Media Cloud when keyed) |
 | A5 | GLM harness | Asks each voter group how its support and turnout move, following the model-recipes rules. Sizes come from real data, not the model. Logs proposed vs applied changes | Engine | Fri 2 Oct | built 28 Sep (`simlab/harness.py`); first real run 28 Sep |
-| A6 | Filter | Daily update from new polls; weekly ensemble Kalman update, which re-tunes each state's sensitivity dials | Statistics | Fri 2 Oct (daily), Mon 12 Oct (weekly) | not started |
-| A7 | Monte Carlo | 40,000 correlated simulated elections → "wins 7 in 10", ranges, Senate control, House seats | Statistics | Thu 1 Oct | not started |
+| A6 | Filter | Daily update from new polls; weekly ensemble Kalman update, which re-tunes each state's sensitivity dials | Statistics | Fri 2 Oct (daily), Mon 12 Oct (weekly) | daily filter built 28 Sep (47e1852; `simlab/moves.py`, story effects from group reactions, c_s fitted, headline and twin in the Monte Carlo); weekly ensemble Kalman by Mon 12 Oct |
+| A7 | Monte Carlo | 40,000 correlated simulated elections → "wins 7 in 10", ranges, Senate control, House seats | Statistics | Thu 1 Oct | done 28 Sep (e7fb30f; `simlab/montecarlo.py`, run by `python -m simlab.statsday`, ~14 s, 35 races); `house` null until A11 |
 | A8 | Daily job | One command a day on GitHub Actions, with a run record, a spend line and an alert if a run is missed | Engine | Sat 3 Oct | built 28 Sep (`simlab/daily.py`, `daily.yml`); off until `PIPELINE_ON` on 5 Oct |
 | A9 | Scoring | Weekly scores against the poll average, the markets, Cook and the stats-only forecast | Kev | first on Mon 19 Oct | test metrics exist |
-| A10 | Rehearsals | Two full dry runs on GitHub Actions | all | Sat 3 – Sun 4 Oct | — |
-| A11 | House seats | Voter groups re-weighted to each district on the new 2026 maps; district baselines and polls; the other ~395 seats from the fundamentals map | Statistics | Fri 9 Oct | not started |
+| A10 | Rehearsals | Two full dry runs on GitHub Actions | all, led by Engine | Sat 3 – Sun 4 Oct | known gap: the levels read gitignored MIT files; Statistics commits them as a frozen input by Fri 2 Oct |
+| A11 | House seats | Voter groups re-weighted to each district on the new 2026 maps; district baselines and polls; the other ~395 seats from the fundamentals map | Kev (moved from Statistics 28 Sep, Matteo's call); starts once A2's House maps and 2024 results by district land, ~Wed 30 Sep | Fri 9 Oct | not started; interface agreed with Statistics; the persuadable and mobilisable shares it needs are in `simlab/pimu.json` (e782daa) |
 | A13 | Scale-up of news and reactions | News queries for all 35 Senate races and ~40 House seats (from `races.json`); a reaction budget that fits the day: national stories asked once with state-neutral personas, fewer groups for safe races, a minimum attention, OpenRouter's batch API if needed (GLM manages ~200 prompts a minute) | Engine | Fri 9 Oct | — |
-| A12 | Early-vote data | NC absentee files now; NC in-person from 15 Oct; Texas from ~19 Oct; Ohio as published | Kev | from Mon 5 Oct | — |
+| A12 | Early-vote data | NC absentee files now; NC in-person from 15 Oct; Texas from ~19 Oct; Ohio as published | Kev (it owns the snapshots); moves to Engine only if B2 slips | from Mon 5 Oct | — |
+| A14 | Pre-freeze code review | An independent review of the daily chain before the 12 Oct freeze | a new review session | Sat 10 – Sun 11 Oct | — |
 
 ## Track B: the models (who does which job)
 
@@ -74,7 +79,7 @@ Checkpoints and fallbacks:
 | "Does this story change anything for this race?" | Jev | Says "no change" to 99–100% of irrelevant news; cheapest |
 | Labels: event type, side helped, salience | Jev, confirmed or changed after Matteo's spot-check | Cheap. Outlet names are removed first, because they sway every model |
 | Direction of each group's reaction | GLM-5.3 Flash, each scale asked both ways | Right direction on 92% of events that moved opinion |
-| The most important stories (high salience, close races) | GLM and Kev, averaged; GLM alone if Kev fails B2 | Averaging only cancels bias if the two models' errors are independent |
+| The most important stories (high salience, close races) | GLM alone (Kev failed B2 on 28 Sep) | Averaging only cancels bias if the two models' errors are independent |
 | Size of reactions | Real past shifts, then tuned per state by the filter | No model tracks size |
 | Starting levels | Statistics, with Kev as a check | Statistics beat every model |
 | Event cards (short neutral text) | DeepSeek V4.1 Flash or GLM | A text job |
@@ -82,10 +87,10 @@ Checkpoints and fallbacks:
 
 | # | Step | Due | Status |
 | --- | --- | --- | --- |
-| B1 | Kev react-v1: trained on real measured shifts and design rules, never on GLM's answers | Thu 1 Oct | building |
-| B2 | Kev verdict on the 19 held-out events. Does it track size (GLM scores 0.26)? Are its errors independent of GLM's? Does Kev + GLM beat GLM alone? | Fri 2 Oct | — |
-| B3 | Freeze the routing table above | Sat 3 Oct | draft |
-| B4 | Kev serving on Modal (one GPU, scale to zero, one burst a day), if it passes B2 | Sun 11 Oct | kit ready |
+| B1 | Kev react-v1: trained on real measured shifts and design rules, never on GLM's answers | Thu 1 Oct | done 28 Sep (23 min, about $2.30; no loss of Kev's public skills) |
+| B2 | Kev verdict on the 19 held-out events. Does it track size (GLM scores 0.26)? Are its errors independent of GLM's? Does Kev + GLM beat GLM alone? | Fri 2 Oct | done 28 Sep: fails. Size-tracking 0.00 (GLM 0.29, Jev 0.28); errors correlate 0.75 with GLM's; Kev + GLM 2.61 error vs GLM alone 2.32. Passes null (0.961) and is best on mirror (flip correlation 0.961, lean +0.002). Scores in `kev-finetune/runs/react-v1/react_scores_T1.json` |
+| B3 | Freeze the routing table above | Sat 3 Oct | draft; after B2, reactions go to GLM alone (asked both ways), with Jev as the gate |
+| B4 | Kev serving on Modal (one GPU, scale to zero, one burst a day), if it passes B2 | Sun 11 Oct | not needed after B2, unless Matteo decides otherwise |
 
 ## Track C: content and distribution
 
@@ -93,11 +98,11 @@ Checkpoints and fallbacks:
 | --- | --- | --- | --- | --- |
 | C1 | Research: political data accounts (incl. the Integrity Index), AI-simulation startups, AI showcase projects, platform rules | Claude | Mon 28 Sep | done (`docs/research/`) |
 | C2 | Content plan: a menu of formats, cadence, tone; name and handles; on camera or voice-over | Content & site proposes, Matteo picks | Wed 30 Sep | draft for Matteo (`docs/content-plan.md`) |
-| C3 | Accounts: Instagram professional (Creator) with Threads, X, Bluesky; TikTok and YouTube Shorts optional | Matteo | Fri 2 Oct | — |
+| C3 | Accounts: Instagram professional (Creator) with Threads, X, Bluesky; TikTok and YouTube Shorts optional | Matteo | Fri 2 Oct | notapoll.org bought 28 Sep; setup in progress (email routing, then IG, Threads, X, Bluesky on @notapoll.org, Buffer free for X, Threads and Bluesky) |
 | C4 | Making-of posts, starting with the test-bench findings | Content & site drafts, Matteo approves and posts | from Sat 3 Oct | Lab notes 1–3 drafted, shown to Matteo 28 Sep |
 | C5 | Chart factory and daily post kit: slides (1080×1350), a 9:16 video, captions, alt text, an X thread | Content & site | Sun 4 Oct (the pilot makes internal kits daily) | daily kit command built (`python -m simlab.publish.kit`), layouts picked; 5 special editions drafted; video next |
-| C6 | Site at research.scaliastudio.dev/midterms: forecast, methods page, public scoring page | Content & site; Matteo sets up Cloudflare | Fri 9 Oct | — |
-| C7 | Publishing and ethics review (Field Guide checklist); OSF pre-registration yes or no | Matteo with Claude | Sat 10 Oct | open task |
+| C6 | Site at labs.scaliastudio.dev/midterms: forecast, methods page, public scoring page | Content & site; Matteo sets up Cloudflare | Fri 9 Oct | — |
+| C7 | Publishing and ethics review (Field Guide checklist); OSF pre-registration yes or no | Matteo with a new review session (not Content & site, which made the posts) | Sat 10 Oct | open task |
 | C8 | Posting by hand: Meta Business Suite for Instagram, x.com's scheduler | Matteo | making-of from 3 Oct, forecasts from 12 Oct | — |
 | C9 | Automated posting behind an approval flag: the Instagram API, and Buffer's free plan for X, Threads and Bluesky | Content & site; Matteo creates the apps and keys | 12–18 Oct | — |
 
@@ -137,10 +142,12 @@ Also during the pilot week:
 
 | Session | Owns |
 | --- | --- |
-| Engine (this one) | A1, A2, A4, A5, A8; the news spot-check page |
-| Statistics | A3, A6, A7, A11 |
-| Kev | B1–B4, then A9 and A12 |
+| Engine | A2, A4, A5, A8, A13; leads A10; the news spot-check page |
+| Statistics | A3, A6, A7 |
+| Kev | A1, B1–B4 (done), A11, then A9 and A12 |
 | Content & site | C2, C4, C5, C6, C9 |
+| Daily check (scheduled task) | the 11:30 UK digest; drafts posts once forecasts exist |
+| Review (new, fresh sessions) | C7 on Sat 10 Oct; A14 on 10–11 Oct |
 | Matteo | the list below |
 
 Each session owns its own files. Edits to shared files (CLAUDE.md, CHANGELOG, pyproject) stay small. Four sessions at
@@ -153,8 +160,8 @@ once use up the Claude plan's limits faster. If the limits bite, pause Content &
 | Mon 28 Sep | News spot-check: about 100 labels, about 30 minutes |
 | Wed 30 Sep | Pick the content formats and the project name |
 | Thu 1 Oct | Put free API keys in `.env` (FEC, Census, FRED, EIA) and create a Redistricting Data Hub account |
-| Fri 2 Oct | Create the accounts; give the Kev react-v1 verdict |
-| Fri 9 Oct | Cloudflare: point research.scaliastudio.dev at the site |
+| Fri 2 Oct | Create the accounts; confirm Kev stays out of reactions and B4 is dropped (react-v1 failed B2) |
+| Fri 9 Oct | Cloudflare: point labs.scaliastudio.dev at the site |
 | Sat 10 Oct | Publishing and ethics review; OSF yes or no; a production OpenRouter key with a monthly cap (the private pilot runs on the test key, which has about $8 left) |
 | from 12 Oct | About 30 minutes a day approving posts |
 
