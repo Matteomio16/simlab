@@ -277,15 +277,35 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
             "lv_gap": gap, "sponsor_shift": sp, "house_effects": he["mean"].round(3).to_dict(), "races": races}
 
 
-def inputs() -> tuple:
-    """The fixed inputs: fitted parameters, pollster priors, state leans, national House vote, candidate records."""
+FROZEN = Path(__file__).parent / "levels_inputs.json"
+
+
+def pack(rel: dict, E: dict, statewide: pd.DataFrame) -> dict:
+    return {"rel": {f"{y}|{s}": v for (y, s), v in rel.items()}, "E": {str(y): v for y, v in E.items()},
+            "statewide": statewide.to_dict("records")}
+
+
+def unpack(d: dict) -> tuple[dict, dict, pd.DataFrame]:
+    rel = {(int(k.split("|")[0]), k.split("|")[1]): v for k, v in d["rel"].items()}
+    return rel, {int(k): v for k, v in d["E"].items()}, pd.DataFrame(d["statewide"])
+
+
+def freeze() -> None:
+    """Writes the inputs taken from the gitignored MIT and 538 files (state leans, national House vote, statewide
+    races) to simlab/levels_inputs.json, so the daily job runs without them."""
     from .statsdata import mit
+    extra = json.loads((Path(__file__).parent / "statewide_extra.json").read_text())["races"]
+    FROZEN.write_text(json.dumps(pack(relative_margins(mit("president")), calib.national_house_vote().to_dict(),
+                                      statewide_races(mit("senate"), mit("house"), extra))), encoding="utf-8")
+
+
+def inputs() -> tuple:
+    """The fixed inputs: fitted parameters, pollster priors, and the frozen state leans, national House vote and
+    candidate records."""
     here = Path(__file__).parent
     params = json.loads((here / "stats_params.json").read_text())
     priors = json.loads((here / "house_effect_priors.json").read_text())
-    extra = json.loads((here / "statewide_extra.json").read_text())["races"]
-    return (params, priors, relative_margins(mit("president")), calib.national_house_vote().to_dict(),
-            statewide_races(mit("senate"), mit("house"), extra))
+    return (params, priors, *unpack(json.loads(FROZEN.read_text(encoding="utf-8"))))
 
 
 def compute(t: dict, today: date, run_id: str, moves: dict | None = None, inp: tuple | None = None) -> dict:
@@ -303,7 +323,12 @@ def main() -> None:
     ap.add_argument("--snapshot", type=Path, default=None)
     ap.add_argument("--out", type=Path, default=None)
     ap.add_argument("--run-id", default=os.environ.get("RUN_ID"))
+    ap.add_argument("--freeze", action="store_true", help="rewrite simlab/levels_inputs.json from the MIT and 538 files")
     args = ap.parse_args()
+    if args.freeze:
+        freeze()
+        print(f"frozen inputs -> {FROZEN}")
+        return
     snap = args.snapshot or polls.latest_snapshot()
     today = date.fromisoformat(snap.parent.name)
     t = polls.build(snap)

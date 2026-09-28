@@ -147,6 +147,18 @@ def poll_frame(margins, start_day, pollsters, race_id=None):
     return pd.DataFrame(rows)
 
 
+class FrozenInputsTest(unittest.TestCase):
+    def test_round_trip(self):
+        import json
+        rel = {(2024, "OH"): -10.0, (2020, "OH"): -8.0}
+        E = {2022: -2.8, 2018: 8.6}
+        sw = pd.DataFrame([{"year": 2018, "state": "OH", "office": "senate", "term": 6, "left": "SHERROD BROWN",
+                            "right": "JIM RENACCI", "margin": 6.8, "inc": 1}])
+        r2, e2, sw2 = levels.unpack(json.loads(json.dumps(levels.pack(rel, E, sw))))
+        self.assertEqual((r2, e2), (rel, E))
+        pd.testing.assert_frame_equal(sw2, sw, check_dtype=False)
+
+
 class AssemblyTest(unittest.TestCase):
     def test_lv_gap_from_polls_released_both_ways(self):
         entries = []
