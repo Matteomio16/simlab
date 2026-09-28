@@ -40,6 +40,14 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 - Gap before the GitHub Actions rehearsals (3 Oct): the levels read the MIT files, which are gitignored. Their fixed
   inputs (lean, candidate records, the national House vote by year) need to be frozen into a committed file.
 
+## 2026-09-28 (Content & site): labs.scaliastudio.dev
+
+Matteo confirmed (relayed by the roadmap session): the Scalia-side address is labs.scaliastudio.dev, replacing
+research.scaliastudio.dev. The forecast site goes at labs.scaliastudio.dev/midterms; notapoll.org's own website comes
+later, and images keep showing notapoll.org. Updated content-plan.md, accounts-setup.md, infrastructure.md and
+research/content-ai-tech.md (older entries below keep the old address as history). CLAUDE.md §5 still says research.;
+its edit waits for Matteo's own OK.
+
 ## 2026-09-28 (Content & site): notapoll.org on every image; profile kit
 
 Matteo's decisions, relayed by the roadmap session (evening): he bought notapoll.org; images and videos show it; the

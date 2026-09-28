@@ -18,7 +18,7 @@
 | Kev fine-tune and serving | Kev repo's `kev_modal.py` (train on H100, serve on L40S, scale to zero) | Modal GPU | $5–25, inside free credit |
 | Raw snapshots, cache exports | a private GitHub data repo (small files; aggregates, not raw voter files) | GitHub | $0 |
 | Public data and post images | served by the site itself (no R2 for now) | Cloudflare | $0 |
-| Website | Cloudflare Worker with static assets at `research.scaliastudio.dev/midterms`, linked from Scalia | Cloudflare | $0 |
+| Website | Cloudflare Worker with static assets at `labs.scaliastudio.dev/midterms` (was research.; Matteo, 28 Sep), linked from Scalia | Cloudflare | $0 |
 | Scheduling | GitHub Actions in a public repo for the daily CPU jobs (unlimited minutes); Modal for GPU jobs | GitHub, Modal | $0 |
 | Instagram | Meta Business Suite by hand, then the Instagram API with Instagram Login (own account, no app review) | — | $0 |
 | X | x.com's free scheduler by hand, then Buffer's free plan; never paid X API credits | — | $0 |
@@ -273,7 +273,7 @@ enough.
 ### 6.3 Website
 
 A Cloudflare Worker with static assets (Cloudflare's current advice for new static sites; Pages still works) on the
-subdomain `research.scaliastudio.dev`, with the forecast under `/midterms`, in the existing zone and linked from
+subdomain `labs.scaliastudio.dev` (was research.; Matteo, 28 Sep), with the forecast under `/midterms`, in the existing zone and linked from
 scaliastudio.dev (which already deploys from
 `Matteomio16/scaliastudio` through Cloudflare). Plain HTML plus vega-embed reading `forecast.json`: overview (Senate
 map, House control), race pages, methods ("simulation-based forecast, not a poll", sources, models and versions, what
@@ -392,7 +392,7 @@ and posts say "no meaningful change" when that is true.
 ### 8.4 Free extras
 
 Threads (same Meta app; 250 posts per 24 hours) and Bluesky (app password, no review, images uploaded directly, up to 4
-per post; a domain handle such as `@research.scaliastudio.dev` needs one DNS record). Both reuse the post kit at no cost.
+per post; a domain handle needs one DNS record; decided 28 Sep: `@notapoll.org`). Both reuse the post kit at no cost.
 Threads is Meta's X-style app attached to the Instagram account (extra reach for no extra work). Bluesky is an
 independent X-style network with an open, free API; its audience leans towards journalists, academics and election-data
 people. Both optional.
@@ -467,7 +467,7 @@ publishes no exact numbers (see claude.ai/settings/usage).
 ## 13. Decisions
 
 Decided by Matteo on 27 Sep (also in CLAUDE.md section 5):
-- Site at `research.scaliastudio.dev/midterms`.
+- Site at `labs.scaliastudio.dev/midterms` (was research.; Matteo, 28 Sep). notapoll.org's own site comes later.
 - Publishing is free only: Instagram by hand then its official API; X by hand then Buffer's free plan; Threads and
   Bluesky optional; accounts created later.
 - No R2 for now. One public repo holds the engine code, workflows and published forecasts (unlimited free minutes,

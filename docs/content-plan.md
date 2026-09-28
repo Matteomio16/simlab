@@ -17,8 +17,8 @@ Decided by Matteo, 28 Sep:
   @notapoll.org on Bluesky (verified with a `_atproto` TXT record in Cloudflare).
 - Domain (Matteo, 28 Sep, evening; relayed by the roadmap session): Matteo bought notapoll.org on his Cloudflare
   account. Images and videos show "notapoll.org" (the header wordmark reads NotAPoll.org). The website comes later; the
-  social accounts come first, for making-of posts from about 3 Oct. The Scalia-side address stays
-  research.scaliastudio.dev/midterms until Matteo decides on labs.scaliastudio.dev. Setup steps:
+  social accounts come first, for making-of posts from about 3 Oct. The Scalia-side address is
+  labs.scaliastudio.dev/midterms (Matteo, 28 Sep; it replaces research.scaliastudio.dev). Setup steps:
   `docs/accounts-setup.md`.
 - Scheduling: free only. Buffer's free plan (3 channels, 10 queued posts each) for X, Threads and Bluesky; Instagram
   through its own scheduler (the app or Meta Business Suite).
@@ -37,7 +37,7 @@ free can still be held by a deactivated account):
 
 Why NotAPoll.org: the research's main lesson is that AI-simulation results get reported as polls once they leave their
 caption (Aaru and Axios). With this name, every quote, screenshot and handle carries the disclaimer. A .org name needs the
-domain (about $10 a year; Matteo buys it). It can redirect to research.scaliastudio.dev/midterms and gives Bluesky the
+domain (about $10 a year; Matteo buys it). It can redirect to labs.scaliastudio.dev/midterms and gives Bluesky the
 handle @notapoll.org. Keep "Scalia" out of the name: to US readers it means Justice Antonin Scalia, a conservative icon,
 which undercuts a neutral forecast. "By Scalia Studio" goes in the bio and on the site.
 

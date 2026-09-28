@@ -16,7 +16,7 @@ Authenticator). Save every platform's backup codes offline, not in the same emai
 4. Send a test email to each alias and check it arrives.
 
 Optional but advised before the first post: since images show notapoll.org and the site comes later, add a redirect
-rule (Rules → Redirect Rules) from notapoll.org to research.scaliastudio.dev/midterms, or a one-page holding site, so
+rule (Rules → Redirect Rules) from notapoll.org to labs.scaliastudio.dev/midterms, or a one-page holding site, so
 the address never leads nowhere.
 
 ## 2. Instagram, then Threads
