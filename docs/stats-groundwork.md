@@ -136,6 +136,15 @@ metadata. Wikipedia adds the polls VoteHub lacks. Any disagreement over 1 point 
 Every row records the snapshot it was first seen in, so each day's filter, and later the blind track, uses only what
 was known that day.
 
+**Built 28 Sep:** `simlab/polls.py` (`python -m simlab.polls`, 28 tests in `tests/test_polls.py`).
+- **Numbers and flags:** when a poll is in both sources, the numbers come from Wikipedia (its versions averaged) and
+  the flags from VoteHub.
+- **First run** (snapshot 28 Sep 09:41):
+  - 35 races and 355 Senate polls: 186 in both sources, 129 Wikipedia only, 40 VoteHub only;
+  - 12 disagreements over 1 point;
+  - 441 generic-ballot and 836 approval polls.
+- **Still to add:** first-seen dates across snapshots, Alaska's ranked-choice count, and Montana's three-way race.
+
 ### 2.3 Generic ballot and approval
 
 On disk (`data/history/`, from VoteHub, 27 Sep): generic ballot, 544 polls from 11 Dec 2024 to 8 Sep 2026 (315 RV,

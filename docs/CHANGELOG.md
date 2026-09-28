@@ -2,6 +2,29 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): poll table (roadmap A3, first part)
+
+- `simlab/polls.py` (`python -m simlab.polls`) was built test-first (`tests/test_polls.py`, 28 tests). It reads one
+  snapshot folder: VoteHub, the 35 Wikipedia race pages and the overview page.
+- It writes the Senate, generic-ballot and approval poll tables to `data/polls/<date>_<time>/`, gitignored until
+  engine-design.md sets the place. A meta file records the snapshot time, Wikipedia revision ids, source counts and
+  licence.
+- Rules as agreed:
+  - nominees come from the overview page; the main challenger is the notable independent where there is one (NE, ID,
+    SD, MT);
+  - Wikipedia tables are picked by nominee names;
+  - versions of one poll are averaged within a population, likely voters first;
+  - sponsor and partisan flags come only from VoteHub (D1);
+  - margins are two-party;
+  - source disagreements over 1 point are flagged.
+- First run (snapshot 28 Sep 09:41):
+  - 35 races and 355 Senate polls: 186 in both sources, 129 Wikipedia only, 40 VoteHub only;
+  - 12 disagreements, mostly different versions of one poll (Montana's three-way ballot against a head-to-head, for
+    example);
+  - 441 generic-ballot and 836 approval polls.
+- Not yet done: first-seen dates across snapshots (for the blind track), ranked-choice handling for Alaska, and
+  three-way handling for Montana.
+
 ## 2026-09-28 (Content & site): label line, visual identity, race cards
 
 - **Label line (Matteo):** every image and caption now says "Social simulation, not a poll" instead of "AI-simulated
