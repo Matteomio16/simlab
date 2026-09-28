@@ -297,6 +297,31 @@ class Run(unittest.TestCase):
         self.assertFalse(day2[failed[0]["event_id"]].get("label_error"))
         self.assertTrue(any("tariffs" in s for s in ok.states))
 
+    def test_a_reworded_follow_up_continues_yesterdays_event(self):
+        class Judge(FakeChat):  # says "same event" to every pairwise check, writes a card otherwise
+            def complete(self, messages, tag="", max_tokens=300, json_mode=True):
+                self.calls += 1
+                if messages[0]["content"] == newsday.SAME_SYSTEM:
+                    return '{"same": true}'
+                return '{"card": "%s", "event": true}' % GOOD
+        day1 = gdelt(("Trump to travel to Ohio to stump for Sen. Jon Husted", "20260928T080000Z", "a.com"))
+        day2 = gdelt(("President Donald Trump to visit Ohio as campaign season heats up", "20260929T090000Z", "b.com"))
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": day1})
+            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": day2})
+            newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [Judge([])])
+            first = newsday._jsonl(derived / "2026-09-28" / "events.jsonl")[0]
+            summary = newsday.run(date(2026, 9, 29), snap, derived, "d2", FakeAsker(), [Judge([])])
+            second = newsday._jsonl(derived / "2026-09-29" / "events.jsonl")
+            private = newsday._jsonl(derived / "2026-09-29" / "news_private.jsonl")
+        self.assertEqual([e["event_id"] for e in second], [first["event_id"]])
+        self.assertEqual(second[0]["first_seen"], first["first_seen"])
+        self.assertTrue(second[0]["last_seen"].startswith("2026-09-29"))
+        self.assertEqual(private[0]["event_id"], first["event_id"])
+        self.assertEqual(private[0]["days_seen"], ["2026-09-28", "2026-09-29"])
+        self.assertEqual(summary["continued"], 1)
+
     def test_second_day_reuses_labels_and_id(self):
         with tempfile.TemporaryDirectory() as tmp:
             snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"

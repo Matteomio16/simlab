@@ -345,6 +345,32 @@ def merge_same_events(events: list[dict], stories: dict, chats: list, top: int =
                 kept.append(e)
 
 
+def continue_known(new_events: list[dict], stories: dict, known: list[dict], taken: set, chats: list,
+                   per_story: int = 3) -> dict:
+    """Today's new candidate events that continue an event of the last 7 days in other words. Each is checked pairwise
+    (strict yes/no) against the same race's known events not already continued today, most similar wording first, so
+    a continuing story extends its event instead of stacking a second one. Returns {today's id: the known event}."""
+    out = {}
+    for e in new_events:
+        s = stories[e["event_id"]]
+        cands = [k for k in known if k["race_id"] == s["race_id"] and k["event_id"] not in taken]
+        if not cands:
+            continue
+        try:
+            X = TfidfVectorizer(stop_words="english", ngram_range=(1, 2)).fit_transform(
+                [" ".join(s["titles"])] + [" ".join(k["titles"]) for k in cands])
+            order = [int(j) for j in np.argsort(-(X[0] @ X[1:].T).toarray()[0])[:per_story]]
+        except ValueError:
+            order = list(range(min(per_story, len(cands))))
+        head = (strip_outlets(s["titles"][0], s["outlet_names"]), s["first_seen"])
+        for j in order:
+            if same_event(head, (cands[j]["titles"][0], cands[j]["first_seen"]), chats):
+                out[e["event_id"]] = cands[j]
+                taken.add(cands[j]["event_id"])
+                break
+    return out
+
+
 def dedupe_scopes(events: list[dict], stories: dict, sim: float = 0.55) -> None:
     """A national story that repeats a race's own story (similar headlines) doesn't count again for that race: its gate
     there drops to 0 and `covered_by` names the race story."""
@@ -388,7 +414,8 @@ def load_known(derived_root: Path, day: date, lookback: int = 7) -> list[dict]:
 def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chats: list) -> dict:
     """One day: read, cluster, carry over, label new stories, score attention, select, write cards, write files."""
     arts = read_day(snap_root, day)
-    stories = carry_over(make_stories(arts), load_known(derived_root, day))
+    known = load_known(derived_root, day)
+    stories = carry_over(make_stories(arts), known)
     views = load_pageviews(snap_root, day)
     fresh = [s for s in stories if s["known"] is None or s["known"].get("label_error")]
 
@@ -400,10 +427,12 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
                     "puts_off": {"D": 0.0, "R": 0.0}, "salience": 0.0, "label_error": True}
     with ThreadPoolExecutor(16) as ex:
         fresh_labels = dict(zip([s["event_id"] for s in fresh], ex.map(safe_label, fresh)))
-    events, private, new = [], [], 0
+    events, private, new, carried = [], [], 0, set()
     for s in stories:
         k = s.pop("known")
         new += k is None
+        if k:
+            carried.add(s["event_id"])
         labels = fresh_labels.get(s["event_id"]) or {f: k[f] for f in LABEL_FIELDS}
         national = s["race_id"] == "US"
         events.append({"schema": SCHEMA, "date": f"{day}", "run_id": run_id, "event_id": s["event_id"],
@@ -423,6 +452,19 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     with ThreadPoolExecutor(8) as ex:
         for e, card in zip(todo, ex.map(lambda e: write_card(by_id[e["event_id"]], chats), todo)):
             e["card"] = card
+    cont = continue_known([e for e in pool.values() if e["event_id"] not in carried], by_id, known, set(carried), chats)
+    priv = {p["event_id"]: p for p in private}
+    for old, k in cont.items():  # the story continues a known event: its id, first sighting and labels
+        e, p, s = pool[old], priv.pop(old), by_id.pop(old)
+        days = sorted(set(k["days_seen"]) | set(p["days_seen"]))
+        e.update({f: k[f] for f in LABEL_FIELDS})
+        e["event_id"], e["first_seen"] = k["event_id"], min(k["first_seen"], e["first_seen"])
+        e["card"] = k.get("card") or e["card"]
+        s["event_id"], s["days_seen"] = k["event_id"], days
+        p["event_id"], p["days_seen"] = k["event_id"], days
+        e["attention"] = attention(s, spike_ratio(views, s["race_id"]))
+        by_id[k["event_id"]] = s
+    new -= len(cont)
     for e in events:
         e["usable"] = bool(e["card"])  # only stories with a card can be selected (the pool is the top 10 per race)
     merge_same_events(events, by_id, chats)
@@ -433,6 +475,7 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     for name, rows in (("events.jsonl", events), ("news_private.jsonl", private)):
         (out / name).write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
     return {"articles": len(arts), "stories": len(events), "new": new, "carried": len(events) - new,
+            "continued": len(cont),
             "selected": {r: sum(bool(e["selected"].get(r)) for e in events) for r in PILOT + ["US"]},
             "cards_written": written, "cards_failed": failed}
 

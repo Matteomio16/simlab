@@ -180,6 +180,9 @@ Kev react-v2 joins the numbers on 12 Oct only if it passes three checks on held-
   - A national story that repeats a race's own story loses its gate for that race.
   - Among each race's top 10 candidates, stories that report the same event in other words are checked in pairs by
     DeepSeek, and only the best-covered one is kept.
+  - Across days: a story is first matched to the last 7 days' events by wording. A new candidate that doesn't match is
+    then checked in pairs against the same race's recent events, most similar wording first. If it continues one, it
+    takes that event's id, first sighting and labels, and extends its `last_seen` instead of stacking a second effect.
 - **Cards:** no outlet names, and no "poll" or "survey" wording, so the Content & site caption checker passes them.
 
 ## 5. The reaction harness (Engine)
