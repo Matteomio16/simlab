@@ -1,0 +1,49 @@
+# Every 3 hours: raw snapshots of live sources (simlab/snap.py) into the private data repo.
+# The deploy key in SIMLAB_DATA_DEPLOY_KEY can write to Matteomio16/simlab-data only. Logs are public: the script
+# prints sizes and errors, never data.
+name: snapshot
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: snapshot
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Matteomio16/simlab-data
+          ssh-key: ${{ secrets.SIMLAB_DATA_DEPLOY_KEY }}
+          path: data-repo
+          fetch-depth: 1
+          sparse-checkout: /README.md
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install --quiet requests
+      - name: Snapshot
+        run: python -m simlab.snap --out data-repo/snapshots
+      - name: Push to the data repo
+        working-directory: data-repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --sparse snapshots
+          git commit --quiet -m "Snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do
+            git pull --quiet --rebase && git push --quiet && exit 0
+            sleep 15
+          done
+          exit 1

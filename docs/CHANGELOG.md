@@ -34,9 +34,10 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   The script uses only `requests`, and logs print sizes and errors, never data, because the job runs in the public repo.
 - First snapshot run by hand, 28 Sep 00:36 UTC: 48 of 51 files (GDELT rate-limited 3 queries), 9.3 MB raw, 1.5 MB
   stored, committed to the data repo.
-- `.github/workflows/snapshot.yml` (every 3 hours at :17 UTC, shallow partial clone, rebase-and-retry push) is written but
-  not pushed. It waits for Matteo's OK to add a deploy key that can write only to `simlab-data`, stored as the public
-  repo's secret `SIMLAB_DATA_DEPLOY_KEY`. FEC, FRED and EIA join once their keys exist; early-vote aggregates are A12.
+- `.github/workflows/snapshot.yml` runs every 3 hours at :17 UTC (shallow partial clone, rebase-and-retry push). It was
+  switched on 28 Sep with Matteo's OK: a deploy key that can write only to `simlab-data` (title "simlab snapshot job
+  (GitHub Actions)"), stored as the public repo's secret `SIMLAB_DATA_DEPLOY_KEY`; no local copy was kept. FEC, FRED
+  and EIA join once their keys exist; early-vote aggregates are A12.
 
 ## 2026-09-28 (Content & site): content choices
 
