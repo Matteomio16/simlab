@@ -2,6 +2,36 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): Matteo's decisions on the statistics layer; downloads
+
+Decided by Matteo, all as recommended in `docs/stats-groundwork.md` §8:
+- **Partisan polls** (half weight) are those sponsored by a party, campaign or partisan group: VoteHub's flag, 538's
+  rule. Wikipedia's "(R)"/"(D)" pollster tags are kept as a field only, since house effects already correct a
+  pollster's lean.
+- **Expert ratings** stay out of both the headline and the stats-only chain (benchmark only), so "beat Cook" stays a
+  clean test. They may still be used to pick which House seats get the full treatment.
+- **Senate control:** the headline is "Republicans hold 50+". Independents who win (Osborn, Achilles, Bengs, Bodnar)
+  are shown in their own colour. "Democrats + independents who caucus with them reach 51" is the second line.
+- **Approval** enters the national environment only if it passes a leave-one-cycle-out test on past midterms. The
+  pilot uses the generic ballot alone.
+- **Candidate effect:** half of a nominee's own over- or under-performance in their last statewide race of the past 12
+  years, rule-based and logged.
+- **Versions within one poll** (leaners, third-party names) are averaged within the chosen population (LV, else RV,
+  else A).
+- **Attribution:** any published poll table built on Wikipedia data is CC BY-SA with attribution; the methods page
+  carries a sources line.
+
+Downloads (approved), via the new `simlab/statsdata.py` into gitignored `data/results/` and `data/history/`:
+- 21 files, 23.7 MB, each with URL, size, SHA-256 and fetch time in `data/stats_downloads.json`:
+  - MIT president and Senate results 1976–2024;
+  - 538 `raw_polls` (1998–2023) and pollster ratings;
+  - 538 Senate, House and governor poll lists (2018–22 "historical", plus the 2024-cycle files from post-election
+    Wayback copies);
+  - 538 Senate forecasts 2008–22;
+  - The Downballot's 2024 and 2020 presidential results for all 435 districts on the 2024 lines and on the 2026 lines.
+- The MIT House file needs a Dataverse guestbook form (name, email), so Matteo downloads it by hand.
+- Map and ACS files wait for the Redistricting Data Hub account and the Census key.
+
 ## 2026-09-28 (Statistics session): statistics groundwork (research only, no decisions)
 
 - `docs/stats-groundwork.md` covers the inputs and their shapes, what is on disk, and the downloads to approve, with

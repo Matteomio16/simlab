@@ -2,8 +2,8 @@
 
 Written 28 Sep 2026 by the Statistics session. It covers where each input comes from, what shape it has, what is
 already on disk, and the simplest methods that meet the dates: a pilot version by 1–2 Oct and the fuller version by
-12 Oct. Nothing here is decided. The open decisions are in §8. File formats between sessions will come from
-`docs/engine-design.md`; §9 lists what this work needs from it.
+12 Oct. Matteo took the decisions in §8 on 28 Sep, all as recommended, and approved the downloads in §4. File formats
+between sessions will come from `docs/engine-design.md`; §9 lists what this work needs from it.
 
 No forecast numbers appear here. Counts and dates describe the inputs; the defaults in §10 are starting assumptions
 that the history fits in §5.10 replace.
@@ -34,8 +34,10 @@ Words used below:
    has to be measured on this year's polls, not copied from past midterms.
 4. **Already on disk:** CES 2024, the CES cumulative file (2006–2025, with Senate and House vote, party ID, zip and
    district), the Census CPS turnout files for 2018, 2022 and 2024, VoteHub generic ballot and approval, and 538's
-   generic-ballot archive. Not on disk yet: 538's Senate and House poll histories and poll errors, past results by
-   state and by new district, and the new-map files. §4 lists the downloads, with sizes, for approval.
+   generic-ballot archive. Since 28 Sep also: 538's poll errors and Senate, House and governor poll histories, MIT
+   president and Senate results, and The Downballot's district results on the 2024 and 2026 lines (§4). Still
+   missing: the MIT House file (it needs a guestbook form filled in by hand) and the new-map and ACS files (they need
+   an account and a key).
 5. **Pilot method (by 1–2 Oct):** one Kalman filter that tracks a national generic-ballot level plus each race's gap
    to it. It corrects for pollster house effects, likely voters and partisan polls. On election day it is blended with
    fundamentals by how uncertain each side is, including a shared poll error that never shrinks. A 40,000-draw Monte
@@ -147,15 +149,17 @@ Enough for generic-ballot house effects and the LV gap, not for race-level error
 
 Needed (§4). All are still online and CC BY 4.0; 538's GitHub repos have been frozen since March 2025 but not
 deleted:
-- `pollster-ratings/raw_polls.csv`: polls from the last three weeks of each race, with the actual result. Cycles back
-  to at least 2014 are visible in the file; 538 says 1998. Used for poll-error sizes.
+- `pollster-ratings/raw_polls.csv`: polls from the last three weeks of each race, with the actual result: 20,466
+  polls from 1998 to 2023, 5,006 of them Senate general elections. There is no 2024; its errors come from the 2024
+  poll list below plus the MIT results. Used for poll-error sizes.
 - `pollster-ratings-combined.csv` (the newest ratings, with a bias column) and `pollster-ratings/2023/pollster-ratings.csv`
   (the older layout with "House Effect" and "Mean-Reverted Bias"). Used for house-effect priors.
-- `senate_polls_historical.csv`, `house_polls_historical.csv` and `governor_polls_historical.csv`, through the Wayback
-  Machine. The snapshots are from 3 Dec 2024, so 2024 is complete; the non-historical `house_polls.csv` copies are
-  empty. Used for drift, house effects 2018–24 and the LV-gap history. Long format: one row per poll question and
-  candidate (`poll_id, pollster, population, partisan, sponsors, cycle, office_type, party, answer, pct` and more).
-- `checking-our-work-data`: 538's daily Senate and House forecasts with outcomes (`forecast_date, probwin,
+- The Senate, House and governor poll lists, through the Wayback Machine. The `*_polls_historical.csv` files hold
+  2018–22 (Senate: 2,119 polls); the current-cycle `*_polls.csv` copies from late Nov / early Dec 2024 hold 2024
+  (Senate: 890 polls). Later copies of `house_polls.csv` are empty. Used for drift, house effects 2018–24 and the
+  LV-gap history. Long format: one row per poll question and candidate (`poll_id, pollster, population, partisan,
+  sponsors, cycle, office_type, party, answer, pct` and more).
+- `checking-our-work-data`: 538's daily Senate forecasts with outcomes, 2008–2022 (`forecast_date, probwin,
   projected_voteshare, actual_voteshare`). Used to see how well calibrated a professional model was.
 
 ### 2.5 Results
@@ -221,12 +225,23 @@ averages also appear on Wikipedia and are skipped with the aggregate tables), X.
 | Nationscape 2019–21 | `data/history/nationscape/` | (events work, not needed here) |
 | Snapshots | `simlab-data/snapshots/YYYY-MM-DD/HHMM/<source>/<name>.gz` + `manifest.json` | first run 28 Sep 00:36 UTC (`simlab/snap.py`, built by the Kev session): VoteHub, all polls; 38 Wikipedia pages as raw API JSON with revision ids; markets (benchmark); news; pageviews. The 3-hourly schedule waits for the deploy key |
 
-Missing: 538 race-level poll history and errors, results by state and by new district, new-map files, ACS on the new
-lines.
+Added on 28 Sep (§4): 538 poll errors and poll histories, MIT president and Senate results, The Downballot's district
+results. Still missing: the MIT House file (guestbook), the new-map files, and ACS on the new lines.
 
-## 4. Downloads to approve
+## 4. Downloads
 
-Sizes were checked on 28 Sep from file listings and headers, without downloading anything. All are free.
+Approved by Matteo on 28 Sep; sizes were checked beforehand from file listings and headers. All are free.
+
+**Status (28 Sep):** `python -m simlab.statsdata download` fetched #1, #2, #4, #5, #6 (Senate file only) and #7 into
+`data/results/` and `data/history/`: 21 files, 23.7 MB, each with its URL, size, SHA-256 and fetch time in
+`data/stats_downloads.json`. `python -m simlab.statsdata check` reports what each file covers. Where things stand on
+the rest:
+- #5 also includes 538's 2024-cycle poll files (Senate 1.5 MB, House 0.4, governor 0.5), because the "historical"
+  files stop at 2022.
+- #3, the MIT House file, sits behind a Dataverse guestbook form (name, email, purpose), which a script shouldn't fill
+  in for someone. Download it by hand from the dataset page and save it as `data/results/1976-2024-house.tab`. The next
+  `download` run then records it. Needed by Mon 5 Oct.
+- #8 and #9 wait for the Redistricting Data Hub account and the Census key (Thu 1 Oct).
 
 | # | What | Source, licence | Size | For | Needed by |
 | --- | --- | --- | --- | --- | --- |
@@ -240,11 +255,9 @@ Sizes were checked on 28 Sep from file listings and headers, without downloading
 | 8 | Block assignment files, new maps (up to 10 states) | Redistricting Data Hub (free account) | behind login; typically a few MB per state | district weights | Tue 6 Oct |
 | 9 | ACS 2020–24 tract tables, education by race, affected states | Census API (free key) | a few MB | district weights | Tue 6 Oct |
 
-Not needed: MIT's 2024 precinct file (400 MB) and the CVAP tabulation (59 MB), unless the tract route fails. The VoteHub
-Senate and House polls and the Wikipedia pages arrive through the snapshots, so they need no separate download.
-
-The pilot needs only #1 and #2 now (1.1 MB together). The rest (about 25 MB, or 67 MB with the optional House file) is
-needed by Mon 5 Oct.
+Not needed: MIT's 2024 precinct file (400 MB), the CVAP tabulation (59 MB, unless the tract route fails) and the
+optional 538 House forecast file (42 MB). The VoteHub Senate and House polls and the Wikipedia pages arrive through the
+snapshots, so they need no separate download.
 
 ## 5. Methods
 
@@ -452,7 +465,9 @@ the roadmap allows.
 | Ohio, Florida | Specials with appointed incumbents | Incumbency at the appointed level (§5.3) |
 | Louisiana, Texas | Incumbents lost renomination | Open seats |
 
-## 8. Decisions for Matteo
+## 8. Decisions
+
+Matteo decided all of these on 28 Sep, as recommended (recorded in `docs/CHANGELOG.md`).
 
 - **D1. What counts as a partisan poll (half weight)?** Recommend the sponsor rule: sponsored by a party, campaign or
   partisan group (VoteHub's flag, 538's rule; 17% of VoteHub's entries). Wikipedia's "(R)"/"(D)" pollster tags would
