@@ -126,5 +126,39 @@ class Labels(unittest.TestCase):
         self.assertEqual(sorted(lab["gate"]), ["NC", "OH-S", "TX", "US"])
 
 
+def cov(n, d=1):
+    return {"outlets": [f"o{i}.com" for i in range(n)], "days_seen": [f"2026-09-{28 - i}" for i in range(d)],
+            "articles": n}
+
+
+class Attention(unittest.TestCase):
+    def test_more_outlets_more_attention_capped(self):
+        a1, a7, a40 = (newsday.attention(cov(n), None)["a"] for n in (1, 7, 40))
+        self.assertLess(a1, a7)
+        self.assertEqual(a40, 1.0)
+        self.assertGreater(newsday.attention(cov(1), 3.0)["a"], a1)
+        self.assertGreater(newsday.attention(cov(1, 3), None)["a"], a1)
+
+    def test_spike_ratio(self):
+        views = {"Sherrod_Brown": {f"202609{d:02d}": 100 for d in range(18, 27)} | {"20260927": 300}}
+        self.assertAlmostEqual(newsday.spike_ratio(views, "OH-S"), 3.0)
+        self.assertIsNone(newsday.spike_ratio({}, "OH-S"))
+
+
+class Select(unittest.TestCase):
+    def ev(self, eid, scope, gate, a, typ="policy"):
+        return {"event_id": eid, "scope": scope, "gate": gate, "type": typ, "salience": 1.0, "attention": {"a": a}}
+
+    def test_gate_poll_rule_and_caps(self):
+        evs = [self.ev(f"OH-S-{i}", "race", {"OH-S": 0.9}, a=i / 10) for i in range(7)]
+        evs += [self.ev("OH-S-poll", "race", {"OH-S": 0.9}, a=1.0, typ="poll"),
+                self.ev("OH-S-weak", "race", {"OH-S": 0.3}, a=1.0),
+                self.ev("US-1", "national", {"OH-S": 0.9, "NC": 0.2, "TX": 0.9, "US": 0.9}, a=0.5)]
+        newsday.select(evs)
+        chosen = sorted(e["event_id"] for e in evs if e["selected"].get("OH-S") and e["scope"] == "race")
+        self.assertEqual(chosen, ["OH-S-2", "OH-S-3", "OH-S-4", "OH-S-5", "OH-S-6"])
+        self.assertEqual(evs[-1]["selected"], {"OH-S": True, "TX": True, "US": True})
+
+
 if __name__ == "__main__":
     unittest.main()

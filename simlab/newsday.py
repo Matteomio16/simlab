@@ -11,6 +11,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import math
 import re
 import xml.etree.ElementTree as ET
 from datetime import date, datetime, timezone
@@ -210,3 +211,52 @@ def label(story: dict, asker) -> dict:
     return {"gate": gate, "type": _top(a["type"]), "helps_face": _top(a["helps_face"]),
             "fires_up": _sides(a["fires_up"]), "puts_off": _sides(a["puts_off"]),
             "salience": round(sum(int(k) * v for k, v in a["salience"].items() if k.isdigit()), 3)}
+
+
+CANDIDATE_PAGES = {"OH-S": ["Sherrod_Brown", "Jon_Husted"], "NC": ["Roy_Cooper", "Michael_Whatley"],
+                   "TX": ["James_Talarico", "Ken_Paxton"]}
+
+
+def load_pageviews(snap_root: Path, day: date) -> dict:
+    """{article: {YYYYMMDD: views}} from the day's latest pageviews snapshot ({} if there is none)."""
+    runs = sorted((snap_root / f"{day:%Y-%m-%d}").glob("*/pageviews/candidates.gz"))
+    if not runs:
+        return {}
+    raw = json.loads(gzip.decompress(runs[-1].read_bytes()))
+    return {a: {i["timestamp"][:8]: i["views"] for i in v["items"]} for a, v in raw.items() if "items" in v}
+
+
+def spike_ratio(views: dict, race_id: str) -> float | None:
+    """The latest day's views of the race's candidates over their median of the 7 days before (larger candidate)."""
+    ratios = []
+    for a in CANDIDATE_PAGES.get(race_id, []):
+        series = views.get(a, {})
+        days = sorted(series)
+        if len(days) >= 4:
+            med = float(np.median([series[d] for d in days[-8:-1]]))
+            if med > 0:
+                ratios.append(series[days[-1]] / med)
+    return max(ratios) if ratios else None
+
+
+def attention(story: dict, spike: float | None) -> dict:
+    """a in [0, 1]: distinct outlets on a log scale (31 or more = 1), plus days in the news, boosted by up to 40% on a
+    pageview spike. First version; weights to be checked against Matteo's spot-check answers (engine-design §9)."""
+    n_o, n_d = len(story["outlets"]), len(story["days_seen"])
+    base = math.log2(1 + n_o) / 5 + 0.05 * (min(n_d, 5) - 1)
+    boost = 1 + 0.2 * min(max((spike or 1.0) - 1, 0.0), 2.0)
+    return {"outlets": n_o, "articles": story["articles"], "days": n_d,
+            "pageviews": None if spike is None else round(spike, 2), "a": round(min(1.0, base * boost), 3)}
+
+
+def select(events: list[dict], per_race: int = 5, national: int = 3) -> None:
+    """Mark, per race, the events that get reactions: past the gate (p >= 0.5), not about polls (polls enter through
+    the filter), then the top by attention: `per_race` race stories and `national` national ones."""
+    for e in events:
+        e["selected"] = {}
+    for r in PILOT + ["US"]:
+        for scope, cap in (("race", per_race), ("national", national)):
+            pool = [e for e in events if e["scope"] == scope and e["gate"].get(r, 0.0) >= 0.5 and e["type"] != "poll"]
+            pool.sort(key=lambda e: (-e["attention"]["a"], -e["salience"], e["event_id"]))
+            for e in pool[:cap]:
+                e["selected"][r] = True
