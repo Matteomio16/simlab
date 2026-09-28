@@ -2,6 +2,26 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Kev session): snapshotter (roadmap A1)
+
+- Matteo asked this session to build the snapshotter unless the data session already had it. A1 was "not started", no
+  snapshot code existed, and the Engine session wasn't running, so the Kev session took it over (roadmap updated).
+- `simlab/snap.py`: every run saves raw files to `simlab-data/snapshots/YYYY-MM-DD/HHMM/<source>/<name>.gz` plus a
+  `manifest.json` (URL, UTC fetch time, HTTP status, raw size, SHA-256, or the error). Gzip has a fixed header, so a
+  file that hasn't changed is byte-identical and git stores it once. Sources, all free with no key:
+  - polls: VoteHub, every poll;
+  - Wikipedia: 38 pages (the 35 Senate race pages, the Senate and House overviews with ratings and generic ballot,
+    the approval polling page), wikitext with revision ids;
+  - markets, benchmark only: PredictIt, Kalshi and Polymarket (Senate and House control and every Senate race);
+  - news: Google News RSS and GDELT headlines for the three pilot races and national;
+  - pageviews for the six pilot candidates.
+  The script uses only `requests`, and logs print sizes and errors, never data, because the job runs in the public repo.
+- First snapshot run by hand, 28 Sep 00:36 UTC: 48 of 51 files (GDELT rate-limited 3 queries), 9.3 MB raw, 1.5 MB
+  stored, committed to the data repo.
+- `.github/workflows/snapshot.yml` (every 3 hours at :17 UTC, shallow partial clone, rebase-and-retry push) is written but
+  not pushed. It waits for Matteo's OK to add a deploy key that can write only to `simlab-data`, stored as the public
+  repo's secret `SIMLAB_DATA_DEPLOY_KEY`. FEC, FRED and EIA join once their keys exist; early-vote aggregates are A12.
+
 ## 2026-09-28 (Content & site): content choices
 
 - Content plan in `docs/content-plan.md`. Matteo's picks: formats A–F (daily forecast, "every future" dot video, why it

@@ -53,7 +53,7 @@ Checkpoints and fallbacks:
 
 | # | Piece | What it does | Owner | Due | Status |
 | --- | --- | --- | --- | --- | --- |
-| A1 | Snapshots | Every 3 hours, saves raw polls, headlines, ratings, markets (benchmark only), early-vote files, FEC and economy data to the private data repo, with hashes | Engine | Tue 29 Sep | not started |
+| A1 | Snapshots | Every 3 hours, saves raw polls, headlines, ratings, markets (benchmark only), early-vote files, FEC and economy data to the private data repo, with hashes | Kev (taken over 28 Sep at Matteo's request) | Tue 29 Sep | `simlab/snap.py` done, first snapshot saved 28 Sep; the 3-hourly job waits for the deploy key; FEC, economy and early-vote files join later |
 | A2 | Download-now list | 538 poll histories, this week's NC and OH voter files, new House maps, 2024 results by new district | Engine | Wed 30 Sep | partly (538 approval and generic ballot) |
 | A3 | Starting levels | Each race's starting vote and range: fundamentals plus a poll average with pollster house effects. Also the stats-only forecast the simulation must beat | Statistics | Thu 1 Oct (Senate) | not started |
 | A4 | News pipeline | Daily headlines → stories → which race → Jev asks "does this change anything?" → labels → a neutral 1–3 sentence event card, outlet names removed | Engine | Thu 1 Oct | prototype (`news.py`) |
