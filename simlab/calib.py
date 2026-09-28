@@ -271,6 +271,120 @@ def blend_weight(oos: pd.DataFrame, r: pd.DataFrame) -> dict:
             "rmse_fund": np.sqrt(((M.fund - M.m) ** 2).mean()), "rmse_blend": np.sqrt(((blend - M.m) ** 2).mean())}
 
 
+HE_FILES = ["538_senate_polls_historical.csv", "538_senate_polls_2024.csv", "538_house_polls_historical.csv",
+            "538_house_polls_2024.csv", "538_governor_polls_historical.csv", "538_governor_polls_2024.csv"]
+HE_OUT = Path(__file__).parent / "house_effect_priors.json"
+ALIASES = {"Public Policy Polling": "PPP", "Saint Anselm": "St. Anselm", "Saint Anselm College": "St. Anselm",
+           "Siena College/The New York Times Upshot": "Siena/NYT", "The New York Times/Siena College": "Siena/NYT",
+           "Rasmussen Reports": "Rasmussen", "Marist College": "Marist", "Monmouth University": "Monmouth"}
+
+
+def he_polls(window: int = 150) -> pd.DataFrame:
+    """General-election polls 2018-2024 (Senate, House, governor, generic ballot), one question per poll and race
+    (likely voters first), within `window` days of the election."""
+    d = pd.concat([pd.read_csv(HIST / f, low_memory=False) for f in HE_FILES])
+    d = d[(d.stage == "general") & d.party.isin(["DEM", "REP"])]
+    d = d[d.hypothetical.fillna(False).astype(str).str.lower() != "true"].assign(partisan=lambda x: x.partisan.fillna(""))
+    idx = ["poll_id", "question_id", "race_id", "cycle", "office_type", "pollster", "population", "sample_size",
+           "start_date", "end_date", "election_date", "partisan"]
+    q = d.pivot_table(index=idx, columns="party", values="pct", aggfunc="max").dropna().reset_index()
+    q["pop"] = q.population.map(POP).fillna(4)
+    q = q.sort_values(["poll_id", "race_id", "pop"]).groupby(["poll_id", "race_id"]).head(1)
+    gb = pd.read_csv(HIST / "538_generic_ballot_polls_historical.csv", low_memory=False)
+    gb["pop"] = gb.population.map(POP).fillna(4)
+    gb = gb.sort_values(["poll_id", "pop"]).groupby("poll_id").head(1)
+    gb = gb.assign(race_id="GB" + gb.cycle.astype(str), office_type="generic", DEM=gb.dem, REP=gb.rep,
+                   partisan=gb.partisan.fillna(""), election_date=gb.cycle.map({2018: "11/6/18", 2020: "11/3/20", 2022: "11/8/22"}))
+    q = pd.concat([q, gb[q.columns.intersection(gb.columns)]], ignore_index=True).dropna(subset=["election_date"])
+    for c in ("start_date", "end_date", "election_date"):
+        q[c] = pd.to_datetime(q[c], format="%m/%d/%y")
+    q["t"] = (q.election_date - (q.start_date + (q.end_date - q.start_date) / 2)).dt.days
+    q = q[(q.t >= 0) & (q.t <= window)].copy()
+    q["y"] = two_party(q.DEM, q.REP)
+    q["s2"] = sampling_var(q.DEM, q.REP, q.sample_size.fillna(q.sample_size.median()).clip(100, 20000))
+    q["race"] = q.race_id.astype(str) + "_" + q.cycle.astype(str)
+    return q.reset_index(drop=True)
+
+
+def house_effects(q: pd.DataFrame, tau: float = 3.0, ns2: float = 4.0, bw: float = 7.0, rounds: int = 6):
+    """Each poll against a consensus of the other pollsters' polls in the same race (Gaussian time weights, SD `bw`
+    days); a pollster's effect is its shrunken mean residual (prior N(0, tau^2)), centred on the average pollster;
+    sponsored polls get a shift pooled by sponsor party on top. Alternates `rounds` times."""
+    h = pd.Series(0.0, index=q.pollster.unique())
+    sp = {"DEM": 0.0, "REP": 0.0}
+    for _ in range(rounds):
+        adj = q.y - q.pollster.map(h) - q.partisan.map(sp).fillna(0.0)
+        cons, cvar = np.full(len(q), np.nan), np.full(len(q), np.nan)
+        for _, g in q.groupby("race"):
+            ix, t, a = g.index.values, g.t.values, adj[g.index].values
+            w0, pol = 1.0 / (g.s2.values + ns2), g.pollster.values
+            for j, i in enumerate(ix):
+                k = np.exp(-0.5 * ((t - t[j]) / bw) ** 2) * w0 * (pol != pol[j])
+                if (k > 1e-3 * w0.max()).sum() >= 2:
+                    cons[i], cvar[i] = (k * a).sum() / k.sum(), 1.0 / k.sum()
+        ok = ~np.isnan(cons)
+        res, w = (q.y - cons)[ok], 1.0 / (q.s2[ok] + ns2 + cvar[ok])
+        num = ((res - q.partisan[ok].map(sp).fillna(0.0)) * w).groupby(q.pollster[ok]).sum()
+        den = w.groupby(q.pollster[ok]).sum()
+        h = (num / (den + 1 / tau ** 2)).reindex(h.index).fillna(0.0)
+        h -= np.average(h[den.index], weights=den)
+        r2 = res - q.pollster[ok].map(h)
+        sp = {p: float(np.average(r2[q.partisan[ok] == p], weights=w[q.partisan[ok] == p])) for p in ("DEM", "REP")}
+    tab = pd.DataFrame({"mean": h, "se": 1 / np.sqrt(den + 1 / tau ** 2), "n": q[ok].groupby("pollster").size()})
+    return tab.dropna(subset=["n"]).sort_values("n", ascending=False), sp
+
+
+ELECTION_DAY = {1998: "1998-11-03", 2000: "2000-11-07", 2002: "2002-11-05", 2004: "2004-11-02", 2006: "2006-11-07",
+                2008: "2008-11-04", 2010: "2010-11-02", 2012: "2012-11-06", 2014: "2014-11-04", 2016: "2016-11-08",
+                2018: "2018-11-06", 2020: "2020-11-03", 2022: "2022-11-08"}
+PRESIDENT = {1998: ("clinton", 1), 2000: ("clinton", 1), 2002: ("gwbush", -1), 2004: ("gwbush", -1),
+             2006: ("gwbush", -1), 2008: ("gwbush", -1), 2010: ("obama", 1), 2012: ("obama", 1), 2014: ("obama", 1),
+             2016: ("obama", 1), 2018: ("trump1", -1), 2020: ("trump1", -1), 2022: ("biden", 1)}
+
+
+def approval_test(r: pd.DataFrame) -> dict:
+    """D4: does net approval add to the final generic-ballot average in predicting the national House vote? Each cycle
+    1998-2022 is predicted from the others. Net approval is Gallup's last reading before election day (American
+    Presidency Project), signed toward the president's party; 2022 uses 538's Biden average, because the Gallup sheet
+    stops in January 2022."""
+    late = r[(r.type_simple == "House-G-US") & (r.time_to_election <= 21)]
+    rows = []
+    for cyc, g in late.groupby("cycle"):
+        name, sign = PRESIDENT[cyc]
+        day = pd.Timestamp(ELECTION_DAY[cyc])
+        a = pd.read_csv(HIST / f"app_gallup_approval_{name}.csv")
+        a["end"] = pd.to_datetime(a["End Date"], format="mixed")
+        a = a[a.end < day]
+        if len(a):
+            net = float((a.Approving - a.Disapproving).iloc[a.end.argmax()])
+        else:
+            b = pd.read_csv(HIST / "538_biden_approval_topline.csv")
+            b = b[(b.subgroup == "All polls") & (pd.to_datetime(b.end_date) < day)]
+            b = b.loc[pd.to_datetime(b.end_date).idxmax()]
+            net = float(b.approve_estimate - b.disapprove_estimate)
+        rows.append({"cycle": cyc, "gb": g.e.mean() + g.m_actual.iloc[0], "E": g.m_actual.iloc[0],
+                     "appr": sign * net, "midterm": cyc % 4 == 2})
+    d = pd.DataFrame(rows)
+
+    def loyo(cols, subset):
+        errs = []
+        for c in d.cycle[subset]:
+            tr = d[d.cycle != c]
+            X = np.column_stack([tr[k] for k in cols] + [np.ones(len(tr))])
+            b, *_ = np.linalg.lstsq(X, tr.E, rcond=None)
+            te = d[d.cycle == c]
+            errs.append(float(te.E.iloc[0] - np.r_[[te[k].iloc[0] for k in cols], 1.0] @ b))
+        return np.sqrt(np.mean(np.square(errs)))
+
+    out = {"table": d}
+    for lab, subset in (("all", d.cycle == d.cycle), ("midterms", d.midterm)):
+        out[lab] = {"gb_only": loyo(["gb"], subset), "gb_plus_approval": loyo(["gb", "appr"], subset),
+                    "approval_only": loyo(["appr"], subset)}
+    out["passes"] = out["midterms"]["gb_plus_approval"] < out["midterms"]["gb_only"] and \
+        out["all"]["gb_plus_approval"] < out["all"]["gb_only"]
+    return out
+
+
 def main() -> None:
     r = raw_polls()
     pe = poll_errors(r)
@@ -302,6 +416,27 @@ def main() -> None:
     bw = blend_weight(fu06["oos"], r)
     print(f"Blend check, 2006-2022, well-polled close races ({bw['races']}): best poll weight {bw['weight']:.2f}, error "
           f"correlation {bw['corr']:.2f}, rmse polls {bw['rmse_polls']:.2f} / fundamentals {bw['rmse_fund']:.2f} / blend {bw['rmse_blend']:.2f}")
+    ap = approval_test(r)
+    print("Approval test (national House vote from the final generic ballot, each cycle predicted from the others):")
+    print(ap["table"].round(1).to_string(index=False))
+    for k in ("all", "midterms"):
+        print(f"  {k:9} rmse: generic ballot only {ap[k]['gb_only']:.2f} | plus approval {ap[k]['gb_plus_approval']:.2f} | "
+              f"approval only {ap[k]['approval_only']:.2f}")
+    print(f"  approval passes: {ap['passes']}")
+    hq = he_polls()
+    he, he_sp = house_effects(hq)
+    print(f"House effects 2018-2024 ({len(hq)} polls, {hq.race.nunique()} races, {len(he)} pollsters; + leans D), "
+          f"sponsor shift on top of pollster effects {({k: round(v, 2) for k, v in he_sp.items()})}:")
+    big = he[he.n >= 20]
+    print("  most R-leaning:", ", ".join(f"{p} {v:+.1f}" for p, v in big["mean"].nsmallest(8).items()))
+    print("  most D-leaning:", ", ".join(f"{p} {v:+.1f}" for p, v in big["mean"].nlargest(8).items()))
+    HE_OUT.write_text(json.dumps({
+        "fitted": "2026-09-28, python -m simlab.calib (538 poll lists 2018-2024, general elections, last 150 days)",
+        "units": "two-party margin, D minus R, relative to the average pollster; prior N(0, 3^2) for pollsters not listed",
+        "sponsor_shift": {k: round(v, 2) for k, v in he_sp.items()}, "aliases": ALIASES,
+        "pollsters": {p: {"mean": round(r["mean"], 2), "se": round(r.se, 2), "n": int(r.n)} for p, r in he.iterrows()}},
+        indent=1))
+    print(f"-> {HE_OUT}")
     s, sh = pe["senate_well_polled_close"], pe["shares"]
     params = {
         "fitted": "2026-09-28, python -m simlab.calib",
@@ -312,12 +447,16 @@ def main() -> None:
         "national_poll_bias_sd": {"value": 3.0, "fit": [round(s["cycle_sd"], 2), round(pe["senate_all"]["cycle_rms"], 2)],
                                   "note": "Senate polls' shared miss per cycle"},
         "generic_ballot_bias": {"mean": round(g["mean"], 2), "sd": round(g["sd"], 2), "note": "final generic-ballot average minus national House vote, 1998-2022; + = overstated D"},
-        "sponsor_shift": {k: round(v, 2) for k, v in pe["sponsor_shift"]["mean"].items()},
+        "sponsor_shift": {"raw": {k: round(v, 2) for k, v in pe["sponsor_shift"]["mean"].items()},
+                          "with_pollster_effects": {k: round(v, 2) for k, v in he_sp.items()},
+                          "note": "raw = against nonpartisan polls of the same race (1998-2022); the second is on top of pollster house effects (2018-24), the one to use with house effects"},
         "drift_daily_sd": {"race": 0.5, "national": 0.3, "fit": {k: round(v["daily_sd"], 3) for k, v in dr.items()}},
         "fundamentals": {"coef": {k: round(v, 3) for k, v in c.items()}, "sd": 7.5,
                          "oos_rmse": round(fu["oos_rmse"], 2), "oos_rmse_close": round(fu["oos_rmse_close"], 2),
                          "note": "margin = r1*lean_latest + r2*lean_previous + inc*incumbent(+1 D/-1 R) + E*national House vote + pr*prior over-performance + const"},
         "blend": {"best_poll_weight": round(bw["weight"], 2), "races": bw["races"]},
+        "approval_test": {"passes": bool(ap["passes"]),
+                          **{k: {m: round(v, 2) for m, v in ap[k].items()} for k in ("all", "midterms")}},
         "mc": {"regional_sd": round(sh["regional_sd"], 2), "state_sd": round(sh["state_sd"], 2),
                "race_only_sd": round(sh["race_only_sd"], 2), "regions": "census divisions"},
     }

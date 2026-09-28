@@ -10,6 +10,8 @@ URL, size, SHA-256 and fetch time go to data/stats_downloads.json.
   files 2024 (copies from late Nov / early Dec 2024, after the election).
 - The Downballot: 2024 and 2020 presidential results by congressional district, on the lines used in 2024 and on the
   2026 lines (cite and link; don't republish whole sheets).
+- Gallup presidential job approval, Roosevelt to Biden, as compiled by the American Presidency Project (one sheet tab
+  per president; the Biden tab stops in January 2022). Approved by Matteo on 28 Sep for the approval test (D13).
 
     python -m simlab.statsdata download
     python -m simlab.statsdata check
@@ -40,6 +42,11 @@ DB_2026_LINES = "1eZfaFI-c-PFOoKx1-zZA2MP0_dxRq_LVK0re3BOQqy0"
 DB_TABS = {"percentages": 620838163, "vote_totals": 1491069057, "info": 1793797417}
 MIT = {"doi:10.7910/DVN/42MVDX": "1976-2024-president.csv", "doi:10.7910/DVN/PEJ5QU": "1976-2024-senate-state.tab",
        "doi:10.7910/DVN/IG0UN2": "1976-2024-house.tab"}
+APP_SHEET = "1iEl565M1mICTubTtoxXMdxzaHzAcPTnb3kpRndsrfyY"  # "View Data Sheet" on presidency.ucsb.edu job approval page
+APP_TABS = {"biden": 2071321487, "trump1": 671375968, "obama": 0, "gwbush": 1067240630, "clinton": 148211037,
+            "ghwbush": 1868734071, "reagan": 1957483948, "carter": 566304079, "ford": 1517284305, "nixon": 460040875,
+            "johnson": 1407107120, "kennedy": 897221739, "eisenhower": 1015541111, "truman": 452265038,
+            "roosevelt": 1904170856}
 FILES = {  # local path: (URL, licence, expected bytes or None)
     HIST / "538_raw_polls.csv": (f"{GH}/data/master/pollster-ratings/raw_polls.csv", "CC BY 4.0", 4961378),
     HIST / "538_pollster_ratings_combined.csv": (f"{GH}/data/master/pollster-ratings/pollster-ratings-combined.csv",
@@ -61,6 +68,10 @@ FILES = {  # local path: (URL, licence, expected bytes or None)
     **{RESULTS / f"downballot_pres_by_cd_{lines}_{tab}.csv":
        (f"{SHEET}/{sid}/export?format=csv&gid={gid}", "The Downballot: cite and link, don't republish whole sheets", None)
        for lines, sid in (("2024lines", DB_2024_LINES), ("2026lines", DB_2026_LINES)) for tab, gid in DB_TABS.items()},
+    **{HIST / f"app_gallup_approval_{name}.csv":
+       (f"{SHEET}/{APP_SHEET}/export?format=csv&gid={gid}",
+        "Gallup data compiled by the American Presidency Project (UC Santa Barbara): cite both", None)
+       for name, gid in APP_TABS.items()},
 }
 
 

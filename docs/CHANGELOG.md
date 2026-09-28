@@ -2,6 +2,30 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): decisions D9–D13; approval test; pollster house-effect priors
+
+Decided by Matteo, as recommended in `docs/stats-groundwork.md` §8 (CLAUDE.md §5 updated):
+- **D9:** sponsored polls are shifted against their sponsor, on top of half weight. Estimated together with the
+  pollster house effects, the shift is +2.2 (D sponsor) / −2.9 (R sponsor) on 2018–24 polls, re-estimated on 2026 polls.
+  The raw 4.7 would double-count partisan pollsters' own lean.
+- **D10:** the candidate effect uses the fitted share, 0.38 of the last statewide over-performance.
+- **D11:** the lean uses the fitted weights, 0.62 × latest + 0.26 × previous presidential margin.
+- **D12:** where the generic ballot feeds the fundamentals, it is lowered by its historical overstatement of Democrats
+  (2.8, spread 2.8).
+- **D13:** Gallup approval fetched from the American Presidency Project's data sheet (15 president tabs, about 60 KB,
+  into `data/history/`, via `simlab.statsdata`).
+
+Results (`python -m simlab.calib`):
+- **Approval test (D4) passes, modestly.** The test predicts the national House vote from the final generic ballot,
+  holding out each cycle 1998–2022. Adding net approval (toward the president's party) cuts the error from 3.17 to
+  2.80 over all cycles and from 3.21 to 3.09 over midterms. Fit: `0.69 × generic ballot + 0.084 × net approval − 2.3`.
+  It enters the fuller version's national environment; the pilot keeps the generic ballot minus 2.8.
+- **Pollster house effects, 2018–24** (6,054 polls; each against the other pollsters' consensus in the same race,
+  shrunk toward zero). They are written to `simlab/house_effect_priors.json` as priors for the 2026 poll average.
+  - Lean R: McLaughlin and Rasmussen −5.1, AtlasIntel −3.1, InsiderAdvantage −2.9, Trafalgar −1.8.
+  - Lean D: Marist +1.7, CNN/SSRS +1.6, Quinnipiac +1.1.
+  - Coverage: 78% of VoteHub's 2025–26 polls come from pollsters with a track record. New ones start at no lean.
+
 ## 2026-09-28 (Content & site): chart factory approved; Lab notes 1–3 drafted
 
 - Matteo approved matplotlib for every post image and video frame (instead of the infrastructure doc's Altair +

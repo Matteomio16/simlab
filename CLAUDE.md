@@ -159,11 +159,14 @@ Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructu
   Matteo a digest, and drafts posts once forecasts exist.
 
 Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.md` §8 and `docs/CHANGELOG.md`):
-- Partisan polls (half weight) are those sponsored by a party, campaign or partisan group, not Wikipedia's "(R)"/"(D)"
-  pollster tags. Expert ratings stay out of the numbers.
+- Partisan polls are those sponsored by a party, campaign or partisan group, not Wikipedia's "(R)"/"(D)" pollster tags.
+  They get half weight and a shift against the sponsor, estimated alongside the pollster house effects (about 2.5
+  points on 2018–24 polls; re-estimated on 2026 polls). Expert ratings stay out of the numbers.
 - Senate headline: "Republicans hold 50+", with independents shown separately.
 - Approval enters only if it passes a leave-one-cycle-out test.
-- Candidate effect: half of the nominee's last statewide over-performance.
+- Fundamentals use the weights fitted on 2012–24 (`simlab/stats_params.json`): lean 0.62 × latest + 0.26 × previous
+  presidential margin, and 0.38 of the nominee's last statewide over-performance. The generic ballot is lowered by its
+  historical 2.8-point overstatement of Democrats where it feeds the fundamentals.
 - The versions of one poll are averaged.
 - A published poll table built on Wikipedia data is CC BY-SA.
 

@@ -57,7 +57,7 @@ Words used below:
    - Races drift about 0.5 points a day.
    - Fundamentals alone miss by 7.5–8 points per race.
    - Sponsored polls lean about 4.7 points toward their sponsor.
-   Four small choices follow from this (D9–D12), plus a data request (D13).
+   Four small choices followed from this (D9–D12), plus a data request (D13). Matteo approved all five on 28 Sep.
 
 ## 2. Inputs: where each comes from and its shape
 
@@ -279,7 +279,8 @@ From the merged table (§2.2):
 4. Poll variance `v = s² + σ_ns²`. σ_ns is non-sampling error (weighting, mode, timing): 2.0 points, the middle of
    the fitted 1.2–3.2 (§5.10). It is refitted from this year's spread of polls around the average.
 5. Partisan poll (D1): `v × 2`, which is half weight. History says sponsored polls also lean about 4.7 points toward
-   their sponsor (§5.10), so D9 proposes correcting that as well. Several polls by one pollster in one race within 14
+   their sponsor (§5.10), so they are also shifted against the sponsor (D9). With pollster house effects in the
+   model, the shift is +2.2 (D) and −2.9 (R) from 2018–24, re-estimated on this year's polls. Several polls by one pollster in one race within 14
    days: `v × k` each, so together they weigh as one poll (Field Guide).
 6. Dated at the field-period midpoint; entered on the day first seen.
 
@@ -295,8 +296,8 @@ the race moves with it until new race polls arrive. That is what keeps poll-poor
 Each poll: `y = latent + house effect of its pollster + LV gap (if RV or A) + noise(v)`.
 - **Drift:** N and each R_r follow random walks with daily SDs σ_N = 0.3 and σ_R = 0.5 points (fitted in §5.10;
   midterm Senate races drifted faster, 0.8, partly undecided voters breaking late).
-- **House effects:** pooled across the generic ballot and all Senate races, prior N(0, 3²) (Field Guide), and centred
-  on the average pollster. Estimated by alternating three to five times: smooth the averages, take each poll's
+- **House effects:** pooled across the generic ballot and all Senate races, and centred on the average pollster. Each
+  pollster's prior is its 2018–24 lean (`simlab/house_effect_priors.json`, §5.10); new pollsters get N(0, 3²). Estimated by alternating three to five times: smooth the averages, take each poll's
   residual, then set each pollster's effect to its shrunken mean residual.
 - **Run:** Kalman filter and smoother over the whole poll history, re-run from the first poll every day. At this size
   (about 1,000 polls) that takes milliseconds and gives the same answer as updating yesterday's state. Each day is
@@ -317,7 +318,7 @@ The fundamentals guess for the gap to the national environment is then `F_r = M_
   Democrats (D12).
 - **Prior over-performance:** the nominee's own over- or under-performance in their last statewide race of the past
   12 years, beyond lean, national vote and incumbency. It covers incumbents, former senators and former governors.
-  The rule was decided as "half"; the fitted share is 0.38 (D10). It is rule-based and logged, with no hand-set
+  The share is the fitted 0.38 (D10). It is rule-based and logged, with no hand-set
   "quality" scores. Collins, Brown and Cooper are where it matters most.
 - **Uncertainty:** SD σ_F = 7.5 points. It is fitted: 8.0 for races predicted within 15 in 2012–24, 7.4 in 2016–24.
   The national and regional parts are carried separately (§5.4, §5.8).
@@ -495,11 +496,40 @@ removed): the weight on polls that minimised error was 0.82. Poll and fundamenta
 blend beat both parts: error 4.4, against 5.1 for polls alone and 9.1 for fundamentals alone. The inverse-variance
 weight in §5.4 with the fitted sizes gives about 0.8. The recipe is confirmed on data it wasn't built from.
 
-Still to do:
-- **House-effect priors** for pollsters active in 2026, from their 2018–24 lean against other pollsters in the same
-  race.
-- A backtest of the full pilot chain on 2018–2024.
-- **Approval:** its test needs approval ratings before 2018, which aren't on disk (§8).
+**Approval test** (D4; Gallup via the American Presidency Project, 538's average for 2022). The test predicts the
+national House vote from the final generic-ballot average, with and without net approval signed toward the president's
+party, holding out each cycle 1998–2022 in turn:
+
+| | Generic ballot only | Plus approval | Approval only |
+| --- | --- | --- | --- |
+| All 13 cycles | 3.17 | 2.80 | 4.78 |
+| 7 midterms | 3.21 | 3.09 | 5.88 |
+
+- Approval passes the pre-agreed test (it beats the generic ballot alone in both rows), narrowly for midterms.
+- It helped most in 2002 (Bush's post-9/11 approval) and hurt in 1998 (Clinton).
+- **Fitted on all cycles:** `House vote = 0.69 × generic ballot + 0.084 × net approval (toward the president's party)
+  − 2.3`. So 10 points of net approval is worth about 0.8 points.
+- The fuller version uses this for the national environment (E in §5.3). The pilot keeps the generic ballot minus 2.8
+  (D12).
+
+**House-effect priors** (`simlab/house_effect_priors.json`; 538 poll lists 2018–24):
+- **Data:** 6,054 general-election polls in the last 150 days, covering Senate, House, governor and generic ballot.
+- **Method:** each poll is compared with a consensus of the other pollsters' polls of the same race at the same time.
+  Each pollster's effect is its mean residual, shrunk toward zero (prior N(0, 3²)) and centred on the average
+  pollster.
+- **Lean Republican:** McLaughlin and Rasmussen −5.1, AtlasIntel and OnMessage −3.1, co/efficient and
+  InsiderAdvantage −2.9, Trafalgar −1.8, Emerson −1.5.
+- **Lean Democratic:** GBAO +2.0, Redfield & Wilton +1.8, Marist +1.7, CNN/SSRS +1.6, Quinnipiac +1.1, YouGov +0.95,
+  Morning Consult +0.9.
+- **Coverage:** 107 of VoteHub's 148 pollsters for 2025–26 (78% of their polls) match a 538 name, some through a
+  short alias list. New pollsters (Quantus, Verasight, Tavern, Focaldata and others) start at no lean and are
+  estimated from this year's polls.
+- **Sponsor shift, measured on top of the pollster effects:** +2.2 for Democratic sponsors and −2.9 for Republican
+  ones. That is smaller than the raw 4.7, because partisan pollsters' own lean already carries part of it. With house
+  effects in the model, the shift to apply is this one (D9's "re-estimated" shift). Applying the raw 4.7 on top would
+  count the lean twice.
+
+Still to do: a backtest of the full pilot chain on 2018–2024.
 
 Fitting the statistics on 1998–2024 is not the LLM-contamination problem; that applies to the agent layer.
 
@@ -555,7 +585,7 @@ Matteo decided all of these on 28 Sep, as recommended (recorded in `docs/CHANGEL
 - **D8. Publishing the poll list:** the Wikipedia-derived part must be CC BY-SA, with attribution. Recommend a
   sources line on the methods page and CC BY-SA on any published poll table.
 
-Raised by the fits (§5.10), open:
+Raised by the fits (§5.10). Matteo approved all five on 28 Sep, as recommended:
 - **D9. Sponsor shift.** Sponsored polls leaned 4.9 (D) and 4.6 (R) points toward their sponsor, against nonpartisan
   polls of the same race. Half weight shrinks that lean but doesn't remove it: a race polled mostly by one side's
   sponsors would still tilt. Recommend also shifting sponsored polls about 4.7 points against the sponsor (the Field
@@ -571,6 +601,9 @@ Raised by the fits (§5.10), open:
 - **D13. Approval data.** The approval test (D4) needs approval ratings for past midterms (1998–2014), which aren't on
   disk. The source would be the Gallup series from the UC Santa Barbara American Presidency Project, a web table of
   about 100 KB. Recommend fetching it for the fuller version; the pilot doesn't need it.
+  - *Done 28 Sep:* approval passes the test (§5.10) and enters the fuller version's national environment.
+  - *D9 in practice:* measured on top of pollster house effects, the sponsor shift is +2.2 (D) and −2.9 (R). This is
+    the re-estimated shift D9 asked for; the raw 4.7 already includes partisan pollsters' own lean.
 
 ## 9. Notes for engine-design.md
 
@@ -601,19 +634,20 @@ are listed on the methods page.
 | Parameter | Value | Source | Status |
 | --- | --- | --- | --- |
 | Partisan poll weight | 0.5 | brief, D1 | fixed |
-| Sponsor shift | about 4.7 against the sponsor | fitted (4.9 D, 4.6 R) | pending D9 |
+| Sponsor shift | +2.2 (D) / −2.9 (R) on top of pollster effects; raw 4.7 | fitted | decided (D9); refit on 2026 polls |
 | Pollster flooding | one weight per pollster per race per 14 days | Field Guide | fixed |
-| House-effect prior | N(0, 3²) | Field Guide | priors from 2018–24 next |
+| House-effect prior | each pollster's 2018–24 lean; N(0, 3²) if new | fitted (`house_effect_priors.json`) | refit on 2026 polls |
+| Approval in the national environment | 0.084 per point of net approval; generic-ballot weight 0.69 | fitted 1998–2022; passes D4 | fuller version |
 | LV gap for RV/A polls | this year's paired mean, cap ±2 | §2.3 | refit weekly |
 | Non-sampling poll error σ_ns | 2.0 | fitted 1.2–3.2 | refit on 2026 polls |
 | Daily drift σ_N / σ_R | 0.3 / 0.5 | fitted 0.28 / 0.41–0.81 | refit with house effects removed |
 | National poll bias σ_bN | 3.0 | fitted 2.6–3.5 (Senate polls' national miss) | fitted |
 | Race-level poll bias σ_bS | 3.5 (5+ polls), 5.9 (fewer) | fitted | fitted |
-| Generic-ballot overstatement of D | 2.8, spread 2.8 | fitted 1998–2022 | pending D12 |
-| Lean weights, latest / previous | 0.62 / 0.26 | fitted (recipe: 0.75 / 0.25) | pending D11 |
+| Generic-ballot overstatement of D | 2.8, spread 2.8 | fitted 1998–2022 | decided (D12) |
+| Lean weights, latest / previous | 0.62 / 0.26 | fitted (recipe: 0.75 / 0.25) | decided (D11) |
 | National House vote coefficient | 0.71 | fitted | fitted |
 | Incumbency (per incumbent, margin points) | 5.1 (appointed: half) | fitted 4.1–5.1; appointed is an assumption | fitted |
-| Candidate-effect share | 0.38 | fitted (decided: half) | pending D10 |
+| Candidate-effect share | 0.38 | fitted | decided (D10) |
 | Fundamentals SD σ_F (race part) | 7.5 | fitted 7.4–8.0 | fitted |
 | Regional / state / race-only SD | 1.1 / 2.6 / 3.7 | fitted (census divisions) | fitted |
 | Tails | Student-t, 8 df | FiftyPlusOne (8–10) | fixed |

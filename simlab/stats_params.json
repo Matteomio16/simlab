@@ -28,8 +28,15 @@
   "note": "final generic-ballot average minus national House vote, 1998-2022; + = overstated D"
  },
  "sponsor_shift": {
-  "DEM": 4.86,
-  "REP": -4.61
+  "raw": {
+   "DEM": 4.86,
+   "REP": -4.61
+  },
+  "with_pollster_effects": {
+   "DEM": 2.23,
+   "REP": -2.91
+  },
+  "note": "raw = against nonpartisan polls of the same race (1998-2022); the second is on top of pollster house effects (2018-24), the one to use with house effects"
  },
  "drift_daily_sd": {
   "race": 0.5,
@@ -58,6 +65,19 @@
  "blend": {
   "best_poll_weight": 0.82,
   "races": 103
+ },
+ "approval_test": {
+  "passes": true,
+  "all": {
+   "gb_only": 3.17,
+   "gb_plus_approval": 2.8,
+   "approval_only": 4.78
+  },
+  "midterms": {
+   "gb_only": 3.21,
+   "gb_plus_approval": 3.09,
+   "approval_only": 5.88
+  }
  },
  "mc": {
   "regional_sd": 1.08,

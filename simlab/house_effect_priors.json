@@ -1,0 +1,1775 @@
+{
+ "fitted": "2026-09-28, python -m simlab.calib (538 poll lists 2018-2024, general elections, last 150 days)",
+ "units": "two-party margin, D minus R, relative to the average pollster; prior N(0, 3^2) for pollsters not listed",
+ "sponsor_shift": {
+  "DEM": 2.23,
+  "REP": -2.91
+ },
+ "aliases": {
+  "Public Policy Polling": "PPP",
+  "Saint Anselm": "St. Anselm",
+  "Saint Anselm College": "St. Anselm",
+  "Siena College/The New York Times Upshot": "Siena/NYT",
+  "The New York Times/Siena College": "Siena/NYT",
+  "Rasmussen Reports": "Rasmussen",
+  "Marist College": "Marist",
+  "Monmouth University": "Monmouth"
+ },
+ "pollsters": {
+  "Morning Consult": {
+   "mean": 0.93,
+   "se": 0.13,
+   "n": 428
+  },
+  "Emerson": {
+   "mean": -1.5,
+   "se": 0.3,
+   "n": 263
+  },
+  "Ipsos": {
+   "mean": 0.68,
+   "se": 0.25,
+   "n": 223
+  },
+  "YouGov": {
+   "mean": 0.95,
+   "se": 0.28,
+   "n": 185
+  },
+  "Siena/NYT": {
+   "mean": -0.3,
+   "se": 0.46,
+   "n": 136
+  },
+  "Trafalgar Group": {
+   "mean": -1.84,
+   "se": 0.35,
+   "n": 130
+  },
+  "HarrisX": {
+   "mean": -0.68,
+   "se": 0.38,
+   "n": 112
+  },
+  "PPP": {
+   "mean": -0.35,
+   "se": 0.5,
+   "n": 108
+  },
+  "Data for Progress": {
+   "mean": -1.62,
+   "se": 0.38,
+   "n": 107
+  },
+  "Change Research": {
+   "mean": -0.99,
+   "se": 0.52,
+   "n": 97
+  },
+  "Marist": {
+   "mean": 1.75,
+   "se": 0.46,
+   "n": 91
+  },
+  "Cygnal": {
+   "mean": -1.61,
+   "se": 0.44,
+   "n": 87
+  },
+  "Redfield & Wilton Strategies": {
+   "mean": 1.76,
+   "se": 0.53,
+   "n": 79
+  },
+  "Beacon/Shaw": {
+   "mean": 0.05,
+   "se": 0.5,
+   "n": 78
+  },
+  "Quinnipiac": {
+   "mean": 1.07,
+   "se": 0.47,
+   "n": 78
+  },
+  "USC Dornsife": {
+   "mean": 1.69,
+   "se": 0.29,
+   "n": 77
+  },
+  "SurveyUSA": {
+   "mean": 1.31,
+   "se": 0.62,
+   "n": 70
+  },
+  "InsiderAdvantage": {
+   "mean": -2.9,
+   "se": 0.57,
+   "n": 68
+  },
+  "Suffolk": {
+   "mean": 0.68,
+   "se": 0.64,
+   "n": 67
+  },
+  "Research Co.": {
+   "mean": 0.29,
+   "se": 0.73,
+   "n": 59
+  },
+  "Rasmussen": {
+   "mean": -5.1,
+   "se": 0.42,
+   "n": 58
+  },
+  "CNN/SSRS": {
+   "mean": 1.62,
+   "se": 0.57,
+   "n": 58
+  },
+  "ActiVote": {
+   "mean": -1.26,
+   "se": 0.8,
+   "n": 52
+  },
+  "Civiqs": {
+   "mean": -0.11,
+   "se": 0.63,
+   "n": 49
+  },
+  "Gravis Marketing (2020 and earlier)": {
+   "mean": 0.53,
+   "se": 0.68,
+   "n": 49
+  },
+  "Monmouth": {
+   "mean": -0.83,
+   "se": 0.77,
+   "n": 46
+  },
+  "AtlasIntel": {
+   "mean": -3.09,
+   "se": 0.58,
+   "n": 41
+  },
+  "RMG Research": {
+   "mean": 0.78,
+   "se": 0.75,
+   "n": 41
+  },
+  "Remington": {
+   "mean": -2.4,
+   "se": 0.73,
+   "n": 41
+  },
+  "U. New Hampshire": {
+   "mean": -0.79,
+   "se": 0.82,
+   "n": 40
+  },
+  "Echelon Insights": {
+   "mean": 0.58,
+   "se": 0.72,
+   "n": 39
+  },
+  "Fabrizio/Impact": {
+   "mean": -1.75,
+   "se": 0.87,
+   "n": 32
+  },
+  "Siena": {
+   "mean": 0.03,
+   "se": 0.94,
+   "n": 32
+  },
+  "Global Strategy Group": {
+   "mean": -0.1,
+   "se": 1.08,
+   "n": 30
+  },
+  "St. Anselm": {
+   "mean": -2.09,
+   "se": 0.94,
+   "n": 26
+  },
+  "OnMessage Inc.": {
+   "mean": -3.07,
+   "se": 0.84,
+   "n": 26
+  },
+  "Center Street PAC": {
+   "mean": 3.65,
+   "se": 0.96,
+   "n": 25
+  },
+  "Mason-Dixon": {
+   "mean": -0.75,
+   "se": 1.08,
+   "n": 24
+  },
+  "GBAO": {
+   "mean": 1.96,
+   "se": 1.07,
+   "n": 24
+  },
+  "co/efficient": {
+   "mean": -2.9,
+   "se": 0.84,
+   "n": 24
+  },
+  "McLaughlin": {
+   "mean": -5.14,
+   "se": 0.9,
+   "n": 23
+  },
+  "OH Predictive Insights / MBQF": {
+   "mean": -0.95,
+   "se": 1.0,
+   "n": 22
+  },
+  "Targoz Market Research": {
+   "mean": -0.4,
+   "se": 0.99,
+   "n": 22
+  },
+  "Swayable": {
+   "mean": 0.47,
+   "se": 1.12,
+   "n": 22
+  },
+  "Marquette Law School": {
+   "mean": -0.64,
+   "se": 1.0,
+   "n": 22
+  },
+  "Tarrance": {
+   "mean": -2.63,
+   "se": 1.2,
+   "n": 21
+  },
+  "East Carolina University": {
+   "mean": -1.6,
+   "se": 0.87,
+   "n": 20
+  },
+  "Vox Populi Polling": {
+   "mean": 2.13,
+   "se": 0.99,
+   "n": 20
+  },
+  "Susquehanna": {
+   "mean": -2.04,
+   "se": 1.06,
+   "n": 20
+  },
+  "Public Opinion Strategies": {
+   "mean": 1.53,
+   "se": 1.24,
+   "n": 20
+  },
+  "WPAi": {
+   "mean": -2.29,
+   "se": 1.18,
+   "n": 19
+  },
+  "SurveyMonkey": {
+   "mean": -2.72,
+   "se": 0.8,
+   "n": 19
+  },
+  "Anzalone Liszt Grove": {
+   "mean": -0.45,
+   "se": 1.19,
+   "n": 19
+  },
+  "Mitchell": {
+   "mean": -1.97,
+   "se": 1.02,
+   "n": 19
+  },
+  "EPIC/MRA": {
+   "mean": -0.15,
+   "se": 1.14,
+   "n": 18
+  },
+  "St. Pete Polls": {
+   "mean": -0.78,
+   "se": 0.8,
+   "n": 18
+  },
+  "Wick": {
+   "mean": -3.35,
+   "se": 0.9,
+   "n": 18
+  },
+  "Patriot Polling": {
+   "mean": -3.32,
+   "se": 0.99,
+   "n": 17
+  },
+  "Hart/POS": {
+   "mean": -0.8,
+   "se": 0.95,
+   "n": 17
+  },
+  "Benenson Strategy Group/GS Strategy Group": {
+   "mean": 1.13,
+   "se": 1.11,
+   "n": 17
+  },
+  "Glengariff Group Inc.": {
+   "mean": 2.36,
+   "se": 1.17,
+   "n": 17
+  },
+  "Franklin and Marshall College": {
+   "mean": 2.65,
+   "se": 1.33,
+   "n": 16
+  },
+  "U. Massachusetts - Lowell": {
+   "mean": 0.02,
+   "se": 1.15,
+   "n": 15
+  },
+  "Fabrizio": {
+   "mean": -2.75,
+   "se": 1.25,
+   "n": 15
+  },
+  "Amber Integrated": {
+   "mean": 0.7,
+   "se": 1.32,
+   "n": 14
+  },
+  "U. Georgia SPIA": {
+   "mean": -1.72,
+   "se": 1.07,
+   "n": 14
+  },
+  "TIPP": {
+   "mean": -0.66,
+   "se": 1.08,
+   "n": 13
+  },
+  "Garin Hart Yang": {
+   "mean": 1.67,
+   "se": 1.52,
+   "n": 13
+  },
+  "GQR": {
+   "mean": 0.09,
+   "se": 1.19,
+   "n": 13
+  },
+  "Ascend Action": {
+   "mean": 3.08,
+   "se": 1.37,
+   "n": 12
+  },
+  "Muhlenberg": {
+   "mean": 0.68,
+   "se": 1.49,
+   "n": 12
+  },
+  "Hart Research Associates": {
+   "mean": -0.58,
+   "se": 1.3,
+   "n": 12
+  },
+  "Data Orbital": {
+   "mean": -1.01,
+   "se": 1.32,
+   "n": 12
+  },
+  "Research & Polling": {
+   "mean": -0.01,
+   "se": 1.54,
+   "n": 12
+  },
+  "Selzer": {
+   "mean": -1.27,
+   "se": 1.33,
+   "n": 12
+  },
+  "Big Village": {
+   "mean": 3.22,
+   "se": 1.14,
+   "n": 12
+  },
+  "U. North Florida": {
+   "mean": 0.54,
+   "se": 1.24,
+   "n": 11
+  },
+  "Winston": {
+   "mean": 1.07,
+   "se": 1.09,
+   "n": 11
+  },
+  "SoonerPoll.com": {
+   "mean": 4.8,
+   "se": 1.78,
+   "n": 11
+  },
+  "DCCC Targeting Team": {
+   "mean": 1.72,
+   "se": 1.93,
+   "n": 11
+  },
+  "Bullfinch": {
+   "mean": 2.41,
+   "se": 1.31,
+   "n": 11
+  },
+  "KAConsulting LLC": {
+   "mean": 0.66,
+   "se": 1.44,
+   "n": 10
+  },
+  "UC Berkeley": {
+   "mean": 1.24,
+   "se": 1.38,
+   "n": 10
+  },
+  "Triton Polling & Research": {
+   "mean": -3.54,
+   "se": 1.46,
+   "n": 10
+  },
+  "Baldwin Wallace University": {
+   "mean": 1.98,
+   "se": 1.28,
+   "n": 10
+  },
+  "Impact Research": {
+   "mean": -1.9,
+   "se": 1.47,
+   "n": 10
+  },
+  "University of Texas at Tyler": {
+   "mean": -2.0,
+   "se": 1.31,
+   "n": 10
+  },
+  "Kaiser Family Foundation": {
+   "mean": 1.34,
+   "se": 1.26,
+   "n": 10
+  },
+  "MassINC Polling Group": {
+   "mean": -0.38,
+   "se": 1.5,
+   "n": 10
+  },
+  "HighGround": {
+   "mean": 0.21,
+   "se": 1.49,
+   "n": 10
+  },
+  "Strategic Research Associates": {
+   "mean": -1.24,
+   "se": 1.45,
+   "n": 10
+  },
+  "American Viewpoint": {
+   "mean": -3.74,
+   "se": 1.71,
+   "n": 10
+  },
+  "Phillips Academy": {
+   "mean": -2.87,
+   "se": 1.23,
+   "n": 10
+  },
+  "Landmark Communications": {
+   "mean": -1.55,
+   "se": 1.35,
+   "n": 9
+  },
+  "Washington Post/George Mason University": {
+   "mean": 2.37,
+   "se": 1.43,
+   "n": 9
+  },
+  "Tulchin Research": {
+   "mean": 2.21,
+   "se": 1.86,
+   "n": 9
+  },
+  "The Political Matrix/The Listener Group": {
+   "mean": 2.78,
+   "se": 1.26,
+   "n": 9
+  },
+  "ARG": {
+   "mean": 4.97,
+   "se": 1.67,
+   "n": 9
+  },
+  "Florida Atlantic University/Mainstreet Research": {
+   "mean": 0.33,
+   "se": 1.42,
+   "n": 9
+  },
+  "Greenberg Quinlan Rosner": {
+   "mean": -0.15,
+   "se": 1.57,
+   "n": 9
+  },
+  "Harper Polling": {
+   "mean": -1.3,
+   "se": 1.58,
+   "n": 9
+  },
+  "Pan Atlantic Research": {
+   "mean": 0.16,
+   "se": 2.14,
+   "n": 9
+  },
+  "MSU - Billings": {
+   "mean": 1.53,
+   "se": 1.72,
+   "n": 9
+  },
+  "Spry Strategies": {
+   "mean": -0.61,
+   "se": 1.55,
+   "n": 9
+  },
+  "Moore Information": {
+   "mean": -3.1,
+   "se": 1.5,
+   "n": 9
+  },
+  "ABC/Washington Post": {
+   "mean": -0.94,
+   "se": 1.36,
+   "n": 8
+  },
+  "Beacon Research": {
+   "mean": 1.01,
+   "se": 1.61,
+   "n": 8
+  },
+  "Florida Atlantic University": {
+   "mean": -1.61,
+   "se": 1.48,
+   "n": 8
+  },
+  "Christopher Newport U.": {
+   "mean": 1.73,
+   "se": 1.51,
+   "n": 8
+  },
+  "Alaska Survey Research": {
+   "mean": 2.11,
+   "se": 2.03,
+   "n": 8
+  },
+  "Patinkin Research Strategies": {
+   "mean": -1.15,
+   "se": 1.48,
+   "n": 8
+  },
+  "Strategies 360": {
+   "mean": 0.73,
+   "se": 1.82,
+   "n": 8
+  },
+  "Thomas Part\u00adners Strategies/\u00d8ptimus": {
+   "mean": -6.2,
+   "se": 1.38,
+   "n": 8
+  },
+  "Clarity": {
+   "mean": 1.54,
+   "se": 1.28,
+   "n": 8
+  },
+  "Research America": {
+   "mean": 0.14,
+   "se": 1.76,
+   "n": 8
+  },
+  "Target Insyght": {
+   "mean": -2.28,
+   "se": 1.67,
+   "n": 7
+  },
+  "Roanoke College": {
+   "mean": 1.87,
+   "se": 1.66,
+   "n": 7
+  },
+  "Blueprint Polling": {
+   "mean": -0.41,
+   "se": 1.7,
+   "n": 7
+  },
+  "\u00d8ptimus": {
+   "mean": -0.35,
+   "se": 1.54,
+   "n": 7
+  },
+  "National Research": {
+   "mean": -2.09,
+   "se": 1.83,
+   "n": 7
+  },
+  "Pew": {
+   "mean": 0.48,
+   "se": 0.95,
+   "n": 7
+  },
+  "Opinium": {
+   "mean": 5.0,
+   "se": 1.19,
+   "n": 7
+  },
+  "Navigator": {
+   "mean": 2.57,
+   "se": 1.33,
+   "n": 7
+  },
+  "Harris Poll": {
+   "mean": 1.39,
+   "se": 1.24,
+   "n": 7
+  },
+  "Digital Research": {
+   "mean": 0.43,
+   "se": 2.18,
+   "n": 7
+  },
+  "SoCal Strategies": {
+   "mean": 2.65,
+   "se": 1.53,
+   "n": 7
+  },
+  "Cherry Communications": {
+   "mean": 1.94,
+   "se": 1.6,
+   "n": 7
+  },
+  "University of Massachusetts Lowell/YouGov": {
+   "mean": 2.29,
+   "se": 1.62,
+   "n": 6
+  },
+  "University of Montana": {
+   "mean": 2.76,
+   "se": 2.19,
+   "n": 6
+  },
+  "Dartmouth Poll": {
+   "mean": 8.0,
+   "se": 1.8,
+   "n": 6
+  },
+  "Cardinal Point Analytics (CardinalGPS)": {
+   "mean": -7.16,
+   "se": 1.65,
+   "n": 6
+  },
+  "Fabrizio Ward/Hart Research Associates": {
+   "mean": -0.62,
+   "se": 1.88,
+   "n": 6
+  },
+  "Colby College": {
+   "mean": 1.31,
+   "se": 1.95,
+   "n": 6
+  },
+  "Expedition Strategies": {
+   "mean": 0.16,
+   "se": 2.31,
+   "n": 6
+  },
+  "Dixie Strategies": {
+   "mean": -3.08,
+   "se": 1.79,
+   "n": 6
+  },
+  "Stockton University": {
+   "mean": -0.67,
+   "se": 1.89,
+   "n": 6
+  },
+  "PRRI": {
+   "mean": 3.15,
+   "se": 1.33,
+   "n": 6
+  },
+  "RABA Research": {
+   "mean": 2.94,
+   "se": 1.65,
+   "n": 6
+  },
+  "Opinion Insight": {
+   "mean": 1.46,
+   "se": 1.61,
+   "n": 6
+  },
+  "Noble Predictive Insights": {
+   "mean": -0.27,
+   "se": 1.71,
+   "n": 6
+  },
+  "Normington, Petts & Associates": {
+   "mean": -0.09,
+   "se": 2.32,
+   "n": 6
+  },
+  "PPIC": {
+   "mean": -0.22,
+   "se": 1.59,
+   "n": 6
+  },
+  "Meredith College": {
+   "mean": 1.06,
+   "se": 1.62,
+   "n": 6
+  },
+  "MRG (Marketing Resource Group)": {
+   "mean": 0.13,
+   "se": 1.74,
+   "n": 6
+  },
+  "Victory Insights": {
+   "mean": -0.73,
+   "se": 1.69,
+   "n": 6
+  },
+  "Lake Research": {
+   "mean": 3.09,
+   "se": 1.94,
+   "n": 6
+  },
+  "Virginia Commonwealth U.": {
+   "mean": 1.5,
+   "se": 1.8,
+   "n": 6
+  },
+  "BSP Research/Shaw & Company": {
+   "mean": -0.16,
+   "se": 1.68,
+   "n": 5
+  },
+  "NewsNation/Decision Desk HQ": {
+   "mean": -1.47,
+   "se": 1.52,
+   "n": 5
+  },
+  "MSU - Bozeman": {
+   "mean": 0.33,
+   "se": 1.89,
+   "n": 5
+  },
+  "Victory Research": {
+   "mean": -3.15,
+   "se": 1.94,
+   "n": 5
+  },
+  "Strategic National": {
+   "mean": 0.15,
+   "se": 1.88,
+   "n": 5
+  },
+  "The Washington Post": {
+   "mean": -1.03,
+   "se": 1.51,
+   "n": 5
+  },
+  "St. Cloud State": {
+   "mean": 6.63,
+   "se": 2.09,
+   "n": 5
+  },
+  "Citizen Data": {
+   "mean": 2.21,
+   "se": 1.6,
+   "n": 5
+  },
+  "Fleming & Associates": {
+   "mean": -0.27,
+   "se": 2.68,
+   "n": 5
+  },
+  "North Star Opinion Research": {
+   "mean": -0.44,
+   "se": 1.99,
+   "n": 4
+  },
+  "Harstad": {
+   "mean": 1.67,
+   "se": 2.12,
+   "n": 4
+  },
+  "Meeting Street Insights": {
+   "mean": -0.05,
+   "se": 2.08,
+   "n": 4
+  },
+  "PEM Management Corporation": {
+   "mean": -0.41,
+   "se": 2.38,
+   "n": 4
+  },
+  "Clout Research": {
+   "mean": -2.83,
+   "se": 2.16,
+   "n": 4
+  },
+  "Embold Research": {
+   "mean": -0.15,
+   "se": 1.87,
+   "n": 4
+  },
+  "Carroll Strategies": {
+   "mean": -3.33,
+   "se": 1.95,
+   "n": 4
+  },
+  "Chism Strategies": {
+   "mean": -1.87,
+   "se": 1.93,
+   "n": 4
+  },
+  "U. Houston": {
+   "mean": -0.99,
+   "se": 1.71,
+   "n": 4
+  },
+  "brilliant corners Research & Strategies": {
+   "mean": 1.53,
+   "se": 2.0,
+   "n": 4
+  },
+  "USC Dornsife/CSU Long Beach/Cal Poly Pomona": {
+   "mean": 0.49,
+   "se": 2.26,
+   "n": 4
+  },
+  "Western New England University": {
+   "mean": 0.94,
+   "se": 2.11,
+   "n": 4
+  },
+  "Rutgers-Eagleton": {
+   "mean": 1.39,
+   "se": 2.0,
+   "n": 4
+  },
+  "Sachs Media": {
+   "mean": 0.71,
+   "se": 1.93,
+   "n": 4
+  },
+  "HarrisX/Harris Poll": {
+   "mean": -1.74,
+   "se": 1.47,
+   "n": 4
+  },
+  "GreatBlue Research": {
+   "mean": -2.74,
+   "se": 2.3,
+   "n": 4
+  },
+  "Mellman": {
+   "mean": 0.6,
+   "se": 2.44,
+   "n": 3
+  },
+  "Crosswind Media & Public Relations": {
+   "mean": -0.31,
+   "se": 1.97,
+   "n": 3
+  },
+  "Saint Leo U.": {
+   "mean": 3.68,
+   "se": 2.1,
+   "n": 3
+  },
+  "RG Strategies": {
+   "mean": -1.32,
+   "se": 2.2,
+   "n": 3
+  },
+  "Hodas & Associates": {
+   "mean": 3.45,
+   "se": 2.1,
+   "n": 3
+  },
+  "Hoffman Research": {
+   "mean": 0.1,
+   "se": 2.21,
+   "n": 3
+  },
+  "Gallup": {
+   "mean": 0.25,
+   "se": 1.76,
+   "n": 3
+  },
+  "Latino Decisions": {
+   "mean": 0.03,
+   "se": 2.16,
+   "n": 3
+  },
+  "Long Island University": {
+   "mean": 11.66,
+   "se": 1.94,
+   "n": 3
+  },
+  "J.L. Partners": {
+   "mean": -1.28,
+   "se": 1.95,
+   "n": 3
+  },
+  "Magellan": {
+   "mean": -0.44,
+   "se": 2.41,
+   "n": 3
+  },
+  "Auburn University at Montgomery": {
+   "mean": -0.52,
+   "se": 2.23,
+   "n": 3
+  },
+  "Hendrix College": {
+   "mean": 3.09,
+   "se": 2.26,
+   "n": 3
+  },
+  "Keating Research/Magellan Strategies": {
+   "mean": 0.86,
+   "se": 2.17,
+   "n": 3
+  },
+  "Victoria Research": {
+   "mean": 0.86,
+   "se": 2.7,
+   "n": 3
+  },
+  "Bruno Political Consulting": {
+   "mean": 1.28,
+   "se": 2.11,
+   "n": 3
+  },
+  "Data Targeting": {
+   "mean": -2.52,
+   "se": 2.52,
+   "n": 3
+  },
+  "The Polling Company Inc./WomanTrend": {
+   "mean": -0.57,
+   "se": 2.21,
+   "n": 3
+  },
+  "Stetson University Center for Public Opinion Research": {
+   "mean": -0.08,
+   "se": 2.06,
+   "n": 3
+  },
+  "Self-Made Insights": {
+   "mean": -3.67,
+   "se": 2.21,
+   "n": 3
+  },
+  "FM3 Research": {
+   "mean": 1.36,
+   "se": 2.22,
+   "n": 3
+  },
+  "Elway": {
+   "mean": 1.17,
+   "se": 2.37,
+   "n": 3
+  },
+  "Fabrizio Ward": {
+   "mean": -1.52,
+   "se": 2.26,
+   "n": 3
+  },
+  "Fairleigh Dickinson": {
+   "mean": -0.44,
+   "se": 2.1,
+   "n": 3
+  },
+  "Schoen Cooperman": {
+   "mean": 0.11,
+   "se": 2.11,
+   "n": 3
+  },
+  "DeSales University": {
+   "mean": 3.08,
+   "se": 2.5,
+   "n": 3
+  },
+  "SSRS": {
+   "mean": 3.43,
+   "se": 2.23,
+   "n": 3
+  },
+  "TargetSmart": {
+   "mean": 0.78,
+   "se": 1.96,
+   "n": 3
+  },
+  "University of Akron": {
+   "mean": 0.96,
+   "se": 1.96,
+   "n": 3
+  },
+  "University of Maryland/Washington Post": {
+   "mean": -0.74,
+   "se": 2.05,
+   "n": 3
+  },
+  "University of Houston/Texas Southern University": {
+   "mean": 0.68,
+   "se": 2.17,
+   "n": 3
+  },
+  "Y2 Analytics": {
+   "mean": -0.96,
+   "se": 2.34,
+   "n": 3
+  },
+  "UMass Amherst/YouGov": {
+   "mean": 0.64,
+   "se": 2.06,
+   "n": 3
+  },
+  "Axis Research": {
+   "mean": 1.53,
+   "se": 2.08,
+   "n": 3
+  },
+  "African American Research Collaborative": {
+   "mean": -0.43,
+   "se": 1.55,
+   "n": 3
+  },
+  "1892 Polling": {
+   "mean": -2.27,
+   "se": 1.92,
+   "n": 3
+  },
+  "Nelson Research": {
+   "mean": -1.88,
+   "se": 2.43,
+   "n": 2
+  },
+  "ARW Strategies": {
+   "mean": -0.55,
+   "se": 2.5,
+   "n": 2
+  },
+  "Michigan State University": {
+   "mean": -0.59,
+   "se": 2.69,
+   "n": 2
+  },
+  "Ohio Northern University Institute for Civics and Public Policy": {
+   "mean": -2.95,
+   "se": 2.21,
+   "n": 2
+  },
+  "Keating Research/OnSight Public Affairs/Melanson": {
+   "mean": 0.55,
+   "se": 2.36,
+   "n": 2
+  },
+  "Gonzales Research & Media Services": {
+   "mean": -0.0,
+   "se": 2.44,
+   "n": 2
+  },
+  "Hickman": {
+   "mean": 1.28,
+   "se": 2.66,
+   "n": 2
+  },
+  "Jayhawk Consulting": {
+   "mean": 3.73,
+   "se": 2.7,
+   "n": 2
+  },
+  "MWR Strategies": {
+   "mean": -1.6,
+   "se": 2.08,
+   "n": 2
+  },
+  "Lake Research Partners/The Tarrance Group": {
+   "mean": 0.22,
+   "se": 2.06,
+   "n": 2
+  },
+  "KG Polling": {
+   "mean": 0.74,
+   "se": 2.25,
+   "n": 2
+  },
+  "Baldwin Wallace University/Oakland University/Ohio Northern University": {
+   "mean": -0.58,
+   "se": 2.05,
+   "n": 2
+  },
+  "BK Strategies": {
+   "mean": -1.19,
+   "se": 2.41,
+   "n": 2
+  },
+  "American Pulse": {
+   "mean": -1.74,
+   "se": 2.17,
+   "n": 2
+  },
+  "VCreek/AMG": {
+   "mean": 2.7,
+   "se": 2.1,
+   "n": 2
+  },
+  "Zogby": {
+   "mean": -1.18,
+   "se": 2.09,
+   "n": 2
+  },
+  "Texas Lyceum": {
+   "mean": -0.01,
+   "se": 2.66,
+   "n": 2
+  },
+  "CWS Research": {
+   "mean": 0.08,
+   "se": 2.43,
+   "n": 2
+  },
+  "Climate Nexus": {
+   "mean": 1.2,
+   "se": 1.65,
+   "n": 2
+  },
+  "TP Research": {
+   "mean": -2.48,
+   "se": 2.59,
+   "n": 2
+  },
+  "TRZ Communication": {
+   "mean": -0.14,
+   "se": 2.77,
+   "n": 2
+  },
+  "SurveyUSA/High Point University": {
+   "mean": 2.52,
+   "se": 2.1,
+   "n": 2
+  },
+  "Texas Hispanic Policy Foundation": {
+   "mean": -0.43,
+   "se": 2.07,
+   "n": 2
+  },
+  "U. Arizona/TrueDot": {
+   "mean": 3.64,
+   "se": 2.11,
+   "n": 2
+  },
+  "University of Nevada": {
+   "mean": 3.27,
+   "se": 2.29,
+   "n": 2
+  },
+  "USC Schwarzenegger Institute": {
+   "mean": 1.91,
+   "se": 2.35,
+   "n": 2
+  },
+  "Basswood Research": {
+   "mean": -3.23,
+   "se": 2.15,
+   "n": 2
+  },
+  "AP-NORC": {
+   "mean": 3.55,
+   "se": 2.07,
+   "n": 2
+  },
+  "Blumenthal Research Daily": {
+   "mean": -0.8,
+   "se": 2.28,
+   "n": 2
+  },
+  "Slingshot Strategies": {
+   "mean": -0.39,
+   "se": 2.26,
+   "n": 2
+  },
+  "SoCal Research": {
+   "mean": 1.56,
+   "se": 2.38,
+   "n": 2
+  },
+  "DFM Research": {
+   "mean": 0.06,
+   "se": 2.96,
+   "n": 2
+  },
+  "Cor Services, Inc.": {
+   "mean": -1.89,
+   "se": 2.3,
+   "n": 2
+  },
+  "Elon U.": {
+   "mean": 3.29,
+   "se": 2.18,
+   "n": 2
+  },
+  "Dittman Research": {
+   "mean": 0.43,
+   "se": 2.64,
+   "n": 2
+  },
+  "East Tennessee State University": {
+   "mean": 1.44,
+   "se": 2.38,
+   "n": 2
+  },
+  "HIT Strategies": {
+   "mean": 2.46,
+   "se": 2.47,
+   "n": 2
+  },
+  "Opinion Savvy": {
+   "mean": 1.01,
+   "se": 2.23,
+   "n": 2
+  },
+  "Osage Research": {
+   "mean": -3.75,
+   "se": 2.44,
+   "n": 2
+  },
+  "Florida Southern College": {
+   "mean": -0.36,
+   "se": 2.36,
+   "n": 2
+  },
+  "Frederick Polls LLC": {
+   "mean": -0.97,
+   "se": 2.19,
+   "n": 2
+  },
+  "Fallon Research & Communications": {
+   "mean": 2.09,
+   "se": 2.3,
+   "n": 2
+  },
+  "Fabrizio/David Binder Research": {
+   "mean": -0.64,
+   "se": 2.74,
+   "n": 2
+  },
+  "Pacific Market Research": {
+   "mean": -0.5,
+   "se": 2.47,
+   "n": 2
+  },
+  "Probolsky Research": {
+   "mean": -2.91,
+   "se": 2.26,
+   "n": 2
+  },
+  "Premise": {
+   "mean": 4.75,
+   "se": 1.92,
+   "n": 2
+  },
+  "Research Affiliates": {
+   "mean": -0.36,
+   "se": 2.43,
+   "n": 2
+  },
+  "Bowling Green State University/YouGov": {
+   "mean": 1.41,
+   "se": 2.14,
+   "n": 2
+  },
+  "SocialSphere": {
+   "mean": -0.59,
+   "se": 2.62,
+   "n": 2
+  },
+  "Lighthouse Research": {
+   "mean": -0.81,
+   "se": 2.54,
+   "n": 2
+  },
+  "John Zogby Strategies/EMI Research Solutions": {
+   "mean": -1.92,
+   "se": 2.03,
+   "n": 2
+  },
+  "We Ask America": {
+   "mean": -1.31,
+   "se": 2.55,
+   "n": 2
+  },
+  "Schroth Eldon & Associates": {
+   "mean": -1.17,
+   "se": 2.25,
+   "n": 2
+  },
+  "Cole Hargrave": {
+   "mean": -0.45,
+   "se": 2.71,
+   "n": 2
+  },
+  "University of Utah": {
+   "mean": 0.13,
+   "se": 2.8,
+   "n": 1
+  },
+  "Alloy Analytics": {
+   "mean": -0.75,
+   "se": 2.51,
+   "n": 1
+  },
+  "Miami University (Ohio)": {
+   "mean": 0.58,
+   "se": 2.47,
+   "n": 1
+  },
+  "Harper Polling/Clarity Campaign Labs": {
+   "mean": 0.83,
+   "se": 2.7,
+   "n": 1
+  },
+  "High Point University": {
+   "mean": 1.22,
+   "se": 2.57,
+   "n": 1
+  },
+  "IMGE Insights": {
+   "mean": 0.43,
+   "se": 2.75,
+   "n": 1
+  },
+  "Illinois Public Opinion Strategies": {
+   "mean": -0.04,
+   "se": 2.87,
+   "n": 1
+  },
+  "NSON/In Lux": {
+   "mean": 1.48,
+   "se": 2.7,
+   "n": 1
+  },
+  "National Public Affairs": {
+   "mean": 0.51,
+   "se": 2.69,
+   "n": 1
+  },
+  "John Zogby Strategies": {
+   "mean": 0.13,
+   "se": 2.39,
+   "n": 1
+  },
+  "JMC Analytics/Bold Blue Campaigns": {
+   "mean": -0.25,
+   "se": 2.8,
+   "n": 1
+  },
+  "Lucid": {
+   "mean": -0.66,
+   "se": 2.41,
+   "n": 1
+  },
+  "LOC Wick": {
+   "mean": -1.23,
+   "se": 2.83,
+   "n": 1
+  },
+  "Victory Geek": {
+   "mean": 0.4,
+   "se": 2.66,
+   "n": 1
+  },
+  "MSR Group": {
+   "mean": -0.63,
+   "se": 2.45,
+   "n": 1
+  },
+  "Leger": {
+   "mean": 1.26,
+   "se": 2.48,
+   "n": 1
+  },
+  "In Lux Research": {
+   "mean": 3.5,
+   "se": 2.66,
+   "n": 1
+  },
+  "Kiaer Research": {
+   "mean": 1.97,
+   "se": 2.51,
+   "n": 1
+  },
+  "Manhattan Institute": {
+   "mean": 0.2,
+   "se": 2.62,
+   "n": 1
+  },
+  "Maine People's Resource Center": {
+   "mean": -0.28,
+   "se": 2.82,
+   "n": 1
+  },
+  "Keating Research/Onsight Public Affairs/Martin Campaigns": {
+   "mean": 0.2,
+   "se": 2.75,
+   "n": 1
+  },
+  "Mark Blankenship Enterprises": {
+   "mean": -0.73,
+   "se": 2.94,
+   "n": 1
+  },
+  "Mason Strategies": {
+   "mean": -1.53,
+   "se": 2.57,
+   "n": 1
+  },
+  "Univision/University of Arizona/Latino Decisions/North Star Opinion Research": {
+   "mean": 2.05,
+   "se": 2.49,
+   "n": 1
+  },
+  "Univision/University of Houston/Latino Decisions/North Star Opinion Research": {
+   "mean": 0.08,
+   "se": 2.5,
+   "n": 1
+  },
+  "Guidant Polling and Strategy": {
+   "mean": -0.26,
+   "se": 2.76,
+   "n": 1
+  },
+  "Goucher College": {
+   "mean": -0.78,
+   "se": 2.87,
+   "n": 1
+  },
+  "Global Strategy Group/Latino Decisions": {
+   "mean": 1.42,
+   "se": 2.59,
+   "n": 1
+  },
+  "Go Right Strategies": {
+   "mean": -1.43,
+   "se": 2.82,
+   "n": 1
+  },
+  "Global Strategy Group/Data for Progress": {
+   "mean": 1.14,
+   "se": 2.03,
+   "n": 1
+  },
+  "Garin-Hart-Yang/Global Strategy Group": {
+   "mean": -0.18,
+   "se": 2.38,
+   "n": 1
+  },
+  "Opinion Diagnostics": {
+   "mean": 0.36,
+   "se": 2.66,
+   "n": 1
+  },
+  "GS Strategy Group": {
+   "mean": -0.5,
+   "se": 2.92,
+   "n": 1
+  },
+  "Neighborhood Research": {
+   "mean": -0.71,
+   "se": 2.69,
+   "n": 1
+  },
+  "Dan Jones": {
+   "mean": 0.54,
+   "se": 2.77,
+   "n": 1
+  },
+  "DHM Research": {
+   "mean": 0.04,
+   "se": 2.72,
+   "n": 1
+  },
+  "Concord Public Opinion Partners": {
+   "mean": -0.01,
+   "se": 2.71,
+   "n": 1
+  },
+  "Seven Letter Insight": {
+   "mean": 0.42,
+   "se": 2.47,
+   "n": 1
+  },
+  "Southern Illinois University": {
+   "mean": 1.72,
+   "se": 2.59,
+   "n": 1
+  },
+  "Echelon Insights/GBAO": {
+   "mean": 2.09,
+   "se": 2.15,
+   "n": 1
+  },
+  "Eppstein Group": {
+   "mean": -5.45,
+   "se": 2.49,
+   "n": 1
+  },
+  "RBI Strategies & Research": {
+   "mean": 1.5,
+   "se": 2.61,
+   "n": 1
+  },
+  "PureSpectrum": {
+   "mean": 2.15,
+   "se": 1.76,
+   "n": 1
+  },
+  "Pulse Research": {
+   "mean": -0.45,
+   "se": 2.74,
+   "n": 1
+  },
+  "Pulse Opinion Research": {
+   "mean": -0.01,
+   "se": 2.76,
+   "n": 1
+  },
+  "Pioneer Polling/Tarrance": {
+   "mean": -1.1,
+   "se": 2.31,
+   "n": 1
+  },
+  "Praecones Analytica": {
+   "mean": -0.62,
+   "se": 2.55,
+   "n": 1
+  },
+  "Peak Insights": {
+   "mean": -1.56,
+   "se": 2.54,
+   "n": 1
+  },
+  "PerryUndem": {
+   "mean": 0.41,
+   "se": 2.4,
+   "n": 1
+  },
+  "POLITICO/Harvard/SSRS": {
+   "mean": 0.49,
+   "se": 2.19,
+   "n": 1
+  },
+  "Ragnar Research Partners": {
+   "mean": -0.46,
+   "se": 2.69,
+   "n": 1
+  },
+  "RRH/PMI": {
+   "mean": -0.9,
+   "se": 2.71,
+   "n": 1
+  },
+  "Fort Hays State University": {
+   "mean": 0.96,
+   "se": 2.81,
+   "n": 1
+  },
+  "Reconnect Research/Roanoke College": {
+   "mean": 1.37,
+   "se": 2.61,
+   "n": 1
+  },
+  "Rethink Priorities": {
+   "mean": -0.39,
+   "se": 1.93,
+   "n": 1
+  },
+  "Right Strategy Group": {
+   "mean": 0.5,
+   "se": 2.72,
+   "n": 1
+  },
+  "Riley": {
+   "mean": -0.31,
+   "se": 2.79,
+   "n": 1
+  },
+  "Davis, Hibbitts, & Midghall, Inc.": {
+   "mean": 0.2,
+   "se": 2.83,
+   "n": 1
+  },
+  "Trafalgar Group/InsiderAdvantage": {
+   "mean": -3.2,
+   "se": 2.49,
+   "n": 1
+  },
+  "Tomahawk Strategies": {
+   "mean": 2.69,
+   "se": 2.56,
+   "n": 1
+  },
+  "Tufts": {
+   "mean": 0.32,
+   "se": 2.5,
+   "n": 1
+  },
+  "Thirty-Ninth Street Strategies": {
+   "mean": -0.24,
+   "se": 2.77,
+   "n": 1
+  },
+  "The Tyson Group": {
+   "mean": 1.38,
+   "se": 2.54,
+   "n": 1
+  },
+  "CBS News": {
+   "mean": 0.44,
+   "se": 2.38,
+   "n": 1
+  },
+  "Torchlight Strategies": {
+   "mean": -0.16,
+   "se": 2.84,
+   "n": 1
+  },
+  "Starboard Communications": {
+   "mean": -2.57,
+   "se": 2.49,
+   "n": 1
+  },
+  "TJP Strategies": {
+   "mean": 0.51,
+   "se": 2.71,
+   "n": 1
+  },
+  "Survation": {
+   "mean": 1.64,
+   "se": 2.42,
+   "n": 1
+  },
+  "Strategies Unlimited": {
+   "mean": 1.14,
+   "se": 2.7,
+   "n": 1
+  },
+  "The Justice Collaborative Institute": {
+   "mean": 1.62,
+   "se": 2.39,
+   "n": 1
+  },
+  "SurveyMonkey/PORES": {
+   "mean": -2.91,
+   "se": 1.75,
+   "n": 1
+  },
+  "The Polling Company": {
+   "mean": -0.12,
+   "se": 2.96,
+   "n": 1
+  },
+  "Causeway Solutions": {
+   "mean": -2.52,
+   "se": 2.62,
+   "n": 1
+  },
+  "U. Rhode Island": {
+   "mean": 0.51,
+   "se": 2.96,
+   "n": 1
+  },
+  "UMBC": {
+   "mean": -0.84,
+   "se": 2.61,
+   "n": 1
+  },
+  "Bold Decision": {
+   "mean": 3.61,
+   "se": 2.37,
+   "n": 1
+  },
+  "Braun": {
+   "mean": -0.2,
+   "se": 2.95,
+   "n": 1
+  },
+  "Benenson": {
+   "mean": -0.78,
+   "se": 2.4,
+   "n": 1
+  },
+  "Bluegrass Community and Technical College": {
+   "mean": -0.34,
+   "se": 2.78,
+   "n": 1
+  },
+  "Bluegrass Data Analytics": {
+   "mean": 3.16,
+   "se": 2.4,
+   "n": 1
+  },
+  "Bold Blue Campaigns": {
+   "mean": -0.03,
+   "se": 2.85,
+   "n": 1
+  },
+  "U. Iowa": {
+   "mean": 0.61,
+   "se": 2.89,
+   "n": 1
+  },
+  "Baselice & Associates": {
+   "mean": -0.3,
+   "se": 2.73,
+   "n": 1
+  },
+  "University of Illinois Springfield": {
+   "mean": 0.33,
+   "se": 2.74,
+   "n": 1
+  },
+  "University of Maryland/YouGov": {
+   "mean": 3.11,
+   "se": 2.62,
+   "n": 1
+  },
+  "University of Nevada Las Vegas Lee Business School": {
+   "mean": -0.11,
+   "se": 2.83,
+   "n": 1
+  },
+  "20/20 Insight, LLC": {
+   "mean": 1.38,
+   "se": 2.56,
+   "n": 1
+  },
+  "YouGov Blue": {
+   "mean": 0.58,
+   "se": 2.56,
+   "n": 1
+  },
+  "1st Tuesday Campaigns": {
+   "mean": -0.47,
+   "se": 2.45,
+   "n": 1
+  }
+ }
+}
