@@ -2,6 +2,25 @@
  "c_s": 0.2055,
  "c_t": 0.2055,
  "c_t_rule": "c_t = c_s (prior: a strong reaction moves the same fraction of a group's mobilisable pool as of its persuadable pool); no data identify c_t before early votes and the weekly filter",
+ "uncertainty": {
+  "form": "each simulated election multiplies the switching and turnout parts of every story effect by its own factor, lognormal with mean 1 (the fitted size on average) and the spread below; the same factors for all races in that election",
+  "c_s": {
+   "sigma_log": 0.5,
+   "range_90": [
+    0.08,
+    0.413
+   ],
+   "why": "the fit itself is tight (0.19-0.23 leaving any one event out), but it is carried from big national events measured in approval and the generic ballot to state races, today's news and the harness's attention weights; about a factor of two either way covers that transfer"
+  },
+  "c_t": {
+   "sigma_log": 0.75,
+   "range_90": [
+    0.045,
+    0.533
+   ],
+   "why": "no data measure it before early votes; a wider range, which also covers the 0.05 first suggested"
+  }
+ },
  "dials": {},
  "half_life_days": {
   "default": 10
@@ -13,6 +32,29 @@
   "corr": 0.418,
   "on": "runs/events2_groups__glm.jsonl (GLM, direct wording)",
   "fitted": "2026-09-28"
+ },
+ "lineage": {
+  "c_s": {
+   "from": [
+    "simlab/events2.json: 45 real events 2017-2025 with national opinion shifts, days +5..+14 against -7..-1 (approval: 538 and VoteHub averages; generic ballot: 538 and VoteHub polls; Engine)",
+    "runs/events2_groups__glm.jsonl: GLM's support answers for the 28 groups, direct wording, two option orders (Engine, simlab/groupcalib.py)",
+    "simlab/pimu.json: national persuadable shares (CES 2018 and 2022 waves)"
+   ],
+   "fit": "python -m simlab.moves --fit: weighted least squares of measured shift on the \u00a73.2 switching term"
+  },
+  "c_t": {
+   "from": [
+    "prior: equal to c_s (Matteo, 28 Sep)"
+   ]
+  },
+  "journey": [
+   "simlab/move_params.json",
+   "derived/D/params.json (copied daily, with date and run_id)",
+   "derived/D/moves.json (group changes and each story's switching and turnout effect)",
+   "derived/D/filter_state.json (headline levels with the effects)",
+   "derived/D/forecast.json (per-election multipliers; each race's news block: effect, parts, win chance if weaker or stronger)"
+  ],
+  "updated_by": "the weekly filter from 12 Oct: per-state dials from the week's polls, then the fit is redone"
  },
  "notes": "dials start at 1 and half-lives at the 10-day prior; the weekly filter tunes both from 12 Oct"
 }

@@ -122,8 +122,9 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
         for g in dd:
             by_group[g]["dd"] += 100 * dd[g] * decay(tau, h)
             by_group[g]["dt"] += 100 * dt[g] * decay(tau, h)
-        info[eid] = {"first_seen": first.isoformat(), "half_life": h, "a": a, "full": round(m, 4),
-                     "full_base": round(full["base"][0], 4), "card": e.get("card", "")}
+        fs, ft = round(100 * race_move(groups, dd, {}), 4), round(100 * race_move(groups, {}, dt), 4)
+        info[eid] = {"first_seen": first.isoformat(), "half_life": h, "a": a, "full": round(fs + ft, 4), "full_s": fs,
+                     "full_t": ft, "full_base": round(full["base"][0], 4), "card": e.get("card", "")}
     return {"delta_margin": round(delta, 4), "delta_margin_base": round(delta_base, 4),
             "delta_turnout": round(delta_t, 4),
             "by_group": {g: {k: round(v, 4) for k, v in x.items()} for g, x in by_group.items()},
@@ -150,9 +151,11 @@ def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> 
     return out
 
 
-def paths(m: dict) -> dict:
-    """{race_id or "US": [(first_seen, full effect, half-life)]} from moves.json's main block, for levels.build."""
-    return {r: [(v["first_seen"], v["full"], v["half_life"]) for v in x["events"].values()]
+def paths(m: dict, part: str = "all") -> dict:
+    """{race_id or "US": [(first_seen, full effect, half-life)]} from moves.json's main block, for levels.build: the
+    whole effect, or only its switching ("s") or turnout ("t") part."""
+    key = {"all": "full", "s": "full_s", "t": "full_t"}[part]
+    return {r: [(v["first_seen"], v[key], v["half_life"]) for v in x["events"].values()]
             for r, x in m.items() if r != "shadow" and isinstance(x, dict) and "events" in x}
 
 

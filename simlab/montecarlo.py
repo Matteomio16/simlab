@@ -167,13 +167,30 @@ def _simulate(lv: dict, ids: list[str], params: dict, n: int, seed: int, df: int
 
 def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: str, benchmarks: dict | None = None,
           not_up: dict = NOT_UP, n: int = N_DRAWS, every: int = EVERY, df: int = DF, lo: float = FLOOR,
-          movers: dict | None = None) -> tuple[dict, dict]:
+          movers: dict | None = None, news: dict | None = None) -> tuple[dict, dict]:
     """forecast.json and draws.json from the headline levels and the stats-only twin's, on the same random numbers.
-    The poll-average benchmark is the twin's, which has no story effects in it."""
+    The poll-average benchmark is the twin's, which has no story effects in it.
+
+    `news` ({"switching": {race_id: points}, "turnout": {...}, "sigma": {"s": ..., "t": ...}}) holds each race's story
+    effect in the headline, split into its switching and turnout parts. The sizes behind them (c_s, c_t) are
+    uncertain: every simulated election draws its own multiplier for each part (lognormal, averaging 1), shared by all
+    races, so the forecast is not tied to the fitted values and races with strong simulated reactions get wider,
+    story-driven tails. Each race also reports its win chance with both multipliers at their 10th and 90th
+    percentiles."""
     ids, seed, bm, movers = sorted(head["races"]), seed_for(day), benchmarks or {}, movers or {}
     x, lifted = _simulate(head, ids, params, n, seed, df, lo)
     xt, _ = _simulate(twin, ids, params, n, seed, df, lo)
     parties = [left[r] for r in ids]
+    if news:
+        sig = news["sigma"]
+        ds, dt = (np.array([news[k].get(r, 0.0) for r in ids]) for k in ("switching", "turnout"))
+        rng = np.random.default_rng(seed + 1)
+        mult = lambda k, z: np.exp(sig[k] * z - sig[k] ** 2 / 2)
+        ls, lt = mult("s", rng.standard_normal(n)), mult("t", rng.standard_normal(n))
+        at = {q: {"s": float(mult("s", z)), "t": float(mult("t", z))} for q, z in (("if_weaker", -1.2816),
+                                                                                  ("if_stronger", 1.2816))}
+        fixed = {q: x + (m["s"] - 1) * ds + (m["t"] - 1) * dt for q, m in at.items()}
+        x = x + np.outer(ls - 1, ds) + np.outer(lt - 1, dt)
     seats, seats_t = senate_seats(x, parties, not_up), senate_seats(xt, parties, not_up)
     races = {}
     for i, r in enumerate(ids):
@@ -184,12 +201,19 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
                     "benchmarks": {"poll_avg": None if poll is None else round(float(poll), 2),
                                    "market": b.get("market"), "cook": b.get("cook")},
                     "movers": movers.get(r, [])}
+        if news:
+            races[r]["news"] = {"effect": round(float(ds[i] + dt[i]), 3), "switching": round(float(ds[i]), 3),
+                                "turnout": round(float(dt[i]), 3)} | {
+                q: {"multipliers": {k: round(v, 3) for k, v in m.items()},
+                    "p_dem_win": round(float(np.mean(fixed[q][:, i] > 0)), 4)} for q, m in at.items()}
     twin_senate = senate_summary(seats_t, not_up)
     senate = senate_summary(seats, not_up) | {"stats_only": {k: v for k, v in twin_senate.items() if k.startswith("p_")},
                                               "benchmarks": {"market": bm.get("US-S", {}).get("market")}}
+    if news:
+        senate["news"] = {q: senate_summary(senate_seats(fixed[q], parties, not_up), not_up)["p_r_50plus"] for q in at}
     meta = {"date": str(day), "run_id": run_id, "schema": SCHEMA, "units": UNITS, "seed": seed}
     forecast = meta | {"draws": n, "df": df, "corr_floor": lo, "floor_lifted_pairs": lifted, "races": races,
-                       "senate": senate, "house": None}
+                       "senate": senate, "house": None} | ({"news_prior": {"sigma": news["sigma"]}} if news else {})
     keep = slice(None, None, every)
     sample = lambda xx, ss: {"races": {r: np.round(xx[keep, i], 1).tolist() for i, r in enumerate(ids)},
                              "seats": {"senate": {k: v[keep].tolist() for k, v in ss.items()}}}

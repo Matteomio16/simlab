@@ -221,9 +221,10 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
           E: dict, statewide: pd.DataFrame, today: date, election: date = ELECTION, entries: list[dict] | None = None,
           lv_gap_value: float | None = None, moves: dict | None = None) -> dict:
     """Starting levels for every race on `today` (stats-groundwork §5.2-5.4). With `moves` ({race_id or "US":
-    [(first_seen, full effect, half-life)]}) this is the daily filter (§5.6): each poll is compared with the latent
-    less the story effects in force on its date, and today's effects are added back, so a story moves the level only
-    as far as the polls since it haven't already shown it. Without, it is the stats-only twin."""
+    [(first_seen, full effect, half-life)]}) this is the daily filter (§5.6): the statistical level is estimated from
+    polls less the story effects in force on their dates, and each race's story effects today go on top in full,
+    polls or not (Matteo, 28 Sep). A race without its own stories takes the nation's. Without `moves`, it is the
+    stats-only twin."""
     moves = moves or {}
     d = (election - today).days
     coef, sd_f = params["fundamentals"]["coef"], params["fundamentals"]["sd"]
@@ -239,13 +240,14 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
     p["adj"] = (p.y + np.where(p.population == "lv", 0.0, gap) - p.pollster.map(he["mean"]).fillna(0.0)
                 - p.partisan.map(sp).fillna(0.0))
     p["v"] = (p.s2 + ns2) * np.where(p.partisan.isin(["DEM", "REP"]), 2.0, 1.0) * _flooding(p)
-    for r in set(p.race) & set(moves):
+    path = lambda r: moves.get(r, moves.get("US", []))
+    for r in set(p.race):
         sel = (p.race == r).values
-        p.loc[sel, "adj"] -= effect(p.t.values[sel].astype(float), moves[r], election)
-    now = lambda r: float(effect(np.array([-d], dtype=float), moves.get(r, []), election)[0])
+        p.loc[sel, "adj"] -= effect(p.t.values[sel].astype(float), path(r), election)
+    now = lambda r: float(effect(np.array([-d], dtype=float), path(r), election)[0])
     g = p[p.race == "US"]
     grid, nx, npv = local_level(g.t.values.astype(float), g.adj.values, g.v.values, q_n, -d)
-    n_now, pn_now = float(nx[-1]) + now("US"), float(npv[-1])
+    n_now, pn_now = float(nx[-1]), float(npv[-1])
     e_hat = n_now - params["generic_ballot_bias"]["mean"]
     var_n = pn_now + q_n * d + params["national_poll_bias_sd"]["value"] ** 2
     races = {}
@@ -262,18 +264,19 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
                                     q_r, -d, smooth=False)
             recent = int((t >= -d - 30).sum())
             sb = params["race_poll_bias_sd"]["value"] if recent >= 5 else params["race_poll_bias_sd"]["few_polls"]
-            r_poll, v_poll = float(rx[-1]) + now(race.race_id) - now("US"), float(rv[-1] + q_r * d + sb ** 2)
-            poll_margin = n_now + r_poll
+            r_poll, v_poll = float(rx[-1]), float(rv[-1] + q_r * d + sb ** 2)
+            poll_margin = n_now + r_poll + now(race.race_id)
         r_t, var_r, w = blend(r_poll, v_poll, fund - n_now, sd_f)
         races[race.race_id] = {
-            "margin": n_now + r_t, "sd": float(np.sqrt(var_n + var_r)), "w_polls": w, "poll_margin": poll_margin,
+            "margin": n_now + r_t + now(race.race_id), "sd": float(np.sqrt(var_n + var_r)), "w_polls": w,
+            "poll_margin": poll_margin, "story_effect": now(race.race_id),
             "fundamentals": fund, "n_polls": int(len(rp)),
             "last_poll": str(max(rp.mid)) if len(rp) else None,
             "components": {"lean": lean, "incumbency": inc, "candidate": cand, "candidate_detail": detail,
                            "national_house_vote": e_hat}}
     return {"date": str(today), "schema": 1, "units": "two-party margin, D (or independent challenger) minus R, points",
             "days_to_election": d,
-            "national": {"N": n_now, "var": var_n, "E_hat": e_hat, "n_polls": int(len(g))},
+            "national": {"N": n_now + now("US"), "var": var_n, "E_hat": e_hat, "n_polls": int(len(g))},
             "lv_gap": gap, "sponsor_shift": sp, "house_effects": he["mean"].round(3).to_dict(), "races": races}
 
 

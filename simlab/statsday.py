@@ -114,9 +114,17 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     head = levels.compute(t, day, run_id, moves=moves.paths(mv), inp=inp)
     sha["filter_state.json"] = _write(out / "filter_state.json", head | {"moves": "moves.json, main block (GLM)",
                                                                           "dials": mp["dials"]})
+    part = {k: levels.compute(t, day, run_id, moves=moves.paths(mv, k), inp=inp)["races"] for k in ("s", "t")}
+    news = {name: {r: part[k][r]["margin"] - lv["races"][r]["margin"] for r in lv["races"]}
+            for name, k in (("switching", "s"), ("turnout", "t"))}
+    gap = max(abs(head["races"][r]["margin"] - lv["races"][r]["margin"] - news["switching"][r] - news["turnout"][r])
+              for r in lv["races"])
+    if gap > 1e-6:
+        raise ValueError(f"story effects don't add up across their parts (gap {gap:.2e})")
+    news["sigma"] = {k[-1]: mp["uncertainty"][k]["sigma_log"] for k in ("c_s", "c_t")}
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
     forecast, draws = montecarlo.build(head, lv, {k: v["left_party"] for k, v in races.items()}, params, day, run_id,
-                                       benchmarks=benchmarks(snap, t["race_list"]), movers=moves.movers(mv))
+                                       benchmarks=benchmarks(snap, t["race_list"]), movers=moves.movers(mv), news=news)
     forecast |= {"snapshot": t["snapshot"], "inputs": sha}
     _write(out / "forecast.json", forecast)
     _write(out / "draws.json", draws, compact=True)

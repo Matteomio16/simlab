@@ -105,6 +105,23 @@ class BuildTest(unittest.TestCase):
         self.assertEqual(m["US"]["delta_margin"], 0.0)
 
 
+class PartsTest(unittest.TestCase):
+    def test_switching_and_turnout_parts_add_up(self):
+        groups = {"OH-S": {A: {"n": 0.5, "t": 0.5, "d": 0.8, "pi": 0.1, "mu": 0.2},
+                           B: {"n": 0.5, "t": 0.5, "d": -0.8, "pi": 0.1, "mu": 0.2}}}
+        params = {"c_s": 0.5, "c_t": 0.5, "dials": {}, "half_life_days": {"default": 10}}
+        with tempfile.TemporaryDirectory() as d:
+            write_day(Path(d), "2026-10-01", [event("e1", "2026-10-01T08:00:00+00:00", 1.0)],
+                      [reaction("e1", A, 1.0, 1.0), reaction("e1", B, 0.0, 0.0)])
+            m = moves.build(date(2026, 10, 1), Path(d), groups, params, "run-1")
+        e = m["OH-S"]["events"]["e1"]
+        self.assertAlmostEqual(e["full_s"], 100 * 0.5 * 2 * 0.1 * 0.25, places=4)
+        self.assertAlmostEqual(e["full_t"], 100 * 0.5 * (0.2 * 0.25 / 0.5) * 0.8, places=4)
+        self.assertAlmostEqual(e["full"], e["full_s"] + e["full_t"], places=4)
+        self.assertEqual(moves.paths(m, "s"), {"OH-S": [("2026-10-01", e["full_s"], 10)]})
+        self.assertEqual(moves.paths(m, "t"), {"OH-S": [("2026-10-01", e["full_t"], 10)]})
+
+
 class ReadTest(unittest.TestCase):
     M = {"date": "2026-10-11", "params": {"c_s": 0.2, "c_t": 0.2}, "shadow": {"OH-S": {"events": {}}},
          "OH-S": {"events": {"e1": {"first_seen": "2026-10-01", "half_life": 10, "full": 2.0, "card": "c1"},

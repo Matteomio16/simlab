@@ -215,9 +215,15 @@ class AssemblyTest(unittest.TestCase):
     def test_story_after_the_last_poll_moves_the_level(self):
         twin, head = self.headline({"US": [("2026-09-28", 2.0, 10)], "OH-S": [("2026-09-28", 3.0, 10)]})
         self.assertAlmostEqual(head["national"]["N"] - twin["national"]["N"], 2.0, places=3)
-        w = twin["races"]["OH-S"]["w_polls"]
-        self.assertAlmostEqual(head["races"]["OH-S"]["margin"] - twin["races"]["OH-S"]["margin"], 2.0 + w, places=3)
+        self.assertAlmostEqual(head["races"]["OH-S"]["margin"] - twin["races"]["OH-S"]["margin"], 3.0, places=3)
         self.assertAlmostEqual(head["races"]["NC"]["margin"] - twin["races"]["NC"]["margin"], 2.0, places=3)
+
+    def test_race_story_moves_a_race_without_polls_in_full(self):
+        twin, head = self.headline({"NC": [("2026-09-28", 1.5, 10)]})
+        self.assertEqual(twin["races"]["NC"]["n_polls"], 0)
+        self.assertAlmostEqual(head["races"]["NC"]["margin"] - twin["races"]["NC"]["margin"], 1.5, places=3)
+        self.assertAlmostEqual(head["races"]["OH-S"]["margin"], twin["races"]["OH-S"]["margin"], places=3)
+        self.assertEqual(head["races"]["NC"]["story_effect"], 1.5)
 
 
 if __name__ == "__main__":

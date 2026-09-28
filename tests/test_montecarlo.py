@@ -238,6 +238,25 @@ class BuildTest(unittest.TestCase):
         f, _ = self.build(movers=mv)
         self.assertEqual((f["races"]["NC"]["movers"], f["races"]["NE"]["movers"]), (mv["NC"], []))
 
+    def test_news_size_uncertainty_and_the_sensitivity_map(self):
+        news = {"switching": {"NC": 2.0}, "turnout": {"NC": 1.0}, "sigma": {"s": 0.5, "t": 0.75}}
+        run = lambda: mc.build(levels(nc=5.0), levels(nc=2.0), {"NC": "D", "OH-S": "D", "NE": "I"}, PARAMS,
+                               date(2026, 9, 28), "run-1", not_up={"R": 48, "D": 47, "I": 2}, n=20000, news=news)
+        f, d = run()
+        nc, oh = f["races"]["NC"], f["races"]["OH-S"]
+        spread = lambda m: m["p90"] - m["p10"]
+        self.assertGreater(spread(nc["margin"]), spread(nc["stats_only"]["margin"]) + 0.2)
+        self.assertAlmostEqual(nc["margin"]["p50"], 5.0, delta=0.4)
+        self.assertEqual((oh["p_dem_win"], oh["margin"]), (oh["stats_only"]["p_dem_win"], oh["stats_only"]["margin"]))
+        s = nc["news"]
+        self.assertEqual((s["effect"], s["switching"], s["turnout"]), (3.0, 2.0, 1.0))
+        self.assertLess(s["if_weaker"]["p_dem_win"], nc["p_dem_win"])
+        self.assertGreater(s["if_stronger"]["p_dem_win"], nc["p_dem_win"])
+        self.assertAlmostEqual(s["if_weaker"]["multipliers"]["s"], float(np.exp(-1.2816 * 0.5 - 0.5 ** 2 / 2)), places=3)
+        self.assertIn("if_stronger", f["senate"]["news"])
+        self.assertEqual(f["news_prior"], {"sigma": {"s": 0.5, "t": 0.75}})
+        self.assertEqual(run(), (f, d))
+
     def test_stats_only_twin_uses_its_own_levels(self):
         f, _ = self.build(twin=levels(nc=-2.0))
         nc = f["races"]["NC"]
