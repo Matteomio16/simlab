@@ -25,6 +25,40 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 - Not yet done: first-seen dates across snapshots (for the blind track), ranked-choice handling for Alaska, and
   three-way handling for Montana.
 
+## 2026-09-28 (Engine session): engine design agreed; news spot-check, labels, attention, backlash test
+
+- **Engine design approved by Matteo:** `docs/engine-design.md`, the contract between the sessions.
+  - GLM gives the news reactions in the pilot.
+  - Kev runs in shadow mode: it answers the same questions every day, and its answers are scored but never applied.
+  - The Kev session trains react-v2 on more real events, with a stricter bar for what counts as a clear shift and never
+    on GLM's answers. It costs about $3 of Modal credit.
+  - React-v2 joins the numbers on 12 Oct only if, on held-out events, its direction is at least as good as GLM's, its
+    size-tracking is above zero, and GLM and Kev averaged beat GLM alone.
+- **Matteo's rule: only people who can move count.** A reaction applies only to the share of each group that can still
+  change: the persuadable share `pi` for vote choice and the mobilisable share `mu` for turnout, both estimated from CES
+  pre- and post-election waves. Voters sure of their choice don't change the outcome, and mobilising a group that already
+  votes at 95% barely changes turnout (engine-design §3).
+
+- **News spot-check so far** (Matteo, 16 of 100 stories; more to come):
+  - Jev matched his answers on 54 of 63 labels, GLM on 50.
+  - Both models overrate how much attention a story gets: on 6 of 16 they said "some" where he said "very little".
+  - Both models missed one story in the way his rule below describes. They labelled "Trump ramps up noncitizen voting
+    prosecutions" as helping Republicans; he said it could cut either way.
+- **Decided by Matteo:**
+  - Jev labels the news: relevant or not, event type, and who it helps on its face.
+  - Attention (salience) comes from coverage data: how many outlets carry the story, and lookups. The model's guess only
+    breaks ties.
+  - The spot-check can stop short of 100 stories.
+- **Matteo's rule for news effects:** a story's effect is how each voter group reacts to it, including backlash and
+  mobilisation, not who it helps on paper. For example, a $30M super PAC for the Republican can fire up Democrats.
+  - Approved: a wording test comparing the current reaction question with one that asks how that kind of person feels
+    about the news itself.
+  - It runs on the real events and on about 15 everyday stories where backlash is plausible.
+  - The new wording is adopted only if accuracy on the real events holds.
+- **Kev react-v1** (Kev session, commit 35271c8): it learned the rules (ignore irrelevant news, flip on a party swap)
+  but not how big an event's effect is. On the 19 held-out events, averaging it with GLM made the error worse (2.61 vs
+  2.32 points). So it runs in shadow mode for now (see above).
+
 ## 2026-09-28 (Content & site): label line, visual identity, race cards
 
 - **Label line (Matteo):** every image and caption now says "Social simulation, not a poll" instead of "AI-simulated
