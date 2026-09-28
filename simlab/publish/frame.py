@@ -122,6 +122,17 @@ def _pil(path: str, px: int) -> ImageFont.FreeTypeFont:
     return ImageFont.truetype(path, px)
 
 
+def _ink(t: Text, bb):
+    """The box around a text's glyphs (its line box minus unused ascender and descender room), in display pixels."""
+    f = t.get_fontproperties().get_file()
+    if not f or t.get_rotation() or len(t.get_text().splitlines()) > 1:
+        return bb
+    font = _pil(str(f), max(1, round(t.get_fontproperties().get_size_in_points() * DPI / 72)))
+    _, top, _, bot = font.getbbox(t.get_text(), anchor="ls")  # y grows downward: top < 0 above the baseline
+    base = bb.y0 + max(font.getbbox("lp", anchor="ls")[3], bot)  # display y grows upward
+    return type(bb).from_extents(bb.x0, base - bot, bb.x1, base - top)
+
+
 def pil_font(role: str, weight: int, px: int, theme: Theme = BROADSHEET) -> ImageFont.FreeTypeFont:
     return _pil(str(font_file(role, weight, theme)), int(px))
 
@@ -310,11 +321,18 @@ class Slide:
 
     def layout_problems(self) -> list[str]:
         """Text outside the side margins, or content running into the source zone."""
-        r, out = self.fig.canvas.get_renderer(), []
+        r, out, boxes = self.fig.canvas.get_renderer(), [], []
         for t in self.fig.findobj(Text):
-            if not t.get_text().strip() or t.get_gid() == "footer" or not t.get_visible():
+            if not t.get_text().strip() or not t.get_visible():
                 continue
             bb = t.get_window_extent(r)
+            ib = _ink(t, bb)
+            for other, ob in boxes:  # glyphs of one text touching the glyphs of another
+                if min(ib.x1, ob.x1) - max(ib.x0, ob.x0) > 2 and min(ib.y1, ob.y1) - max(ib.y0, ob.y0) > 2:
+                    out.append(f"overlaps: {t.get_text()[:30]!r} and {other[:30]!r}")
+            boxes.append((t.get_text(), ib))
+            if t.get_gid() == "footer":
+                continue
             if bb.x0 < MARGIN - 2 or bb.x1 > self.w - MARGIN + 2:
                 out.append(f"outside the margins: {t.get_text()[:40]!r}")
             if self.h - bb.y0 > self.limit + 2:

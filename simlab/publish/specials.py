@@ -13,7 +13,7 @@ import numpy as np
 from matplotlib.patches import Ellipse, FancyBboxPatch
 
 from .frame import MARGIN, Slide, pt, typeset
-from .racecards import DAY, RACE, margin_txt, pct_txt, verdict
+from .racecards import DAY, RACE, benchmarks, chip, fit, margin_txt, pct_txt, strip, verdict
 from .themes import BALLOT, CHAMBER, FIGHT, MAP, SEISMO
 
 ELECTION = date(2026, 11, 3)
@@ -48,11 +48,20 @@ def mix(c: str, bg: str, a: float) -> str:
     return "#" + "".join(f"{round(v):02X}" for v in f(c) * a + f(bg) * (1 - a))
 
 
+def lum(c: str) -> float:
+    return sum(int(c[i:i + 2], 16) * w for i, w in ((1, 0.2126), (3, 0.7152), (5, 0.0722))) / 255
+
+
+def light_of(t) -> str:
+    """The theme's lighter base (paper on light themes, ink on dark ones): "leans" tints move toward it."""
+    return t.paper if lum(t.paper) > lum(t.ink) else t.ink
+
+
 def rating_color(t, p: float) -> str:
     if 0.35 <= p <= 0.65:
         return t.ai
     c = t.dem if p > 0.5 else t.rep
-    return c if max(p, 1 - p) >= 0.8 else mix(c, t.paper, 0.55)
+    return c if max(p, 1 - p) >= 0.8 else mix(c, light_of(t), 0.55)
 
 
 def surname(name: str) -> str:
@@ -110,23 +119,11 @@ def ballot(r: dict = NC, t=BALLOT) -> Slide:
     s.ax.plot([x0 + 310, x1 - 28], [y + 72, y + 72], color=t.baseline, lw=pt(2))
     y += 116
     s.ax.add_patch(plt.Rectangle((x0, top), x1 - x0, y - top, fill=False, ec=t.ink, lw=pt(4), zorder=4))
-    s.y = y + 40
-    s.text(f"{verdict(r['p'])}. {r['change']}. Middle 80% of simulated margins: {margin_txt(r['lo'])} to "
-           f"{margin_txt(r['hi'])}.", px=30, color=t.ink2, after=0.8)
+    chip(s, r, y + 36)
+    s.y += 40
     benchmarks(s, r)
     source(s, r, "The Ballot")
     return s
-
-
-def benchmarks(s: Slide, r: dict, px: int = 30):
-    t = s.t
-    s.rule(t.ink, after=18)
-    col = s.width / 3
-    for i, (label, value) in enumerate((("POLL AVERAGE", r["poll"]), ("MARKET, DEM", pct_txt(r["market"])),
-                                        ("COOK", r["cook"]))):
-        s._put(MARGIN + i * col, s.y, label, "mono", 500, 22, t.ink2, va="top")
-        s._put(MARGIN + i * col, s.y + 32, value, "sans", 700, 40, t.ink, va="top")
-    s.y += 32 + 40 * 1.3
 
 
 def main_event(r: dict = NC, t=FIGHT) -> Slide:
@@ -161,10 +158,13 @@ def main_event(r: dict = NC, t=FIGHT) -> Slide:
     col = s.width / 4
     cells = (("POLL AVG", r["poll"]), ("MARKET", pct_txt(r["market"])), ("COOK", r["cook"]),
              ("DAYS LEFT", str(days_left(r.get("day", DAY)))))
+    vpx = 44
+    while vpx > 26 and max(s.pil("hero", 800, vpx).getlength(typeset(v)) for _, v in cells) > col - 20:
+        vpx -= 2
     for i, (label, value) in enumerate(cells):
         x = MARGIN + col * (i + 0.5)
         s._put(x, y + 22, label, "mono", 500, 20, t.ink2, ha="center", va="top")
-        s._put(x, y + 52, value, "hero", 800, 44, t.ink, ha="center", va="top")
+        s._put(x, y + 52, value, "hero", 800, vpx, t.ink, ha="center", va="top")
         if i:
             s.ax.plot([MARGIN + col * i] * 2, [y + 18, y + 104], color=t.baseline, lw=pt(1))
     s.y = y + 120
@@ -178,11 +178,11 @@ def chamber(t=CHAMBER, up: dict = UP, holdover: dict = HOLDOVER, p_r: float = 0.
     the simulations lean, toss-ups in purple. The line marks 50 seats, which is control for Republicans."""
     s = Slide(day, kicker, t, run=run)
     s.headline("Who holds the Senate?", px=80)
-    s.dek(f"Republicans keep 50 seats or more in {p_r * 100:.0f} of 100 simulated Senates.", px=34)
+    s.dek("All 100 seats; the 35 on the ballot by how the simulations lean.", px=32)
     order = sorted(up, key=lambda k: -up[k])
     seats = ([(t.dem, False, None)] * holdover["D"] + [(t.ai if 0.35 <= up[k] <= 0.65 else t.dem if up[k] > 0.5 else t.rep, True, k) for k in order]
              + [(t.rep, False, None)] * holdover["R"])
-    cx, cy, R = s.w / 2, s.y + 440, 420
+    cx, cy, R = s.w / 2, s.y + 470, 420
     rows, pos = 6, []
     radii = np.linspace(R * 0.42, R, rows)
     counts = np.round(100 * radii / radii.sum()).astype(int)
@@ -204,71 +204,89 @@ def chamber(t=CHAMBER, up: dict = UP, holdover: dict = HOLDOVER, p_r: float = 0.
     s._put(cx, cy - 118, f"{p_r * 100:.0f}", "hero", 600, 120, t.ink, ha="center", va="top")
     s._put(cx, cy + 36, "in 100: Republicans hold 50+", "sans", 500, 30, t.ink2, ha="center", va="top")
     s.y = cy + 96
-    items = [("Not up", mix(t.ink2, t.paper, 0.25)), ("D side", t.dem), (f"Toss-up ({tos})", t.ai),
-             ("R side", t.rep)]
+    items = [("D favoured", [t.dem]), ("Toss-up", [t.ai]), ("R favoured", [t.rep]),
+             ("Not up this year", [mix(t.dem, t.paper, 0.25), mix(t.rep, t.paper, 0.25)])]
     x = MARGIN
-    for label, col in items:
-        s.ax.add_patch(plt.Circle((x + 12, s.y + 17), 12, color=col, lw=0))
+    for label, cols in items:
+        for j, col in enumerate(cols):
+            s.ax.add_patch(plt.Circle((x + 12 + j * 20, s.y + 17), 12, color=col, lw=0))
+        x += 20 * (len(cols) - 1)
         s._put(x + 34, s.y + 17, label, "sans", 400, 26, t.ink2, va="center")
-        x += 50 + s.pil("sans", 400, 26).getlength(label) + 30
-    s.y += 56
-    s.rule(t.ink, after=14)
-    s._put(MARGIN, s.y, f"Market for Republican control: {pct_txt(market)}", "sans", 600, 30, t.ink, va="top")
-    s._put(s.w - MARGIN, s.y, f"Not up: D {holdover['D']} · R {holdover['R']}", "sans", 400, 30, t.ink2, ha="right",
-           va="top")
-    s.y += 50
+        x += 34 + s.pil("sans", 400, 26).getlength(label) + 36
+    s.y += 64
+    strip(s, [("Market, R control", pct_txt(market)), ("Toss-ups", str(tos)),
+              ("Not up", f"D {holdover['D']} · R {holdover['R']}")])
     s.source(src or "EXAMPLE: invented numbers, not a forecast. Independents who caucus with Democrats count as D. "
                     "Special edition: The Chamber.")
     return s
 
 
-def seismograph(r: dict = NC, t=SEISMO, history: list = HISTORY, events: list = EVENTS) -> Slide:
+def seismograph(r: dict = NC, t=SEISMO, history: list | None = None, events: list = EVENTS) -> Slide:
     """The Seismograph: two weeks of one race drawn as a trace on chart paper. Each tremor is numbered and tied to the
     neutral event card that caused it."""
     s = base(t, r)
-    s.headline(f"What shook {r['state']} this fortnight.", px=72)
+    if history is None:  # the example trace, moved so it ends on today's number
+        history = [min(max(p - HISTORY[-1] + r["p"], 0.01), 0.99) for p in HISTORY]
+    txt = f"What moved {r['state']}"
+    s.headline(txt, px=fit(s, txt, 72, s.width, low=48))
     x0, x1 = MARGIN, s.w - MARGIN
-    top, h = s.y + 10, 380
-    lo_p, hi_p = 0.30, 0.70
+    top, h = s.y + 6, 360
+    lo_p, hi_p = max(0, min(history) - 0.08), min(1, max(history) + 0.08)
+    lo_p, hi_p = min(lo_p, 0.62), max(hi_p, 0.38)  # always show at least the edge of the toss-up zone
+    if hi_p - lo_p < 0.3:
+        mid = (hi_p + lo_p) / 2
+        lo_p, hi_p = max(0, mid - 0.15), min(1, mid + 0.15)
     Y = lambda p: top + h - (p - lo_p) / (hi_p - lo_p) * h
-    X = lambda i: x0 + 70 + (x1 - x0 - 240) * i / (len(history) - 1)
-    for gx in np.arange(x0, x1 + 1, 18):
-        s.ax.plot([gx, gx], [top, top + h], color=t.hairline, lw=pt(1.4 if (gx - x0) % 90 == 0 else 0.7), zorder=0)
+    cx0 = x0 + 78  # left column holds the scale labels
+    X = lambda i: cx0 + 20 + (x1 - cx0 - 170) * i / (len(history) - 1)
+    for gx in np.arange(cx0, x1 + 1, 18):
+        s.ax.plot([gx, gx], [top, top + h], color=t.hairline, lw=pt(1.4 if (gx - cx0) % 90 == 0 else 0.7), zorder=0)
     for gy in np.arange(top, top + h + 1, 18):
-        s.ax.plot([x0, x1], [gy, gy], color=t.hairline, lw=pt(1.4 if (gy - top) % 90 == 0 else 0.7), zorder=0)
-    s.ax.add_patch(plt.Rectangle((x0, Y(0.65)), x1 - x0, Y(0.35) - Y(0.65), color=t.tossup, alpha=0.7, lw=0, zorder=0))
-    s._put(x0 + 10, Y(0.65) + 8, "TOSS-UP 35–65%", "mono", 500, 20, t.ai, va="top", zorder=2)
-    s.ax.plot([x0, x1], [Y(0.5)] * 2, color=t.baseline, lw=pt(1.5), zorder=1)
-    s._put(x0 + 10, Y(0.5) + 6, "50%", "mono", 400, 20, t.ink2, va="top", zorder=2)
+        s.ax.plot([cx0, x1], [gy, gy], color=t.hairline, lw=pt(1.4 if (gy - top) % 90 == 0 else 0.7), zorder=0)
+    band = Y(min(0.65, hi_p)), Y(max(0.35, lo_p))
+    if band[1] > band[0]:
+        s.ax.add_patch(plt.Rectangle((cx0, band[0]), x1 - cx0, band[1] - band[0], color=t.tossup, alpha=0.8, lw=0,
+                                     zorder=0))
+    if lo_p < 0.5 < hi_p:
+        s.ax.plot([cx0, x1], [Y(0.5)] * 2, color=t.baseline, lw=pt(1.5), zorder=1)
+    for p, col in ((0.65, t.ai), (0.5, t.ink2), (0.35, t.ai), (lo_p, t.ink2), (hi_p, t.ink2)):
+        if lo_p <= p <= hi_p and (p in (0.35, 0.5, 0.65) or min(abs(p - q) for q in (0.35, 0.5, 0.65)) > 0.06):
+            s._put(cx0 - 12, Y(p), f"{p:.0%}", "mono", 500, 20, col, ha="right", va="center")
     xs = np.array([X(i) for i in range(len(history))])
     ys = np.array([Y(p) for p in history])
     fine = np.linspace(0, len(history) - 1, 400)
-    jitter = 5 * np.sin(fine * 23) * np.sin(fine * 3.1)
+    jitter = 4 * np.sin(fine * 23) * np.sin(fine * 3.1)
     s.ax.plot(np.interp(fine, range(len(history)), xs), np.interp(fine, range(len(history)), ys) + jitter,
               color=t.ink, lw=pt(3), zorder=3, solid_joinstyle="round")
     ex, ey = xs[-1], ys[-1]
-    s.ax.add_patch(plt.Polygon([[ex, ey], [ex + 46, ey - 16], [ex + 46, ey + 16]], color=t.ai, zorder=4))
-    s._put(ex + 54, ey, f"{history[-1]:.0%}", "hero", 700, 44, t.ink, va="center", zorder=4)
+    s.ax.add_patch(plt.Polygon([[ex + 4, ey], [ex + 40, ey - 14], [ex + 40, ey + 14]], color=t.ai, zorder=4))
+    s._put(ex + 48, ey, f"{history[-1]:.0%}", "hero", 700, 40, t.ink, va="center", zorder=4)
     for n, (i, _, delta) in enumerate(events, 1):
-        mx, my = X(i), Y(history[i]) + (-44 if delta > 0 else 44)
-        s.ax.add_patch(plt.Circle((mx, my), 20, color=t.ink, zorder=5))
-        s._put(mx, my + 1, str(n), "mono", 600, 24, t.paper, ha="center", va="center", zorder=6)
-    for i in (0, len(history) - 1):
-        d = r.get("day", DAY).toordinal() - (len(history) - 1 - i)
-        s._put(X(i), top + h + 12, date.fromordinal(d).strftime("%d %b").upper(), "mono", 400, 20, t.ink2,
-               ha="center", va="top")
-    s.y = top + h + 60
+        up = delta > 0
+        mx, my = X(i), Y(history[i]) + (-40 if up else 40)
+        if not top + 20 <= my <= top + h - 20:  # no room on its own side: mark it on the other
+            my = Y(history[i]) + (40 if up else -40)
+        s.ax.add_patch(plt.Circle((mx, my), 18, color=t.dem if up else t.rep, zorder=5))
+        s._put(mx, my + 1, str(n), "mono", 600, 22, "#FFFFFF", ha="center", va="center", zorder=6)
+    first = date.fromordinal(r.get("day", DAY).toordinal() - len(history) + 1)
+    s._put(X(0), top + h + 12, first.strftime("%d %b").upper(), "mono", 400, 20, t.ink2, ha="left", va="top")
+    s._put(x1, top + h + 12, "TODAY", "mono", 600, 20, t.ink2, ha="right", va="top")
+    s._put((X(0) + x1) / 2, top + h + 12, "SHADED: TOSS-UP", "mono", 500, 20, t.ai, ha="center", va="top")
+    s.y = top + h + 64
+    s._put(s.w - MARGIN, s.y, "MARGIN MOVE", "mono", 500, 20, t.ink2, ha="right", va="top")
+    s.y += 34
     for n, (i, card, delta) in enumerate(events, 1):
-        s.ax.add_patch(plt.Circle((MARGIN + 20, s.y + 20), 20, color=t.ink))
-        s._put(MARGIN + 20, s.y + 21, str(n), "mono", 600, 24, t.paper, ha="center", va="center")
-        lines = s.wrap(card, "sans", 400, 28, s.width - 200)
+        up = delta > 0
+        s.ax.add_patch(plt.Circle((MARGIN + 18, s.y + 20), 18, color=t.dem if up else t.rep))
+        s._put(MARGIN + 18, s.y + 21, str(n), "mono", 600, 22, "#FFFFFF", ha="center", va="center")
+        lines = s.wrap(card, "sans", 400, 28, s.width - 210)
         for k, line in enumerate(lines):
-            s._put(MARGIN + 60, s.y + 4 + k * 36, line, "sans", 400, 28, t.ink, va="top")
-        s._put(s.w - MARGIN, s.y + 4, f"{delta:+.1f} pts", "mono", 600, 26, t.ink, ha="right", va="top")
-        s.y += max(len(lines), 1) * 36 + 22
-    s.y += 6
-    s.text(f"Today {r['p']:.0%} · poll average {r['poll']} · market {pct_txt(r['market'])} · Cook {r['cook']}",
-           "mono", 500, 24, t.ink2, after=0.4)
+            s._put(MARGIN + 56, s.y + 4 + k * 36, line, "sans", 400, 28, t.ink, va="top")
+        s._put(s.w - MARGIN, s.y + 4, f"{abs(delta):.1f} {'D' if up else 'R'}", "mono", 600, 26, t.ink, ha="right",
+               va="top")
+        s.y += max(len(lines), 1) * 36 + 18
+    s.y += 8
+    benchmarks(s, r)
     source(s, r, "The Seismograph")
     return s
 
@@ -293,16 +311,16 @@ def tile_map(t=MAP, up: dict = UP, cook: dict = COOK, day: date = DAY, run: str 
             if k in cook and cook[k] != verdict(p):
                 s.ax.add_patch(FancyBboxPatch((x - 5, y - 5), size + 10, size + 10, fill=False, ec=t.ink, lw=pt(3.5),
                                               boxstyle="round,pad=0,rounding_size=9", zorder=3))
-            s._put(x + size / 2, y + 28, k, "sans", 700, 26, "#FFFFFF", ha="center", va="center", zorder=4)
-            s._put(x + size / 2, y + 54, f"{p * 100:.0f}", "mono", 500, 20, "#FFFFFF", ha="center", va="center",
-                   zorder=4)
+            fg = "#FFFFFF" if lum(rating_color(t, p)) < 0.6 else "#141414"
+            s._put(x + size / 2, y + 28, k, "sans", 700, 26, fg, ha="center", va="center", zorder=4)
+            s._put(x + size / 2, y + 54, f"{p * 100:.0f}", "mono", 500, 20, fg, ha="center", va="center", zorder=4)
         else:
             s.ax.add_patch(FancyBboxPatch((x, y), size, size, boxstyle="round,pad=0,rounding_size=6", fill=False,
                                           ec=t.baseline, lw=pt(1.5), zorder=2))
             s._put(x + size / 2, y + size / 2, k, "sans", 400, 20, t.muted, ha="center", va="center", zorder=4)
     s.y = top + 8 * (size + gap) + 20
-    items = [("Likely D", t.dem), ("Leans D", mix(t.dem, t.paper, 0.55)), ("Toss-up", t.ai),
-             ("Leans R", mix(t.rep, t.paper, 0.55)), ("Likely R", t.rep)]
+    items = [("Likely D", t.dem), ("Leans D", rating_color(t, 0.7)), ("Toss-up", t.ai),
+             ("Leans R", rating_color(t, 0.3)), ("Likely R", t.rep)]
     x = MARGIN
     for label, col in items:
         s.ax.add_patch(plt.Rectangle((x, s.y + 4), 26, 26, color=col, lw=0))

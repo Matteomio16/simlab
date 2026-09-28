@@ -17,7 +17,7 @@ def stats(s: Slide, items: list[tuple[str, str]], px: int = 120, rule: bool = Fa
         px -= 4
     for i, (value, label) in enumerate(items):
         x = MARGIN + i * col
-        s.hero(x, s.y, value, px)
+        s._put(x, s.y, value, "hero", t.hero_weight, px, t.ink, va="top")
         s._put(x, s.y + px * 1.05, label, "sans", 400, 34, t.ink2, va="top")
     s.y += px * 1.05 + 34 * 1.3 + 40
     return s

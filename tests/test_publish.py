@@ -77,6 +77,18 @@ class TextCheckTest(unittest.TestCase):
     def test_allow_list_for_real_surveys(self):
         self.assertEqual(text.check(f"The survey's own data. {frame.LABEL}", allow=("survey",)), [])
 
+    def test_overlapping_text_blocks_save(self):
+        s = frame.Slide(date(2026, 10, 12), "TEST")
+        s.text("Overlap", px=60)
+        s.y -= 70
+        s.text("Overlap", px=60)
+        self.assertTrue(any("overlaps" in p for p in s.layout_problems()))
+
+    def test_stacked_lines_do_not_count_as_overlap(self):
+        s = frame.Slide(date(2026, 10, 12), "TEST")
+        s.headline("A headline long enough to wrap onto a second line, and a third one too.", px=88)
+        self.assertEqual(s.layout_problems(), [])
+
     def test_special_editions_render(self):
         from simlab.publish import specials
         with tempfile.TemporaryDirectory() as tmp:
