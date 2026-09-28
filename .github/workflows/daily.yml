@@ -1,0 +1,71 @@
+# Once a day, 30 minutes after the 09:17 UTC snapshot: news -> reactions -> statistics -> post kit (simlab/daily.py),
+# outputs committed to the private data repo (derived/<date>/). Runs on schedule only when the repository variable
+# PIPELINE_ON is "true" (from the pilot, 5 Oct); a manual run works any time. Logs are public: the steps print
+# statuses and counts, never data. Package versions come from uv.lock.
+name: daily
+
+on:
+  schedule:
+    - cron: "47 9 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Day to run (YYYY-MM-DD, default today UTC)"
+        required: false
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  daily:
+    if: github.event_name == 'workflow_dispatch' || vars.PIPELINE_ON == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - name: Day
+        run: |
+          d="${{ inputs.date }}"
+          echo "DAY=${d:-$(date -u +%F)}" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          repository: Matteomio16/simlab-data
+          ssh-key: ${{ secrets.SIMLAB_DATA_DEPLOY_KEY }}
+          path: data-repo
+          fetch-depth: 1
+          sparse-checkout: |
+            /README.md
+            /derived/
+          sparse-checkout-cone-mode: false
+      - name: The day's snapshots
+        working-directory: data-repo
+        run: git sparse-checkout add "/snapshots/${DAY}/"
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - uses: actions/cache@v4
+        with:
+          path: runs/cache.sqlite
+          key: llm-cache-${{ env.DAY }}-${{ github.run_id }}
+          restore-keys: llm-cache-${{ env.DAY }}-
+      - name: Run the day
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          SIMLAB_BUDGET_USD: "2"
+        run: uv run python -m simlab.daily --date "$DAY" --data data-repo --kev "${{ vars.KEV_URL }}"
+      - name: Push outputs to the data repo
+        if: always()
+        working-directory: data-repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --sparse derived
+          git commit --quiet -m "Daily run ${DAY}" || exit 0
+          for i in 1 2 3; do
+            git pull --quiet --rebase && git push --quiet && exit 0
+            sleep 15
+          done
+          exit 1
