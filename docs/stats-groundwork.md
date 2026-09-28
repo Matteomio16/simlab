@@ -51,6 +51,13 @@ Words used below:
 8. **What beating the stats-only twin can mean:** where polls are dense, reactions can matter only in the days
    between polls. The simulation carries weight where polls are sparse (most Senate races and most House seats) and
    through the dials. Scores should be reported separately for poll-rich and poll-poor races.
+9. **Fitted on history (28 Sep, §5.10):** the recipe holds up on past elections.
+   - For well-polled, close Senate races, the best election-day weight on polls was 0.82 (the formula gives about 0.8).
+   - Polls miss together nationally by about 3 points a year, plus 3.5 per race and 2.6 per state.
+   - Races drift about 0.5 points a day.
+   - Fundamentals alone miss by 7.5–8 points per race.
+   - Sponsored polls lean about 4.7 points toward their sponsor.
+   Four small choices follow from this (D9–D12), plus a data request (D13).
 
 ## 2. Inputs: where each comes from and its shape
 
@@ -269,11 +276,11 @@ From the merged table (§2.2):
    take the version closest to the real ballot.
 3. Two-party margin: `m = 100 × (D − R) / (D + R)`. The sampling variance comes from the decided respondents only:
    `s² = 4·10⁴ · p(1 − p) / n_decided`, with `p = D / (D + R)` and `n_decided = n × (D + R) / 100`.
-4. Poll variance `v = s² + σ_ns²`. σ_ns is non-sampling error (weighting, mode, timing), fitted from the spread of
-   polls around the average (default 2.5 points; Shirani-Mehr et al. put total poll variance at about 1.5× the
-   sampling variance).
-5. Partisan poll (D1): `v × 2`, which is half weight. Several polls by one pollster in one race within 14 days:
-   `v × k` each, so together they weigh as one poll (Field Guide).
+4. Poll variance `v = s² + σ_ns²`. σ_ns is non-sampling error (weighting, mode, timing): 2.0 points, the middle of
+   the fitted 1.2–3.2 (§5.10). It is refitted from this year's spread of polls around the average.
+5. Partisan poll (D1): `v × 2`, which is half weight. History says sponsored polls also lean about 4.7 points toward
+   their sponsor (§5.10), so D9 proposes correcting that as well. Several polls by one pollster in one race within 14
+   days: `v × k` each, so together they weigh as one poll (Field Guide).
 6. Dated at the field-period midpoint; entered on the day first seen.
 
 ### 5.2 Poll average (pilot)
@@ -286,8 +293,8 @@ A race poll from August is thus read against the national level of August. If th
 the race moves with it until new race polls arrive. That is what keeps poll-poor races current.
 
 Each poll: `y = latent + house effect of its pollster + LV gap (if RV or A) + noise(v)`.
-- **Drift:** N and each R_r follow random walks with daily SDs σ_N and σ_R (defaults 0.2 and 0.25 points; fitted in
-  §5.10).
+- **Drift:** N and each R_r follow random walks with daily SDs σ_N = 0.3 and σ_R = 0.5 points (fitted in §5.10;
+  midterm Senate races drifted faster, 0.8, partly undecided voters breaking late).
 - **House effects:** pooled across the generic ballot and all Senate races, prior N(0, 3²) (Field Guide), and centred
   on the average pollster. Estimated by alternating three to five times: smooth the averages, take each poll's
   residual, then set each pollster's effect to its shrunken mean residual.
@@ -297,18 +304,23 @@ Each poll: `y = latent + house effect of its pollster + LV gap (if RV or A) + no
 
 ### 5.3 Fundamentals
 
-For race r in state s, the fundamentals guess for the gap to the national environment:
-`F_r = L_s + I_r + C_r`
-- **Lean:** `L_s = 0.75 × (M24_s − M24_US) + 0.25 × (M20_s − M20_US)`, from two-party presidential margins (Field Guide:
-  75–80% on 2024).
-- **Incumbency** `I_r`: +2 for an elected senator running again, +1 for a first-termer or an appointed senator (Husted,
-  Moody). These are assumptions; §5.10 fits them on Senate results 2006–24.
-- **Candidate effect** `C_r`: half of the nominee's own over- or under-performance in their last statewide race in
-  the past 12 years, measured against that year's lean and national vote. This covers incumbents, former senators and
-  former governors. It is rule-based and logged, with no hand-set "quality" scores. Collins, Brown and Cooper are
-  where it matters most.
-- **Uncertainty:** SD σ_F = 8 points, FiftyPlusOne's race-level SD for an unpolled Senate race. The national and
-  regional parts are carried separately (§5.4, §5.8).
+For race r in state s, the fundamentals margin is the formula fitted in §5.10:
+
+`M_r = 0.62 × lean(2024) + 0.26 × lean(2020) + 5.1 × incumbent + 0.71 × E + 0.38 × prior over-performance + 2.8`
+
+The fundamentals guess for the gap to the national environment is then `F_r = M_r − N`.
+- **Lean:** the state's two-party presidential margin minus the nation's. The weights are fitted: close to the
+  Field Guide's 75/25, but summing to 0.88 (D11).
+- **Incumbent:** +1 for a Democratic senator running again, −1 for a Republican. Appointed senators (Husted, Moody)
+  get half. That is an assumption, because the fit only sees elected incumbents.
+- **E**, the national House vote: the generic-ballot level N minus the generic ballot's historical overstatement of
+  Democrats (D12).
+- **Prior over-performance:** the nominee's own over- or under-performance in their last statewide race of the past
+  12 years, beyond lean, national vote and incumbency. It covers incumbents, former senators and former governors.
+  The rule was decided as "half"; the fitted share is 0.38 (D10). It is rule-based and logged, with no hand-set
+  "quality" scores. Collins, Brown and Cooper are where it matters most.
+- **Uncertainty:** SD σ_F = 7.5 points. It is fitted: 8.0 for races predicted within 15 in 2012–24, 7.4 in 2016–24.
+  The national and regional parts are carried separately (§5.4, §5.8).
 
 National environment: in the pilot, the generic-ballot level N alone. In the fuller version, approval enters as a
 national fundamentals prior (president's party's House vote against net approval in past midterms), blended with N
@@ -318,19 +330,20 @@ the same way as below, and only if a leave-one-cycle-out test shows it helps (D4
 
 On election day T, for each race:
 1. **From polls:** `R̂_r(t)` from the filter, with variance P_r. Project to T by adding drift `σ_R² × (T − t)`, then add
-   the permanent race-level poll bias σ_bS² (default 4.5², the Field Guide's 4–5 for a well-polled Senate race). This
-   error is shared by all polls of a race, so it never shrinks as polls pile up: `V_r = P_r + σ_R²(T − t) + σ_bS²`.
+   the permanent race-level poll bias σ_bS² (fitted: 3.5 for races with 5+ recent polls, 5.9 for fewer). This error
+   is shared by all polls of a race, so it never shrinks as polls pile up: `V_r = P_r + σ_R²(T − t) + σ_bS²`.
 2. **From fundamentals:** `F_r` with variance σ_F².
 3. **Blend by inverse variance:** `R̂_r(T) = w·R̂_r(t) + (1 − w)·F_r`, with `w = σ_F² / (σ_F² + V_r)`.
-4. **National:** `N̂(T)` with variance `P_N + σ_N²(T − t) + σ_bN²`, where σ_bN is the national poll bias (default
-   3.5; the Field Guide gives 3.5–4.8, and generic-ballot averages have missed by 3.9 on average since 1998).
-   In the fuller version it is blended with the approval prior.
+4. **National:** `N̂(T)` with variance `P_N + σ_N²(T − t) + σ_bN²`, where σ_bN is the national poll bias. It is
+   fitted at 3.0: the Senate polls' shared miss per cycle, which is what polled races inherit. For unpolled races, the
+   generic ballot's own spread (2.8) around its mean overstatement applies. In the fuller version N is blended with the
+   approval prior if approval passes its test.
 5. **Race margin:** `N̂(T) + R̂_r(T)`.
 
 What this does: an unpolled race is all fundamentals (w = 0) and moves daily with N. A heavily polled race gets
-mostly polls but never more than `σ_F² / (σ_F² + σ_bS²)`, about three-quarters with the defaults. FLIPR's
-election-day split for heavily polled Senate races is about 58% polls. §5.10 fits σ_F and σ_bS, and the weight follows. Each race
-publishes its poll weight w, so readers can see how much the polls count.
+mostly polls but never more than `σ_F² / (σ_F² + σ_bS²)`, about 0.8 with the fitted sizes. In 2006–22, the best
+election-day weight on polls for such races was 0.82 (§5.10). About five weeks out, the remaining drift lowers it to
+about 0.7. Each race publishes its poll weight w, so readers can see how much the polls count.
 
 This is the stats-only forecast. The headline differs only through the reactions (§5.6).
 
@@ -398,8 +411,9 @@ Kalman update suffices is in §9.
 
 - 40,000 draws. The seed is set from the run date and recorded.
 - Each race's election-day margin = its mean (§5.4) + national + regional (the 9 census divisions) + state + race
-  error. The national SD comes from §5.4. The regional and state parts use defaults (2.5 and 2.0, Field Guide/538)
-  until §5.10; the race error takes the rest of each race's variance.
+  error. The national SD comes from §5.4. The regional and state parts are fitted: 1.1 and 2.6 (§5.10). All races in
+  a state share the state term; the race error takes the rest of each race's variance. Census divisions carry little
+  shared error; the fuller version's demographic factors should capture more of the regional pattern.
 - **Fat tails:** a multivariate Student-t with 8 degrees of freedom. Each draw gets one shared scale, so an extreme
   year is extreme everywhere, and the correlations stay as specified.
 - **Correlation floor:** check every pair at 0.25 or more each run. If any pair falls short (possible for two
@@ -414,26 +428,80 @@ Kalman update suffices is in §9.
 ### 5.9 House
 
 - **~395 seats, fundamentals map:** district lean on the lines in force (2024 presidential from The Downballot, with
-  2020 on the same lines at 25% if available) + N + incumbency (+2, +1 for first-termers, × 0.7 where the district was
-  redrawn; Field Guide). Uncontested seats are fixed. District error SD 7–9 when unpolled.
+  2020 on the same lines at 25% if available) + N + incumbency. Incumbency uses the Field Guide rule (first-termers
+  get half, × 0.7 where the district was redrawn) until it is fitted on the MIT House file, which is now on disk.
+  Uncontested seats are fixed. District error SD 7–9 when unpolled, to be fitted the same way.
 - **~40 seats:** the same, plus district polls (VoteHub `us-representative`, 104 entries on 28 Sep, plus Wikipedia),
   district voter-group weights (§5.5) and reactions.
 - **Picking the 40:** the closest fundamentals margins, plus the consensus Toss-up and Lean seats from the Wikipedia
   ratings table. Ratings are used for selection only and never enter the numbers.
 
-### 5.10 Calibration from history (5–9 Oct)
+### 5.10 Calibration from history (fitted 28 Sep)
 
-Fit on 2006–2022, holding 2024 out as a check, one cycle out at a time:
-- **Poll error split** into national (per cycle), race and poll parts, from 538 `raw_polls`: gives σ_bN, σ_bS and σ_ns.
-- **Drift:** how much Senate and House averages moved in the last five weeks (538 poll histories): gives σ_N and σ_R.
-- **Fundamentals:** Senate result minus (lean + national House vote) against incumbency and past over-performance
-  (MIT): gives σ_F, the incumbency sizes and the candidate-effect share.
-- **National:** House vote against the final generic ballot, and approval if the test says so.
-- **House-effect priors** for pollsters active in 2026: their 2018–24 lean against other pollsters in the same race,
-  not against results (which mixes in each year's shared miss).
-- **Checks:** 80% intervals cover about 80%; Brier score and calibration by bin; no negative correlations.
+`python -m simlab.calib` reproduces everything below and writes `simlab/stats_params.json`. Margins are two-party,
+D minus R; a poll error is poll minus result, so + means the polls overstated the Democrat.
 
-Fitting the statistics on 2006–22 is not the LLM-contamination problem; that applies to the agent layer.
+**Poll errors** (538 `raw_polls`, polls in the last 21 days, 1998–2022; method of moments: national + race + poll):
+
+| Senate races | Polls | Extra poll noise | Race-level shared error | National shared error |
+| --- | --- | --- | --- | --- |
+| All | 2,557 | 3.2 (sampling 4.0) | 5.9 | 3.0 (RMS 3.2) |
+| 5+ polls, result within 15 | 1,653 | 1.7 | 3.6 | 3.5 |
+| Same, 2006–2022 only | 1,319 | 1.2 | 3.3 | 2.6 |
+| Fewer than 5 polls | 466 | 5.9 | 5.9 | 3.5 |
+| 5+ polls, within 15, 22–61 days out | 1,428 | 2.5 | 5.0 | 3.8 |
+
+- The national miss is shared across offices: its yearly values correlate 0.90–0.98 between Senate, governor and
+  presidential polls, and only 0.38 with the generic ballot.
+- **Generic ballot:** the final average overstated Democrats in 9 of 13 cycles; the mean is +2.8, the spread (SD) 2.8
+  and the root-mean-square error 3.9 (by cycle: −0.8 to +7.6; 2018 −0.7, 2020 +5.4, 2022 +2.4). Part of this is the
+  House vote itself (uncontested seats), which is why it tracks the Senate misses poorly.
+- **Sponsored polls** sit 4.9 points more Democratic (D sponsor) or 4.6 more Republican (R sponsor) than the
+  nonpartisan polls of the same race (medians 4.0 and 4.3).
+- **Polls understate landslides:** in races won by 10 points or more, the final polls had the winner about 2 points
+  short (undecided voters break toward the favourite). The blend with fundamentals pulls such races back.
+- **Region and state:** with the national miss removed, statewide races' shared errors split into region (census
+  division) SD 1.1, state SD 2.6 (all offices in one state miss together) and race-only SD 3.7.
+
+**Drift** (538 poll lists, last 120 days, random walk plus poll noise by maximum likelihood; pollster-mix changes count
+as drift, so these are upper bounds):
+
+| Series | Races | Daily SD | Over 35 days |
+| --- | --- | --- | --- |
+| Senate 2018–2024 | 71 | 0.57 | 3.3 |
+| Senate midterms 2018, 2022 | 37 | 0.81 | 4.8 |
+| Senate 2024 | 17 | 0.41 | 2.4 |
+| Generic ballot 2018–2022 | 3 cycles | 0.28 | 1.7 |
+
+The same picture comes from the error sizes: race-level error grows from 3.6 to 5.0 between the last three weeks and
+three to nine weeks out, about 0.4 of variance a day.
+
+**Fundamentals** (MIT, Senate 2012–2024, 221 races with a Democrat and a Republican as the top two, Louisiana's
+jungle races left out; each year predicted from the other years):
+
+`margin = 0.62 × lean(latest) + 0.26 × lean(previous) + 5.1 × incumbent + 0.71 × national House vote + 0.38 × prior over-performance + 2.8`
+
+- **Lean:** each state's presidential margin minus the nation's, the latest and the previous election. The weights are
+  close to the recipe's 75/25 but add up to 0.88, not 1.
+- **Incumbent:** +1 for a Democratic incumbent, −1 for a Republican. The effect is 4.1 on 2016–2024.
+- **Prior over-performance:** the incumbent's previous win beyond lean, the national vote and incumbency.
+- **Error when predicted from other years:** 8.9 points; 8.0 for races predicted within 15; 7.4 on 2016–2024. By year
+  it falls from about 10.5 (2012–18) to 7.9, 6.4 and 5.6 (2020, 2022, 2024), as races nationalise.
+- The big misses are real personal votes (Collins, Byrd, Conrad, Manchin), which is what the prior over-performance
+  term catches.
+
+**Blend check** (2006–2022, Senate races with 5+ polls in the last 21 days and a poll average within 15, national misses
+removed): the weight on polls that minimised error was 0.82. Poll and fundamentals errors barely correlate (0.04). The
+blend beat both parts: error 4.4, against 5.1 for polls alone and 9.1 for fundamentals alone. The inverse-variance
+weight in §5.4 with the fitted sizes gives about 0.8. The recipe is confirmed on data it wasn't built from.
+
+Still to do:
+- **House-effect priors** for pollsters active in 2026, from their 2018–24 lean against other pollsters in the same
+  race.
+- A backtest of the full pilot chain on 2018–2024.
+- **Approval:** its test needs approval ratings before 2018, which aren't on disk (§8).
+
+Fitting the statistics on 1998–2024 is not the LLM-contamination problem; that applies to the agent layer.
 
 ## 6. What lands when
 
@@ -487,6 +555,23 @@ Matteo decided all of these on 28 Sep, as recommended (recorded in `docs/CHANGEL
 - **D8. Publishing the poll list:** the Wikipedia-derived part must be CC BY-SA, with attribution. Recommend a
   sources line on the methods page and CC BY-SA on any published poll table.
 
+Raised by the fits (§5.10), open:
+- **D9. Sponsor shift.** Sponsored polls leaned 4.9 (D) and 4.6 (R) points toward their sponsor, against nonpartisan
+  polls of the same race. Half weight shrinks that lean but doesn't remove it: a race polled mostly by one side's
+  sponsors would still tilt. Recommend also shifting sponsored polls about 4.7 points against the sponsor (the Field
+  Guide's "shifted against the sponsor"), re-estimated on this year's polls.
+- **D10. Candidate-effect share.** Decided as half; history says 0.38 of a past over-performance carries over.
+  Recommend the fitted 0.38. The rule stays the same; only the share changes.
+- **D11. Lean weights.** The recipe says 0.75 × 2024 + 0.25 × 2020. History fits 0.62 and 0.26: the same split, but
+  lopsided states count a little less. Recommend the fitted weights.
+- **D12. Generic-ballot correction.** The final generic-ballot average overstated Democrats by 2.8 on average
+  (1998–2022; 9 of 13 cycles). Recommend subtracting 2.8 where the generic ballot feeds the fundamentals, with its
+  spread (2.8) as uncertainty. Polled races aren't affected: the correction cancels there. This mostly moves unpolled
+  races.
+- **D13. Approval data.** The approval test (D4) needs approval ratings for past midterms (1998–2014), which aren't on
+  disk. The source would be the Gallup series from the UC Santa Barbara American Presidency Project, a web table of
+  about 100 KB. Recommend fetching it for the fuller version; the pilot doesn't need it.
+
 ## 9. Notes for engine-design.md
 
 - **Race ids:** one stable id per race across all files (state, office, seat or district), with special or ranked-choice
@@ -508,25 +593,29 @@ Matteo decided all of these on 28 Sep, as recommended (recorded in `docs/CHANGEL
   simulated data. The weekly clock can stay as a policy (re-tune dials on Mondays) even though the maths would allow
   daily updates.
 
-## 10. Assumption register: starting defaults
+## 10. Assumption register
 
-Each is replaced by §5.10 where marked "fit"; the rest stay as assumptions and are listed in the methods page.
+Fitted values come from `python -m simlab.calib` (28 Sep; `simlab/stats_params.json`). The rest stay as assumptions and
+are listed on the methods page.
 
-| Parameter | Default | Source | Then |
+| Parameter | Value | Source | Status |
 | --- | --- | --- | --- |
-| Partisan poll weight | 0.5 | brief | fixed |
+| Partisan poll weight | 0.5 | brief, D1 | fixed |
+| Sponsor shift | about 4.7 against the sponsor | fitted (4.9 D, 4.6 R) | pending D9 |
 | Pollster flooding | one weight per pollster per race per 14 days | Field Guide | fixed |
-| House-effect prior | N(0, 3²) | Field Guide | priors from 2018–24 |
+| House-effect prior | N(0, 3²) | Field Guide | priors from 2018–24 next |
 | LV gap for RV/A polls | this year's paired mean, cap ±2 | §2.3 | refit weekly |
-| Non-sampling poll error σ_ns | 2.5 | Shirani-Mehr et al. | fit |
-| Daily drift σ_N / σ_R | 0.2 / 0.25 | assumption | fit |
-| National poll bias σ_bN | 3.5 | Field Guide (3.5–4.8), 538 | fit |
-| Race-level poll bias σ_bS | 4.5 | Field Guide (4–5, well-polled Senate race) | fit |
-| Lean weights 2024 / 2020 | 0.75 / 0.25 | Field Guide | fixed |
-| Incumbency (elected / first-term or appointed) | +2 / +1 | Field Guide, assumption | fit |
-| Candidate-effect share | 0.5 | assumption | fit if data allow |
-| Fundamentals SD σ_F (race part) | 8 | FiftyPlusOne | fit |
-| Regional / state SD | 2.5 / 2.0 | 538 | fit |
+| Non-sampling poll error σ_ns | 2.0 | fitted 1.2–3.2 | refit on 2026 polls |
+| Daily drift σ_N / σ_R | 0.3 / 0.5 | fitted 0.28 / 0.41–0.81 | refit with house effects removed |
+| National poll bias σ_bN | 3.0 | fitted 2.6–3.5 (Senate polls' national miss) | fitted |
+| Race-level poll bias σ_bS | 3.5 (5+ polls), 5.9 (fewer) | fitted | fitted |
+| Generic-ballot overstatement of D | 2.8, spread 2.8 | fitted 1998–2022 | pending D12 |
+| Lean weights, latest / previous | 0.62 / 0.26 | fitted (recipe: 0.75 / 0.25) | pending D11 |
+| National House vote coefficient | 0.71 | fitted | fitted |
+| Incumbency (per incumbent, margin points) | 5.1 (appointed: half) | fitted 4.1–5.1; appointed is an assumption | fitted |
+| Candidate-effect share | 0.38 | fitted (decided: half) | pending D10 |
+| Fundamentals SD σ_F (race part) | 7.5 | fitted 7.4–8.0 | fitted |
+| Regional / state / race-only SD | 1.1 / 2.6 / 3.7 | fitted (census divisions) | fitted |
 | Tails | Student-t, 8 df | FiftyPlusOne (8–10) | fixed |
 | Correlation floor | 0.25 | Economist model | fixed |
 | Draws / published sample | 40,000 / 1,000 | brief | fixed |

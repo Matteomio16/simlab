@@ -2,6 +2,33 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): statistics layer calibrated on past elections
+
+- `python -m simlab.calib` (new `simlab/calib.py`) fits the sizes the filter, blend and Monte Carlo need and writes
+  `simlab/stats_params.json`. Inputs: 538's polls with results (1998–2022), 538's poll lists (2018–24) and the MIT
+  results. Details in `docs/stats-groundwork.md` §5.10; two-party margins throughout.
+  - **Poll errors** (last three weeks):
+    - Senate polls share a national miss of about 3 points a year.
+    - Race-level error is 3.5 for well-polled close races and 5.9 with fewer than 5 polls.
+    - Noise beyond sampling is 1.2–3.2.
+    - Shared errors split into state 2.6, region 1.1 and race-only 3.7.
+  - **Drift:** Senate races about 0.5 points a day (0.8 in the 2018 and 2022 midterms); generic ballot 0.3.
+  - **Fundamentals** (Senate 2012–24): margin = 0.62 × lean(latest) + 0.26 × lean(previous) + 5.1 × incumbent + 0.71
+    × national House vote + 0.38 × prior over-performance + 2.8. The error, predicting each year from the others, is
+    8.0 for races predicted within 15, and 5.6 in 2024.
+  - **Blend:** the best election-day weight on polls for well-polled close races was 0.82 (2006–22). The
+    inverse-variance formula with the fitted sizes gives about 0.8.
+  - **Other findings:** the final generic-ballot average overstated Democrats by 2.8 on average (1998–2022).
+    Sponsored polls lean about 4.7 points toward their sponsor.
+- New open choices for Matteo, in stats-groundwork §8:
+  - D9: shift sponsored polls against their sponsor;
+  - D10: fitted candidate share of 0.38 instead of half;
+  - D11: fitted lean weights;
+  - D12: generic-ballot correction for unpolled races;
+  - D13: fetch past approval data for the approval test.
+- Matteo downloaded the MIT House file by hand (it sits behind a Dataverse guestbook); `statsdata` now registers
+  hand-downloaded files. Matteo OK'd the CLAUDE.md §5 summary of the 28 Sep decisions.
+
 ## 2026-09-28 (Statistics session): Matteo's decisions on the statistics layer; downloads
 
 Decided by Matteo, all as recommended in `docs/stats-groundwork.md` §8:

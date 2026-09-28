@@ -1,0 +1,68 @@
+{
+ "fitted": "2026-09-28, python -m simlab.calib",
+ "poll_extra_sd": {
+  "value": 2.0,
+  "fit": [
+   1.17,
+   3.23
+  ],
+  "note": "extra poll noise beyond sampling; range from well-polled close races (2006-22) to all Senate races"
+ },
+ "race_poll_bias_sd": {
+  "value": 3.5,
+  "fit": 3.59,
+  "few_polls": 5.91,
+  "note": "error shared by a race's polls in the last 3 weeks, national part removed"
+ },
+ "national_poll_bias_sd": {
+  "value": 3.0,
+  "fit": [
+   3.46,
+   3.16
+  ],
+  "note": "Senate polls' shared miss per cycle"
+ },
+ "generic_ballot_bias": {
+  "mean": 2.78,
+  "sd": 2.83,
+  "note": "final generic-ballot average minus national House vote, 1998-2022; + = overstated D"
+ },
+ "sponsor_shift": {
+  "DEM": 4.86,
+  "REP": -4.61
+ },
+ "drift_daily_sd": {
+  "race": 0.5,
+  "national": 0.3,
+  "fit": {
+   "senate_2018_2024": 0.566,
+   "senate_midterms": 0.811,
+   "senate_2024": 0.405,
+   "generic_ballot": 0.281
+  }
+ },
+ "fundamentals": {
+  "coef": {
+   "r1": 0.619,
+   "r2": 0.264,
+   "inc": 5.142,
+   "E": 0.713,
+   "pr": 0.376,
+   "const": 2.757
+  },
+  "sd": 7.5,
+  "oos_rmse": 8.87,
+  "oos_rmse_close": 8.01,
+  "note": "margin = r1*lean_latest + r2*lean_previous + inc*incumbent(+1 D/-1 R) + E*national House vote + pr*prior over-performance + const"
+ },
+ "blend": {
+  "best_poll_weight": 0.82,
+  "races": 103
+ },
+ "mc": {
+  "regional_sd": 1.08,
+  "state_sd": 2.62,
+  "race_only_sd": 3.67,
+  "regions": "census divisions"
+ }
+}
