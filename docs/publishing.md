@@ -37,9 +37,13 @@ Tests: `python -m unittest tests.test_publish`.
 
 ## The daily kit (due Sun 4 Oct)
 
-- **Input:** the day's forecast file (format in `docs/engine-design.md`, pending). Until it exists, a fixture shaped like
-  the Monte Carlo outputs in `docs/stats-groundwork.md` §5.8 (win chance, 10–90% margin range, seat distributions, the
-  1,000-draw sample, the stats-only twin), plus the poll average, market and Cook, and the day's events.
+- **Input** (`docs/engine-design.md` §7, approved 28 Sep): `forecast.json` (per race `p_dem_win`, margin p10/p50/p90,
+  `stats_only`, `benchmarks` {poll_avg, market, cook}, `movers` [{event_id, card, delta}]; Senate and House control) and
+  `draws.json` (the fixed 1,000-draw sample, for dot charts), from `simlab-data/derived/YYYY-MM-DD/`; public copies
+  under `simlab/public/forecasts/` only from 12 Oct. Race names from `races.json`. Race ids map to tag codes: `NC` →
+  NC-SEN, `OH-S` → OH-SEN (special), `TX-28` → TX-28.
+- **Rules for these inputs:** posts quote the neutral event `card`, never raw headlines. `moves.json` breakdowns by
+  voter group describe the simulation's reasoning ("Why it moved"), never public opinion: no "young voters think".
 - **Output:** `kits/<date>/`: slides, `reel.mp4` when useful, `caption_instagram.txt`, `alt_text.json`, `thread.txt`,
   `note.md` (what changed and why, rule checks first), `manifest.json` (input and file hashes). `kits/` is gitignored:
   kits stay internal during the pilot.
