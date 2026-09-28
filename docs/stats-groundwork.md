@@ -454,7 +454,25 @@ Kalman update suffices is in §9.
   is produced for the stats-only twin.
 - **Size:** about 470 races × 40,000 draws is 19 million numbers, under a second in numpy.
 
+**Built 28 Sep:** `simlab/montecarlo.py` (20 tests), run daily by `python -m simlab.statsday` (6 tests), which also
+writes `polls.csv`, `races.json` and `levels.json`.
+- **Tails:** the Student-t's shared scale is set so each race keeps its fitted SD; only the tails fatten.
+- **Floor:** on the 28 Sep run the 0.25 floor lifted 21 pairs, all involving races without polls.
+- **Benchmarks** (display only):
+  - market: Kalshi and Polymarket bid-ask midpoints, normalised over the race's candidates and averaged;
+  - Cook: from the Wikipedia predictions table.
+- **Senate control:** `p_r_50plus`, plus `p_d_caucus_51`, which counts only King and Sanders as caucusing with
+  Democrats.
+- **Headline and twin:** until the filter lands, they run on the same levels and the same random numbers.
+
 ### 5.9 House
+
+*Moved to the Kev session on 28 Sep (Matteo's call, via the roadmap session). The interface agreed with Kev:*
+- *`house_levels.json`: all 435 seats in the `levels.json` race shape, on `levels.json`'s national block;*
+- *`house_groups.json` and `house_races.json`;*
+- *`simlab/house.py` `run(day, data, levels)`, which statsday calls after the levels.*
+
+*Statistics provides the state table of persuadable and mobilisable shares, `simlab/pimu.json`, for all 50 states.*
 
 - **~395 seats, fundamentals map:** district lean on the lines in force (2024 presidential from The Downballot, with
   2020 on the same lines at 25% if available) + N + incumbency. Incumbency uses the Field Guide rule (first-termers
@@ -748,5 +766,10 @@ are listed on the methods page.
 | Tails | Student-t, 8 df | FiftyPlusOne (8–10) | fixed |
 | Correlation floor | 0.25 | Economist model | fixed |
 | Draws / published sample | 40,000 / 1,000 | brief | fixed |
+| Student-t scaling | keeps each race's SD (t scaled by √(6/8)) | assumption; the SDs were fitted as SDs | fixed |
+| Race-only variance, minimum | 1 point² | numerical (keeps the matrix invertible); binds for no 2026 race | fixed |
+| Senate seats not up | 31 R, 32 D, 2 I (King, Sanders) | overview page, 28 Sep | fixed |
+| Independents and control | R ≥ 50 is control (VP breaks ties); only King and Sanders counted with Democrats | D3 | decided |
+| Market benchmark | Kalshi + Polymarket bid-ask midpoints, normalised over candidates, averaged | display only | fixed |
 | Dials before the first weekly update | 1 | assumption | weekly filter |
 | Group turnout party gap | CES validated odds ratio within cell | assumption | check against NC voter file |

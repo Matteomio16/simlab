@@ -260,17 +260,9 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
             "lv_gap": gap, "sponsor_shift": sp, "house_effects": he["mean"].round(3).to_dict(), "races": races}
 
 
-def main() -> None:
-    from . import polls
+def compute(t: dict, today: date, run_id: str) -> dict:
+    """levels.json for one snapshot's poll tables (polls.build)."""
     from .statsdata import mit
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--snapshot", type=Path, default=None)
-    ap.add_argument("--out", type=Path, default=None)
-    ap.add_argument("--run-id", default=os.environ.get("RUN_ID"))
-    args = ap.parse_args()
-    snap = args.snapshot or polls.latest_snapshot()
-    today = date.fromisoformat(snap.parent.name)
-    t = polls.build(snap)
     here = Path(__file__).parent
     params = json.loads((here / "stats_params.json").read_text())
     priors = json.loads((here / "house_effect_priors.json").read_text())
@@ -280,7 +272,21 @@ def main() -> None:
     statewide = statewide_races(mit("senate"), mit("house"), extra)
     out = build(t["race_list"], t["senate"], t["generic_ballot"], params, priors, rel, E, statewide, today,
                 entries=t["entries"])
-    out.update(run_id=args.run_id or f"{today}-local", snapshot=t["snapshot"])
+    out.update(run_id=run_id, snapshot=t["snapshot"])
+    return out
+
+
+def main() -> None:
+    from . import polls
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--snapshot", type=Path, default=None)
+    ap.add_argument("--out", type=Path, default=None)
+    ap.add_argument("--run-id", default=os.environ.get("RUN_ID"))
+    args = ap.parse_args()
+    snap = args.snapshot or polls.latest_snapshot()
+    today = date.fromisoformat(snap.parent.name)
+    t = polls.build(snap)
+    out = compute(t, today, args.run_id or f"{today}-local")
     dest = args.out or polls.SNAPSHOTS.parent / "derived" / str(today)
     dest.mkdir(parents=True, exist_ok=True)
     (dest / "levels.json").write_text(json.dumps(out, indent=1, default=str))

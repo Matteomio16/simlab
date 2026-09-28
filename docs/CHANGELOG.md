@@ -2,6 +2,44 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): Monte Carlo and the statistics daily step (roadmap A7)
+
+- `simlab/montecarlo.py` was built test-first (`tests/test_montecarlo.py`, 20 tests) to stats-groundwork §5.8 and
+  engine-design §3.3 and §7:
+  - 40,000 draws, seeded from the run date. A race's margin = its level + national + census-division (1.1) + state
+    (2.6) + race-only error. The national variance and each race's SD come from `levels.json`; the race-only error
+    takes the rest.
+  - Student-t with 8 df and one shared scale per draw. The scale keeps each race's fitted SD, so only the tails fatten
+    (unscaled, every SD would grow 15%).
+  - Correlation floor 0.25: pairs below it are lifted, then the matrix is projected back to a valid one. On 28 Sep, 21
+    pairs were lifted, all involving races without polls.
+  - Benchmarks, display only:
+    - `poll_avg` from the levels;
+    - `market`: the challenger's Kalshi and Polymarket bid-ask midpoints, normalised over the race's candidates and
+      averaged across the two;
+    - `cook`: the Cook column of the Wikipedia predictions table.
+  - Senate: `p_r_50plus` counts the Vice President's tie-break. The second line, `p_d_caucus_51`, counts only King and
+    Sanders as caucusing with Democrats; new independents are shown on their own. Seats not up: 31 R, 32 D, 2 I.
+  - Added fields: `left_party` (D, or I where the challenger is an independent) and `w_polls` per race; `house` stays
+    null until A11. `draws.json` holds every 40th draw in the shape the post kit reads.
+- `simlab/statsday.py` (`python -m simlab.statsday --date D --data <data>`, 6 tests) is the daily job's statistics step:
+  - It reads the day's latest snapshot run, or `--snapshot HHMM` to re-run a saved day exactly.
+  - It writes `polls.csv`, `races.json`, `levels.json`, `forecast.json` and `draws.json` to `derived/D/` in about
+    14 seconds.
+  - Until the filter exists, the headline and the stats-only twin run on the same levels; `forecast.json` flags this.
+- First run: 35 races. Win chances match the analytic Student-t within simulation error, and every draw totals 100
+  seats. The post kit read both files; its only flags were the 7 races without polls and a caption too long for 35
+  races.
+- **House seats (A11) moved to the Kev session** (Matteo's call, recorded by the roadmap session). The interface is
+  agreed with Kev:
+  - `house_levels.json` holds all 435 seats in the `levels.json` race shape, on the same national block;
+  - `house_groups.json` and `house_races.json`;
+  - `simlab/house.py` `run(day, data, levels)`, which statsday calls right after the levels.
+  - Persuadable and mobilisable shares will come from a state table, `simlab/pimu.json`, for all 50 states: many
+    competitive seats are in states without a Senate race.
+- Gap before the GitHub Actions rehearsals (3 Oct): the levels read the MIT files, which are gitignored. Their fixed
+  inputs (lean, candidate records, the national House vote by year) need to be frozen into a committed file.
+
 ## 2026-09-28 (Content & site): layouts picked, election purple, special editions, Scalia domain
 
 Matteo's answers, later on 28 Sep:
