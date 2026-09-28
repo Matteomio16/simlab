@@ -26,9 +26,10 @@ def _area(ring):
 def build() -> dict:
     z = zipfile.ZipFile(SRC)
     kml = z.read(next(n for n in z.namelist() if n.endswith(".kml"))).decode("utf-8")
-    states = {}
+    states, names = {}, {}
     for pm in re.findall(r"<Placemark[^>]*>(.*?)</Placemark>", kml, re.S):
         usps = re.search(r'<SimpleData name="STUSPS">(\w+)</SimpleData>', pm).group(1)
+        names[usps] = re.search(r'<SimpleData name="NAME">([^<]+)</SimpleData>', pm).group(1)
         rings = [[tuple(map(float, p.split(",")[:2])) for p in c.split()]
                  for c in re.findall(r"<outerBoundaryIs>.*?<coordinates>(.*?)</coordinates>", pm, re.S)]
         lat = sum(y for r in rings for _, y in r) / sum(len(r) for r in rings)
@@ -36,13 +37,21 @@ def build() -> dict:
         rings = [[(x * k if x < 0 else (x - 360) * k, -y) for x, y in r] for r in rings]  # Alaska crosses 180°
         big = max(_area(r) for r in rings)
         states[usps] = [[[round(x, 4), round(y, 4)] for x, y in r] for r in rings if _area(r) >= 0.02 * big]
-    OUT.write_text(json.dumps(states, separators=(",", ":")), encoding="utf-8")
+    OUT.write_text(json.dumps(states | {"_names": names}, separators=(",", ":")), encoding="utf-8")
     return states
 
 
 @cache
+def _data() -> dict:
+    return json.loads(OUT.read_text(encoding="utf-8"))
+
+
 def outline(usps: str) -> list[list[list[float]]]:
-    return json.loads(OUT.read_text(encoding="utf-8"))[usps]
+    return _data()[usps]
+
+
+def state_name(usps: str) -> str:
+    return _data()["_names"][usps]
 
 
 if __name__ == "__main__":

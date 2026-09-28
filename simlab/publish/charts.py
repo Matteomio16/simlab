@@ -184,4 +184,5 @@ def state_voters(s: Slide, usps: str, code: str, p_dem: float, x: float, y: floa
     bottom = oy + (y1 - y0) * k
     s._put(x + bw / 2, bottom + 18, code, "mono", 600, 26, t.ink, ha="center", va="top")
     s.tag_bottom = bottom + 60
+    s.tag_box = (ox, oy, ox + (x1 - x0) * k, bottom)
     return len(dots)

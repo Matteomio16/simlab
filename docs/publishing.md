@@ -50,6 +50,14 @@ Tests: `python -m unittest tests.test_publish`.
 
 ## The daily kit (due Sun 4 Oct)
 
+Command for the daily job (roadmap A8): `python -m simlab.publish.kit --date YYYY-MM-DD --data <simlab-data>`. It
+writes `derived/<date>/post-kit/`, exits 1 if the kit can't be built, and prints a one-line JSON summary last
+(`ok`, `races`, `slides`, `problems`, `approvable`, `out`). Before 12 Oct every slide's kicker says "PILOT · INTERNAL,
+NOT FOR POSTING". Layouts are provisional (The Stamp, Where everyone stands, 100 futures) until Matteo picks. A slide
+takes about 1 s to render; from 12 Oct the kit features a few selected races a day, not all 75, so posts stay
+short. Tests:
+`python -m unittest tests.test_kit`.
+
 - **Input** (`docs/engine-design.md` §7, approved 28 Sep): `forecast.json` (per race `p_dem_win`, margin p10/p50/p90,
   `stats_only`, `benchmarks` {poll_avg, market, cook}, `movers` [{event_id, card, delta}]; Senate and House control) and
   `draws.json` (the fixed 1,000-draw sample, for dot charts), from `simlab-data/derived/YYYY-MM-DD/`; public copies

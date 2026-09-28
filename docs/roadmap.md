@@ -95,7 +95,7 @@ Checkpoints and fallbacks:
 | C2 | Content plan: a menu of formats, cadence, tone; name and handles; on camera or voice-over | Content & site proposes, Matteo picks | Wed 30 Sep | draft for Matteo (`docs/content-plan.md`) |
 | C3 | Accounts: Instagram professional (Creator) with Threads, X, Bluesky; TikTok and YouTube Shorts optional | Matteo | Fri 2 Oct | — |
 | C4 | Making-of posts, starting with the test-bench findings | Content & site drafts, Matteo approves and posts | from Sat 3 Oct | Lab notes 1–3 drafted, awaiting approval |
-| C5 | Chart factory and daily post kit: slides (1080×1350), a 9:16 video, captions, alt text, an X thread | Content & site | Sun 4 Oct (the pilot makes internal kits daily) | canvas, charts, caption checks built (`docs/publishing.md`); daily kit and video next |
+| C5 | Chart factory and daily post kit: slides (1080×1350), a 9:16 video, captions, alt text, an X thread | Content & site | Sun 4 Oct (the pilot makes internal kits daily) | daily kit command built (`python -m simlab.publish.kit`), layouts provisional; video next |
 | C6 | Site at research.scaliastudio.dev/midterms: forecast, methods page, public scoring page | Content & site; Matteo sets up Cloudflare | Fri 9 Oct | — |
 | C7 | Publishing and ethics review (Field Guide checklist); OSF pre-registration yes or no | Matteo with Claude | Sat 10 Oct | open task |
 | C8 | Posting by hand: Meta Business Suite for Instagram, x.com's scheduler | Matteo | making-of from 3 Oct, forecasts from 12 Oct | — |
