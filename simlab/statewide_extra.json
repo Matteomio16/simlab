@@ -1,0 +1,14 @@
+{
+ "note": "Statewide races of 2026 Senate nominees that the MIT Senate and House files don't cover (governor, attorney general). Two-party votes from each race's Wikipedia infobox (CC BY-SA 4.0), read 28 Sep 2026. inc: +1 if the Democrat was the incumbent in that office, -1 if the Republican was.",
+ "races": [
+  {"year": 2020, "state": "NC", "office": "governor", "left": "Roy Cooper", "left_votes": 2834790,
+   "right": "Dan Forest", "right_votes": 2586605, "inc": 1,
+   "source": "https://en.wikipedia.org/wiki/2020_North_Carolina_gubernatorial_election", "revid": 1375558126},
+  {"year": 2022, "state": "TX", "office": "attorney general", "left": "Rochelle Mercedes Garza", "left_votes": 3497267,
+   "right": "Ken Paxton", "right_votes": 4278986, "inc": -1,
+   "source": "https://en.wikipedia.org/wiki/2022_Texas_Attorney_General_election", "revid": 1376643548},
+  {"year": 2022, "state": "FL", "office": "attorney general", "left": "Aramis Ayala", "left_votes": 3025959,
+   "right": "Ashley Moody", "right_votes": 4651376, "inc": -1,
+   "source": "https://en.wikipedia.org/wiki/2022_Florida_Attorney_General_election", "revid": 1355688756}
+ ]
+}

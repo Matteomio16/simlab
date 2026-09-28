@@ -132,6 +132,9 @@ OVERVIEW = """== Race summary ==
 ! [[2026 United States Senate special election in Ohio|Ohio]]<br />(Class 3)
 | {{Shading PVI|R|5}}
 | [[Jon Husted]]
+| {{Party shading/Republican}} | Republican
+| 2025 {{small|(appointed)}}
+| data-sort-value=0 | Interim appointee nominated
 | nowrap | {{Plainlist |
 *{{Party stripe|Democratic Party (US)}}[[Sherrod Brown]] (Democratic)
 *{{Party stripe|Republican Party (US)}}[[Jon Husted]] (Republican)
@@ -147,6 +150,9 @@ OVERVIEW = """== Race summary ==
 |-
 ! [[2026 United States Senate election in Alabama|Alabama]]
 | {{Shading PVI|R|15}}
+| {{sortname|Tommy|Tuberville}}
+| {{Party shading/Republican}} | Republican
+| {{Party shading/Hold}} data-sort-value=-1 | Incumbent retiring<br />to [[2026 Alabama gubernatorial election|run for governor]]
 | nowrap | {{Plainlist |
 *{{Party stripe|Republican Party (US)}}[[Barry Moore (American politician)|Barry Moore]] (Republican)<ref name="AL2026R">{{#invoke:cite|web|title=Qualified}}</ref>
 *{{Party stripe|Democratic Party (US)}}Everett Wess (Democratic)<ref name="AL2026D" />
@@ -154,6 +160,9 @@ OVERVIEW = """== Race summary ==
 |-
 ! [[2026 United States Senate election in Georgia|Georgia]]
 | {{Shading PVI|R|1}}
+| {{sortname|Jon|Ossoff}}
+| {{Party shading/Democratic}} | Democratic
+| data-sort-value=1 | Incumbent renominated
 | nowrap | {{Plainlist |*{{Party stripe|Republican Party (US)}}[[Mike Collins (politician)|Mike Collins]] (Republican)<ref name="GA2026" />
 *{{Party stripe|Democratic Party (United States)}}[[Jon Ossoff]] (Democratic)<ref name="GA2026">{{#invoke:cite|web|title=Q}}</ref>
 }}
@@ -308,6 +317,11 @@ class RacesTest(unittest.TestCase):
         oh = self.races["OH-S"]
         self.assertEqual((oh.right, oh.left, oh.left_party), ("Jon Husted", "Sherrod Brown", "D"))
         self.assertEqual(oh.title, "2026 United States Senate special election in Ohio")
+
+    def test_incumbent_party_and_status(self):
+        self.assertEqual((self.races["OH-S"].incumbent, self.races["OH-S"].status), ("R", "Interim appointee nominated"))
+        self.assertEqual((self.races["GA"].incumbent, self.races["GA"].status), ("D", "Incumbent renominated"))
+        self.assertEqual(self.races["AL"].status, "Incumbent retiring")
 
     def test_unlinked_democrat_when_no_other_notable_challenger(self):
         self.assertEqual((self.races["AL"].right, self.races["AL"].left), ("Barry Moore", "Everett Wess"))

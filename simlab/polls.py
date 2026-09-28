@@ -214,6 +214,8 @@ class Race:
     left: str
     left_party: str
     title: str
+    incumbent: str = ""
+    status: str = ""
 
     @property
     def race_id(self) -> str:
@@ -456,8 +458,8 @@ def build(snapshot: Path) -> dict:
         frames.append(wiki_polls(page(p), race).assign(race_id=race.race_id))
     entries = _load(snapshot / "polls" / "votehub.gz")
     wiki = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=VERSION_COLUMNS + ["race_id"])
-    return {"snapshot": f"{snapshot.parent.name} {snapshot.name[:2]}:{snapshot.name[2:]}",
-            "races": pd.DataFrame([{**asdict(r), "race_id": r.race_id} for r in race_list]),
+    return {"snapshot": f"{snapshot.parent.name} {snapshot.name[:2]}:{snapshot.name[2:]}", "race_list": race_list,
+            "entries": entries, "races": pd.DataFrame([{**asdict(r), "race_id": r.race_id} for r in race_list]),
             "senate": merge(wiki, votehub_polls(entries, race_list)), "generic_ballot": generic_ballot(entries),
             "approval": approval(entries), "revisions": revisions, "missing_pages": missing}
 
@@ -516,7 +518,11 @@ def races(overview: str) -> list[Race]:
             if not reps or not challengers:
                 continue
             left = max(challengers, key=lambda c: (c[2], c[1] == "D"))
-            out.append(Race(STATE_CODES[m.group(3).strip()], bool(m.group(2)), reps[0][0], left[0], left[1], m.group(1)))
+            inc = re.search(r"\{\{Party shading/[^}]*\}\}\s*\|\s*(Republican|Democratic|Independent|DFL|"
+                            r"Democratic–Farmer–Labor)\s*$", row, re.M)
+            status = [s for s in re.findall(r"data-sort-value=-?\d+\s*\|\s*([^\n]+)", row) if re.match(r"[A-Z]", s)]
+            out.append(Race(STATE_CODES[m.group(3).strip()], bool(m.group(2)), reps[0][0], left[0], left[1], m.group(1),
+                            PARTY.get(inc.group(1), "") if inc else "", clean(status[-1].split("<br")[0]) if status else ""))
     return out
 
 

@@ -2,6 +2,31 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): starting levels for 2026 (roadmap A3), built to engine-design.md
+
+- The engine design approved by Matteo arrived (commit e5df5e9). Statistics' review asked for three clarifications,
+  and the Engine session adopted them (commit 271af29):
+  - the dials are applied once;
+  - units are stated;
+  - each story counts once, from first_seen.
+- `simlab/levels.py` (`python -m simlab.levels`) was built test-first (`tests/test_levels.py`, 15 tests) and writes
+  `levels.json` to `simlab-data/derived/<date>/`. For each race:
+  - election-day margin, SD and poll weight;
+  - the poll-only margin (the forecast's "poll_avg" benchmark);
+  - fundamentals, with lean, incumbency and candidate-effect components.
+- Method, as fitted: a relative Kalman average on house-effect-corrected polls, then fundamentals with D10–D12, then the
+  inverse-variance blend.
+  - Candidate records come from MIT Senate and at-large House races, plus `simlab/statewide_extra.json`: Cooper,
+    Paxton and Moody's governor and attorney-general races, with Wikipedia revision ids.
+  - Incumbency comes from the Wikipedia status column: running counts in full, an interim appointee nominated counts
+    half, and an open seat counts zero. `polls.Race` now carries `incumbent` and `status`.
+- First run (snapshot 28 Sep 09:41): 35 races, 28 with polls, poll weights 0.4–0.7. The 7 races without polls are pure
+  fundamentals.
+- Correction to stats-groundwork §2.3: the 2025–26 likely-voter gap of +1.0 is on raw margins. On the model's two-party
+  scale it is median +0.2, mean +1.2, and the levels use the two-party median, recomputed daily.
+- `calib.national_house_vote()` was split out of `senate_table`. `calib.house_effects` now copes with a batch that has
+  no sponsored polls. The calibration outputs are unchanged (re-run checked).
+
 ## 2026-09-28 (Statistics session): poll table (roadmap A3, first part)
 
 - `simlab/polls.py` (`python -m simlab.polls`) was built test-first (`tests/test_polls.py`, 28 tests). It reads one

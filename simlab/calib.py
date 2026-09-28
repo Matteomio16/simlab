@@ -167,6 +167,18 @@ def _surname(name: str) -> str:
     return toks[-1] if toks else ""
 
 
+def national_house_vote() -> pd.Series:
+    """Two-party national House vote margin by year: 538's figure for 1998-2022, MIT's district sum otherwise."""
+    h = mit("house")
+    h = h[(h.stage == "GEN") & h.party.isin(["DEMOCRAT", "REPUBLICAN"])]
+    hv = h.pivot_table(index="year", columns="party", values="candidatevotes", aggfunc="sum")
+    E = two_party(hv.DEMOCRAT, hv.REPUBLICAN)
+    rp = pd.read_csv(HIST / "538_raw_polls.csv", low_memory=False)
+    g = rp[rp.type_simple == "House-G-US"].drop_duplicates("cycle").set_index("cycle")
+    E.update(two_party(g.cand1_actual, g.cand2_actual))
+    return E
+
+
 def senate_table() -> pd.DataFrame:
     """One row per Senate race with a Democrat and a Republican as the top two (decisive round; Louisiana's jungle
     races left out): margin, lean from the two previous presidential elections, national House vote, incumbency."""
@@ -176,13 +188,7 @@ def senate_table() -> pd.DataFrame:
     nat = pv.groupby("year").sum()
     rel = two_party(pv.DEMOCRAT, pv.REPUBLICAN) - two_party(nat.DEMOCRAT, nat.REPUBLICAN).reindex(
         pv.index.get_level_values(0)).values
-    h = mit("house")
-    h = h[(h.stage == "GEN") & h.party.isin(["DEMOCRAT", "REPUBLICAN"])]
-    hv = h.pivot_table(index="year", columns="party", values="candidatevotes", aggfunc="sum")
-    E = two_party(hv.DEMOCRAT, hv.REPUBLICAN)
-    rp = pd.read_csv(HIST / "538_raw_polls.csv", low_memory=False)
-    g = rp[rp.type_simple == "House-G-US"].drop_duplicates("cycle").set_index("cycle")
-    E.update(two_party(g.cand1_actual, g.cand2_actual))
+    E = national_house_vote()
     s = mit("senate")
     s["stage"] = s.stage.str.lower()
     s = s[s.stage.isin(["gen", "runoff", "gen runoff"]) & ~s.writein.fillna(False).astype(bool) & (s.state_po != "LA")]
@@ -332,7 +338,8 @@ def house_effects(q: pd.DataFrame, tau: float = 3.0, ns2: float = 4.0, bw: float
         h = ((num + m.reindex(num.index) / tau ** 2) / (den + 1 / tau ** 2)).reindex(h.index).fillna(m)
         h -= np.average(h[den.index], weights=den)
         r2 = res - q.pollster[ok].map(h)
-        sp = {p: float(np.average(r2[q.partisan[ok] == p], weights=w[q.partisan[ok] == p])) for p in ("DEM", "REP")}
+        sp = {p: float(np.average(r2[sel], weights=w[sel])) if (sel := q.partisan[ok] == p).any() else 0.0
+              for p in ("DEM", "REP")}
     tab = pd.DataFrame({"mean": h, "se": 1 / np.sqrt(den + 1 / tau ** 2), "n": q[ok].groupby("pollster").size()})
     return tab.dropna(subset=["n"]).sort_values("n", ascending=False), sp
 

@@ -29,7 +29,7 @@ Words used below:
    in July, and Florida's biggest table is a hypothetical matchup. The parser must pick tables by nominee, never by
    size. About half the Wikipedia polls carry an "(R)" or "(D)" tag on the pollster name. VoteHub instead flags
    sponsored polls (17% of its entries). Which one counts as "partisan" (half weight) is decision D1.
-3. **Likely voters:** this cycle's likely-voter screens lean Democratic (+1.0 median in 23 paired generic-ballot
+3. **Likely voters:** this cycle's likely-voter screens lean Democratic (+1.0 median raw margin in 23 paired generic-ballot
    releases). In 2018 and 2022 they leaned Republican (−0.7 and −1.5). So the correction for registered-voter polls
    has to be measured on this year's polls, not copied from past midterms.
 4. **Already on disk:** CES 2024, the CES cumulative file (2006–2025, with Senate and House vote, party ID, zip and
@@ -151,7 +151,7 @@ On disk (`data/history/`, from VoteHub, 27 Sep): generic ballot, 544 polls from 
 123 LV, 103 A); approval, 2,946 polls from Nov 2018 to 17 Sep 2026. The schema is as in §2.2 (`subject` "2026" or
 "Donald Trump"; answers Dem/Rep or Approve/Disapprove). The snapshots now carry both, every 3 hours once scheduled.
 
-Likely-voter minus registered-voter margin, from polls released both ways:
+Likely-voter minus registered-voter margin (raw D − R), from polls released both ways:
 
 | Cycle | Pairs | Mean | Median |
 | --- | --- | --- | --- |
@@ -159,8 +159,10 @@ Likely-voter minus registered-voter margin, from polls released both ways:
 | 2022 (538 archive) | 40 | −1.3 | −1.5 |
 | 2025–26 (VoteHub) | 23 | +1.4 | +1.0 |
 
-Registered-voter and all-adult polls get this year's measured gap (capped at ±2, Field Guide). Pollsters with enough
-pairs get their own gap in the fuller version.
+Registered-voter and all-adult polls get this year's measured gap, capped at ±2 (Field Guide). The model works in
+two-party margins, and on that scale the 2025–26 gap is smaller: median +0.2, mean +1.2. Likely-voter samples have
+fewer undecided voters, which shrinks the gap once rescaled. The levels use the two-party median, recomputed on each
+day's snapshot. Pollsters with enough pairs get their own gap in the fuller version.
 
 ### 2.4 538 history: house effects and poll-error sizes
 
@@ -361,6 +363,18 @@ election-day weight on polls for such races was 0.82 (§5.10). About five weeks 
 about 0.7. Each race publishes its poll weight w, so readers can see how much the polls count.
 
 This is the stats-only forecast. The headline differs only through the reactions (§5.6).
+
+**Built 28 Sep:** `simlab/levels.py` (`python -m simlab.levels`, 15 tests in `tests/test_levels.py`) writes
+`levels.json` per engine-design §7.
+- **Poll inputs:** each pollster's lean starts from its 2018–24 prior; the likely-voter gap and the sponsor shift are
+  re-estimated on the day's polls, the shift shrunk toward its 2018–24 value.
+- **Candidate records:** Senate and at-large House races come from the MIT files. Cooper, Paxton and Moody's governor
+  and attorney-general races are in `simlab/statewide_extra.json`, with their Wikipedia revision ids.
+- **First run** (snapshot 28 Sep 09:41):
+  - 35 races, 28 with polls; poll weights 0.4–0.7, as expected five weeks out;
+  - the 7 races without polls are pure fundamentals.
+- **Known limit:** for races where the challenger is an independent (NE, ID, SD, MT), the fundamentals treat them like a
+  Democrat. Only Osborn has a record that corrects this (his 2024 run).
 
 ### 5.5 Voter-group weights
 
