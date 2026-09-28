@@ -49,6 +49,17 @@ class ReadDay(unittest.TestCase):
             snapshot(Path(tmp), "2026-09-28", "0036", {"googlenews-ohio": "<rss><channel></channel></rss>"})
             self.assertEqual(newsday.read_day(Path(tmp), date(2026, 9, 28)), [])
 
+    def test_mediacloud_stories(self):
+        raw = json.dumps({"stories": [
+            {"id": "1", "title": "Brown and Husted clash over tariffs", "url": "https://cleveland.com/a",
+             "media_name": "cleveland.com", "media_url": "cleveland.com", "publish_date": "2026-09-28",
+             "indexed_date": "2026-09-28T08:15:00", "language": "en"},
+            {"id": "2", "title": "No date here at all", "url": "https://x.com/b", "media_name": "x.com"}]})
+        arts = newsday.parse_mediacloud(raw.encode(), "OH-S")
+        self.assertEqual(len(arts), 1)
+        self.assertEqual((arts[0]["source"], arts[0]["domain"], arts[0]["seen"]),
+                         ("mediacloud", "cleveland.com", "2026-09-28T08:15:00+00:00"))
+
     def test_bad_gdelt_json_is_skipped(self):
         self.assertEqual(newsday.parse_gdelt(b'{"articles": [ {bad', "TX"), [])
 

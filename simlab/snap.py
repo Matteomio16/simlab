@@ -98,6 +98,42 @@ def combined(parts: dict[str, tuple[str, dict]], pause: float = 0.2):
     return fetch
 
 
+MEDIACLOUD = "https://search.mediacloud.org/api/search/story-list"
+MC_US_NATIONAL = 34412234  # Media Cloud's "United States - National" collection
+
+
+def _key(name: str) -> str:
+    """A key from the environment (GitHub secret), else from the Sim Research .env; never printed."""
+    if os.environ.get(name):
+        return os.environ[name]
+    env = Path(__file__).resolve().parents[2] / ".env"
+    if env.exists():
+        for line in env.read_text(encoding="utf-8-sig").splitlines():
+            k, _, v = line.partition("=")
+            if k.strip() == name:
+                return v.strip().strip('"').strip("'")
+    return ""
+
+
+def mediacloud(run: "Run", key: str) -> None:
+    """The last day's stories per race query in Media Cloud's US national collection. The key rides in a header, so it
+    never reaches the URL, the manifest or the logs."""
+    end = run.when.date()
+    for race, query in NEWS.items():
+        params = {"q": query, "start": f"{end - timedelta(days=1)}", "end": f"{end}",
+                  "platform": "onlinenews-mediacloud", "cs": MC_US_NATIONAL, "page_size": 1000}
+
+        def fetch(params=params):
+            for i in range(3):
+                r = requests.get(MEDIACLOUD, params=params, headers={**UA, "Authorization": f"Token {key}"},
+                                 timeout=90)
+                if r.status_code < 500 and r.status_code != 429:
+                    break
+                time.sleep(10 * (i + 1))
+            return r.status_code, r.content
+        run.save("news", f"mediacloud-{race}", MEDIACLOUD, fetch)
+
+
 def slug(title: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
 
@@ -172,6 +208,8 @@ def snapshot(out: Path) -> dict:
         run.save("news", f"gdelt-{race}", GDELT, one(GDELT, {
             "query": f"{query} sourcecountry:US sourcelang:english", "mode": "ArtList", "format": "json",
             "maxrecords": 250, "sort": "DateDesc", "timespan": "6h"}, tries=5, wait=20.0))
+    if key := _key("MEDIACLOUD_API_KEY"):
+        mediacloud(run, key)
     end = run.when.date()
     run.save("pageviews", "candidates", PAGEVIEWS, combined(
         {a: (f"{PAGEVIEWS}/{a}/daily/{end - timedelta(days=10):%Y%m%d}/{end:%Y%m%d}", {}) for a in CANDIDATES}))

@@ -45,9 +45,27 @@ def parse_gdelt(raw: bytes, race_id: str) -> list[dict]:
              "source": "gdelt"} for a in arts if a.get("seendate")]
 
 
+def parse_mediacloud(raw: bytes, race_id: str) -> list[dict]:
+    """Media Cloud's story-list JSON; `seen` is when Media Cloud indexed the story (its publish date if missing)."""
+    try:
+        stories = json.loads(raw).get("stories", [])
+    except ValueError:
+        return []
+    out = []
+    for s in stories:
+        when = s.get("indexed_date") or s.get("publish_date")
+        if not when:
+            continue
+        seen = datetime.fromisoformat(when if "T" in when else f"{when[:10]}T00:00:00")
+        out.append({"race_id": race_id, "title": s.get("title") or "", "url": s.get("url") or "",
+                    "outlet": s.get("media_name") or "", "domain": (s.get("media_url") or "").removeprefix("www."),
+                    "seen": _iso(seen if seen.tzinfo else seen.replace(tzinfo=timezone.utc)), "source": "mediacloud"})
+    return out
+
+
 # Google News is not a source: its feed's terms allow only personal news readers (Matteo, 28 Sep); files saved before
 # that decision are ignored.
-PARSERS = {"gdelt": parse_gdelt}
+PARSERS = {"gdelt": parse_gdelt, "mediacloud": parse_mediacloud}
 
 
 def read_day(snap_root: Path, day: date) -> list[dict]:
