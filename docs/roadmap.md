@@ -91,7 +91,7 @@ Checkpoints and fallbacks:
 | # | Step | Who | Due | Status |
 | --- | --- | --- | --- | --- |
 | C1 | Research: political data accounts (incl. the Integrity Index), AI-simulation startups, AI showcase projects, platform rules | Claude | Mon 28 Sep | done (`docs/research/`) |
-| C2 | Content plan: a menu of formats, cadence, tone; name and handles; on camera or voice-over | Content & site proposes, Matteo picks | Wed 30 Sep | — |
+| C2 | Content plan: a menu of formats, cadence, tone; name and handles; on camera or voice-over | Content & site proposes, Matteo picks | Wed 30 Sep | draft for Matteo (`docs/content-plan.md`) |
 | C3 | Accounts: Instagram professional (Creator) with Threads, X, Bluesky; TikTok and YouTube Shorts optional | Matteo | Fri 2 Oct | — |
 | C4 | Making-of posts, starting with the test-bench findings | Content & site drafts, Matteo approves and posts | from Sat 3 Oct | — |
 | C5 | Chart factory and daily post kit: slides (1080×1350), a 9:16 video, captions, alt text, an X thread | Content & site | Sun 4 Oct (the pilot makes internal kits daily) | — |
