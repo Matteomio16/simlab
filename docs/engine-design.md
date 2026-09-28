@@ -143,6 +143,9 @@ Kev react-v2 joins the numbers on 12 Oct only if it passes three checks on held-
   The voter groups read the card, never the raw headlines.
 - **Which stories get reactions:** every story that passes the gate, capped at the top 5 per race per day by attention.
   National stories count for every race, and are also asked once with state-neutral personas for `Δ_N`.
+- **Stories about polls or forecasts get no reactions.** Polls already enter through the filter, so reacting to news
+  about them would count them twice. This also keeps "poll" out of the movers' cards.
+- **Cards:** no outlet names, and no "poll" or "survey" wording, so the Content & site caption checker passes them.
 
 ## 5. The reaction harness (Engine)
 
