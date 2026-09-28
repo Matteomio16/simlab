@@ -372,14 +372,21 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     arts = read_day(snap_root, day)
     stories = carry_over(make_stories(arts), load_known(derived_root, day))
     views = load_pageviews(snap_root, day)
-    fresh = [s for s in stories if s["known"] is None]
+    fresh = [s for s in stories if s["known"] is None or s["known"].get("label_error")]
+
+    def safe_label(s):
+        try:
+            return label(s, asker)
+        except Exception:  # failed after its retries: no labels today, asked again tomorrow
+            return {"gate": {}, "type": "other", "helps_face": "unclear", "fires_up": {"D": 0.0, "R": 0.0},
+                    "puts_off": {"D": 0.0, "R": 0.0}, "salience": 0.0, "label_error": True}
     with ThreadPoolExecutor(16) as ex:
-        fresh_labels = dict(zip([s["event_id"] for s in fresh], ex.map(lambda s: label(s, asker), fresh)))
+        fresh_labels = dict(zip([s["event_id"] for s in fresh], ex.map(safe_label, fresh)))
     events, private, new = [], [], 0
     for s in stories:
         k = s.pop("known")
         new += k is None
-        labels = {f: k[f] for f in LABEL_FIELDS} if k else fresh_labels[s["event_id"]]
+        labels = fresh_labels.get(s["event_id"]) or {f: k[f] for f in LABEL_FIELDS}
         national = s["race_id"] == "US"
         events.append({"schema": SCHEMA, "date": f"{day}", "run_id": run_id, "event_id": s["event_id"],
                        "first_seen": s["first_seen"], "last_seen": s["last_seen"],

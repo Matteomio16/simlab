@@ -56,7 +56,7 @@ EVENTS = [{"event_id": "OH-S-1", "card": "Trump will campaign for Jon Husted in 
 class React(unittest.TestCase):
     def test_rows_per_race_event_group_with_separate_turnout(self):
         glm = FakeLLM()
-        rows = harness.react(EVENTS, [("glm", glm, False)], "direct", skip=set())
+        rows, _ = harness.react(EVENTS, [("glm", glm, False)], "direct", skip=set())
         self.assertEqual(len(rows), 3 * 28)
         self.assertEqual({(r["race_id"], r["event_id"]) for r in rows},
                          {("OH-S", "OH-S-1"), ("OH-S", "US-1"), ("US", "US-1")})
@@ -68,9 +68,18 @@ class React(unittest.TestCase):
 
     def test_skip_and_shadow(self):
         skip = {("OH-S", "OH-S-1", g["group"], "glm") for g in harness.personas("OH-S")}
-        rows = harness.react(EVENTS[:1], [("glm", FakeLLM(), False), ("kev", FakeDecision(), True)], "direct", skip)
+        rows, _ = harness.react(EVENTS[:1], [("glm", FakeLLM(), False), ("kev", FakeDecision(), True)], "direct", skip)
         self.assertEqual({(r["model"], r["shadow"]) for r in rows}, {("kev", True)})
         self.assertEqual(len(rows), 28)
+
+    def test_a_failing_call_does_not_sink_the_run(self):
+        class Flaky(FakeLLM):
+            def ask_many(self, state, questions, tag="", groups=None):
+                if "Strong Democrat" in state:
+                    raise RuntimeError("giving up on https://openrouter.ai after 8 tries")
+                return super().ask_many(state, questions, tag, groups)
+        rows, failed = harness.react(EVENTS[:1], [("glm", Flaky(), False)], "direct", skip=set())
+        self.assertEqual((len(rows), failed), (24, 4))
 
     def test_asked_before_reads_earlier_days(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -124,7 +124,8 @@ def _post(url: str, payload: dict, headers: dict, tries: int = 8, timeout: int =
             if isinstance(data, dict) and "error" in data and not ({"choices", "answers"} & data.keys()):
                 raise requests.HTTPError(f"{r.status_code} with an error body: {str(data['error'])[:200]}")
             return data
-        except (requests.HTTPError, requests.ConnectionError, requests.Timeout) as e:
+        except (requests.HTTPError, requests.ConnectionError, requests.Timeout,
+                requests.exceptions.ChunkedEncodingError) as e:  # a connection dropped mid-reply
             last = e
             time.sleep(min(2 ** i, 60) + random.random())
     raise RuntimeError(f"giving up on {url} after {tries} tries; last error: {str(last)[:300]}")

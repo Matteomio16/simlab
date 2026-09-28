@@ -69,8 +69,9 @@ def asked_before(derived_root: Path, day: date, lookback: int = 14) -> set:
     return seen
 
 
-def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> list[dict]:
-    """Every (race, selected event, voter group, model) not asked before: expected support and turnout moves."""
+def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> tuple[list[dict], int]:
+    """Every (race, selected event, voter group, model) not asked before: expected support and turnout moves.
+    A call that fails after its retries is left out (and asked again on the next run); returns (rows, failed)."""
     tasks = [(r, e, p, name, asker, shadow)
              for e in events for r in sorted(e.get("selected") or {})
              for p in personas(r) for name, asker, shadow in askers
@@ -79,13 +80,18 @@ def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> l
     def one(t):
         r, e, p, name, asker, shadow = t
         kw = {"groups": GROUPS} if hasattr(asker, "chat") else {}
-        a = asker.ask_many(reaction_state(p["text"], e["card"]), questions(r, wording), f"harness:{name}", **kw)
+        try:
+            a = asker.ask_many(reaction_state(p["text"], e["card"]), questions(r, wording), f"harness:{name}", **kw)
+        except Exception:
+            return None
         return {"schema": SCHEMA, "race_id": r, "event_id": e["event_id"], "group": p["group"], "model": name,
                 "shadow": shadow, "wording": wording, "support": round(expected(a["support"]), 4),
                 "turnout": round(expected(a["turnout"]), 4),
                 "parse_error": bool(a["support"].get("_parse_error") or a["turnout"].get("_parse_error"))}
     with ThreadPoolExecutor(16) as ex:
-        return list(ex.map(one, tasks))
+        results = list(ex.map(one, tasks))
+    rows = [r for r in results if r is not None]
+    return rows, len(results) - len(rows)
 
 
 def run(day: date, derived_root: Path, run_id: str, askers: list[tuple], wording: str = "direct") -> dict:
@@ -97,10 +103,11 @@ def run(day: date, derived_root: Path, run_id: str, askers: list[tuple], wording
     if out.exists():
         skip |= {(r["race_id"], r["event_id"], r["group"], r["model"])
                  for r in (json.loads(l) for l in out.read_text(encoding="utf-8").splitlines() if l.strip())}
-    rows = [{**r, "date": f"{day}", "run_id": run_id} for r in react(events, askers, wording, skip)]
+    new, failed = react(events, askers, wording, skip)
+    rows = [{**r, "date": f"{day}", "run_id": run_id} for r in new]
     with out.open("a", encoding="utf-8") as f:
         f.writelines(json.dumps(r) + "\n" for r in rows)
-    return {"rows": len(rows), "parse_errors": sum(r["parse_error"] for r in rows),
+    return {"rows": len(rows), "failed": failed, "parse_errors": sum(r["parse_error"] for r in rows),
             "by_model": {m: sum(r["model"] == m for r in rows) for m in {r["model"] for r in rows}}}
 
 

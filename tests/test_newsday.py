@@ -261,6 +261,31 @@ class Run(unittest.TestCase):
         self.assertEqual({p["event_id"] for p in private}, {e["event_id"] for e in events})
         self.assertTrue(all(e["card"] for e in events if e["selected"]))
 
+    def test_a_failing_label_call_skips_that_story_and_is_retried_next_day(self):
+        class Flaky(FakeAsker):
+            fail = True
+
+            def ask_many(self, state, questions, tag=""):
+                if self.fail and "tariffs" in state:
+                    raise RuntimeError("giving up")
+                return super().ask_many(state, questions, tag)
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
+            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO.replace("20260928", "20260929")})
+            chat = FakeChat(['{"card": "%s"}' % GOOD] * 10)
+            newsday.run(date(2026, 9, 28), snap, derived, "d1", Flaky(), [chat])
+            day1 = {e["event_id"]: e for e in newsday._jsonl(derived / "2026-09-28" / "events.jsonl")}
+            ok = Flaky()
+            ok.fail = False
+            newsday.run(date(2026, 9, 29), snap, derived, "d2", ok, [chat])
+            day2 = {e["event_id"]: e for e in newsday._jsonl(derived / "2026-09-29" / "events.jsonl")}
+        failed = [e for e in day1.values() if e.get("label_error")]
+        self.assertEqual(len(failed), 1)
+        self.assertEqual((failed[0]["gate"], failed[0]["selected"]), ({}, {}))
+        self.assertFalse(day2[failed[0]["event_id"]].get("label_error"))
+        self.assertTrue(any("tariffs" in s for s in ok.states))
+
     def test_second_day_reuses_labels_and_id(self):
         with tempfile.TemporaryDirectory() as tmp:
             snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
