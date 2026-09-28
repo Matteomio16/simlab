@@ -2,6 +2,15 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Content & site): chart factory approved; Lab notes 1–3 drafted
+
+- Matteo approved matplotlib for every post image and video frame (instead of the infrastructure doc's Altair +
+  vl-convert split), and the new dependencies matplotlib 3.11 and imageio-ffmpeg 0.6. Fonts, on his brief of "the best
+  ones for design, not vibe-coded": Newsreader, Libre Franklin and IBM Plex Mono (SIL Open Font License, Google Fonts'
+  repository), instead of Inter.
+- `simlab/publish/`: canvas with the label strip on every image, charts, caption rule check, and the Lab notes 1–3
+  drafts (`kits/`, gitignored, awaiting Matteo's approval). Design and colours in `docs/publishing.md`.
+
 ## 2026-09-28 (Statistics session): statistics layer calibrated on past elections
 
 - `python -m simlab.calib` (new `simlab/calib.py`) fits the sizes the filter, blend and Monte Carlo need and writes

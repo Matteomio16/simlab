@@ -9,4 +9,6 @@ dependencies = [
     "numpy",
     "scipy",
     "scikit-learn",
+    "matplotlib>=3.11.2",
+    "imageio-ffmpeg>=0.6.0",
 ]

@@ -5,3 +5,5 @@ data/
 runs/cache.sqlite*
 runs/spend.jsonl
 kev-finetune/*.log
+kits/
+simlab/publish/fonts/_static/
