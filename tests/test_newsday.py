@@ -160,5 +160,31 @@ class Select(unittest.TestCase):
         self.assertEqual(evs[-1]["selected"], {"OH-S": True, "TX": True, "US": True})
 
 
+class FakeChat:
+    def __init__(self, replies):
+        self.replies, self.calls = list(replies), 0
+
+    def complete(self, messages, tag="", max_tokens=300, json_mode=True):
+        self.calls += 1
+        return self.replies.pop(0) if self.replies else '{"card": ""}'
+
+
+GOOD = "A crypto industry group plans to spend $30 million opposing Sherrod Brown."
+
+
+class Cards(unittest.TestCase):
+    story = {"race_id": "OH-S", "titles": ["Crypto PAC to spend $30M against Brown"], "outlet_names": ["Politico"]}
+
+    def test_rule_breaking_card_retries_then_falls_back(self):
+        bad = FakeChat(['{"card": "Politico reports a crypto PAC will spend $30M."}',
+                        '{"card": "A new poll shows Brown ahead."}'])
+        good = FakeChat(['{"card": "%s"}' % GOOD])
+        self.assertEqual(newsday.write_card(self.story, [bad, good]), GOOD)
+        self.assertEqual(bad.calls, 2)
+
+    def test_no_valid_card_gives_empty(self):
+        self.assertEqual(newsday.write_card(self.story, [FakeChat(["not json", "{}"])]), "")
+
+
 if __name__ == "__main__":
     unittest.main()

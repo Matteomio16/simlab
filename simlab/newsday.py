@@ -260,3 +260,33 @@ def select(events: list[dict], per_race: int = 5, national: int = 3) -> None:
             pool.sort(key=lambda e: (-e["attention"]["a"], -e["salience"], e["event_id"]))
             for e in pool[:cap]:
                 e["selected"][r] = True
+
+
+CARD_SYSTEM = (
+    "You write short, neutral summaries of news events for a research simulation of voters. Use only the headlines "
+    "given. In 1 to 3 plain sentences, say what happened and who was involved. Do not name any news outlet or website. "
+    "Do not use the words poll, polls, polling, pollster, survey or surveys. No opinions and no predictions. "
+    'Reply with JSON only: {"card": "..."}')
+FORBIDDEN = re.compile(r"\b(poll|polls|polling|pollsters?|surveys?)\b", re.I)
+
+
+def card_ok(card: str, outlet_names: list[str]) -> bool:
+    low = card.lower()
+    return (0 < len(card) <= 450 and not FORBIDDEN.search(card)
+            and not any(n.lower() in low for n in outlet_names if len(n) >= 3))
+
+
+def write_card(story: dict, chats: list) -> str:
+    """1-3 neutral sentences from the first model that follows the rules (two tries each); '' if none does."""
+    user = story_text(story, story["race_id"])
+    for chat in chats:
+        for note in ("", "\nYour previous answer broke a rule. Follow every rule exactly."):
+            try:
+                text = chat.complete([{"role": "system", "content": CARD_SYSTEM},
+                                      {"role": "user", "content": user + note}], tag="newsday:card", max_tokens=200)
+                card = str(json.loads(text[text.index("{"): text.rindex("}") + 1]).get("card", "")).strip()
+            except (ValueError, RuntimeError):
+                card = ""
+            if card_ok(card, story["outlet_names"]):
+                return card
+    return ""
