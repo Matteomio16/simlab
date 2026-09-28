@@ -1,11 +1,13 @@
 # Every 3 hours: raw snapshots of live sources (simlab/snap.py) into the private data repo.
+# GitHub drops scheduled runs under load (3 of the first 4 slots on 28 Sep), so the trigger fires hourly and a
+# scheduled run only proceeds when the newest snapshot is at least 150 minutes old; manual runs always proceed.
 # The deploy key in SIMLAB_DATA_DEPLOY_KEY can write to Matteomio16/simlab-data only. Logs are public: the script
 # prints sizes and errors, never data.
 name: snapshot
 
 on:
   schedule:
-    - cron: "17 */3 * * *"
+    - cron: "41 * * * *"
   workflow_dispatch:
 
 concurrency:
@@ -29,15 +31,30 @@ jobs:
           fetch-depth: 1
           sparse-checkout: /README.md
           sparse-checkout-cone-mode: false
+      - name: Due?
+        id: due
+        if: github.event_name == 'schedule'
+        working-directory: data-repo
+        run: |
+          day=$(git ls-tree --name-only HEAD snapshots/ | grep -E '/[0-9]{4}-[0-9]{2}-[0-9]{2}$' | sort | tail -1)
+          run=$(git ls-tree --name-only HEAD "$day/" | sort | tail -1)
+          last=$(date -u -d "$(basename "$day") $(basename "$run" | sed 's/^\(..\)/\1:/')" +%s)
+          age=$(( ($(date -u +%s) - last) / 60 ))
+          echo "newest snapshot: ${age} minutes old"
+          if [ "$age" -ge 150 ]; then echo "run=true" >> "$GITHUB_OUTPUT"; else echo "run=false" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/setup-python@v5
+        if: steps.due.outputs.run != 'false'
         with:
           python-version: "3.13"
       - run: pip install --quiet requests
+        if: steps.due.outputs.run != 'false'
       - name: Snapshot
+        if: steps.due.outputs.run != 'false'
         env:
           MEDIACLOUD_API_KEY: ${{ secrets.MEDIACLOUD_API_KEY }}
         run: python -m simlab.snap --out data-repo/snapshots
       - name: Push to the data repo
+        if: steps.due.outputs.run != 'false'
         working-directory: data-repo
         run: |
           git config user.name "github-actions[bot]"
