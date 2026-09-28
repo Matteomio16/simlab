@@ -13,12 +13,9 @@ import hashlib
 import json
 import math
 import re
-import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
-from email.utils import parsedate_to_datetime
 from pathlib import Path
-from urllib.parse import urlparse
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -37,19 +34,6 @@ def _iso(dt: datetime) -> str:
     return dt.astimezone(timezone.utc).isoformat(timespec="seconds")
 
 
-def parse_googlenews(raw: bytes, race_id: str) -> list[dict]:
-    out = []
-    for it in ET.fromstring(raw).iter("item"):
-        src, when = it.find("source"), it.findtext("pubDate")
-        if not when:
-            continue
-        out.append({"race_id": race_id, "title": it.findtext("title") or "", "url": it.findtext("link") or "",
-                    "outlet": (src.text or "").strip() if src is not None else "",
-                    "domain": urlparse(src.get("url", "")).netloc.removeprefix("www.") if src is not None else "",
-                    "seen": _iso(parsedate_to_datetime(when)), "source": "googlenews"})
-    return out
-
-
 def parse_gdelt(raw: bytes, race_id: str) -> list[dict]:
     try:
         arts = json.loads(raw).get("articles", [])
@@ -61,7 +45,9 @@ def parse_gdelt(raw: bytes, race_id: str) -> list[dict]:
              "source": "gdelt"} for a in arts if a.get("seendate")]
 
 
-PARSERS = {"googlenews": parse_googlenews, "gdelt": parse_gdelt}
+# Google News is not a source: its feed's terms allow only personal news readers (Matteo, 28 Sep); files saved before
+# that decision are ignored.
+PARSERS = {"gdelt": parse_gdelt}
 
 
 def read_day(snap_root: Path, day: date) -> list[dict]:

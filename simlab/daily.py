@@ -81,7 +81,11 @@ def _spend(started: float, finished: float) -> dict:
     path = RUNS / "spend.jsonl"
     out: dict = {}
     if path.exists():
-        for e in map(json.loads, path.read_text(encoding="utf-8").splitlines()):
+        for line in path.read_text(encoding="utf-8").splitlines():
+            try:
+                e = json.loads(line)
+            except ValueError:  # a line another process is still writing
+                continue
             if started <= e["ts"] <= finished:
                 k = e["tag"].split(":")[0]
                 out[k] = round(out.get(k, 0.0) + e["usd"], 4)

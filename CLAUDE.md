@@ -172,6 +172,27 @@ Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.m
   that size.
 - A published poll table built on Wikipedia data is CC BY-SA.
 
+Decided by Matteo, 28 Sep (engine; details in `docs/engine-design.md`, `docs/roadmap.md` and `docs/CHANGELOG.md`):
+- **Dates:** build until 4 Oct; a private pilot for OH, NC and TX from 5–11 Oct; the public full run from 12 Oct, with all
+  35 Senate races and ~40 House seats. If the House isn't ready on 9 Oct, it starts from statistics only.
+- **Design:** the forecast machine is a chain of steps that pass dated files. `docs/engine-design.md` is the contract
+  between the sessions (Engine, Statistics, Kev, Content & site).
+- **News effects are voter reactions**, including backlash and mobilisation, not who a story helps on paper. Only the
+  voter groups' reactions move numbers.
+- **Only people who can move count.** A reaction applies only to the share of a group that can still change: the
+  persuadable share for vote choice and the mobilisable share for turnout, both estimated from CES pre- and
+  post-election waves.
+- **Models:** GLM gives the reactions in the pilot. Kev runs in shadow mode, where its answers are scored but never
+  applied. Kev react-v2 joins on 12 Oct only if, on held-out events, its direction is at least as good as GLM's, its
+  size-tracking is above zero, and GLM and Kev averaged beat GLM alone.
+- **News:**
+  - Jev labels the news, with outlet names removed.
+  - Attention comes from coverage data; the model's guess only breaks ties.
+  - Stories about polls get no reactions, because polls enter through the filter.
+  - Sources are GDELT and Media Cloud. Google News is not used: its feed's terms allow only personal news readers.
+- **Daily job:** it runs on GitHub Actions at 09:47 UTC and writes its outputs to the private data repo. Its schedule is
+  switched on at the pilot (repository variable `PIPELINE_ON`); manual runs work any time.
+
 ## 6. Reference material (read, don't duplicate)
 
 Local snapshots (read these; Claude Code cannot open claude.ai links):

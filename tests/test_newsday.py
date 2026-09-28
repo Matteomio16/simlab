@@ -7,14 +7,14 @@ from pathlib import Path
 
 from simlab import newsday
 
-RSS = """<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel>
-<item><title>Brown and Husted clash over tariffs - Cleveland.com</title><link>https://news.google.com/a1</link>
-<pubDate>Mon, 28 Sep 2026 08:00:00 GMT</pubDate><source url="https://www.cleveland.com">Cleveland.com</source></item>
-<item><title>Crypto PAC to spend $30M against Sherrod Brown - Politico</title><link>https://news.google.com/a2</link>
-<pubDate>Mon, 28 Sep 2026 07:00:00 GMT</pubDate><source url="https://www.politico.com">Politico</source></item>
-</channel></rss>"""
-GDELT = {"articles": [{"url": "https://example.com/x", "title": "Talarico , Paxton trade attacks",
-                       "seendate": "20260928T090000Z", "domain": "example.com"}]}
+def gdelt(*arts) -> str:
+    return json.dumps({"articles": [{"url": f"https://{d}/{t[:24]}", "title": t, "seendate": s, "domain": d}
+                                    for t, s, d in arts]})
+
+
+OHIO = gdelt(("Brown and Husted clash over tariffs", "20260928T080000Z", "cleveland.com"),
+             ("Crypto PAC to spend $30M against Sherrod Brown", "20260928T070000Z", "politico.com"))
+TEXAS = gdelt(("Talarico , Paxton trade attacks", "20260928T090000Z", "example.com"))
 
 
 def snapshot(root: Path, day: str, hhmm: str, files: dict) -> None:
@@ -23,19 +23,18 @@ def snapshot(root: Path, day: str, hhmm: str, files: dict) -> None:
     for name, body in files.items():
         path = run / "news" / f"{name}.gz"
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(gzip.compress(body, mtime=0))
+        path.write_bytes(gzip.compress(body.encode(), mtime=0))
         entries.append({"source": "news", "name": name, "file": f"news/{name}.gz"})
-    entries.append({"source": "news", "name": "gdelt-ohio", "error": "HTTP 429"})
+    entries.append({"source": "news", "name": "gdelt-north-carolina", "error": "HTTP 429"})
     (run / "manifest.json").write_text(json.dumps({"files": entries}), encoding="utf-8")
 
 
 class ReadDay(unittest.TestCase):
-    def test_parses_both_sources_dedupes_and_cleans(self):
+    def test_parses_dedupes_and_cleans(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            snapshot(root, "2026-09-28", "0036", {"googlenews-ohio": RSS.encode()})
-            snapshot(root, "2026-09-28", "0341", {"googlenews-ohio": RSS.encode(),
-                                                   "gdelt-texas": json.dumps(GDELT).encode()})
+            snapshot(root, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
+            snapshot(root, "2026-09-28", "0341", {"gdelt-ohio": OHIO, "gdelt-texas": TEXAS})
             arts = newsday.read_day(root, date(2026, 9, 28))
         self.assertEqual([a["race_id"] for a in arts], ["OH-S", "OH-S", "TX"])
         oh = {a["title"]: a for a in arts if a["race_id"] == "OH-S"}
@@ -45,13 +44,18 @@ class ReadDay(unittest.TestCase):
         self.assertEqual(tx["title"], "Talarico, Paxton trade attacks")
         self.assertEqual(tx["source"], "gdelt")
 
+    def test_google_news_files_are_ignored(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            snapshot(Path(tmp), "2026-09-28", "0036", {"googlenews-ohio": "<rss><channel></channel></rss>"})
+            self.assertEqual(newsday.read_day(Path(tmp), date(2026, 9, 28)), [])
+
     def test_bad_gdelt_json_is_skipped(self):
         self.assertEqual(newsday.parse_gdelt(b'{"articles": [ {bad', "TX"), [])
 
     def test_headlines_under_four_words_are_dropped(self):
-        stub = RSS.replace("Brown and Husted clash over tariffs - Cleveland.com", "GOP-ABC News - ABC News")
+        stub = OHIO.replace("Brown and Husted clash over tariffs", "GOP-ABC News")
         with tempfile.TemporaryDirectory() as tmp:
-            snapshot(Path(tmp), "2026-09-28", "0036", {"googlenews-ohio": stub.encode()})
+            snapshot(Path(tmp), "2026-09-28", "0036", {"gdelt-ohio": stub})
             arts = newsday.read_day(Path(tmp), date(2026, 9, 28))
         self.assertEqual([a["title"] for a in arts], ["Crypto PAC to spend $30M against Sherrod Brown"])
 
@@ -245,7 +249,7 @@ class Run(unittest.TestCase):
     def test_writes_events_and_private_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
-            snapshot(snap, "2026-09-28", "0036", {"googlenews-ohio": RSS.encode()})
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
             summary = newsday.run(date(2026, 9, 28), snap, derived, "test-run", FakeAsker(),
                                   [FakeChat(['{"card": "%s"}' % GOOD] * 5)])
             events = newsday._jsonl(derived / "2026-09-28" / "events.jsonl")
@@ -260,8 +264,8 @@ class Run(unittest.TestCase):
     def test_second_day_reuses_labels_and_id(self):
         with tempfile.TemporaryDirectory() as tmp:
             snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
-            snapshot(snap, "2026-09-28", "0036", {"googlenews-ohio": RSS.encode()})
-            snapshot(snap, "2026-09-29", "0036", {"googlenews-ohio": RSS.replace("28 Sep", "29 Sep").encode()})
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
+            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO.replace("20260928", "20260929")})
             chat = FakeChat(['{"card": "%s"}' % GOOD] * 10)
             newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [chat])
             asker2 = FakeAsker()

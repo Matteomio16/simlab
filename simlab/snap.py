@@ -10,8 +10,9 @@ HTTP status, raw size and SHA-256 of the raw content, or the error. Sources, all
   polling page; raw wikitext with revision ids (CC BY-SA).
 - markets, benchmark only (never assimilated): PredictIt (all markets), Kalshi and Polymarket (Senate and House
   control, every Senate race).
-- news: Google News RSS and GDELT headlines for each pilot race and the national midterms (news.RACES queries; GDELT
-  allows one request per 5 s and often rate-limits shared IPs).
+- news: GDELT headlines for each pilot race and the national midterms (news.RACES queries). GDELT allows one request
+  per 5 s and often rate-limits shared IPs, so each query retries with longer waits. Google News is not used: its
+  feed's terms allow only personal news readers (Matteo, 28 Sep). Media Cloud joins once its key exists.
 - pageviews: daily Wikipedia views of the pilot candidates' articles, last 10 days.
 Sources that need keys (FEC, FRED, EIA) and early-vote aggregates join once their keys and files exist. Nothing raw
 is printed: the job runs in a public repo whose logs are public.
@@ -57,7 +58,6 @@ POLYMARKET_SLUGS = ["which-party-will-win-the-senate-in-2026", "which-party-will
 NEWS = {"ohio": '("Sherrod Brown" OR "Jon Husted")', "north-carolina": '("Roy Cooper" OR "Michael Whatley")',
         "texas": '("James Talarico" OR "Ken Paxton")',
         "national": '("midterm elections" OR "midterms" OR "Senate majority" OR "generic ballot")'}
-GOOGLE_NEWS = "https://news.google.com/rss/search"
 GDELT = "https://api.gdeltproject.org/api/v2/doc/doc"
 PAGEVIEWS = "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user"
 CANDIDATES = ["Sherrod_Brown", "Jon_Husted", "Roy_Cooper", "Michael_Whatley", "James_Talarico", "Ken_Paxton"]
@@ -78,9 +78,9 @@ def get(url: str, params: dict | None = None, tries: int = 3, wait: float = 5.0)
     return r
 
 
-def one(url: str, params: dict | None = None):
+def one(url: str, params: dict | None = None, tries: int = 3, wait: float = 5.0):
     def fetch():
-        r = get(url, params)
+        r = get(url, params, tries, wait)
         return r.status_code, r.content
     return fetch
 
@@ -168,13 +168,10 @@ def snapshot(out: Path) -> dict:
         {t: (KALSHI, {"series_ticker": t, "status": "open", "with_nested_markets": "true"}) for t in KALSHI_SERIES}))
     run.save("markets", "polymarket", GAMMA, combined({s: (GAMMA, {"slug": s}) for s in POLYMARKET_SLUGS}))
     for race, query in NEWS.items():
-        run.save("news", f"googlenews-{race}", GOOGLE_NEWS, one(
-            GOOGLE_NEWS, {"q": f"{query} when:1d", "hl": "en-US", "gl": "US", "ceid": "US:en"}))
-    for race, query in NEWS.items():
         time.sleep(6)
         run.save("news", f"gdelt-{race}", GDELT, one(GDELT, {
             "query": f"{query} sourcecountry:US sourcelang:english", "mode": "ArtList", "format": "json",
-            "maxrecords": 250, "sort": "DateDesc", "timespan": "6h"}))
+            "maxrecords": 250, "sort": "DateDesc", "timespan": "6h"}, tries=5, wait=20.0))
     end = run.when.date()
     run.save("pageviews", "candidates", PAGEVIEWS, combined(
         {a: (f"{PAGEVIEWS}/{a}/daily/{end - timedelta(days=10):%Y%m%d}/{end:%Y%m%d}", {}) for a in CANDIDATES}))

@@ -58,6 +58,17 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 - Not yet done: first-seen dates across snapshots (for the blind track), ranked-choice handling for Alaska, and
   three-way handling for Montana.
 
+## 2026-09-28 (Engine session): Matteo's answers on news sources, CLAUDE.md, push, secrets, schedule
+
+Matteo answered yes to all five:
+1. **News sources:** GDELT and Media Cloud replace Google News, because Google News's feed terms allow only personal
+   news readers. Google News is dropped from the snapshots and the pipeline; the files already saved are ignored. Matteo
+   creates the free Media Cloud account and adds the key.
+2. **CLAUDE.md §5:** gets the engine decisions of 28 Sep.
+3. **Push:** the local commits go to the public repo, as planned.
+4. **OpenRouter key:** Matteo adds it as the GitHub secret `OPENROUTER_API_KEY`.
+5. **Schedule:** the daily job's schedule is switched on at the pilot on 5 Oct (`PIPELINE_ON`), with his OK then.
+
 ## 2026-09-28 (Engine session): news pipeline built (A4)
 
 - `simlab/newsday.py` turns each day's snapshots into `derived/<date>/events.jsonl`, the engine-design §7 contract, plus
