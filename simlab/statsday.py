@@ -14,7 +14,7 @@ import json
 import subprocess
 import sys
 import traceback
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -61,6 +61,39 @@ def previous_polls(data: Path, day: date) -> pd.DataFrame | None:
     return pd.read_csv(files[-1], low_memory=False) if files else None
 
 
+PILOT = {"OH-S", "NC", "TX"}
+TIER_RANK = {"statistics": 0, "watch": 1, "simulate": 2}
+
+
+def tier(p_stats: float | None, cook: str | None, market: float | None) -> tuple[str, list[str]]:
+    """Where the simulation runs (Matteo, 28 Sep): "simulate" (full), "watch" (the biggest stories only) or
+    "statistics" (statistics and national news). A race runs on statistics alone only when all three signals call it
+    safe, since a race that flips unsimulated would count against the simulation."""
+    close = lambda p, lo: p is not None and lo <= p <= 1 - lo
+    word = (cook or "").split(" ")[0]
+    reasons = ([f"stats-only {p_stats:.0%}"] if close(p_stats, 0.10) else []) +               ([f"Cook {cook}"] if word in ("Tossup", "Tilt", "Lean") else []) +               ([f"market {market:.0%}"] if close(market, 0.10) else [])
+    if reasons:
+        return "simulate", reasons
+    reasons = ([f"stats-only {p_stats:.0%}"] if close(p_stats, 0.03) else []) +               ([f"Cook {cook}"] if word == "Likely" else []) + ([f"market {market:.0%}"] if close(market, 0.05) else [])
+    return ("watch", reasons) if reasons else ("statistics", ["all three signals call it safe"])
+
+
+def tiers(races: dict, stats: dict, bench: dict, history: list[dict]) -> dict:
+    """races.json rows with today's tier: pilot races always simulate; otherwise the most competitive tier of today
+    and the last days in `history` (earlier races.json files), so a race doesn't drop out after one quiet day."""
+    out = {}
+    for rid, row in races.items():
+        raw, why = tier(stats.get(rid), bench.get(rid, {}).get("cook"), bench.get(rid, {}).get("market"))
+        past = [h[rid]["tier_raw"] for h in history if rid in h and "tier_raw" in h.get(rid, {})]
+        best = max([raw, *past], key=TIER_RANK.get)
+        if rid in PILOT:
+            best, why = "simulate", ["pilot race"]
+        elif best != raw:
+            why = why + [f"kept from the last {len(history)} days"]
+        out[rid] = row | {"tier": best, "tier_raw": raw, "tier_reasons": why}
+    return out
+
+
 def _read(path: Path):
     return json.loads(gzip.decompress(path.read_bytes())) if path.exists() else {}
 
@@ -100,7 +133,6 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     first_seen(poll_rows(t["senate"], t["generic_ballot"]), previous_polls(data, day),
                t["snapshot"]).to_csv(out / "polls.csv", index=False)
     races = races_json(t["race_list"])
-    _write(out / "races.json", meta | races)
     inp = levels.inputs()
     lv = levels.compute(t, day, run_id, inp=inp)
     sha = {"levels.json": _write(out / "levels.json", lv)}
@@ -123,14 +155,21 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
         raise ValueError(f"story effects don't add up across their parts (gap {gap:.2e})")
     news["sigma"] = {k[-1]: mp["uncertainty"][k]["sigma_log"] for k in ("c_s", "c_t")}
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
+    bench = benchmarks(snap, t["race_list"])
     forecast, draws = montecarlo.build(head, lv, {k: v["left_party"] for k, v in races.items()}, params, day, run_id,
-                                       benchmarks=benchmarks(snap, t["race_list"]), movers=moves.movers(mv), news=news)
+                                       benchmarks=bench, movers=moves.movers(mv), news=news)
     forecast |= {"snapshot": t["snapshot"], "inputs": sha}
+    history = [json.loads(f.read_text(encoding="utf-8")) for k in range(1, 7)
+               if (f := data / "derived" / (day - timedelta(days=k)).isoformat() / "races.json").exists()]
+    stats = {r: x["stats_only"]["p_dem_win"] for r, x in forecast["races"].items()}
+    races = tiers(races, stats, bench, history)
+    _write(out / "races.json", meta | races)
     _write(out / "forecast.json", forecast)
     _write(out / "draws.json", draws, compact=True)
     return {"ok": True, "date": day.isoformat(), "run_id": run_id, "snapshot": t["snapshot"], "races": len(races),
             "with_polls": sum(r["n_polls"] > 0 for r in lv["races"].values()), "draws": forecast["draws"],
             "floor_lifted_pairs": forecast["floor_lifted_pairs"],
+            "tiers": {k: sum(r["tier"] == k for r in races.values()) for k in TIER_RANK},
             "stories": sum(len(x["events"]) for k, x in mv.items() if k != "shadow" and isinstance(x, dict) and "events" in x),
             "files": ["polls.csv", "races.json", "levels.json", "groups.json", "params.json", "moves.json",
                       "filter_state.json", "forecast.json", "draws.json"]}

@@ -83,6 +83,26 @@ class FirstSeenTest(unittest.TestCase):
             self.assertIsNone(statsday.previous_polls(Path(d), date(2026, 9, 26)))
 
 
+class TierTest(unittest.TestCase):
+    def test_tier_rules(self):
+        self.assertEqual(statsday.tier(0.5, "Solid R", 0.02)[0], "simulate")
+        self.assertEqual(statsday.tier(0.95, "Lean R", 0.97)[0], "simulate")
+        self.assertEqual(statsday.tier(0.95, "Solid D", 0.96)[0], "watch")
+        self.assertEqual(statsday.tier(0.99, "Likely D", 0.99)[0], "watch")
+        self.assertEqual(statsday.tier(0.99, "Solid D", 0.98), ("statistics", ["all three signals call it safe"]))
+
+    def test_pilot_races_always_simulate_and_a_week_of_memory(self):
+        races = {"OH-S": {}, "CO": {}, "WY": {}}
+        stats = {"OH-S": 0.99, "CO": 0.99, "WY": 0.01}
+        bench = {"OH-S": {"cook": "Solid D", "market": 0.99}, "CO": {"cook": "Solid D", "market": 0.99},
+                 "WY": {"cook": "Solid R", "market": 0.01}}
+        history = [{"CO": {"tier_raw": "watch"}}, {"WY": {"tier_raw": "statistics"}}]
+        out = statsday.tiers(races, stats, bench, history)
+        self.assertEqual((out["OH-S"]["tier"], out["OH-S"]["tier_reasons"]), ("simulate", ["pilot race"]))
+        self.assertEqual((out["CO"]["tier_raw"], out["CO"]["tier"]), ("statistics", "watch"))
+        self.assertEqual(out["WY"]["tier"], "statistics")
+
+
 class BenchmarkTest(unittest.TestCase):
     def test_markets_and_cook_from_the_snapshot(self):
         with tempfile.TemporaryDirectory() as d:

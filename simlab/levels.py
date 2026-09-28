@@ -208,12 +208,15 @@ def _poll_rows(senate: pd.DataFrame, gb: pd.DataFrame, election: date) -> pd.Dat
     return p
 
 
-def effect(t: np.ndarray, items: list, election: date = ELECTION) -> np.ndarray:
-    """Total story effect on days `t` (relative to election day) from (first_seen date, full effect, half-life)."""
+def effect(t: np.ndarray, items: list, election: date = ELECTION, stop: float | None = None) -> np.ndarray:
+    """Total story effect on days `t` (relative to election day) from (first_seen, last_seen, full effect, half-life):
+    none before a story was first seen, all of it while it is in the news, then fading from the day it was last seen.
+    With `stop` (a day relative to election day), coverage is taken to end then at the latest."""
     out = np.zeros(len(t))
-    for first, full, h in items:
-        t0 = (date.fromisoformat(first) - election).days
-        out += np.where(t >= t0, full * 0.5 ** ((t - t0) / h), 0.0)
+    for first, last, full, h in items:
+        t0, t1 = ((date.fromisoformat(x) - election).days for x in (first, last))
+        t1 = t1 if stop is None else min(t1, stop)
+        out += np.where(t < t0, 0.0, np.where(t <= t1, full, full * 0.5 ** (np.maximum(t - t1, 0) / h)))
     return out
 
 
@@ -223,8 +226,9 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
     """Starting levels for every race on `today` (stats-groundwork §5.2-5.4). With `moves` ({race_id or "US":
     [(first_seen, full effect, half-life)]}) this is the daily filter (§5.6): the statistical level is estimated from
     polls less the story effects in force on their dates, and each race's story effects today go on top in full,
-    polls or not (Matteo, 28 Sep). A race without its own stories takes the nation's. Without `moves`, it is the
-    stats-only twin."""
+    polls or not (Matteo, 28 Sep). The election-day margin counts what is expected to remain of each story on
+    3 Nov, taking its coverage to end today; `story_effect` is today's. A race without its own stories takes the
+    nation's. Without `moves`, it is the stats-only twin."""
     moves = moves or {}
     d = (election - today).days
     coef, sd_f = params["fundamentals"]["coef"], params["fundamentals"]["sd"]
@@ -245,6 +249,7 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
         sel = (p.race == r).values
         p.loc[sel, "adj"] -= effect(p.t.values[sel].astype(float), path(r), election)
     now = lambda r: float(effect(np.array([-d], dtype=float), path(r), election)[0])
+    eday = lambda r: float(effect(np.array([0.0]), path(r), election, stop=-d)[0])
     g = p[p.race == "US"]
     grid, nx, npv = local_level(g.t.values.astype(float), g.adj.values, g.v.values, q_n, -d)
     n_now, pn_now = float(nx[-1]), float(npv[-1])
@@ -268,8 +273,8 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
             poll_margin = n_now + r_poll + now(race.race_id)
         r_t, var_r, w = blend(r_poll, v_poll, fund - n_now, sd_f)
         races[race.race_id] = {
-            "margin": n_now + r_t + now(race.race_id), "sd": float(np.sqrt(var_n + var_r)), "w_polls": w,
-            "poll_margin": poll_margin, "story_effect": now(race.race_id),
+            "margin": n_now + r_t + eday(race.race_id), "sd": float(np.sqrt(var_n + var_r)), "w_polls": w,
+            "poll_margin": poll_margin, "story_effect": now(race.race_id), "story_effect_3nov": eday(race.race_id),
             "fundamentals": fund, "n_polls": int(len(rp)),
             "last_poll": str(max(rp.mid)) if len(rp) else None,
             "components": {"lean": lean, "incumbency": inc, "candidate": cand, "candidate_detail": detail,

@@ -168,6 +168,14 @@ class SummaryTest(unittest.TestCase):
         self.assertAlmostEqual(s["p_d_caucus_51"], 1 / 3, places=4)
 
 
+class IndependentsTest(unittest.TestCase):
+    def test_share_where_the_new_independents_hold_the_balance(self):
+        seats = {"R": np.array([49, 50, 48]), "D": np.array([48, 47, 49]), "I": np.array([3, 3, 3])}
+        s = mc.senate_summary(seats, {"R": 45, "D": 46, "I": 2})
+        self.assertAlmostEqual(s["p_independents_decide"], 1 / 3, places=4)
+        self.assertAlmostEqual(s["p_r_50plus"] + s["p_d_caucus_51"] + s["p_independents_decide"], 1.0, places=3)
+
+
 class BenchmarkTest(unittest.TestCase):
     def test_cook_ratings_from_the_predictions_table(self):
         self.assertEqual(mc.cook(PREDICTIONS), {"AL": "Solid R", "NC": "Lean D", "OH-S": "Tossup"})

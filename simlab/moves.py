@@ -19,6 +19,7 @@ from scipy.optimize import minimize_scalar
 
 HERE = Path(__file__).parent
 PARAMS = HERE / "move_params.json"
+ELECTION = date(2026, 11, 3)
 LOOKBACK = 60
 SCHEMA = 1
 UNITS = "delta_margin and by_event in points of two-party margin (D or independent challenger minus R); " \
@@ -43,6 +44,12 @@ def race_move(groups: dict, dd: dict, dt: dict) -> float:
 
 def decay(days: float, half_life: float) -> float:
     return 0.0 if days < 0 else 0.5 ** (days / half_life)
+
+
+def held(since_first: float, since_last: float, half_life: float) -> float:
+    """A story's share of its full effect: none before it was first seen, all of it while it is still in the news,
+    then fading with its half-life from the day it was last seen (Matteo, 28 Sep)."""
+    return 0.0 if since_first < 0 else 1.0 if since_last <= 0 else 0.5 ** (since_last / half_life)
 
 
 def fit_cs(rows: list[dict], pimu: dict) -> dict:
@@ -104,10 +111,14 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
         if e is None:
             continue
         first = datetime.fromisoformat(e["first_seen"]).date()
+        last = datetime.fromisoformat(e.get("last_seen") or e["first_seen"]).date()
         asked = min(d for _, d in answers.values())
-        tau, h, a = (day - first).days, hl.get(e.get("type"), hl["default"]), float(e.get("attention", {}).get("a", 0.0))
+        tau, lag = (day - first).days, (day - last).days
+        h, a = hl.get(e.get("type"), hl["default"]), float(e.get("attention", {}).get("a", 0.0))
         known = 1.0 if asked < day else 0.0
-        step = decay(tau, h) - known * decay(tau - 1, h)
+        share = held(tau, lag, h)
+        step = share - known * held(tau - 1, lag - 1, h)
+        eday = held((ELECTION - first).days, (ELECTION - min(last, day)).days, h)
         full = {}
         for base, (ks, kt) in (("dials", (dial.get("k_s", 1.0), dial.get("k_t", 1.0))), ("base", (1.0, 1.0))):
             ch = {g: group_change(r["support"], r["turnout"], groups[g]["pi"], groups[g]["mu"], a, params["c_s"],
@@ -116,16 +127,18 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
             full[base] = (100 * race_move(groups, dd, dt), 100 * sum(groups[g]["n"] * dt[g] for g in dt), dd, dt)
         m, turnout, dd, dt = full["dials"]
         by_event[eid] = round(m * step, 4)
-        by_effect[eid] = round(m * decay(tau, h), 4)
+        by_effect[eid] = round(m * share, 4)
         delta += m * step
         delta_base += full["base"][0] * step
         delta_t += turnout * step
         for g in dd:
-            by_group[g]["dd"] += 100 * dd[g] * decay(tau, h)
-            by_group[g]["dt"] += 100 * dt[g] * decay(tau, h)
+            by_group[g]["dd"] += 100 * dd[g] * share
+            by_group[g]["dt"] += 100 * dt[g] * share
         fs, ft = round(100 * race_move(groups, dd, {}), 4), round(100 * race_move(groups, {}, dt), 4)
-        info[eid] = {"first_seen": first.isoformat(), "half_life": h, "a": a, "full": round(fs + ft, 4), "full_s": fs,
-                     "full_t": ft, "full_base": round(full["base"][0], 4), "card": e.get("card", "")}
+        info[eid] = {"first_seen": first.isoformat(), "last_seen": last.isoformat(), "type": e.get("type"),
+                     "half_life": h, "a": a, "full": round(fs + ft, 4), "full_s": fs, "full_t": ft,
+                     "full_base": round(full["base"][0], 4), "election_day": round((fs + ft) * eday, 4),
+                     "card": e.get("card", "")}
     return {"delta_margin": round(delta, 4), "delta_margin_base": round(delta_base, 4),
             "delta_turnout": round(delta_t, 4),
             "by_group": {g: {k: round(v, 4) for k, v in x.items()} for g, x in by_group.items()},
@@ -169,20 +182,21 @@ def lasting_share(events: list[tuple], lags: list[tuple] = LAGS) -> tuple[dict, 
 
 
 def paths(m: dict, part: str = "all") -> dict:
-    """{race_id or "US": [(first_seen, full effect, half-life)]} from moves.json's main block, for levels.build: the
-    whole effect, or only its switching ("s") or turnout ("t") part."""
+    """{race_id or "US": [(first_seen, last_seen, full effect, half-life)]} from moves.json's main block, for
+    levels.build: the whole effect, or only its switching ("s") or turnout ("t") part."""
     key = {"all": "full", "s": "full_s", "t": "full_t"}[part]
-    return {r: [(v["first_seen"], v[key], v["half_life"]) for v in x["events"].values()]
+    return {r: [(v["first_seen"], v["last_seen"], v[key], v["half_life"]) for v in x["events"].values()]
             for r, x in m.items() if r != "shadow" and isinstance(x, dict) and "events" in x}
 
 
 def movers(m: dict, top: int = 5, least: float = 0.01) -> dict:
-    """forecast.json movers: each race's stories with the largest effect so far (points), largest first."""
+    """forecast.json movers: each race's stories with the largest effect on its election-day margin (points), largest
+    first."""
     out = {}
     for r, x in m.items():
-        if r in ("US", "shadow") or not isinstance(x, dict) or "by_event_effect" not in x:
+        if r in ("US", "shadow") or not isinstance(x, dict) or "events" not in x:
             continue
-        ranked = sorted(x["by_event_effect"].items(), key=lambda kv: -abs(kv[1]))[:top]
+        ranked = sorted(((e, v["election_day"]) for e, v in x["events"].items()), key=lambda kv: -abs(kv[1]))[:top]
         out[r] = [{"event_id": e, "card": x["events"][e]["card"], "delta": round(v, 2)} for e, v in ranked
                   if abs(v) >= least]
     return out

@@ -23,8 +23,11 @@
  },
  "dials": {},
  "half_life_days": {
-  "default": 10
+  "default": 1,
+  "economy": 60,
+  "national": 60
  },
+ "lasting_rule": "Matteo, 28 Sep: a story keeps its full effect while it is still in the news (first_seen to last_seen), then fades. One-off stories (endorsements, scandals, debates, ads, candidates' policy news, other) fade with a 1-day half-life once out of the news; lasting topics (economy: prices, jobs, gas; national: president, Congress, war, disasters) with 60 days, in line with the calibration events, whose shifts held for 3-7 weeks (lasting_evidence). The 3 Nov forecast counts what is expected to remain of each story then, taking its coverage to end today. Similar headlines are one story (the Engine's clustering), so a continuing story extends rather than stacks.",
  "fit": {
   "c_s": 0.2055,
   "events": 45,
@@ -33,30 +36,6 @@
   "on": "runs/events2_groups__glm.jsonl (GLM, direct wording)",
   "fitted": "2026-09-28"
  },
- "lineage": {
-  "c_s": {
-   "from": [
-    "simlab/events2.json: 45 real events 2017-2025 with national opinion shifts, days +5..+14 against -7..-1 (approval: 538 and VoteHub averages; generic ballot: 538 and VoteHub polls; Engine)",
-    "runs/events2_groups__glm.jsonl: GLM's support answers for the 28 groups, direct wording, two option orders (Engine, simlab/groupcalib.py)",
-    "simlab/pimu.json: national persuadable shares (CES 2018 and 2022 waves)"
-   ],
-   "fit": "python -m simlab.moves --fit: weighted least squares of measured shift on the \u00a73.2 switching term"
-  },
-  "c_t": {
-   "from": [
-    "prior: equal to c_s (Matteo, 28 Sep)"
-   ]
-  },
-  "journey": [
-   "simlab/move_params.json",
-   "derived/D/params.json (copied daily, with date and run_id)",
-   "derived/D/moves.json (group changes and each story's switching and turnout effect)",
-   "derived/D/filter_state.json (headline levels with the effects)",
-   "derived/D/forecast.json (per-election multipliers; each race's news block: effect, parts, win chance if weaker or stronger)"
-  ],
-  "updated_by": "the weekly filter from 12 Oct: per-state dials from the week's polls, then the fit is redone"
- },
- "notes": "dials start at 1 and half-lives at the 10-day prior; the weekly filter tunes both from 12 Oct",
  "lasting_evidence": {
   "events": 44,
   "share_left": {
@@ -98,5 +77,29 @@
   },
   "how": "shift on each later window minus days -7..-1, regressed through the origin on the days +5..+14 shift; the series events2 measured the events on (538 and VoteHub approval and generic-ballot averages)",
   "computed": "2026-09-28"
- }
+ },
+ "lineage": {
+  "c_s": {
+   "from": [
+    "simlab/events2.json: 45 real events 2017-2025 with national opinion shifts, days +5..+14 against -7..-1 (approval: 538 and VoteHub averages; generic ballot: 538 and VoteHub polls; Engine)",
+    "runs/events2_groups__glm.jsonl: GLM's support answers for the 28 groups, direct wording, two option orders (Engine, simlab/groupcalib.py)",
+    "simlab/pimu.json: national persuadable shares (CES 2018 and 2022 waves)"
+   ],
+   "fit": "python -m simlab.moves --fit: weighted least squares of measured shift on the \u00a73.2 switching term"
+  },
+  "c_t": {
+   "from": [
+    "prior: equal to c_s (Matteo, 28 Sep)"
+   ]
+  },
+  "journey": [
+   "simlab/move_params.json",
+   "derived/D/params.json (copied daily, with date and run_id)",
+   "derived/D/moves.json (group changes and each story's switching and turnout effect)",
+   "derived/D/filter_state.json (headline levels with the effects)",
+   "derived/D/forecast.json (per-election multipliers; each race's news block: effect, parts, win chance if weaker or stronger)"
+  ],
+  "updated_by": "the weekly filter from 12 Oct: per-state dials from the week's polls, then the fit is redone"
+ },
+ "notes": "dials start at 1; the weekly filter tunes the dials and the half-lives from 12 Oct"
 }

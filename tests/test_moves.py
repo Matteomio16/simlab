@@ -106,6 +106,34 @@ class BuildTest(unittest.TestCase):
         self.assertEqual(m["US"]["delta_margin"], 0.0)
 
 
+class CoverageTest(unittest.TestCase):
+    GROUPS = {"OH-S": {A: {"n": 0.5, "t": 0.5, "d": 0.8, "pi": 0.1, "mu": 0.2},
+                       B: {"n": 0.5, "t": 0.5, "d": -0.8, "pi": 0.1, "mu": 0.2}}}
+
+    def run_days(self, etype):
+        params = {"c_s": 0.5, "c_t": 0.0, "dials": {}, "half_life_days": {"default": 1, "economy": 60}}
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            e = event("e1", "2026-10-01T08:00:00+00:00", 1.0) | {"type": etype}
+            write_day(root, "2026-10-01", [e], [reaction("e1", A, 2.0, 0.0), reaction("e1", B, 2.0, 0.0)])
+            write_day(root, "2026-10-05", [e | {"last_seen": "2026-10-05T09:00:00+00:00"}], [])
+            return {day: moves.build(date.fromisoformat(day), root, self.GROUPS, params, "run-1")["OH-S"]
+                    for day in ("2026-10-05", "2026-10-06", "2026-10-08")}
+
+    def test_a_story_holds_while_in_the_news_then_fades(self):
+        m, full = self.run_days("endorsement"), 10.0
+        self.assertAlmostEqual(m["2026-10-05"]["by_event_effect"]["e1"], full, places=4)
+        self.assertAlmostEqual(m["2026-10-06"]["by_event_effect"]["e1"], full / 2, places=4)
+        self.assertAlmostEqual(m["2026-10-08"]["by_event_effect"]["e1"], full / 8, places=4)
+        self.assertEqual(m["2026-10-05"]["events"]["e1"]["last_seen"], "2026-10-05")
+
+    def test_lasting_topics_fade_slowly_and_count_on_election_day(self):
+        oneoff, lasting = self.run_days("endorsement"), self.run_days("economy")
+        self.assertAlmostEqual(lasting["2026-10-08"]["by_event_effect"]["e1"], 10 * 0.5 ** (3 / 60), places=4)
+        self.assertAlmostEqual(lasting["2026-10-05"]["events"]["e1"]["election_day"], 10 * 0.5 ** (29 / 60), places=4)
+        self.assertLess(oneoff["2026-10-05"]["events"]["e1"]["election_day"], 1e-6)
+
+
 class PartsTest(unittest.TestCase):
     def test_switching_and_turnout_parts_add_up(self):
         groups = {"OH-S": {A: {"n": 0.5, "t": 0.5, "d": 0.8, "pi": 0.1, "mu": 0.2},
@@ -119,8 +147,8 @@ class PartsTest(unittest.TestCase):
         self.assertAlmostEqual(e["full_s"], 100 * 0.5 * 2 * 0.1 * 0.25, places=4)
         self.assertAlmostEqual(e["full_t"], 100 * 0.5 * (0.2 * 0.25 / 0.5) * 0.8, places=4)
         self.assertAlmostEqual(e["full"], e["full_s"] + e["full_t"], places=4)
-        self.assertEqual(moves.paths(m, "s"), {"OH-S": [("2026-10-01", e["full_s"], 10)]})
-        self.assertEqual(moves.paths(m, "t"), {"OH-S": [("2026-10-01", e["full_t"], 10)]})
+        self.assertEqual(moves.paths(m, "s"), {"OH-S": [("2026-10-01", "2026-10-01", e["full_s"], 10)]})
+        self.assertEqual(moves.paths(m, "t"), {"OH-S": [("2026-10-01", "2026-10-01", e["full_t"], 10)]})
 
 
 class LastingTest(unittest.TestCase):
@@ -144,20 +172,23 @@ class LastingTest(unittest.TestCase):
 
 
 class ReadTest(unittest.TestCase):
+    ev = lambda first, last, full, eday, card: {"first_seen": first, "last_seen": last, "half_life": 10, "full": full,
+                                                "full_s": full, "full_t": 0.0, "election_day": eday, "card": card}
     M = {"date": "2026-10-11", "params": {"c_s": 0.2, "c_t": 0.2}, "shadow": {"OH-S": {"events": {}}},
-         "OH-S": {"events": {"e1": {"first_seen": "2026-10-01", "half_life": 10, "full": 2.0, "card": "c1"},
-                             "e2": {"first_seen": "2026-10-05", "half_life": 10, "full": -0.5, "card": "c2"},
-                             "e3": {"first_seen": "2026-10-05", "half_life": 10, "full": 0.001, "card": "c3"}},
+         "OH-S": {"events": {"e1": ev("2026-10-01", "2026-10-03", 2.0, 0.2, "c1"),
+                             "e2": ev("2026-10-05", "2026-10-05", -0.5, -0.9, "c2"),
+                             "e3": ev("2026-10-05", "2026-10-05", 0.001, 0.0004, "c3")},
                   "by_event_effect": {"e1": 1.0, "e2": -0.33, "e3": 0.0006}},
          "US": {"events": {}, "by_event_effect": {}}}
 
     def test_effect_paths_for_the_filter(self):
-        self.assertEqual(moves.paths(self.M), {"OH-S": [("2026-10-01", 2.0, 10), ("2026-10-05", -0.5, 10),
-                                                        ("2026-10-05", 0.001, 10)], "US": []})
+        self.assertEqual(moves.paths(self.M), {"OH-S": [("2026-10-01", "2026-10-03", 2.0, 10),
+                                                        ("2026-10-05", "2026-10-05", -0.5, 10),
+                                                        ("2026-10-05", "2026-10-05", 0.001, 10)], "US": []})
 
-    def test_movers_for_the_forecast(self):
-        self.assertEqual(moves.movers(self.M), {"OH-S": [{"event_id": "e1", "card": "c1", "delta": 1.0},
-                                                         {"event_id": "e2", "card": "c2", "delta": -0.33}]})
+    def test_movers_are_the_stories_effect_on_election_day(self):
+        self.assertEqual(moves.movers(self.M), {"OH-S": [{"event_id": "e2", "card": "c2", "delta": -0.9},
+                                                         {"event_id": "e1", "card": "c1", "delta": 0.2}]})
 
 
 if __name__ == "__main__":

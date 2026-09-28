@@ -89,9 +89,11 @@ def _dist(v: np.ndarray) -> dict:
 
 def senate_summary(seats: dict, not_up: dict) -> dict:
     """Control (D3): Republicans hold 50+ (the Vice President breaks ties); the second line counts only the
-    independents not up (King, Sanders) as caucusing with Democrats. New independents are shown on their own."""
-    return {"p_r_50plus": round(float(np.mean(seats["R"] >= 50)), 4),
-            "p_d_caucus_51": round(float(np.mean(seats["D"] + not_up["I"] >= 51)), 4),
+    independents not up (King, Sanders) as caucusing with Democrats. New independents are shown on their own
+    (Matteo, 28 Sep); in the remaining elections they hold the balance."""
+    r, d = seats["R"] >= 50, seats["D"] + not_up["I"] >= 51
+    return {"p_r_50plus": round(float(np.mean(r)), 4), "p_d_caucus_51": round(float(np.mean(d)), 4),
+            "p_independents_decide": round(float(np.mean(~r & ~d)), 4),
             "seats": {k: _dist(v) for k, v in seats.items()}, "not_up": dict(not_up)}
 
 
