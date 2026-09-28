@@ -2,6 +2,22 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): statistics groundwork (research only, no decisions)
+
+- `docs/stats-groundwork.md` covers the inputs and their shapes, what is on disk, and the downloads to approve, with
+  sizes. It also sets out the methods for the pilot (1–2 Oct) and the fuller version (12 Oct): poll table, starting
+  levels, voter-group weights, daily and weekly filter, Monte Carlo, House.
+- Findings:
+  - Wikipedia has about 350 polls for the actual nominee pairs and VoteHub 239. VoteHub misses most polls in thinly
+    polled races, so the poll table merges both.
+  - The largest table on a page can be an obsolete or hypothetical matchup (Maine, Florida), so tables are picked by
+    nominee.
+  - About half the Wikipedia polls carry an "(R)"/"(D)" pollster tag, against 17% of VoteHub entries flagged partisan
+    by sponsor.
+  - Likely-voter screens lean D this cycle (+1.0 median over 23 paired releases) after leaning R in 2018 and 2022.
+- Open decisions for Matteo are in its §8. Note for engine-design.md: the sensitivity dial enters linearly, so the
+  weekly update can be an exact Kalman update.
+
 ## 2026-09-28 (Kev session): snapshotter (roadmap A1)
 
 - Matteo asked this session to build the snapshotter unless the data session already had it. A1 was "not started", no
