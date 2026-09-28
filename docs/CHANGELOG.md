@@ -2,6 +2,21 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): backtest extended to 2024
+
+- With Matteo's OK, `simlab.statsdata` fetched 538's 2024 generic-ballot poll list from the Wayback Machine (3 Dec 2024
+  copy, 735 polls, 0.33 MB). The backtest now covers 2018–2024: 122 races. California's 2024 special is left out,
+  because it had the same two candidates as the regular race.
+- **2024** (no 538 comparison: their scoring file stops at 2022). Brier at 35 / 14 / 1 days: ours 0.041 / 0.036 /
+  0.034, polls only 0.048 / 0.041 / 0.036, fundamentals only 0.051 / 0.052 / 0.053. One wrong call on eve:
+  Pennsylvania (we gave Casey 83%; McCormick won by 0.2).
+- **2018–2022 against 538** barely moved (the error sizes now also learn from 2024). Eve 0.040 against 538 deluxe
+  0.048; 35 days out 0.042 against 0.048.
+- **Our margin leaned Democratic every cycle** (+2.0, +3.9, +0.9, +3.3), inheriting the polls' tilt. Not corrected: the
+  polls' yearly misses swing both ways over 1998–2022, and the national error term covers a miss of that size.
+- Per-race output is now `runs/backtest_senate_2018_2024.csv`; the 2018–2022 file is removed. Details in
+  stats-groundwork §5.11.
+
 ## 2026-09-28 (Statistics session): backtest of the stats-only chain, Senate 2018–2022
 
 - `python -m simlab.backtest` (new `simlab/backtest.py`; Matteo's go-ahead) runs the chain of stats-groundwork

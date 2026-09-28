@@ -65,6 +65,8 @@ FILES = {  # local path: (URL, licence, expected bytes or None)
     HIST / "538_senate_polls_2024.csv": (f"{WB}/20241203183703id_/{FTE}/senate_polls.csv", "CC BY 4.0", 1497307),
     HIST / "538_house_polls_2024.csv": (f"{WB}/20241126021208id_/{FTE}/house_polls.csv", "CC BY 4.0", 373366),
     HIST / "538_governor_polls_2024.csv": (f"{WB}/20241202052158id_/{FTE}/governor_polls.csv", "CC BY 4.0", 457589),
+    HIST / "538_generic_ballot_polls_2024.csv": (f"{WB}/20241203161806id_/{FTE}/generic_ballot_polls.csv", "CC BY 4.0",
+                                                 332546),
     **{RESULTS / f"downballot_pres_by_cd_{lines}_{tab}.csv":
        (f"{SHEET}/{sid}/export?format=csv&gid={gid}", "The Downballot: cite and link, don't republish whole sheets", None)
        for lines, sid in (("2024lines", DB_2024_LINES), ("2026lines", DB_2026_LINES)) for tab, gid in DB_TABS.items()},

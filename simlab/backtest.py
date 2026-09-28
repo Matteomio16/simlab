@@ -1,10 +1,12 @@
-"""Backtest of the statistics-only chain (docs/stats-groundwork.md §5.1-5.4) on the 2018, 2020 and 2022 Senate races,
-scored against the results and against 538's own forecasts (lite, classic, deluxe) made on the same dates.
+"""Backtest of the statistics-only chain (docs/stats-groundwork.md §5.1-5.4) on the 2018-2024 Senate races, scored
+against the results and, for 2018-2022, against 538's own forecasts (lite, classic, deluxe) made on the same dates
+(538's scoring file has no 2024).
 
 No peeking: a poll counts only once 538 had logged it (created_at) by the forecast date; pollster house effects use
 the tested cycle's polls known by then, with priors from earlier cycles only; the fundamentals, the generic-ballot
-correction and the error sizes are refitted without the tested cycle. Georgia 2020 (both seats went to January runoffs)
-and races without a Democrat and a Republican as the top two (Louisiana, independents, same-party runoffs) are left out.
+correction and the error sizes are refitted without the tested cycle. Left out: Georgia 2020 (both seats went to
+January runoffs), California's 2024 special (the same two candidates as the regular race on the same ballot), and races
+without a Democrat and a Republican as the top two (Louisiana, independents, same-party runoffs).
 
     python -m simlab.backtest
 """
@@ -17,12 +19,12 @@ from scipy.stats import t as student_t
 from . import calib
 from .statsdata import HIST, mit
 
-CYCLES = (2018, 2020, 2022)
+CYCLES = (2018, 2020, 2022, 2024)
 DAYS = (35, 14, 1)
-ELECTION = {2018: "2018-11-06", 2020: "2020-11-03", 2022: "2022-11-08"}
-REGULAR_CLASS = {2018: "Class I", 2020: "Class II", 2022: "Class III"}
+ELECTION = {2018: "2018-11-06", 2020: "2020-11-03", 2022: "2022-11-08", 2024: "2024-11-05"}
+REGULAR_CLASS = {2018: "Class I", 2020: "Class II", 2022: "Class III", 2024: "Class I"}
 NS2, NU = 2.0 ** 2, 8
-OUT = calib.Path(__file__).parents[1] / "runs" / "backtest_senate_2018_2022.csv"
+OUT = calib.Path(__file__).parents[1] / "runs" / "backtest_senate_2018_2024.csv"
 
 
 def _states() -> dict:
@@ -32,7 +34,8 @@ def _states() -> dict:
 
 def senate_polls() -> pd.DataFrame:
     """One row per poll and race (versions within a population averaged, likely voters first), nominee pairs only."""
-    d = pd.read_csv(HIST / "538_senate_polls_historical.csv", low_memory=False)
+    d = pd.concat([pd.read_csv(HIST / f, low_memory=False)
+                   for f in ("538_senate_polls_historical.csv", "538_senate_polls_2024.csv")])
     d = d[(d.stage == "general") & d.party.isin(["DEM", "REP"])].copy()
     d["st"] = d.state.map(_states())
     d["special"] = d.seat_name != d.cycle.map(REGULAR_CLASS)
@@ -60,7 +63,8 @@ def nominee_polls(q: pd.DataFrame, T: pd.DataFrame) -> pd.DataFrame:
 
 
 def gb_polls() -> pd.DataFrame:
-    g = pd.read_csv(HIST / "538_generic_ballot_polls_historical.csv", low_memory=False)
+    g = pd.concat([pd.read_csv(HIST / f, low_memory=False)
+                   for f in ("538_generic_ballot_polls_historical.csv", "538_generic_ballot_polls_2024.csv")])
     g = g.assign(partisan=g.partisan.fillna(""), st="US", special=False, dlast="", rlast="",
                  y=calib.two_party(g.dem, g.rep),
                  s2=calib.sampling_var(g.dem, g.rep, g.sample_size.fillna(g.sample_size.median()).clip(100, 20000)))
@@ -168,7 +172,7 @@ def run_cycle(cycle, sen, gb, S1, G1, raw, T, prior):
     predict, sdF, eco = fundamentals_without(cycle, T)
     eday = pd.Timestamp(ELECTION[cycle])
     races = T[T.year == cycle]
-    races = races[~((cycle == 2020) & (races.st == "GA"))]
+    races = races[~((cycle == 2020) & (races.st == "GA")) & ~((cycle == 2024) & (races.st == "CA") & races.special)]
     out = []
     for d in DAYS:
         F = eday - pd.Timedelta(days=d) + pd.Timedelta(hours=23, minutes=59)
@@ -225,15 +229,19 @@ def add_538(bt: pd.DataFrame) -> pd.DataFrame:
     return bt.merge(wide, on=["cycle", "st", "special", "days"], how="left")
 
 
-def score(bt: pd.DataFrame) -> pd.DataFrame:
+OURS = {"ours": "p", "polls only": "p_polls", "fundamentals only": "p_fund"}
+WITH_538 = {**OURS, "538 lite": "p_538lite", "538 classic": "p_538classic", "538 deluxe": "p_538deluxe"}
+
+
+def score(bt: pd.DataFrame, models: dict) -> pd.DataFrame:
+    """Brier, log loss and wrong calls per forecast date, for all races and for competitive ones (a model in the
+    comparison gave 10-90%)."""
     y = (bt.result > 0).astype(float)
+    close = pd.concat([bt[c].between(0.1, 0.9) for c in ("p", "p_538classic") if c in models.values()], axis=1).any(axis=1)
     rows = []
-    models = {"ours": "p", "polls only": "p_polls", "fundamentals only": "p_fund", "538 lite": "p_538lite",
-              "538 classic": "p_538classic", "538 deluxe": "p_538deluxe"}
     for d in DAYS:
-        for sub, mask in (("all", bt.days == d),
-                          ("competitive", (bt.days == d) & (bt.p.between(0.1, 0.9) | bt.p_538classic.between(0.1, 0.9)))):
-            m = mask & bt.p_538classic.notna()
+        for sub, mask in (("all", bt.days == d), ("competitive", (bt.days == d) & close)):
+            m = mask & bt[list(models.values())].notna().all(axis=1)
             for name, col in models.items():
                 p = bt.loc[m, col].clip(0.01, 0.99)
                 o = y[m]
@@ -259,19 +267,24 @@ def main() -> None:
     bt = add_538(pd.concat(frames, ignore_index=True))
     OUT.parent.mkdir(exist_ok=True)
     bt.to_csv(OUT, index=False)
-    sc = score(bt)
     pd.set_option("display.width", 200)
-    for d in DAYS:
-        print(f"\n== {d} days before the election ==")
-        print(sc[sc.days == d].pivot_table(index="model", columns="races", values=["brier", "log_loss", "wrong", "n"])
-              .round(3).to_string())
+    for label, sub, models in (("2018-2022, against 538", bt[bt.cycle < 2024], WITH_538),
+                               ("2024 (no 538 file)", bt[bt.cycle == 2024], OURS),
+                               ("2018-2024, our chain and its parts", bt, OURS)):
+        sc = score(sub, models)
+        print(f"\n######## {label}")
+        for d in DAYS:
+            print(f"== {d} days before the election ==")
+            print(sc[sc.days == d].pivot_table(index="model", columns="races", values=["brier", "wrong", "n"])
+                  .round(3).to_string())
     last = bt[bt.days == 1]
-    mae = lambda a: np.abs(a - last.result).mean()
-    print(f"\nmargin MAE on election eve: ours {mae(last.mu):.2f}, polls only {mae(last.mu_polls.fillna(last.mu_fund)):.2f}, "
-          f"fundamentals {mae(last.mu_fund):.2f}, 538 classic {mae(2 * last.share_538classic - 100):.2f}, "
-          f"538 deluxe {mae(2 * last.share_538deluxe - 100):.2f}")
+    err = lambda a: (a - last.result)
+    tab = pd.DataFrame({"ours_bias": err(last.mu), "ours_mae": err(last.mu).abs(),
+                        "polls_mae": err(last.mu_polls.fillna(last.mu_fund)).abs(), "fund_mae": err(last.mu_fund).abs(),
+                        "538d_mae": err(2 * last.share_538deluxe - 100).abs()}).groupby(last.cycle).mean()
+    print("\nelection-eve margin error by cycle:\n" + tab.round(2).to_string())
     bins = pd.cut(bt.p, [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0])
-    print("\ncalibration, all dates:", bt.groupby(bins, observed=True).apply(
+    print("\ncalibration, all cycles and dates:", bt.groupby(bins, observed=True).apply(
         lambda g: f"n={len(g)} predicted {g.p.mean():.2f} actual {(g.result > 0).mean():.2f}", include_groups=False).to_dict())
     print(f"-> {OUT}")
 
