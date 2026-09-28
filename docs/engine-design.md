@@ -151,6 +151,12 @@ Kev react-v2 joins the numbers on 12 Oct only if it passes three checks on held-
   National stories count for every race, and are also asked once with state-neutral personas for `Δ_N`.
 - **Stories about polls or forecasts get no reactions.** Polls already enter through the filter, so reacting to news
   about them would count them twice. This also keeps "poll" out of the movers' cards.
+- **Each event counts once per race** (built 28 Sep):
+  - Headlines under four words are dropped.
+  - A story the card writer flags as "not a specific event" (a news round-up, a TV listing) is never selected.
+  - A national story that repeats a race's own story loses its gate for that race.
+  - Among each race's top 10 candidates, stories that report the same event in other words are checked in pairs by
+    DeepSeek, and only the best-covered one is kept.
 - **Cards:** no outlet names, and no "poll" or "survey" wording, so the Content & site caption checker passes them.
 
 ## 5. The reaction harness (Engine)

@@ -58,6 +58,31 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 - Not yet done: first-seen dates across snapshots (for the blind track), ranked-choice handling for Alaska, and
   three-way handling for Montana.
 
+## 2026-09-28 (Engine session): news pipeline built (A4)
+
+- `simlab/newsday.py` turns each day's snapshots into `derived/<date>/events.jsonl`, the engine-design §7 contract, plus
+  `news_private.jsonl` with the raw headlines. It has 19 unit tests and runs in about 2 minutes.
+  - Stories are clustered, carried over across days with stable ids, and labelled by Jev with outlet names removed.
+  - The labels include the new "whose voters it fires up or puts off".
+  - Attention comes from coverage and pageviews.
+  - DeepSeek writes neutral cards, with GLM as fallback.
+- **First run** (28 Sep snapshots): 325 articles became 227 stories. 8 per pilot race and 3 national stories were
+  selected for reactions. Cost was $0.03, and about $0.02–0.03 a day from now on.
+- **Fixes after that run.** It showed double counting and junk, so:
+  - Headlines under four words are dropped.
+  - Non-events (round-ups, TV listings) are flagged by the card writer and never selected.
+  - National copies of a race's own story don't count twice.
+  - Same-event duplicates in other words are checked in pairs, which merged the three reports of Trump's Ohio trip.
+  - Asking the model to group a whole list at once over-merged stories on the same topic, so it was replaced by the
+    pairwise check.
+- **Known limits:**
+  - One near-duplicate is left: two reports of Brown's Mahoning Valley visit.
+  - The "puts off" label seems to be read as "dislikes the news" rather than "less likely to vote". It is descriptive
+    only and doesn't move numbers.
+  - The attention weights are a first guess.
+  - News queries cover only the pilot races until `snap.py` is scaled up.
+  - The development runs used the Google News items already saved; the pilot's sources depend on Matteo's decision.
+
 ## 2026-09-28 (Engine session): engine design agreed; news spot-check, labels, attention, backlash test
 
 - **Engine design approved by Matteo:** `docs/engine-design.md`, the contract between the sessions.
