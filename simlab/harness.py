@@ -86,3 +86,42 @@ def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> l
                 "parse_error": bool(a["support"].get("_parse_error") or a["turnout"].get("_parse_error"))}
     with ThreadPoolExecutor(16) as ex:
         return list(ex.map(one, tasks))
+
+
+def run(day: date, derived_root: Path, run_id: str, askers: list[tuple], wording: str = "direct") -> dict:
+    """React to the day's selected events; rows asked earlier today or in the last 14 days are not asked again."""
+    d = derived_root / f"{day:%Y-%m-%d}"
+    events = [json.loads(l) for l in (d / "events.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
+    out = d / "reactions.jsonl"
+    skip = asked_before(derived_root, day)
+    if out.exists():
+        skip |= {(r["race_id"], r["event_id"], r["group"], r["model"])
+                 for r in (json.loads(l) for l in out.read_text(encoding="utf-8").splitlines() if l.strip())}
+    rows = [{**r, "date": f"{day}", "run_id": run_id} for r in react(events, askers, wording, skip)]
+    with out.open("a", encoding="utf-8") as f:
+        f.writelines(json.dumps(r) + "\n" for r in rows)
+    return {"rows": len(rows), "parse_errors": sum(r["parse_error"] for r in rows),
+            "by_model": {m: sum(r["model"] == m for r in rows) for m in {r["model"] for r in rows}}}
+
+
+def main() -> None:
+    import argparse
+    from datetime import datetime, timezone
+    from .askers import DecisionAsker, LLMAsker
+    data = Path(__file__).resolve().parents[2] / "simlab-data"
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--date", type=date.fromisoformat, default=datetime.now(timezone.utc).date())
+    ap.add_argument("--out", type=Path, default=data / "derived")
+    ap.add_argument("--wording", choices=["direct", "reaction"], default="direct")
+    ap.add_argument("--kev", default="", help="Kev endpoint URL (Modal); its rows are shadow rows")
+    ap.add_argument("--run-id", default="")
+    a = ap.parse_args()
+    askers = [("glm", LLMAsker("glm", n_orders=2, name="glm"), False)]
+    if a.kev:
+        askers.append(("kev", DecisionAsker("kev-latest", endpoint=a.kev.rstrip("/") + "/v1/systemone",
+                                            n_orders=2, name="kev"), True))
+    print(json.dumps(run(a.date, a.out, a.run_id or f"{a.date}-manual", askers, a.wording)))
+
+
+if __name__ == "__main__":
+    main()

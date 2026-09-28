@@ -81,5 +81,20 @@ class React(unittest.TestCase):
             self.assertEqual(harness.asked_before(Path(tmp), date(2026, 9, 28)), {("OH-S", "OH-S-1", "g", "glm")})
 
 
+class Run(unittest.TestCase):
+    def test_run_writes_rows_and_second_run_asks_nothing_new(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            d = root / "2026-09-28"
+            d.mkdir()
+            (d / "events.jsonl").write_text("\n".join(json.dumps(e) for e in EVENTS) + "\n", encoding="utf-8")
+            s1 = harness.run(date(2026, 9, 28), root, "r1", [("glm", FakeLLM(), False)])
+            s2 = harness.run(date(2026, 9, 28), root, "r2", [("glm", FakeLLM(), False)])
+            rows = [json.loads(l) for l in (d / "reactions.jsonl").read_text(encoding="utf-8").splitlines()]
+        self.assertEqual((s1["rows"], s2["rows"]), (84, 0))
+        self.assertEqual(len(rows), 84)
+        self.assertTrue(all(r["date"] == "2026-09-28" and r["run_id"] == "r1" for r in rows))
+
+
 if __name__ == "__main__":
     unittest.main()
