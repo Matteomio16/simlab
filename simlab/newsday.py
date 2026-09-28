@@ -177,9 +177,9 @@ LABEL_QS = {
     "helps_face": NEWS_QUESTIONS["helps"],
     "fires_up": {"type": "choice", "criteria": SIDES,
                  "instructions": "Whose voters might this news fire up, making them more motivated to vote?"},
-    "puts_off": {"type": "choice", "criteria": SIDES,
-                 "instructions": "Whose voters might this news put off, making them less keen on their candidate or "
-                                 "less likely to vote?"},
+    "puts_off": {"type": "choice", "criteria": SIDES,  # 28 Sep: "put off" read as "dislikes", so asked plainly
+                 "instructions": "Whose voters might this news demoralise, making them less likely to turn out or less "
+                                 "keen on their own side's candidate?"},
     "salience": NEWS_QUESTIONS["salience"],
 }
 GATE_Q = {"relevant": NEWS_QUESTIONS["relevant"]}
