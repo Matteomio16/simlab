@@ -103,15 +103,24 @@ def download() -> None:
     print(f"{len(ledger)} files, {sum(v['bytes'] for v in ledger.values()) / 1e6:.1f} MB -> {LEDGER}")
 
 
+def mit(office: str) -> pd.DataFrame:
+    """MIT results for 'president', 'senate' or 'house'. Dataverse serves tab-separated files; a copy downloaded by
+    hand in the original format is comma-separated, so the separator is read from the header."""
+    path = RESULTS / next(n for n in MIT.values() if office in n)
+    with path.open(encoding="utf-8") as fh:
+        sep = "\t" if "\t" in fh.readline() else ","
+    return pd.read_csv(path, sep=sep, low_memory=False)
+
+
 def check() -> None:
     """What each file covers, so a truncated or changed download shows up at once."""
-    pres = pd.read_csv(RESULTS / MIT["doi:10.7910/DVN/42MVDX"])
+    pres = mit("president")
     print(f"president: {pres.year.min()}-{pres.year.max()}, 2024 states {pres[pres.year == 2024].state_po.nunique()}")
-    sen = pd.read_csv(RESULTS / MIT["doi:10.7910/DVN/PEJ5QU"], sep="\t")
+    sen = mit("senate")
     print(f"senate: {sen.year.min()}-{sen.year.max()}, 2024 races "
           f"{sen[sen.year == 2024].groupby(['state_po', 'special']).ngroups}, columns {list(sen.columns)}")
     if (RESULTS / MIT["doi:10.7910/DVN/IG0UN2"]).exists():
-        house = pd.read_csv(RESULTS / MIT["doi:10.7910/DVN/IG0UN2"], sep="\t", low_memory=False)
+        house = mit("house")
         print(f"house: {house.year.min()}-{house.year.max()}, 2024 districts "
               f"{house[house.year == 2024].groupby(['state_po', 'district']).ngroups}")
     else:

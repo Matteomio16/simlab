@@ -158,6 +158,15 @@ Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructu
 - Daily Claude check at 11:30 UK: desktop scheduled task `midterm-daily-check` (runs while the app is open); emails
   Matteo a digest, and drafts posts once forecasts exist.
 
+Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.md` §8 and `docs/CHANGELOG.md`):
+- Partisan polls (half weight) are those sponsored by a party, campaign or partisan group, not Wikipedia's "(R)"/"(D)"
+  pollster tags. Expert ratings stay out of the numbers.
+- Senate headline: "Republicans hold 50+", with independents shown separately.
+- Approval enters only if it passes a leave-one-cycle-out test.
+- Candidate effect: half of the nominee's last statewide over-performance.
+- The versions of one poll are averaged.
+- A published poll table built on Wikipedia data is CC BY-SA.
+
 ## 6. Reference material (read, don't duplicate)
 
 Local snapshots (read these; Claude Code cannot open claude.ai links):
