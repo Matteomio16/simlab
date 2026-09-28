@@ -14,6 +14,7 @@ import json
 import math
 import re
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
@@ -316,11 +317,14 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     arts = read_day(snap_root, day)
     stories = carry_over(make_stories(arts), load_known(derived_root, day))
     views = load_pageviews(snap_root, day)
+    fresh = [s for s in stories if s["known"] is None]
+    with ThreadPoolExecutor(16) as ex:
+        fresh_labels = dict(zip([s["event_id"] for s in fresh], ex.map(lambda s: label(s, asker), fresh)))
     events, private, new = [], [], 0
     for s in stories:
         k = s.pop("known")
         new += k is None
-        labels = {f: k[f] for f in LABEL_FIELDS} if k else label(s, asker)
+        labels = {f: k[f] for f in LABEL_FIELDS} if k else fresh_labels[s["event_id"]]
         national = s["race_id"] == "US"
         events.append({"schema": SCHEMA, "date": f"{day}", "run_id": run_id, "event_id": s["event_id"],
                        "first_seen": s["first_seen"], "last_seen": s["last_seen"],
@@ -332,13 +336,14 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
                         "titles": s["titles"], "outlet_names": s["outlet_names"], "outlets": s["outlets"],
                         "urls": s["urls"], "days_seen": s["days_seen"]})
     select(events)
-    by_id, written, failed = {s["event_id"]: s for s in stories}, 0, 0
-    for e in events:
-        if e["selected"] and not e["card"]:
-            e["card"] = write_card(by_id[e["event_id"]], chats)
-            written += bool(e["card"])
-            if not e["card"]:
-                e["selected"], failed = {}, failed + 1
+    by_id = {s["event_id"]: s for s in stories}
+    todo = [e for e in events if e["selected"] and not e["card"]]
+    with ThreadPoolExecutor(8) as ex:
+        for e, card in zip(todo, ex.map(lambda e: write_card(by_id[e["event_id"]], chats), todo)):
+            e["card"] = card
+            if not card:
+                e["selected"] = {}
+    written, failed = sum(bool(e["card"]) for e in todo), sum(not e["card"] for e in todo)
     out = derived_root / f"{day:%Y-%m-%d}"
     out.mkdir(parents=True, exist_ok=True)
     for name, rows in (("events.jsonl", events), ("news_private.jsonl", private)):
