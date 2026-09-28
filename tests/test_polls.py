@@ -345,6 +345,11 @@ class MergeTest(unittest.TestCase):
         a1 = self.vh.set_index("votehub_id").loc["a1"]
         self.assertEqual((a1.left, a1.right, a1.partisan, a1.sponsors), (46.5, 46.0, "REP", "Some PAC"))
 
+    def test_votehub_drops_even_split_placeholders(self):
+        placeholder = vh("a5", "2026 Ohio", "Tavern Research", {"Jon Husted": 50.0, "Sherrod Brown": 50.0},
+                         "2026-09-10", "2026-09-12")
+        self.assertNotIn("a5", set(polls.votehub_polls(VOTEHUB + [placeholder], [self.race]).votehub_id))
+
     def test_poll_in_both_sources_takes_wikipedia_numbers_and_votehub_metadata(self):
         q = self.table.loc["Quantus Insights"]
         self.assertEqual((q.source, q.versions, q.votehub_id, q.partisan), ("both", 2, "a1", "REP"))

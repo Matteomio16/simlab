@@ -46,6 +46,21 @@ def poll_rows(senate: pd.DataFrame, gb: pd.DataFrame) -> pd.DataFrame:
     return pd.concat([senate, gb.assign(race_id="US")], ignore_index=True)
 
 
+FIRST_SEEN_KEY = ["race_id", "pollster", "start", "end", "population"]
+
+
+def first_seen(today: pd.DataFrame, prev: pd.DataFrame | None, stamp: str) -> pd.DataFrame:
+    """Each poll row's first snapshot: carried from the last day's polls.csv, else this run's snapshot time."""
+    key = lambda df: df[FIRST_SEEN_KEY].astype(str).agg("|".join, axis=1)
+    seen = dict(zip(key(prev), prev.first_seen)) if prev is not None and "first_seen" in prev else {}
+    return today.assign(first_seen=[seen.get(k, stamp) for k in key(today)])
+
+
+def previous_polls(data: Path, day: date) -> pd.DataFrame | None:
+    files = sorted(p for p in (data / "derived").glob("*/polls.csv") if p.parent.name < day.isoformat())
+    return pd.read_csv(files[-1], low_memory=False) if files else None
+
+
 def _read(path: Path):
     return json.loads(gzip.decompress(path.read_bytes())) if path.exists() else {}
 
@@ -82,7 +97,8 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     out = data / "derived" / day.isoformat()
     out.mkdir(parents=True, exist_ok=True)
     t = polls.build(snap)
-    poll_rows(t["senate"], t["generic_ballot"]).to_csv(out / "polls.csv", index=False)
+    first_seen(poll_rows(t["senate"], t["generic_ballot"]), previous_polls(data, day),
+               t["snapshot"]).to_csv(out / "polls.csv", index=False)
     races = races_json(t["race_list"])
     _write(out / "races.json", meta | races)
     inp = levels.inputs()

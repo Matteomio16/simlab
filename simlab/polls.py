@@ -343,8 +343,8 @@ def votehub_polls(entries: list[dict], race_list: list[Race]) -> pd.DataFrame:
             if e.get("poll_type") != "us-senator" or e.get("subject") != subject:
                 continue
             left, right = _answer(e["answers"], race.left), _answer(e["answers"], race.right)
-            if left is None or right is None:
-                continue
+            if left is None or right is None or (left == right == 50 and len(e["answers"]) == 2):
+                continue  # an exact 50-50 two-way is a placeholder in VoteHub's data, not a result
             rest = sum(a["pct"] for a in e["answers"]) - left - right
             out.append({"race_id": race.race_id, **_vh_meta(e), "left": left, "right": right,
                         "other": rest if rest > 0 else np.nan, "undecided": np.nan})

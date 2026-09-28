@@ -57,6 +57,32 @@ class FilesTest(unittest.TestCase):
         self.assertEqual(out.margin.tolist(), [2.0, 3.0])
 
 
+class FirstSeenTest(unittest.TestCase):
+    TODAY = pd.DataFrame({"race_id": ["NC", "NC", "OH-S"], "pollster": ["A", "B", "C"],
+                          "start": [date(2026, 9, 20), date(2026, 9, 21), date(2026, 9, 25)],
+                          "end": [date(2026, 9, 22), date(2026, 9, 23), date(2026, 9, 27)],
+                          "population": ["lv", "rv", "lv"]})
+
+    def test_carried_from_the_last_day_and_stamped_when_new(self):
+        prev = pd.DataFrame({"race_id": ["NC", "NC"], "pollster": ["A", "B"], "start": ["2026-09-20", "2026-09-21"],
+                             "end": ["2026-09-22", "2026-09-23"], "population": ["lv", "rv"],
+                             "first_seen": ["2026-09-27 09:17", "2026-09-28 09:17"]})
+        out = statsday.first_seen(self.TODAY, prev, "2026-09-29 09:17")
+        self.assertEqual(out.first_seen.tolist(), ["2026-09-27 09:17", "2026-09-28 09:17", "2026-09-29 09:17"])
+
+    def test_first_day(self):
+        self.assertEqual(set(statsday.first_seen(self.TODAY, None, "2026-09-28 09:41").first_seen), {"2026-09-28 09:41"})
+
+    def test_previous_poll_file_is_the_latest_earlier_day(self):
+        with tempfile.TemporaryDirectory() as d:
+            for day, v in (("2026-09-26", "a"), ("2026-09-27", "b"), ("2026-09-29", "c")):
+                (Path(d) / "derived" / day).mkdir(parents=True)
+                pd.DataFrame({"x": [v]}).to_csv(Path(d) / "derived" / day / "polls.csv", index=False)
+            (Path(d) / "derived" / "2026-09-28").mkdir()
+            self.assertEqual(statsday.previous_polls(Path(d), date(2026, 9, 29)).x.tolist(), ["b"])
+            self.assertIsNone(statsday.previous_polls(Path(d), date(2026, 9, 26)))
+
+
 class BenchmarkTest(unittest.TestCase):
     def test_markets_and_cook_from_the_snapshot(self):
         with tempfile.TemporaryDirectory() as d:
