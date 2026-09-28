@@ -49,5 +49,40 @@ class ReadDay(unittest.TestCase):
         self.assertEqual(newsday.parse_gdelt(b'{"articles": [ {bad', "TX"), [])
 
 
+def art(race, title, seen, domain="a.com", outlet="A"):
+    return {"race_id": race, "title": title, "url": f"https://{domain}/{title[:24]}", "outlet": outlet,
+            "domain": domain, "seen": seen, "source": "gdelt"}
+
+
+class Stories(unittest.TestCase):
+    def test_similar_headlines_cluster_and_outlets_count(self):
+        arts = [art("OH-S", "Crypto super PAC to spend $30 million against Sherrod Brown", "2026-09-28T07:00:00+00:00",
+                    "politico.com", "Politico"),
+                art("OH-S", "Crypto super PAC will spend $30 million against Sherrod Brown in Ohio",
+                    "2026-09-28T08:00:00+00:00", "axios.com", "Axios"),
+                art("OH-S", "Husted visits Dayton factory", "2026-09-28T09:00:00+00:00")]
+        stories = newsday.make_stories(arts)
+        self.assertEqual(len(stories), 2)
+        pac = [s for s in stories if "PAC" in s["title"]][0]
+        self.assertEqual(pac["outlets"], ["axios.com", "politico.com"])
+        self.assertEqual(pac["first_seen"], "2026-09-28T07:00:00+00:00")
+
+    def test_carry_over_keeps_id_and_first_seen(self):
+        s = newsday.make_stories([art("OH-S", "Crypto super PAC to spend $30 million against Sherrod Brown",
+                                      "2026-09-29T07:00:00+00:00")])
+        known = [{"event_id": "OH-S-20260928-abcdef12", "race_id": "OH-S", "first_seen": "2026-09-28T07:00:00+00:00",
+                  "days_seen": ["2026-09-28"], "titles": ["Crypto super PAC to spend $30 million against Sherrod Brown"]}]
+        out = newsday.carry_over(s, known)
+        self.assertEqual(out[0]["event_id"], "OH-S-20260928-abcdef12")
+        self.assertEqual(out[0]["first_seen"], "2026-09-28T07:00:00+00:00")
+        self.assertEqual(out[0]["days_seen"], ["2026-09-28", "2026-09-29"])
+
+    def test_new_story_gets_deterministic_id(self):
+        s = newsday.carry_over(newsday.make_stories([art("TX", "Paxton sues county", "2026-09-28T10:00:00+00:00")]), [])
+        self.assertEqual(s[0]["event_id"], newsday.event_id("TX", "2026-09-28T10:00:00+00:00", "Paxton sues county"))
+        self.assertTrue(s[0]["event_id"].startswith("TX-20260928-"))
+        self.assertIsNone(s[0]["known"])
+
+
 if __name__ == "__main__":
     unittest.main()
