@@ -23,6 +23,7 @@ from .themes import LAB
 
 LAYOUTS = ("4-stamp", "2-ladder", "3-futures")  # provisional until Matteo picks
 MEANINGFUL = 0.03  # a smaller 7-day move in the win chance is "no meaningful change"
+MOVER_MIN = 0.5  # margin points on 3 Nov; smaller story effects stay in note.md, out of public captions
 LAUNCH = date(2026, 10, 12)
 LIMITS = {"instagram": 2200, "thread": 280}
 PILOT = ("OH-S", "NC", "TX")
@@ -154,7 +155,8 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> di
                      f"The {racecards.who(r)} wins "
                      f"{round(r['p'] * 10)} in 10 simulated elections. Poll average {r['poll']}, market "
                      f"{racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
-        top = sorted(r["movers"], key=lambda mv: -abs(mv.get("delta", 0)))[:1]
+        top = [mv for mv in sorted(r["movers"], key=lambda mv: -abs(mv.get("delta", 0)))
+               if abs(mv.get("delta", 0)) >= MOVER_MIN][:1]
         if top:
             lines.append(f"What moved it: {top[0]['card']}")
         lines.append("")
@@ -189,7 +191,18 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> di
         so = f["races"][r["rid"]].get("stats_only", {}).get("p_dem_win")
         gap = "" if so is None else f"; statistics alone: {so:.0%}"
         note.append(f"- **{r['state']} {r['office']}**: {r['p']:.0%}{gap}. {r['change']}.")
-        note += [f"  - {mv['card']} (Δ {mv.get('delta', 0):+.1f})" for mv in r["movers"]]
+        x = f["races"][r["rid"]]
+        tier = (races.get(r["rid"]) or {}).get("tier")
+        nw = x.get("news") or {}
+        if abs(nw.get("effect", 0)) >= 0.005:  # races the news hasn't touched get no line
+            note.append(f"  - News: {nw.get('effect', 0):+.2f} pts on the 3 Nov margin ({nw.get('switching', 0):+.2f} "
+                        f"switching, {nw.get('turnout', 0):+.2f} turnout). Win chance "
+                        f"{nw.get('if_weaker', {}).get('p_dem_win', r['p']):.0%} if news matters less, "
+                        f"{nw.get('if_stronger', {}).get('p_dem_win', r['p']):.0%} if more."
+                        + (f" Tier: {tier}." if tier else ""))
+        note += [f"  - {mv['card']} (effect on the 3 Nov margin {mv.get('delta', 0):+.2f} pts"
+                 + ("" if abs(mv.get("delta", 0)) >= MOVER_MIN else "; too small for captions") + ")"
+                 for mv in r["movers"]]
     (out / "note.md").write_text("\n".join(note) + "\n", encoding="utf-8")
 
     try:
