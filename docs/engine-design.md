@@ -188,6 +188,15 @@ Kev react-v2 joins the numbers on 12 Oct only if it passes three checks on held-
   are only pushed from 12 Oct, after Matteo's go.
 - **Run record:** `derived/YYYY-MM-DD/run.json` holds the git SHA, a hash of the settings, model slugs and hosts, input
   file hashes, spend, step timings and any fallbacks used.
+- **Entry points the daily job calls, in order.** Each exits non-zero on failure, and its last stdout line is a
+  one-line JSON summary that goes into `run.json`. A step whose module doesn't exist yet is skipped and logged.
+
+  | Step | Command | Owner |
+  | --- | --- | --- |
+  | News | `python -m simlab.newsday --date D --snap <data>/snapshots --out <data>/derived` | Engine (built) |
+  | Reactions | `python -m simlab.harness --date D --out <data>/derived [--wording ...] [--kev URL]` | Engine (built) |
+  | Statistics | `python -m simlab.statsday --date D --data <data>`: polls, levels and groups, moves, filter, Monte Carlo | Statistics |
+  | Post kit | `python -m simlab.publish.kit --date D --data <data>`, writing to `derived/D/post-kit/` in the pilot | Content & site |
 - **Secrets:** the deploy key, and the OpenRouter key, which Matteo adds as a repository secret. The private pilot uses
   the test key.
 - **When things fail:**
