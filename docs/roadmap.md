@@ -56,14 +56,15 @@ Checkpoints and fallbacks:
 | A1 | Snapshots | Every 3 hours, saves raw polls, headlines, ratings, markets (benchmark only), early-vote files, FEC and economy data to the private data repo, with hashes | Kev (taken over 28 Sep at Matteo's request) | Tue 29 Sep | `simlab/snap.py` and the 3-hourly GitHub Actions job live since 28 Sep; FEC, economy and early-vote files join later |
 | A2 | Download-now list | 538 poll histories, this week's NC and OH voter files, new House maps, 2024 results by new district | Engine | Wed 30 Sep | partly (538 approval and generic ballot) |
 | A3 | Starting levels | Each race's starting vote and range: fundamentals plus a poll average with pollster house effects. Also the stats-only forecast the simulation must beat | Statistics | Thu 1 Oct (Senate) | in progress: groundwork, calibration, 2018–24 backtest and poll table done (28 Sep) |
-| A4 | News pipeline | Daily headlines → stories → which race → Jev asks "does this change anything?" → labels → a neutral 1–3 sentence event card, outlet names removed | Engine | Thu 1 Oct | prototype (`news.py`) |
-| A5 | GLM harness | Asks each voter group how its support and turnout move, following the model-recipes rules. Sizes come from real data, not the model. Logs proposed vs applied changes | Engine | Fri 2 Oct | asking, cache, spend cap exist |
+| A4 | News pipeline | Daily headlines → stories → which race → Jev asks "does this change anything?" → labels → a neutral 1–3 sentence event card, outlet names removed | Engine | Thu 1 Oct | built 28 Sep (`simlab/newsday.py`; GDELT, Media Cloud when keyed) |
+| A5 | GLM harness | Asks each voter group how its support and turnout move, following the model-recipes rules. Sizes come from real data, not the model. Logs proposed vs applied changes | Engine | Fri 2 Oct | built 28 Sep (`simlab/harness.py`); first real run 28 Sep |
 | A6 | Filter | Daily update from new polls; weekly ensemble Kalman update, which re-tunes each state's sensitivity dials | Statistics | Fri 2 Oct (daily), Mon 12 Oct (weekly) | not started |
 | A7 | Monte Carlo | 40,000 correlated simulated elections → "wins 7 in 10", ranges, Senate control, House seats | Statistics | Thu 1 Oct | not started |
-| A8 | Daily job | One command a day on GitHub Actions, with a run record, a spend line and an alert if a run is missed | Engine | Sat 3 Oct | not started |
+| A8 | Daily job | One command a day on GitHub Actions, with a run record, a spend line and an alert if a run is missed | Engine | Sat 3 Oct | built 28 Sep (`simlab/daily.py`, `daily.yml`); off until `PIPELINE_ON` on 5 Oct |
 | A9 | Scoring | Weekly scores against the poll average, the markets, Cook and the stats-only forecast | Kev | first on Mon 19 Oct | test metrics exist |
 | A10 | Rehearsals | Two full dry runs on GitHub Actions | all | Sat 3 – Sun 4 Oct | — |
 | A11 | House seats | Voter groups re-weighted to each district on the new 2026 maps; district baselines and polls; the other ~395 seats from the fundamentals map | Statistics | Fri 9 Oct | not started |
+| A13 | Scale-up of news and reactions | News queries for all 35 Senate races and ~40 House seats (from `races.json`); a reaction budget that fits the day: national stories asked once with state-neutral personas, fewer groups for safe races, a minimum attention, OpenRouter's batch API if needed (GLM manages ~200 prompts a minute) | Engine | Fri 9 Oct | — |
 | A12 | Early-vote data | NC absentee files now; NC in-person from 15 Oct; Texas from ~19 Oct; Ohio as published | Kev | from Mon 5 Oct | — |
 
 ## Track B: the models (who does which job)
