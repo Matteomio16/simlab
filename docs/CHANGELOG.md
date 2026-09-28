@@ -2,6 +2,48 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): voter groups, moves and the daily filter (roadmap A3 groups, A6 daily)
+
+- **Voter groups** (`simlab/groups.py`, 11 tests; `python -m simlab.groups --fit`) for all 50 states, DC and the
+  nation.
+  - `simlab/pimu.json`: persuadable and mobilisable shares (engine-design §9, due Thu 1 Oct) by state and group, from
+    the CES 2018 and 2022 pre- and post-election waves, shrunk state → census division → nation.
+    - pi: Senate voters who were unsure before or whose vote differed from their intention.
+    - mu: registered respondents who were unsure about voting, or whose validated vote contradicted their intention.
+    - Firm partisans come out at 3–9% persuadable and 6–15% mobilisable; independents at 26–42% and 17–50%.
+    - The 2024 check is a little lower (a presidential year); self-reported turnout gives nearly the same mu.
+    - Kev's House districts read this table.
+  - `simlab/groups_base.json`: population share, midterm turnout and Senate vote for each group (stats-groundwork
+    §5.5).
+    - CPS citizens by white/non-white × degree, times the CES party mix, tilted to each state's 2024 result;
+    - 2022 turnout with CES party odds ratios;
+    - reproduces official 2022 turnout exactly.
+  - `groups.json` shifts each race's group vote to its level daily.
+- **Moves** (`simlab/moves.py`, 9 tests):
+  - GLM's group reactions go through the §3.2 formula into race moves; each story counts once from `first_seen` and
+    fades with a 10-day half-life.
+  - Kev's shadow rows go under `shadow` and never move the forecast.
+  - c_s is fitted on the 45 calibration events at 0.21 (0.19–0.23 leaving any one event out; typical miss 0.9 points).
+    GLM's direction explains about a sixth of the variation between events.
+  - c_t has no data yet: set equal to c_s as a prior (`simlab/move_params.json`). It needs Matteo's call.
+- **Daily filter** (roadmap A6, due Fri 2 Oct):
+  - It re-runs the poll average each day with every poll compared against the latent less the story effects in force
+    on its date, then adds today's effects back.
+  - This matches the recursive filter of stats-groundwork §5.6 for this linear model. Late polls land on their field
+    dates, re-runs reproduce exactly, and the stats-only twin is the same code with no moves.
+  - The result is `filter_state.json`; the Monte Carlo now runs the headline on it and the twin on `levels.json`, with
+    the same random numbers. Movers come from the stories' effects so far; the poll-average benchmark comes from the
+    twin.
+- **The daily step** (`python -m simlab.statsday`, about 10 seconds) now writes the whole chain: polls, races, levels,
+  groups, params, moves, filter state, forecast and draws. On 28 Sep, 27 story effects reached OH, NC, TX and the
+  nation, each a fraction of a point.
+- **Rehearsal gap closed:** the levels read their fixed inputs from `simlab/levels_inputs.json`, frozen from the MIT and
+  538 files with `python -m simlab.levels --freeze`; the output is identical. The daily job needs no gitignored file.
+- **Known limits:**
+  - Race-specific story effects reach only races with polls, scaled by the poll weight. Races without polls move only
+    with the nation, through the fundamentals.
+  - Moves add no uncertainty of their own.
+
 ## 2026-09-28 (Statistics session): Monte Carlo and the statistics daily step (roadmap A7)
 
 - `simlab/montecarlo.py` was built test-first (`tests/test_montecarlo.py`, 20 tests) to stats-groundwork §5.8 and

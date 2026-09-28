@@ -399,6 +399,14 @@ a race move:
 
 The first term is voters switching; the second is turnout changing the mix of who votes.
 
+**Built 28 Sep:** `simlab/groups.py` (`python -m simlab.groups --fit`). It covers all 50 states, DC and the nation, so
+the House districts (Kev session) reuse it.
+- `simlab/groups_base.json` holds n, t and d0 as above, with two adjustments:
+  - t comes from CPS 2022 alone; 2018's turnout level differs;
+  - the cells are aligned to 2022 official turnout on the 2024 population mix.
+- `simlab/pimu.json` holds pi and mu (engine-design §3.1). Variables are in the register.
+- The daily `groups.json` shifts d0 to each race's stats-only level, and the nation's to N.
+
 **Per House district** (the ~40 seats, by Fri 9 Oct):
 - **Race × degree on the new lines:** ACS tract tables allocated to districts through the block assignment files.
   Split tracts go by 2020 block population.
@@ -419,6 +427,19 @@ State: N and R_r for every race (House seats join on 9 Oct). Each day:
 3. Then the blend (§5.4) and the Monte Carlo (§5.8).
 
 The stats-only twin is the same code with Δ = 0.
+
+**Built 28 Sep** (`simlab/moves.py`, `levels.build(moves=...)`, run daily by `python -m simlab.statsday`):
+- **Formulation.** The filter is computed in its smoother form, which is equivalent for this linear model:
+  - each day the poll average is re-run with every poll compared against the latent less the story effects in force
+    on its field date;
+  - then today's effects are added back.
+
+  A story therefore moves the level only as far as the polls since it haven't already shown it. Late polls land on
+  their field dates, and a saved day re-runs exactly.
+- **Story effects.** Each story's effect is its full §3.2 move at today's attention, fading from `first_seen` with its
+  half-life. The attention is read fresh each day, so the effect path is re-estimated with it.
+- **Output.** `filter_state.json` has the `levels.json` shape. The Monte Carlo runs the headline on it and the twin on
+  `levels.json`.
 
 **Innovation monitor:** each poll's surprise, scaled by its expected size, is summed weekly per state (a chi-squared
 test). A state that stays surprising flags the auditor. The maths makes the update; the auditor only explains.
@@ -773,3 +794,10 @@ are listed on the methods page.
 | Market benchmark | Kalshi + Polymarket bid-ask midpoints, normalised over candidates, averaged | display only | fixed |
 | Dials before the first weekly update | 1 | assumption | weekly filter |
 | Group turnout party gap | CES validated odds ratio within cell | assumption | check against NC voter file |
+| Persuadable share pi | Senate voters (CES 2018/2022 post wave, `voted_sen`) unsure before (`intent_sen` "Not Sure"/"No One") or voting otherwise than intended; `weight_post` | fitted; 2024 a little lower | shrunk state → division → nation, 50 |
+| Mobilisable share mu | respondents on an active registration (`vv_regstatus`): turnout intention "Probably", "Undecided" or missing, or a validated vote (`vv_turnout_gvm`) against their intention; `weight` | fitted; self-report gives nearly the same | shrunk as pi |
+| Switching size c_s | 0.21 | fitted on 45 events (0.19–0.23 leave-one-out) | refit weekly |
+| Turnout size c_t | = c_s | prior: equal responsiveness of the movable pools; no data yet | needs Matteo's call; early vote and weekly filter |
+| Story half-life | 10 days, all types | engine-design prior | weekly filter |
+| Story effects on unpolled races | national part only (through the fundamentals) | design (§5.4 blend) | known limit |
+| Uncertainty of moves | none added | assumption | review with the weekly filter |
