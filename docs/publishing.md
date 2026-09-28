@@ -11,10 +11,10 @@ plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing)
   Newsreader for headlines and the wordmark, Libre Franklin for text and numbers, IBM Plex Mono for kickers, sources and
   the label strip. The static weights matplotlib needs are cut from the variable fonts on first use
   (`fonts/_static/`, not committed).
-- **Colours:** paper `#F5F3EE`, ink `#111110`, secondary ink `#55534E`. Party blue `#2a78d6`, red `#e34948`, amber
-  `#eda100` for independents (low contrast, so always labelled). Violet `#4a3aa7` marks the simulation's own
-  contribution; graphite `#3B3A36` marks real data and statistics. Blue, red and violet pass the dataviz validator's
-  colour-blind checks on the paper colour, all pairs.
+- **Colours and type per theme:** `simlab/publish/themes.py` and `docs/creative-directions.md`. Lab Notebook: graph
+  paper `#F7F7F2`, navy ink `#1C2A4A`, Dem `#2F6DB5`, Rep `#D1432F`, ochre `#D4A017` for the simulation's own
+  contribution, highlighter `#F3E27A`, IBM Plex Sans and Plex Mono. Independents use a labelled neutral grey. Each
+  theme's party and simulation colours pass the dataviz validator's colour-blind checks on its paper, all pairs.
 - **Theme:** Lab Notebook by default, Riso Print now and then (`simlab/publish/themes.py`; Matteo, 28 Sep).
 - **Every image:** the logomark (a ballot box holding a 3x3 grid of simulated voters) and wordmark at the top; the
   strip "SOCIAL SIMULATION, NOT A POLL" with the date at the bottom; a source line above it. The strip is drawn by the
