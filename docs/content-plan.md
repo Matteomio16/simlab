@@ -1,39 +1,37 @@
 # Content plan (draft for Matteo to choose from)
 
 Content & site session, 28 Sep 2026. Built on `docs/research/`, the Field Guide's publishing rules, infrastructure §8
-and the test bench. Nothing here is decided until Matteo picks.
+and the test bench. Matteo's picks are in section 1; the name is still open.
 
 **The pitch in one line:** the honest AI forecast. Every number sits beside the poll average, the market and Cook; every
 miss gets published; the making-of is shown as it happens.
 
-## 1. Your decisions (by Wed 30 Sep)
+## 1. Decisions
 
-1. **Name and handles**
-   - **Model Citizens** (my pick): a pun on AI models, so the name itself says "simulated". It reads well when quoted
-     ("the Model Citizens forecast shows...").
-   - **Sim Desk**: sounds like a news desk (Decision Desk HQ); serious, less memorable.
-   - **Midterm Sim**: plain and searchable, but tied to this one election.
-   - **Not A Poll**: the disclaimer is the name; memorable, but can read as anti-poll.
-   - Keep "Scalia" out of the name: to US readers it means Justice Antonin Scalia, a conservative icon, which undercuts a
-     neutral forecast. "By Scalia Studio" goes in the bio and on the site.
-   - Handles: one handle everywhere, at most 15 characters (X's limit). I'll check which are free once you shortlist.
-     Bluesky can use `@midterms.scaliastudio.dev` (one DNS record), which also verifies the account.
-2. **On camera or voice-over**
-   - **Mix** (my pick): on camera twice (launch on 12 Oct, results on 4 Nov), your voice over the weekly Reels.
-   - Voice-over only: about 10 minutes per Reel; your face stays private.
-   - On camera: the most trusted style in the research (the Integrity Index founder, Harry Enten); 30–45 minutes per
-     video; your face becomes the brand and draws the abuse political accounts get.
-   - Neither: captions and music only; least work, weakest Reels.
-   - In every case: no AI presenters or AI voices.
-3. **TikTok or YouTube Shorts**
-   - **TikTok only** (my pick, unless you choose "neither" above): the same videos, posted by hand, about 5 minutes
-     each, 2–3 a week. TikTok is the friendliest platform to new accounts. Before 12 Oct I'd check its current rules on
-     unpaid political posts by non-US creators (the research found nothing either way).
-   - Both: Shorts adds 5 minutes a video and grows new channels slowly.
-   - Neither: Instagram, X, Threads and Bluesky only.
-4. **LinkedIn (my addition):** the Lab notes from your own profile, weekly, by hand. That's where the AI, startup and VC
-   audience is.
-5. **Formats:** tick from the menu below. My pick: A to F; G if there's time.
+Decided by Matteo, 28 Sep:
+- Formats A to F below. "Ask the lab" dropped.
+- On camera twice (launch on 12 Oct, results on 4 Nov); Matteo's voice over the weekly Reels. No AI presenters or AI
+  voices.
+- Channels: Instagram, X, Threads and Bluesky only (no TikTok, YouTube Shorts or LinkedIn).
+
+Open: **the name.** Matteo wants something like NotAPoll, Midterms Sim or Model Voters, more memorable, perhaps ending in
+.org. Checked 28 Sep against the domain registries and public profile pages (a handle that looks free can still be held
+by a deactivated account):
+
+| Name | .org / .com | Instagram (and Threads) | X | Bluesky |
+|---|---|---|---|---|
+| **NotAPoll.org** (my pick) | both free | @notapoll taken (small private account); @notapoll.org free | @notapoll free | free; @notapoll.org once we own the domain |
+| ThisIsNotAPoll.org | both free | free | free | free |
+| ModelVoters.org | both free | free | free | free |
+| ParallelVote.org | both free | free | free | free |
+| Unpoll.org | .org free, .com taken | taken | free | free |
+| MidtermMachine.org | both free | not checked | held by a suspended account | free |
+
+Why NotAPoll.org: the research's main lesson is that AI-simulation results get reported as polls once they leave their
+caption (Aaru and Axios). With this name, every quote, screenshot and handle carries the disclaimer. A .org name needs the
+domain (about $10 a year; Matteo buys it). It can redirect to research.scaliastudio.dev/midterms and gives Bluesky the
+handle @notapoll.org. Keep "Scalia" out of the name: to US readers it means Justice Antonin Scalia, a conservative icon,
+which undercuts a neutral forecast. "By Scalia Studio" goes in the bio and on the site.
 
 ## 2. Format menu
 
@@ -43,12 +41,11 @@ news hooks (F).
 | | Format | What it is | Inspired by | How we make it | Build / your time | Cadence | Where |
 |---|---|---|---|---|---|---|---|
 | A | **Daily forecast** | 4–6 slides: Senate and House control, the races that moved (or "no meaningful change"), a race of the day, each beside the poll average, market and Cook | Silver Bulletin's daily update; Enten's one number per clip; Cook's ratings | Chart factory reads the forecast file → JPEG 1080×1350; caption, alt text and X post from templates; I polish, you approve | 3 days (by 4 Oct) / 15 min a day | Daily from 12 Oct (internal kits from 5 Oct) | IG carousel; X, Threads, Bluesky (4 images) |
-| B | **Every future** | 15–20 s video: 100 dots fall, one per simulated election, until the count reads "wins 7 in 10" | 538's and 50+1's one-dot-per-simulation charts | matplotlib animation → MP4 1080×1920 from the simulated elections; music added in the app when posting by hand | 1 day / 2 min (10 if voiced) | Sundays (Senate control) and after big moves | IG Reel; X video; TikTok, Shorts if added |
+| B | **Every future** | 15–20 s video: 100 dots fall, one per simulated election, until the count reads "wins 7 in 10" | 538's and 50+1's one-dot-per-simulation charts | matplotlib animation → MP4 1080×1920 from the simulated elections; music added in the app when posting by hand | 1 day / 2 min (10 if voiced) | Sundays (Senate control) and after big moves | IG Reel; X video |
 | C | **Why it moved** | The week's biggest move, traced: the news event → which simulated groups changed turnout or support → how much the engine kept → the new number, and the gap to statistics alone | Kornacki's big board; AI Village's weekly recaps | From the daily run log; I draft, you approve | 1 day / 20 min a week | Wednesdays from 14 Oct | IG Reel or carousel; X thread; Bluesky |
 | D | **The receipts** | Every close race on one chart: ours, poll average, market, Cook, locked and timestamped; this week's divergence calls; scored after 3 Nov | The Field Guide ("disagreement is the content"); Split Ticket's contrarian calls; Aaru's lesson (commit before the result) | Chart from the forecast file and benchmark snapshots; the same numbers feed the site's scoring page | ½ day / 10 min a week | Mondays from 12 Oct | IG carousel; X thread; Bluesky; site |
 | E | **Lab notes** | One finding, one chart: what we tested, what we found, what we changed | Epoch AI's one-chart posts; AI Village and Claude Plays Pokémon (the struggle is the story) | Test-bench numbers; I draft, you approve | none / 20 min a post | Daily 3–11 Oct, then Fridays | IG carousel; X thread; Bluesky; Threads |
 | F | **Early-vote watch** | Real ballots, not AI: NC and TX early votes against 2022 by party and age, and where turnout runs ahead of the simulation | VoteHub and Election Twitter's trackers | Bars from the early-vote files the engine downloads | ½ day / 5 min a post | Tuesdays and Saturdays from 15 Oct | X, Bluesky, Threads; a slide in the IG daily post |
-| G | **Ask the lab** | Three follower questions about the method, answered | Cook's live Q&As; Threads rewards replies | You pick the questions, I draft | none / 20 min a week | Thursdays | IG Stories; Threads |
 
 Every format: "AI-simulated voters, not a poll" inside the image and in the caption; any forecast number sits beside the
 poll average, market and Cook; ranges and "wins X in 10 simulations" before percentages; 35–65% called a toss-up; a
@@ -85,15 +82,15 @@ week before the US).
 | Wed 30 Sep – Fri 2 Oct | — | You pick; Lab notes 1–3 drafts on Thu 1; you create the accounts on Fri 2 | |
 | Sat 3 – Sun 4 Oct | Lab notes 1–2 | Chart factory and daily kit ready (Sun 4) | |
 | Mon 5 – Sun 11 Oct (private pilot) | Lab notes 3–9, one a day | Daily kits for OH, NC, TX stay internal; site ready Fri 9; ethics review Sat 10; go or no-go Sun 11 | Ohio early voting from about 6 Oct |
-| Mon 12 – Sun 18 Oct (launch) | Mon 12: launch post, Senate Reel (on camera if chosen), first receipts. Then the weekly rhythm | Posting automation behind the approval flag | Code freeze 12 Oct; NC early voting 15 Oct (Early-vote watch starts) |
+| Mon 12 – Sun 18 Oct (launch) | Mon 12: launch video (on camera), Senate Reel, first receipts. Then the weekly rhythm | Posting automation behind the approval flag | Code freeze 12 Oct; NC early voting 15 Oct (Early-vote watch starts) |
 | Mon 19 – Sun 25 Oct | Weekly rhythm | | Texas early voting from about 19 Oct; UK clocks change 25 Oct |
 | Mon 26 Oct – Sun 1 Nov | Weekly rhythm; Sat 31: every path to Senate control | | US clocks change 1 Nov |
 | Mon 2 Nov | Final forecast, locked and timestamped | | Last scoring date |
 | Tue 3 Nov | Morning: what to watch tonight, with poll-closing times in ET and UK; the site's live page; night posts only if you're up to approve them | | First polls close 23:00 UK |
-| Wed 4 Nov | How we did, first look: every called race, misses first (on camera if chosen) | | |
+| Wed 4 Nov | How we did, first look: every called race, misses first (on camera) | | |
 
 Weekly rhythm from 12 Oct: the daily forecast every day, plus Mon receipts, Tue and Sat early-vote watch, Wed why it
-moved, Thu ask the lab, Fri lab notes, Sun every future. About 25 minutes a day of your time.
+moved, Fri lab notes, Sun every future. About 25 minutes a day of your time.
 
 ## 5. Tone and distribution
 

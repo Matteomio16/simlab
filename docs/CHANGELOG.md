@@ -2,6 +2,14 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Content & site): content choices
+
+- Content plan in `docs/content-plan.md`. Matteo's picks: formats A–F (daily forecast, "every future" dot video, why it
+  moved, the receipts, lab notes, early-vote watch); on camera twice (launch 12 Oct, results 4 Nov) and voice-over for
+  the weekly Reels, no AI presenters or voices; Instagram, X, Threads and Bluesky only (no TikTok, YouTube Shorts or
+  LinkedIn).
+- Name still open. Shortlist with domain and handle checks in the plan; recommended NotAPoll.org (needs the domain).
+
 ## 2026-09-28 (night): Kev reaction fine-tune react-v1 (Matteo's go-ahead)
 
 - Data (`python -m simlab.kevreact`, design agreed with the test-bench session; full rules in the module docstring):
