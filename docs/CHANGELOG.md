@@ -2,6 +2,31 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): how long news lasts, independents, simulation tiers; decisions on record
+
+Matteo's answers, later on 28 Sep (stats-groundwork §8):
+- **How long news lasts (D19).** Matteo: most news lasts about a day unless it stays in the news; long-running topics
+  (war, prices) last longer; an endorsement or a small scandal doesn't. Built:
+  - a story keeps its full effect while it is in the news (`first_seen` to `last_seen`), then fades;
+  - half-life 1 day for one-off types, 60 days for `economy` and `national`;
+  - the 3 Nov forecast counts what is expected to remain of each story then; `story_effect` gives today's;
+  - `movers` now rank stories by their effect on 3 Nov.
+
+  On 28 Sep, most of the pilot races' stories were one-off (ads, candidates' policy news, endorsements), so the
+  forecast now carries mainly the national and economic ones.
+- **Senate independents (D16).** King and Sanders count with Democrats; the new independents are shown as
+  independents. `forecast.json` adds `p_independents_decide`, the share of simulations where they hold the balance.
+  The final presentation is decided later.
+- **Simulation tiers (D20).** Statistics runs for every race; the simulation only where races are contested. Built:
+  - a daily `tier` in `races.json` (simulate, watch, statistics);
+  - a race runs on statistics alone only when the stats-only forecast, Cook and the market all call it safe;
+  - the pilot races always simulate, and a race keeps its most competitive tier of the past week;
+  - on 28 Sep: 13 simulate, 7 watch (Montana among them), 15 statistics only.
+
+  The Engine's harness reads the previous day's tiers.
+- **On record** (Matteo's OK): CLAUDE.md §5 block "Decided by Matteo, 28 Sep evening (statistics)"; engine-design
+  §3.2 (how long news lasts, size ranges), §3.3 (daily update, Monte Carlo, tiers) and §7 (new fields).
+
 ## 2026-09-28 (Kev session): Matteo's answers on Kev react-v2; more real events (events3)
 
 - Matteo, 28 Sep, "yes to all four":

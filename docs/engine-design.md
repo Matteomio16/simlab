@@ -91,12 +91,24 @@ The terms:
 - `k_s` and `k_t` are the state's dials. They start at 1 and the weekly filter tunes them.
 - `a_e` is the story's attention weight, from 0 to 1 (§4).
 
-Each story's contribution fades with a half-life that depends on the event type. The prior is 10 days, and the weekly
-filter tunes it. `t` stays within [0, 1] and `d` within [−1, 1].
+How long a story lasts (Matteo, 28 Sep evening; replaces the flat 10-day prior):
+- A story keeps its full effect while it is still in the news, from `first_seen` to `last_seen`.
+- Then it fades with a half-life that depends on its type:
+  - one-off stories (endorsements, scandals, debates, ads, candidates' policy news, other): 1 day;
+  - lasting topics (`economy`: prices, jobs, gas; `national`: president, Congress, war, disasters): 60 days. The real
+    calibration events' shifts held for 3–7 weeks (stats-groundwork §10).
+- The 3 Nov forecast counts what is expected to remain of each story then, taking its coverage to end today.
+- The weekly filter tunes the half-lives. `t` stays within [0, 1] and `d` within [−1, 1].
 
-Each event counts once. Its effect starts at `first_seen` and then fades:
+Each event counts once:
 - The harness asks each event once per race. If an event is asked again, the earliest reactions are used.
 - `a_e` is read fresh each day, so a story that keeps spreading grows its effect.
+- Similar headlines are one story (§4), so a continuing story extends rather than stacks.
+
+The sizes `c_s` and `c_t` are ranges, not single values (Matteo, 28 Sep evening):
+- Every simulated election draws its own multipliers for the switching and turnout parts, averaging the fitted
+  values; `c_t` equals `c_s` as a starting point.
+- Their origin, route and updates are recorded in `simlab/move_params.json`.
 
 The race's move comes from the formula in stats-groundwork §5.5:
 
@@ -111,13 +123,24 @@ national-scope reactions (§5).
 ### 3.3 Filter, Monte Carlo, stats-only twin
 
 As stats-groundwork §5.6–5.8:
-- **Daily Kalman update:** `N ← N + Δ_N` and `R_r ← R_r + (Δ_r − Δ_N)`, then new polls update the state. `Δ`
-  already includes the dials (§3.2), so they are not applied twice. `moves.json` also carries `delta_margin_base`
+- **Daily update** (Matteo, 28 Sep evening: news moves every race, polls or not):
+  - the statistical level is estimated from polls less the story effects in force on their dates;
+  - each race's story effects go on top in full; a race without its own stories takes the nation's.
+
+  `Δ` already includes the dials (§3.2), so they are not applied twice. `moves.json` also carries `delta_margin_base`
   (dials = 1) for the weekly re-tuning.
 - **Weekly re-tuning of the dials from 12 Oct.** Because the dials are linear, this is an exact Kalman update. Ensembles
   are used only if a non-linear parameter is added.
-- **Monte Carlo:** 40,000 draws with Student-t errors (8 degrees of freedom) and a correlation floor of 0.25. A fixed
-  sample of 1,000 draws is kept for one-dot-per-election charts.
+- **Monte Carlo:** 40,000 draws with Student-t errors (8 degrees of freedom) and a correlation floor of 0.25. Each draw
+  also takes its own news-size multipliers (§3.2), so races with strong simulated reactions get wider, story-driven
+  tails. A fixed sample of 1,000 draws is kept for one-dot-per-election charts.
+- **Where the simulation runs** (Matteo, 28 Sep evening):
+  - Statistics sets a daily `tier` per race in `races.json`: `simulate` (full), `watch` (the biggest stories only) or
+    `statistics` (statistics and national news only).
+  - A race runs on statistics alone only when the stats-only forecast (beyond 97/3), Cook ("Solid") and the market
+    (beyond 95/5) all call it safe. The pilot races always simulate.
+  - A race keeps its most competitive tier of the past week.
+  - The harness reads the previous day's tiers.
 - **Stats-only twin:** the same chain with Δ = 0.
 - **Innovation monitor:** it flags states whose polls keep surprising the forecast. The weekly auditor (MiMo) explains
   them and never changes numbers.
@@ -218,15 +241,15 @@ Special elections and ranked-choice voting are also fields in `races.json`.
 
 | File | Writer | Readers | Content |
 | --- | --- | --- | --- |
-| `races.json` (static) | Statistics | all | `race_id → {state, office, district, special, rcv, candidates}` |
+| `races.json` (daily) | Statistics | all | `race_id → {state, office, district, special, rcv, candidates, left_party, incumbent_party, status, tier, tier_raw, tier_reasons}` |
 | `polls.csv` | Statistics | Statistics, scoring | one row per poll version (stats-groundwork §5.1) |
 | `events.jsonl` | Engine | Statistics, Content | `{event_id, first_seen (UTC ISO), last_seen, scope, races, gate: {race_id: p}, type, helps_face, fires_up: {D, R}, puts_off: {D, R}, attention: {outlets, articles, days, pageviews, a}, card}`; raw headlines kept separately in `news_private.jsonl` |
 | `reactions.jsonl` | Engine | Statistics, scoring | one row per race × event × group × model: `{race_id, event_id, group, model, shadow, wording, support, turnout}` (expected values, −2..+2) |
 | `groups.json` | Statistics | Statistics, Content | `{units, race_id: {group: {n, t, d, pi, mu}}}`, all fractions (`d` from −1 to 1, the rest from 0 to 1), including a `US` entry |
-| `moves.json` | Statistics | filter, Content, scoring | `{units, race_id: {delta_margin, delta_margin_base, delta_turnout, by_group: {group: {dd, dt}}, by_event: {event_id: today's change}, by_event_effect: {event_id: total effect so far}}}` for GLM, plus the same under `shadow` for Kev. Margins in points of two-party margin; turnout in percentage points. `movers` in `forecast.json` read `by_event_effect` |
+| `moves.json` | Statistics | filter, Content, scoring | `{units, race_id: {delta_margin, delta_margin_base, delta_turnout, by_group: {group: {dd, dt}}, by_event: {event_id: today's change}, by_event_effect: {event_id: total effect so far}}}` for GLM, plus the same under `shadow` for Kev. Margins in points of two-party margin; turnout in percentage points. Each race's `events` block gives every story's `first_seen`, `last_seen`, type, half-life, full effect (and its switching and turnout parts) and `election_day` effect. `movers` in `forecast.json` read `election_day`, the story's effect on the 3 Nov margin |
 | `params.json` (weekly) | Statistics | Statistics, Engine | `{c_s, c_t, dials: {state: {k_s, k_t}}, half_life_days: {type: days}, fitted_on}` |
 | `levels.json`, `filter_state.json` | Statistics | Statistics | stats-groundwork §9 |
-| `forecast.json` (public) | Statistics | Content | `{races: {race_id: {p_dem_win, margin: {p10, p50, p90}, stats_only: {p_dem_win, margin}, benchmarks: {poll_avg, market, cook}, movers: [{event_id, card, delta}]}}, senate: {p_r_50plus, seats}, house: {p_d_majority, seats}}` |
+| `forecast.json` (public) | Statistics | Content | `{races: {race_id: {p_dem_win, margin: {p10, p50, p90}, stats_only: {p_dem_win, margin}, benchmarks: {poll_avg, market, cook}, movers: [{event_id, card, delta}], news: {effect, switching, turnout, if_weaker, if_stronger}}}, senate: {p_r_50plus, p_d_caucus_51, p_independents_decide, seats, news}, house: {p_d_majority, seats}}` |
 | `draws.json` (public) | Statistics | Content | the fixed 1,000-draw sample: every race's margin and the seat totals |
 | `run.json` | Engine | all | run record (§6) |
 

@@ -748,14 +748,20 @@ Raised by the build (28 Sep evening); Matteo's answers:
   election, traceable from source to forecast, and updated by the weekly filter.
 - **D15. Fat tails keep the fitted spread.** Yes, with extremes tied to what the simulation says; the size ranges do
   that.
-- **D16. "Democrats reach 51".** Brief given; open. Recommended: three outcomes (Republicans control; Democrats with
-  King and Sanders control; the new independents decide).
+- **D16. "Democrats reach 51".** Decided for now: King and Sanders count with Democrats. The new independents are shown
+  as independents, and `forecast.json` gives the share of simulations where they hold the balance
+  (`p_independents_decide`). The final presentation is decided later.
 - **D17. Montana.** No three-way work while Alme leads by about 20; flagged.
 - **D18. News moves every race.** Yes, in full, polls or not (§5.6 formulation).
-- **D19. How long news lasts** (raised by D18). Open. The calibration events' shifts lasted 3–7 weeks; the 10-day
-  prior would fade them by 90% before election day.
-- **D20. Simulate only the races where it matters** (Matteo's question). Open. Proposed: three tiers set daily from
-  the stats-only forecast.
+- **D19. How long news lasts** (raised by D18). Decided:
+  - a story keeps its effect while it is in the news, then fades: 1-day half-life for one-off stories, 60 days for
+    the economy and national events (the calibration events' shifts held 3–7 weeks);
+  - the 3 Nov forecast counts what is expected to remain then.
+- **D20. Simulate only the races where it matters** (Matteo's question). Decided: daily tiers in `races.json`
+  (simulate, watch, statistics).
+  - Statistics alone only when the stats-only forecast (beyond 97/3), Cook ("Solid") and the market (beyond 95/5) all
+    call a race safe, because an unsimulated flip would count against the simulation.
+  - The pilot races always simulate, and a race keeps its most competitive tier of the past week.
 
 ## 9. Notes for engine-design.md
 
@@ -816,6 +822,7 @@ are listed on the methods page.
 | Mobilisable share mu | respondents on an active registration (`vv_regstatus`): turnout intention "Probably", "Undecided" or missing, or a validated vote (`vv_turnout_gvm`) against their intention; `weight` | fitted; self-report gives nearly the same | shrunk as pi |
 | Switching size c_s | 0.21 on average; each simulated election draws its own (lognormal, mean 1 × 0.21, 90% range 0.08–0.41) | fitted on 45 events (0.19–0.23 leave-one-out); the range covers the transfer to state races | decided (Matteo, 28 Sep: flexible, not tied to one value); refit weekly |
 | Turnout size c_t | = c_s on average; 90% range 0.05–0.53 | prior: no data yet | decided (Matteo, 28 Sep); early vote and weekly filter |
-| Story half-life | 10 days, all types | engine-design prior; **the calibration events' shifts lasted** (share left 1.01–1.11 after 3–7 weeks, 90% ranges 0.84–1.31; random dates 0.83–0.92; `python -m simlab.moves --lasting`) | open: Matteo |
+| How long a story lasts | full while in the news (`first_seen` to `last_seen`), then a half-life of 1 day (one-off types) or 60 days (economy, national); the 3 Nov forecast counts what remains, taking coverage to end today | Matteo, 28 Sep (D19); the calibration events' shifts held (share left 1.01–1.11 after 3–7 weeks, 90% ranges 0.84–1.31; random dates 0.83–0.92; `python -m simlab.moves --lasting`) | decided; weekly filter tunes |
+| Simulation tiers | simulate: stats-only 10–90%, Cook toss-up/tilt/lean, or market 10–90%; watch: 3–97%, Likely, or 5–95%; statistics otherwise; pilot always simulate; a week of memory | Matteo, 28 Sep (D20); thresholds an assumption | decided |
 | Story effects on unpolled races | in full, like polled races | Matteo, 28 Sep (decision 5) | decided |
 | Uncertainty of moves | the size multipliers above | Matteo, 28 Sep (decision 1) | decided |

@@ -196,6 +196,28 @@ Decided by Matteo, 28 Sep (engine; details in `docs/engine-design.md`, `docs/roa
 - **Daily job:** it runs on GitHub Actions at 09:47 UTC and writes its outputs to the private data repo. Its schedule is
   switched on at the pilot (repository variable `PIPELINE_ON`); manual runs work any time.
 
+Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork.md` §8, D14–D20, and `docs/CHANGELOG.md`):
+- **News sizes are ranges, not single values.** Each simulated election draws its own switching and turnout sizes:
+  they average the fitted 0.21, turnout equals switching as a starting point, and they can go well up or down. No
+  single data point drives the result (the Hungary lesson).
+  - Each race shows how its forecast changes if news matters less or more.
+  - `simlab/move_params.json` records where the sizes come from, the files they pass through and what updates them:
+    the weekly filter, from 12 Oct.
+- **Fat tails keep the fitted spread**, and extremes also follow the simulated dynamics.
+- **News moves every race by its full effect, polls or not.** Polls correct the statistical level underneath.
+- **How long news lasts:** a story keeps its effect while it is in the news, then fades.
+  - One-off stories (endorsements, scandals, debates, ads, candidates' policy news) fade within about a day.
+  - Lasting topics (the economy and prices; national events such as war) fade slowly, with a 60-day half-life.
+  - The 3 Nov forecast counts only what is expected to remain by then.
+- **Senate:** King and Sanders count with Democrats. The new independents (Osborn, Achilles, Bengs, Bodnar) are shown
+  as independents, with the share of simulations where they hold the balance. The final presentation is decided
+  later.
+- **The simulation runs only where races are contested.** Statistics runs for every race.
+  - A daily tier per race (full simulation, watch, statistics only) is set in `races.json`.
+  - A race runs on statistics alone only when the stats-only forecast, Cook and the market all call it safe: an
+    unsimulated flip would count against the simulation.
+- **Montana:** no three-way model while it isn't competitive; it is on the watch list.
+
 ## 6. Reference material (read, don't duplicate)
 
 Local snapshots (read these; Claude Code cannot open claude.ai links):
