@@ -5,6 +5,7 @@ and the poll average, market and Cook beside our number. The numbers here are in
 """
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import date
 
 import matplotlib.pyplot as plt
@@ -19,10 +20,21 @@ RACE = {"state": "Ohio", "usps": "OH", "code": "OH-SEN", "run": "a3f9c1e", "offi
         "market": 0.55, "cook": "Toss-up", "change": "No meaningful change this week"}
 
 
-def verdict(p: float) -> str:
+LEFT = {"D": ("Democrat", "D"), "I": ("independent", "I")}  # the challenger to the Republican: races.json left_party
+
+
+def who(r: dict) -> str:
+    return LEFT[r.get("left_party", "D")][0]
+
+
+def abbr(r: dict) -> str:
+    return LEFT[r.get("left_party", "D")][1]
+
+
+def verdict(p: float, left: str = "D") -> str:
     if 0.35 <= p <= 0.65:
         return "Toss-up"
-    lean = "Democrat" if p > 0.5 else "Republican"
+    lean = LEFT[left][0].capitalize() if p > 0.5 else "Republican"
     return f"Likely {lean}" if max(p, 1 - p) >= 0.8 else f"Leans {lean}"
 
 
@@ -30,8 +42,12 @@ def verdict_color(t: Theme, p: float) -> str:
     return t.ai if 0.35 <= p <= 0.65 else t.dem if p > 0.65 else t.rep
 
 
-def margin_txt(x: float) -> str:
-    return "Even" if abs(x) < 0.05 else f"{'D' if x > 0 else 'R'}+{abs(x):.1f}"
+def margin_txt(x: float, left: str = "D") -> str:
+    return "Even" if abs(x) < 0.05 else f"{left if x > 0 else 'R'}+{abs(x):.1f}"
+
+
+def span(r: dict) -> str:
+    return f"{margin_txt(r['lo'], abbr(r))} to {margin_txt(r['hi'], abbr(r))}"
 
 
 def pct_txt(x) -> str:
@@ -39,6 +55,9 @@ def pct_txt(x) -> str:
 
 
 def slide(t: Theme, r: dict) -> Slide:
+    """The race's canvas; for an independent challenger the left side is drawn in the neutral independent colour."""
+    if r.get("left_party", "D") == "I":
+        t = replace(t, dem=t.ind)
     return Slide(r.get("day", DAY), r.get("kicker", "RACE CARD · EXAMPLE"), t, run=r["run"])
 
 
@@ -91,7 +110,7 @@ def chip(s: Slide, r: dict, y: float | None = None, change: bool = True) -> floa
     """The verdict as a filled label (purple for a toss-up, blue or red otherwise), then the 7-day change."""
     t = s.t
     y = s.y if y is None else y
-    label = verdict(r["p"]).upper()
+    label = verdict(r["p"], abbr(r)).upper()
     w = s.pil("mono", 600, 26).getlength(label) + 36
     s.ax.add_patch(FancyBboxPatch((MARGIN, y), w, 48, boxstyle="round,pad=0,rounding_size=6",
                                   color=verdict_color(t, r["p"]), lw=0, zorder=2))
@@ -117,7 +136,7 @@ def strip(s: Slide, items: list[tuple[str, str]]):
 
 
 def benchmarks(s: Slide, r: dict, px: int = 60):
-    strip(s, [("Poll average", r["poll"]), ("Market, Dem", pct_txt(r["market"])), ("Cook", r["cook"])])
+    strip(s, [("Poll average", r["poll"]), (f"Market, {abbr(r)}", pct_txt(r["market"])), ("Cook", r["cook"])])
 
 
 def stamp(s: Slide, x: float, y: float, text: str, px: int = 96, rot: float = 8, color: str | None = None):
@@ -160,11 +179,12 @@ def split(t: Theme, r: dict = RACE) -> Slide:
 def ladder(t: Theme, r: dict = RACE) -> Slide:
     """Where everyone stands: one 0–100% scale with our number above it and the market below it."""
     s = slide(t, r)
+    t = s.t
     hw = tag(s, r)
     title(s, r, hw)
     chip(s, r, s.y + 4)
     y0 = max(s.y, s.tag_bottom) + 56
-    s._put(MARGIN, y0, "THE DEMOCRAT’S CHANCE OF WINNING", "mono", 500, 24, t.ink2, va="top")
+    s._put(MARGIN, y0, f"THE {who(r).upper()}’S CHANCE OF WINNING", "mono", 500, 24, t.ink2, va="top")
     x0, w = MARGIN + 20, s.width - 40
     X = lambda p: x0 + w * p
     y = y0 + 330
@@ -200,7 +220,7 @@ def ladder(t: Theme, r: dict = RACE) -> Slide:
         s._put(MARGIN, y + 100, "No market price for this race", "sans", 400, 28, t.ink2, va="top")
     s.y = y + 230
     strip(s, [("Poll average", r["poll"]), ("Cook", r["cook"]),
-              ("Range (80%)", f"{margin_txt(r['lo'])} to {margin_txt(r['hi'])}")])
+              ("Range (80%)", span(r))])
     source(s, r, "Where everyone stands")
     return s
 
@@ -208,6 +228,7 @@ def ladder(t: Theme, r: dict = RACE) -> Slide:
 def futures(t: Theme, r: dict = RACE) -> Slide:
     """100 futures: a dot histogram of simulated margins, one dot per simulation, coloured by the winner."""
     s = slide(t, r)
+    t = s.t
     hw = tag(s, r)
     title(s, r, hw)
     chip(s, r, s.y + 4)
@@ -216,14 +237,19 @@ def futures(t: Theme, r: dict = RACE) -> Slide:
     n_dem = int((d > 0).sum())
     s.hero(MARGIN, s.y, f"{n_dem} of 100", 110)
     s.y += 110 * 1.05
-    s.text("simulated elections won by the Democrat", px=32, color=t.ink2, after=0.6)
-    lim = max(14, int(np.ceil(np.abs(d).max())) + 1)
+    s.text(f"simulated elections won by the {who(r)}", px=32, color=t.ink2, after=0.6)
+    # the axis covers the simulated margins plus Even, so lopsided races keep readable dots
+    lo_m = min(-7, int(np.floor(d.min())) - 1)
+    hi_m = max(7, int(np.ceil(d.max())) + 1)
+    if hi_m - lo_m < 28:
+        pad = (28 - (hi_m - lo_m)) / 2
+        lo_m, hi_m = int(np.floor(lo_m - pad)), int(np.ceil(hi_m + pad))
     x0, w = MARGIN + 30, s.width - 60
-    X = lambda m: x0 + w * (m + lim) / (2 * lim)
+    X = lambda m: x0 + w * (m - lo_m) / (hi_m - lo_m)
     # one-point columns either side of the Even line, so no column mixes the two parties
     bins = np.where(d > 0, np.ceil(d), np.minimum(-1, -np.ceil(-d))).astype(int)
-    rows = max(np.bincount(bins + lim).max(), 10)
-    size = min(28, 300 / rows - 2, w / (2 * lim) - 2)  # tall or wide spreads get smaller dots, same chart size
+    rows = max(np.bincount(bins - lo_m).max(), 10)
+    size = min(28, 300 / rows - 2, w / (hi_m - lo_m) - 2)  # tall or wide spreads get smaller dots, same chart size
     base = s.y + 300 + 16
     counts: dict[int, int] = {}
     for m, v in sorted(zip(bins, d), key=lambda z: (abs(z[0]), -z[1])):
@@ -231,11 +257,11 @@ def futures(t: Theme, r: dict = RACE) -> Slide:
         counts[m] = k + 1
         s.ax.add_patch(plt.Circle((X(m - 0.5 if m > 0 else m + 0.5), base - size / 2 - k * (size + 2)), size / 2 - 1,
                                   color=t.dem if v > 0 else t.rep, lw=0, zorder=2))
-    s.ax.plot([X(-lim), X(lim)], [base + 4, base + 4], color=t.baseline, lw=pt(2))
+    s.ax.plot([X(lo_m), X(hi_m)], [base + 4, base + 4], color=t.baseline, lw=pt(2))
     s.ax.plot([X(0), X(0)], [base + 4, s.y + 4], color=t.ink, lw=pt(2), zorder=3, dashes=(3, 2))
-    step = 5 if lim <= 16 else 10
-    for m in range(-(lim // step) * step, lim, step):
-        s._put(X(m), base + 16, "Even" if m == 0 else f"{'D' if m > 0 else 'R'}+{abs(m)}", "mono", 400, 22,
+    step = 5 if hi_m - lo_m <= 32 else 10
+    for m in range(-(-lo_m // step) * step, hi_m, step):
+        s._put(X(m), base + 16, "Even" if m == 0 else f"{abbr(r) if m > 0 else 'R'}+{abs(m)}", "mono", 400, 22,
                t.ink2, ha="center", va="top")
     s.y = base + 76
     benchmarks(s, r)
@@ -246,6 +272,7 @@ def futures(t: Theme, r: dict = RACE) -> Slide:
 def stamped(t: Theme, r: dict = RACE) -> Slide:
     """The Stamp: the state as a masthead, its simulated voters, the verdict stamped beside the number, a ledger."""
     s = slide(t, r)
+    t = s.t
     s._put(MARGIN, s.y, r["office"].upper(), "mono", 600, 28, t.ink2, va="top")
     s.y += 46
     s.text(r["state"], "serif", t.head_weight, fit(s, r["state"], 136, s.width, lines=1, low=84), t.ink, leading=0.98,
@@ -256,16 +283,16 @@ def stamped(t: Theme, r: dict = RACE) -> Slide:
     rx, rw = MARGIN + 540, s.width - 540
     s._put(rx, top - 10, f"{r['p'] * 100:.0f}", "hero", t.hero_weight, 150, t.ink, va="top")
     s._put(rx, top + 150, "of 100 simulations", "sans", 400, 30, t.ink2, va="top")
-    s._put(rx, top + 188, "won by the Democrat", "sans", 400, 30, t.ink2, va="top")
-    label = verdict(r["p"]).upper()
+    s._put(rx, top + 188, f"won by the {who(r)}", "sans", 400, 30, t.ink2, va="top")
+    label = verdict(r["p"], abbr(r)).upper()
     spx = 48
     while spx > 26 and s.pil("hero", t.hero_weight, spx).getlength(label) + spx * 1.4 > rw - 20:
         spx -= 2
     sw = s.pil("hero", t.hero_weight, spx).getlength(label) + spx * 0.64
     stamp(s, rx + sw / 2 + 6, top + 290, label, px=spx, rot=-5, color=None if t.overprint else verdict_color(t, r["p"]))
     s.y = max(top + 350, s.tag_bottom + 20)
-    rows = [("Range of margins (80%)", f"{margin_txt(r['lo'])} to {margin_txt(r['hi'])}"),
-            ("Poll average", r["poll"]), ("Market, Dem", pct_txt(r["market"])), ("Cook", r["cook"]),
+    rows = [("Range of margins (80%)", span(r)),
+            ("Poll average", r["poll"]), (f"Market, {abbr(r)}", pct_txt(r["market"])), ("Cook", r["cook"]),
             ("This week", r["change"].replace(" this week", ""))]
     for name, value in rows:
         s.rule(t.hairline, after=14)

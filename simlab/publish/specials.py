@@ -94,7 +94,7 @@ def ballot(r: dict = NC, t=BALLOT) -> Slide:
     s._put(x0 + 28, y, office.upper(), "sans", 800, 40, t.ink, va="top")
     s._put(x0 + 28, y + 52, f"{r['state']} · Vote for one", "sans", 400, 30, t.ink2, va="top")
     y += 118
-    rows = [(r["dem"], "Democratic", t.dem, r["p"]), (r["rep"], "Republican", t.rep, 1 - r["p"])]
+    rows = [(r["dem"], "Independent" if r.get("left_party") == "I" else "Democratic", t.dem, r["p"]), (r["rep"], "Republican", t.rep, 1 - r["p"])]
     for name, party, col, share in rows:
         s.ax.plot([x0, x1], [y, y], color=t.ink, lw=pt(2))
         cy = y + 96

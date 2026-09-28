@@ -75,9 +75,14 @@ Command for the daily job (roadmap A8): `python -m simlab.publish.kit --date YYY
 writes `derived/<date>/post-kit/`, exits 1 if the kit can't be built, and prints a one-line JSON summary last
 (`ok`, `races`, `slides`, `problems`, `approvable`, `out`). Before 12 Oct every slide's kicker says "PILOT · INTERNAL,
 NOT FOR POSTING". Layouts: The Stamp, Where everyone stands, 100 futures (Matteo, 28 Sep). A slide
-takes about 1 s to render; from 12 Oct the kit features a few selected races a day, not all 75, so posts stay
-short. Tests:
-`python -m unittest tests.test_kit`.
+takes about 1 s to render. Featured races: OH, NC and TX before 12 Oct; from 12 Oct the three closest races plus the
+biggest 7-day mover (`--races NC,GA` overrides). `note.md` still lists every race. The summary adds `featured`.
+Tests: `python -m unittest tests.test_kit`.
+
+- **Independents:** where `left_party` is "I" (NE, ID, SD, MT in 2026) the cards say "the independent", use I+ margins
+  and draw that side in the neutral independent grey instead of blue.
+- **Layout guard:** `save()` also refuses text whose glyphs touch other text. Text over shapes is checked by eye on
+  the review boards.
 
 - **Input** (`docs/engine-design.md` §7, approved 28 Sep): `forecast.json` (per race `p_dem_win`, margin p10/p50/p90,
   `stats_only`, `benchmarks` {poll_avg, market, cook}, `movers` [{event_id, card, delta}]; Senate and House control) and

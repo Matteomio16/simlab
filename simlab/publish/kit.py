@@ -25,6 +25,9 @@ LAYOUTS = ("4-stamp", "2-ladder", "3-futures")  # provisional until Matteo picks
 MEANINGFUL = 0.03  # a smaller 7-day move in the win chance is "no meaningful change"
 LAUNCH = date(2026, 10, 12)
 LIMITS = {"instagram": 2200, "thread": 280}
+PILOT = ("OH-S", "NC", "TX")
+FEATURED = 4  # races per daily post from the launch: the closest races plus the biggest mover
+COOK = {"Tossup": "Toss-up", "Toss Up": "Toss-up"}
 
 
 def race_meta(rid: str, races: dict) -> dict:
@@ -41,13 +44,27 @@ def race_meta(rid: str, races: dict) -> dict:
         m["state"] = f"{m['state']} {rest if rest != 'AL' else 'at-large'}"
     if m["special"]:
         m["office"] = "Senate special"
+    m["left_party"] = info.get("left_party", "D")
+    m["candidates"] = info.get("candidates") or {}
     return m
 
 
-def poll_txt(x) -> str:
+def featured(rs: list[dict], day: date, only: list[str] | None = None) -> list[dict]:
+    """The races a day's post shows: the pilot's three before the launch; from the launch, the closest races and
+    the biggest 7-day mover, at most FEATURED."""
+    if only:
+        return [r for r in rs if r["rid"] in only]
+    if day < LAUNCH:
+        return [r for r in rs if r["rid"] in PILOT] or rs[:FEATURED]
+    close = sorted(rs, key=lambda r: abs(r["p"] - 0.5))[:FEATURED - 1]
+    moved = sorted((r for r in rs if r not in close), key=lambda r: -abs(r["p"] - (r["prev"] or r["p"])))
+    return close + moved[:1]
+
+
+def poll_txt(x, left: str = "D") -> str:
     if x is None:
         return "n/a"
-    return x if isinstance(x, str) else racecards.margin_txt(float(x))
+    return x if isinstance(x, str) else racecards.margin_txt(float(x), left)
 
 
 def change_txt(p: float, prev: float | None) -> str:
@@ -78,7 +95,7 @@ def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def build(day: date, data: Path, theme=LAB) -> dict:
+def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> dict:
     d = data / "derived" / day.isoformat()
     f = load(d / "forecast.json")
     if f is None:
@@ -86,7 +103,7 @@ def build(day: date, data: Path, theme=LAB) -> dict:
     draws = load(d / "draws.json")
     prev = load(data / "derived" / (day - timedelta(days=7)).isoformat() / "forecast.json") or {"races": {}}
     races = load(d / "races.json") or load(data / "races.json") or {}
-    run = str(f.get("run_id", "unknown"))[:7]
+    run = str(f.get("run_id", "unknown")).rsplit("-", 1)[-1][:7]  # "2026-09-28-bf145e8" -> "bf145e8"
     pilot = day < LAUNCH
     kicker = "PILOT · INTERNAL, NOT FOR POSTING" if pilot else "DAILY FORECAST"
     out = d / "post-kit"
@@ -100,32 +117,41 @@ def build(day: date, data: Path, theme=LAB) -> dict:
             continue
         b = x.get("benchmarks") or {}
         m = race_meta(rid, races)
-        r = m | {"rid": rid, "run": run, "day": day, "kicker": kicker, "p": float(x["p_dem_win"]),
-                 "lo": x["margin"]["p10"], "mid": x["margin"]["p50"], "hi": x["margin"]["p90"],
-                 "poll": poll_txt(b.get("poll_avg")), "market": b.get("market"), "cook": b.get("cook") or "n/a",
-                 "change": change_txt(float(x["p_dem_win"]), (prev["races"].get(rid) or {}).get("p_dem_win")),
-                 "draws": race_draws(draws, rid), "movers": x.get("movers") or [],
-                 "source": f"NotAPoll run {run}: 40,000 simulated elections. Poll average, market and Cook as of the run."}
+        m["left_party"] = x.get("left_party", m["left_party"])
+        before = (prev["races"].get(rid) or {}).get("p_dem_win")
+        rs.append(m | {"rid": rid, "run": run, "day": day, "kicker": kicker, "p": float(x["p_dem_win"]), "prev": before,
+                       "lo": x["margin"]["p10"], "mid": x["margin"]["p50"], "hi": x["margin"]["p90"],
+                       "poll": poll_txt(b.get("poll_avg"), m["left_party"]), "market": b.get("market"),
+                       "cook": COOK.get(b.get("cook"), b.get("cook")) or "n/a",
+                       "change": change_txt(float(x["p_dem_win"]), before),
+                       "draws": race_draws(draws, rid), "movers": x.get("movers") or [], "benchmarks": b,
+                       "source": f"NotAPoll run {run}: 40,000 simulated elections. Poll average, market and Cook as of "
+                                 "the run."})
+    if not rs:
+        raise ValueError("forecast.json has no races")
+    everyone, rs = rs, featured(rs, day, only)
+    for r in rs:
+        m, b = r, r["benchmarks"]
         for key, what in (("poll_avg", "poll average"), ("market", "market price"), ("cook", "Cook rating")):
             if b.get(key) is None:
                 problems.append(f"{m['code']}: no {what}")
         for mv in r["movers"]:
             problems += [f"{m['code']} event card: {p}" for p in text.check(mv.get("card", ""), caption=False)]
-        rs.append(r)
         for name in LAYOUTS:
             n = len(paths) + 1
             p = racecards.LAYOUTS[name](theme, r).save(out / "slides" / f"{n:02d}-{m['code']}-{name[2:]}.jpg")
             paths.append(p)
-            alts[p.name] = (f"{r['state']} {r['office']}: {racecards.verdict(r['p'])}. The Democrat wins "
+            alts[p.name] = (f"{r['state']} {r['office']}: {racecards.verdict(r['p'], r['left_party'])}. The "
+                            f"{racecards.who(r)} wins "
                             f"{r['p']:.0%} of simulated elections; poll average {r['poll']}, market "
                             f"{racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
-    if not rs:
-        raise ValueError("forecast.json has no races")
     contact_sheet(paths, out / "contact.jpg", scale=0.3)
 
-    lines = [f"Where the races stand, {day:%d %B}: {len(rs)} races, 40,000 simulated elections each.", ""]
+    lines = [f"Where the races stand, {day:%d %B}: {len(rs)} of our {len(everyone)} races, 40,000 simulated "
+             "elections each.", ""]
     for r in rs:
-        lines.append(f"{r['state']} {r['office']}: {racecards.verdict(r['p'])}. The Democrat wins "
+        lines.append(f"{r['state']} {r['office']}: {racecards.verdict(r['p'], r['left_party'])}. "
+                     f"The {racecards.who(r)} wins "
                      f"{round(r['p'] * 10)} in 10 simulated elections. Poll average {r['poll']}, market "
                      f"{racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
         top = sorted(r["movers"], key=lambda mv: -abs(mv.get("delta", 0)))[:1]
@@ -137,7 +163,8 @@ def build(day: date, data: Path, theme=LAB) -> dict:
               "#midterms2026 #elections #socialsimulation"]
     caption = "\n".join(lines)
     thread = [f"Where the races stand today, in 40,000 simulated elections each. {LABEL}."]
-    thread += [f"{r['state']} {r['office']}: {racecards.verdict(r['p'])}, the Democrat wins {round(r['p'] * 10)} "
+    thread += [f"{r['state']} {r['office']}: {racecards.verdict(r['p'], r['left_party'])}, the {racecards.who(r)} "
+               f"wins {round(r['p'] * 10)} "
                f"in 10. Poll average {r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. "
                f"{r['change']}." for r in rs]
 
@@ -158,7 +185,7 @@ def build(day: date, data: Path, theme=LAB) -> dict:
             "## Checks", ""] + ([f"- {p}" for p in problems] or ["- All rules pass."]) + [""]
     note += ["## Style notes", ""] + ([f"- {n}" for n in notes] or ["- None."]) + [""]
     note += ["## What changed and why", ""]
-    for r in rs:
+    for r in everyone:
         so = f["races"][r["rid"]].get("stats_only", {}).get("p_dem_win")
         gap = "" if so is None else f"; statistics alone: {so:.0%}"
         note.append(f"- **{r['state']} {r['office']}**: {r['p']:.0%}{gap}. {r['change']}.")
@@ -176,7 +203,8 @@ def build(day: date, data: Path, theme=LAB) -> dict:
                 "inputs": {n: sha(d / n) for n in ("forecast.json", "draws.json") if (d / n).exists()},
                 "outputs": {str(p.relative_to(out)).replace("\\", "/"): sha(p) for p in files}}
     (out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
-    return {"ok": True, "date": day.isoformat(), "races": len(rs), "slides": len(paths), "problems": len(problems),
+    return {"ok": True, "date": day.isoformat(), "races": len(everyone), "featured": [r["rid"] for r in rs],
+            "slides": len(paths), "problems": len(problems),
             "approvable": not problems, "out": str(out)}
 
 
@@ -184,9 +212,10 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--date", required=True, type=date.fromisoformat)
     ap.add_argument("--data", type=Path, default=Path(__file__).resolve().parents[3] / "simlab-data")
+    ap.add_argument("--races", help="comma-separated race ids to feature instead of the automatic pick")
     a = ap.parse_args(argv)
     try:
-        summary = build(a.date, a.data)
+        summary = build(a.date, a.data, only=a.races.split(",") if a.races else None)
         code = 0
     except Exception as e:  # the daily job needs one summary line and a non-zero exit, whatever went wrong
         summary, code = {"ok": False, "date": a.date.isoformat(), "error": f"{type(e).__name__}: {e}"}, 1
