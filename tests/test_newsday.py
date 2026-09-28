@@ -186,5 +186,41 @@ class Cards(unittest.TestCase):
         self.assertEqual(newsday.write_card(self.story, [FakeChat(["not json", "{}"])]), "")
 
 
+REQUIRED = ["schema", "date", "run_id", "event_id", "first_seen", "last_seen", "scope", "races", "gate", "type",
+            "helps_face", "fires_up", "puts_off", "salience", "attention", "card", "selected"]
+
+
+class Run(unittest.TestCase):
+    def test_writes_events_and_private_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"googlenews-ohio": RSS.encode()})
+            summary = newsday.run(date(2026, 9, 28), snap, derived, "test-run", FakeAsker(),
+                                  [FakeChat(['{"card": "%s"}' % GOOD] * 5)])
+            events = newsday._jsonl(derived / "2026-09-28" / "events.jsonl")
+            private = newsday._jsonl(derived / "2026-09-28" / "news_private.jsonl")
+        self.assertEqual(summary["stories"], 2)
+        for e in events:
+            self.assertEqual(set(REQUIRED) - set(e), set())
+            self.assertNotIn("titles", e)
+        self.assertEqual({p["event_id"] for p in private}, {e["event_id"] for e in events})
+        self.assertTrue(all(e["card"] for e in events if e["selected"]))
+
+    def test_second_day_reuses_labels_and_id(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"googlenews-ohio": RSS.encode()})
+            snapshot(snap, "2026-09-29", "0036", {"googlenews-ohio": RSS.replace("28 Sep", "29 Sep").encode()})
+            chat = FakeChat(['{"card": "%s"}' % GOOD] * 10)
+            newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [chat])
+            asker2 = FakeAsker()
+            newsday.run(date(2026, 9, 29), snap, derived, "d2", asker2, [chat])
+            day1 = {e["event_id"] for e in newsday._jsonl(derived / "2026-09-28" / "events.jsonl")}
+            day2 = newsday._jsonl(derived / "2026-09-29" / "events.jsonl")
+        self.assertEqual({e["event_id"] for e in day2}, day1)
+        self.assertEqual(asker2.states, [])
+        self.assertTrue(all(e["first_seen"].startswith("2026-09-28") for e in day2))
+
+
 if __name__ == "__main__":
     unittest.main()

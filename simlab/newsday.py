@@ -14,7 +14,7 @@ import json
 import math
 import re
 import xml.etree.ElementTree as ET
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 from urllib.parse import urlparse
@@ -290,3 +290,79 @@ def write_card(story: dict, chats: list) -> str:
             if card_ok(card, story["outlet_names"]):
                 return card
     return ""
+
+
+def _jsonl(path: Path) -> list[dict]:
+    return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+
+
+def load_known(derived_root: Path, day: date, lookback: int = 7) -> list[dict]:
+    """Events from the previous `lookback` days (the newest copy of each) with their headlines, for carry_over."""
+    out: dict = {}
+    for k in range(1, lookback + 1):
+        d = derived_root / f"{day - timedelta(days=k):%Y-%m-%d}"
+        if not ((d / "events.jsonl").exists() and (d / "news_private.jsonl").exists()):
+            continue
+        priv = {r["event_id"]: r for r in _jsonl(d / "news_private.jsonl")}
+        for e in _jsonl(d / "events.jsonl"):
+            p = priv.get(e["event_id"])
+            if p and e["event_id"] not in out:
+                out[e["event_id"]] = {**e, "race_id": p["race_id"], "titles": p["titles"], "days_seen": p["days_seen"]}
+    return list(out.values())
+
+
+def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chats: list) -> dict:
+    """One day: read, cluster, carry over, label new stories, score attention, select, write cards, write files."""
+    arts = read_day(snap_root, day)
+    stories = carry_over(make_stories(arts), load_known(derived_root, day))
+    views = load_pageviews(snap_root, day)
+    events, private, new = [], [], 0
+    for s in stories:
+        k = s.pop("known")
+        new += k is None
+        labels = {f: k[f] for f in LABEL_FIELDS} if k else label(s, asker)
+        national = s["race_id"] == "US"
+        events.append({"schema": SCHEMA, "date": f"{day}", "run_id": run_id, "event_id": s["event_id"],
+                       "first_seen": s["first_seen"], "last_seen": s["last_seen"],
+                       "scope": "national" if national else "race",
+                       "races": PILOT + ["US"] if national else [s["race_id"]], **labels,
+                       "attention": attention(s, spike_ratio(views, s["race_id"])),
+                       "card": (k or {}).get("card", "")})
+        private.append({"schema": SCHEMA, "date": f"{day}", "event_id": s["event_id"], "race_id": s["race_id"],
+                        "titles": s["titles"], "outlet_names": s["outlet_names"], "outlets": s["outlets"],
+                        "urls": s["urls"], "days_seen": s["days_seen"]})
+    select(events)
+    by_id, written, failed = {s["event_id"]: s for s in stories}, 0, 0
+    for e in events:
+        if e["selected"] and not e["card"]:
+            e["card"] = write_card(by_id[e["event_id"]], chats)
+            written += bool(e["card"])
+            if not e["card"]:
+                e["selected"], failed = {}, failed + 1
+    out = derived_root / f"{day:%Y-%m-%d}"
+    out.mkdir(parents=True, exist_ok=True)
+    for name, rows in (("events.jsonl", events), ("news_private.jsonl", private)):
+        (out / name).write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
+    return {"articles": len(arts), "stories": len(events), "new": new, "carried": len(events) - new,
+            "selected": {r: sum(bool(e["selected"].get(r)) for e in events) for r in PILOT + ["US"]},
+            "cards_written": written, "cards_failed": failed}
+
+
+def main() -> None:
+    import argparse
+    from .askers import DecisionAsker
+    from .core import HOSTS, JEV, LLMS, REASONING, Chat
+    data = Path(__file__).resolve().parents[2] / "simlab-data"
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--date", type=date.fromisoformat, default=datetime.now(timezone.utc).date())
+    ap.add_argument("--snap", type=Path, default=data / "snapshots")
+    ap.add_argument("--out", type=Path, default=data / "derived")
+    ap.add_argument("--run-id", default="")
+    a = ap.parse_args()
+    chats = [Chat(LLMS["deepseek"], HOSTS["deepseek"]), Chat(LLMS["glm"], HOSTS["glm"], reasoning=REASONING["glm"])]
+    print(json.dumps(run(a.date, a.snap, a.out, a.run_id or f"{a.date}-manual",
+                         DecisionAsker(JEV, n_orders=2, name="jev"), chats)))
+
+
+if __name__ == "__main__":
+    main()
