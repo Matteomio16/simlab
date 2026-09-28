@@ -542,8 +542,8 @@ classic = polls + fundamentals, deluxe = classic + expert ratings). 538's scorin
 `runs/backtest_senate_2018_2024.csv`.
 
 **Races:** 122, those with a Democrat and a Republican as the top two. Left out: Georgia 2020 (both seats went to
-runoffs), California's 2024 special (the same two candidates on the same ballot), Louisiana, and races with an
-independent as a finalist.
+runoffs), California's 2022 and 2024 specials (the same two candidates as the regular race on the same ballot),
+Louisiana, and races with an independent as a finalist.
 
 **No peeking:**
 - a poll counts only once 538 had logged it by the forecast date;
@@ -570,7 +570,7 @@ means races where a model in the comparison gave between 10% and 90%.
 - **Wrong call on eve:** one, Pennsylvania. We gave Casey 83% on 136 polls; McCormick won by 0.2 points.
 
 **All four cycles** (122 races): Brier on eve 0.038, against 0.046 for polls only and 0.054 for fundamentals only;
-35 days out 0.041, against 0.058 and 0.052.
+35 days out 0.042, against 0.058 and 0.053.
 
 - **Margin on election eve**, average miss:
   - 2018–22: ours 4.5 points, 538 deluxe 4.9, polls only 5.4.

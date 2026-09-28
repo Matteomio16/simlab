@@ -5,8 +5,8 @@ against the results and, for 2018-2022, against 538's own forecasts (lite, class
 No peeking: a poll counts only once 538 had logged it (created_at) by the forecast date; pollster house effects use
 the tested cycle's polls known by then, with priors from earlier cycles only; the fundamentals, the generic-ballot
 correction and the error sizes are refitted without the tested cycle. Left out: Georgia 2020 (both seats went to
-January runoffs), California's 2024 special (the same two candidates as the regular race on the same ballot), and races
-without a Democrat and a Republican as the top two (Louisiana, independents, same-party runoffs).
+January runoffs), specials with the same two candidates as that year's regular race (California 2022 and 2024), and
+races without a Democrat and a Republican as the top two (Louisiana, independents, same-party runoffs).
 
     python -m simlab.backtest
 """
@@ -172,7 +172,9 @@ def run_cycle(cycle, sen, gb, S1, G1, raw, T, prior):
     predict, sdF, eco = fundamentals_without(cycle, T)
     eday = pd.Timestamp(ELECTION[cycle])
     races = T[T.year == cycle]
-    races = races[~((cycle == 2020) & (races.st == "GA")) & ~((cycle == 2024) & (races.st == "CA") & races.special)]
+    regular = set(zip(races.st[~races.special], races.D[~races.special], races.R[~races.special]))
+    same_pair = races.special & np.array([(s, d, r) in regular for s, d, r in zip(races.st, races.D, races.R)])
+    races = races[~((cycle == 2020) & (races.st == "GA")) & ~same_pair]
     out = []
     for d in DAYS:
         F = eday - pd.Timedelta(days=d) + pd.Timedelta(hours=23, minutes=59)

@@ -5,8 +5,8 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 ## 2026-09-28 (Statistics session): backtest extended to 2024
 
 - With Matteo's OK, `simlab.statsdata` fetched 538's 2024 generic-ballot poll list from the Wayback Machine (3 Dec 2024
-  copy, 735 polls, 0.33 MB). The backtest now covers 2018–2024: 122 races. California's 2024 special is left out,
-  because it had the same two candidates as the regular race.
+  copy, 735 polls, 0.33 MB). The backtest now covers 2018–2024: 122 races. California's 2022 and 2024 specials are
+  left out, because each had the same two candidates as the regular race on the same ballot.
 - **2024** (no 538 comparison: their scoring file stops at 2022). Brier at 35 / 14 / 1 days: ours 0.041 / 0.036 /
   0.034, polls only 0.048 / 0.041 / 0.036, fundamentals only 0.051 / 0.052 / 0.053. One wrong call on eve:
   Pennsylvania (we gave Casey 83%; McCormick won by 0.2).
