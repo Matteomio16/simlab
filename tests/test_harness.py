@@ -31,5 +31,55 @@ class Questions(unittest.TestCase):
         self.assertEqual(harness.GROUPS, [["support"], ["turnout"]])
 
 
+class FakeLLM:
+    chat = None  # marks an LLM asker (takes `groups`)
+
+    def __init__(self):
+        self.calls = []
+
+    def ask_many(self, state, questions, tag="", groups=None):
+        self.calls.append((state, sorted(questions), groups))
+        up = {"0": 0.0, "1": 0.0, "2": 0.5, "3": 0.5, "4": 0.0}
+        return {q: up for q in questions}
+
+
+class FakeDecision:
+    def ask_many(self, state, questions, tag=""):
+        return {q: {"0": 0.2, "1": 0.2, "2": 0.2, "3": 0.2, "4": 0.2} for q in questions}
+
+
+EVENTS = [{"event_id": "OH-S-1", "card": "Trump will campaign for Jon Husted in Ohio.", "selected": {"OH-S": True}},
+          {"event_id": "US-1", "card": "A national event happened.", "selected": {"OH-S": True, "US": True}},
+          {"event_id": "TX-9", "card": "Not selected.", "selected": {}}]
+
+
+class React(unittest.TestCase):
+    def test_rows_per_race_event_group_with_separate_turnout(self):
+        glm = FakeLLM()
+        rows = harness.react(EVENTS, [("glm", glm, False)], "direct", skip=set())
+        self.assertEqual(len(rows), 3 * 28)
+        self.assertEqual({(r["race_id"], r["event_id"]) for r in rows},
+                         {("OH-S", "OH-S-1"), ("OH-S", "US-1"), ("US", "US-1")})
+        self.assertTrue(all(c[2] == [["support"], ["turnout"]] for c in glm.calls))
+        self.assertTrue(all("NEWS THIS PERSON SAW TODAY\n" in c[0] for c in glm.calls))
+        r = rows[0]
+        self.assertAlmostEqual(r["support"], 0.5)
+        self.assertEqual((r["model"], r["shadow"], r["wording"], r["parse_error"]), ("glm", False, "direct", False))
+
+    def test_skip_and_shadow(self):
+        skip = {("OH-S", "OH-S-1", g["group"], "glm") for g in harness.personas("OH-S")}
+        rows = harness.react(EVENTS[:1], [("glm", FakeLLM(), False), ("kev", FakeDecision(), True)], "direct", skip)
+        self.assertEqual({(r["model"], r["shadow"]) for r in rows}, {("kev", True)})
+        self.assertEqual(len(rows), 28)
+
+    def test_asked_before_reads_earlier_days(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp) / "2026-09-27"
+            d.mkdir()
+            (d / "reactions.jsonl").write_text(json.dumps({"race_id": "OH-S", "event_id": "OH-S-1", "group": "g",
+                                                           "model": "glm"}) + "\n", encoding="utf-8")
+            self.assertEqual(harness.asked_before(Path(tmp), date(2026, 9, 28)), {("OH-S", "OH-S-1", "g", "glm")})
+
+
 if __name__ == "__main__":
     unittest.main()

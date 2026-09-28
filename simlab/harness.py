@@ -11,9 +11,12 @@ model) is asked once: earlier days' rows are skipped. Logs print counts only.
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor
+from datetime import date, timedelta
 from pathlib import Path
 
-from .probes import REACTION_QUESTIONS
+from .askers import expected
+from .probes import REACTION_QUESTIONS, reaction_state
 from .tests import EVENT_Q
 
 SCHEMA = 1
@@ -51,3 +54,35 @@ def questions(race_id: str, wording: str = "direct") -> dict:
         support["instructions"] = REACTION_TEXT["US" if race_id == "US" else "race"]
         turnout["instructions"] = REACTION_TEXT["turnout"]
     return {"support": support, "turnout": turnout}
+
+
+def asked_before(derived_root: Path, day: date, lookback: int = 14) -> set:
+    """(race_id, event_id, group, model) already asked in the previous `lookback` days."""
+    seen = set()
+    for k in range(1, lookback + 1):
+        p = derived_root / f"{day - timedelta(days=k):%Y-%m-%d}" / "reactions.jsonl"
+        if p.exists():
+            for line in p.read_text(encoding="utf-8").splitlines():
+                if line.strip():
+                    r = json.loads(line)
+                    seen.add((r["race_id"], r["event_id"], r["group"], r["model"]))
+    return seen
+
+
+def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> list[dict]:
+    """Every (race, selected event, voter group, model) not asked before: expected support and turnout moves."""
+    tasks = [(r, e, p, name, asker, shadow)
+             for e in events for r in sorted(e.get("selected") or {})
+             for p in personas(r) for name, asker, shadow in askers
+             if (r, e["event_id"], p["group"], name) not in skip]
+
+    def one(t):
+        r, e, p, name, asker, shadow = t
+        kw = {"groups": GROUPS} if hasattr(asker, "chat") else {}
+        a = asker.ask_many(reaction_state(p["text"], e["card"]), questions(r, wording), f"harness:{name}", **kw)
+        return {"schema": SCHEMA, "race_id": r, "event_id": e["event_id"], "group": p["group"], "model": name,
+                "shadow": shadow, "wording": wording, "support": round(expected(a["support"]), 4),
+                "turnout": round(expected(a["turnout"]), 4),
+                "parse_error": bool(a["support"].get("_parse_error") or a["turnout"].get("_parse_error"))}
+    with ThreadPoolExecutor(16) as ex:
+        return list(ex.map(one, tasks))
