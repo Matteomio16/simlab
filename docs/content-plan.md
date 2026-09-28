@@ -1,7 +1,7 @@
 # Content plan (draft for Matteo to choose from)
 
 Content & site session, 28 Sep 2026. Built on `docs/research/`, the Field Guide's publishing rules, infrastructure §8
-and the test bench. Matteo's picks are in section 1; the name is still open.
+and the test bench. Matteo's picks are in section 1.
 
 **The pitch in one line:** the honest AI forecast. Every number sits beside the poll average, the market and Cook; every
 miss gets published; the making-of is shown as it happens.
@@ -13,10 +13,12 @@ Decided by Matteo, 28 Sep:
 - On camera twice (launch on 12 Oct, results on 4 Nov); Matteo's voice over the weekly Reels. No AI presenters or AI
   voices.
 - Channels: Instagram, X, Threads and Bluesky only (no TikTok, YouTube Shorts or LinkedIn).
+- Name: **NotAPoll.org**. Handles: @notapoll.org on Instagram and Threads, @notapoll on X, @notapoll.bsky.social on
+  Bluesky until the domain is bought (Matteo: "maybe later"), then @notapoll.org. Until then, images show the wordmark
+  "NotAPoll" and the real address research.scaliastudio.dev/midterms, never "notapoll.org".
 
-Open: **the name.** Matteo wants something like NotAPoll, Midterms Sim or Model Voters, more memorable, perhaps ending in
-.org. Checked 28 Sep against the domain registries and public profile pages (a handle that looks free can still be held
-by a deactivated account):
+The shortlist it came from, checked 28 Sep against the domain registries and public profile pages (a handle that looks
+free can still be held by a deactivated account):
 
 | Name | .org / .com | Instagram (and Threads) | X | Bluesky |
 |---|---|---|---|---|

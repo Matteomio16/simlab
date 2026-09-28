@@ -45,7 +45,10 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   moved, the receipts, lab notes, early-vote watch); on camera twice (launch 12 Oct, results 4 Nov) and voice-over for
   the weekly Reels, no AI presenters or voices; Instagram, X, Threads and Bluesky only (no TikTok, YouTube Shorts or
   LinkedIn).
-- Name still open. Shortlist with domain and handle checks in the plan; recommended NotAPoll.org (needs the domain).
+- Name: **NotAPoll.org** (Matteo, 28 Sep). Handles: @notapoll.org on Instagram and Threads, @notapoll on X (no dots
+  allowed), @notapoll.bsky.social on Bluesky until the domain is bought ("maybe later"), then @notapoll.org. All were
+  free on 28 Sep. Until the domain is owned, images show the wordmark "NotAPoll" and the real address
+  research.scaliastudio.dev/midterms, never "notapoll.org".
 
 ## 2026-09-28 (night): Kev reaction fine-tune react-v1 (Matteo's go-ahead)
 
