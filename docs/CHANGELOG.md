@@ -2,6 +2,40 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): Matteo's answers on the statistics decisions; news sizes as ranges; news moves every race
+
+Matteo's answers, 28 Sep evening (stats-groundwork §8, D14–D20):
+1. **Turnout size = switching size (0.21): yes, as a starting point only.** The sizes must stay flexible:
+   - a range that can go up or down with evidence;
+   - a traceable origin and route through the chain;
+   - results not tied to one data point (the Hungary lesson).
+
+   Built:
+   - Each simulated election draws its own multipliers for the switching and turnout parts of every story effect,
+     shared by all races in that election. They average 1; the 90% ranges are c_s 0.08–0.41 and c_t 0.05–0.53.
+   - Each race in `forecast.json` gets a `news` block: its story effect, split into switching and turnout, and its
+     win chance if news matters less or more (the 10th and 90th percentiles of both multipliers). The Senate block
+     has the same for control.
+   - `simlab/move_params.json` records where each size comes from, the files it passes through and what updates it:
+     the weekly filter, from 12 Oct.
+2. **Fat tails keep the fitted spread: yes**, with extremes tied to what the simulation says. The multipliers give
+   races with strong simulated reactions wider, story-driven tails.
+3. **"Democrats reach 51": brief first**, then Matteo decides. Options given: King and Sanders only; all independents;
+   or three outcomes, with "the new independents decide" as the third. Recommended: three outcomes.
+4. **Montana:** no three-way work while it isn't competitive; flagged, revisit if it tightens. The focus stays on
+   competitive races.
+5. **News should move races, polls or not.** Built: each race's story effects now go on top of the statistical level
+   in full, where before they were scaled by the poll weight. Polls correct the level; a race without its own stories
+   takes the nation's.
+- **Matteo's question:** should the simulation run only where races are competitive, to save credits and compute?
+  Proposed three tiers set daily from the stats-only forecast. Safe races would run on statistics and national news
+  and be promoted automatically if they tighten. Open.
+- **New evidence on how long news lasts** (`python -m simlab.moves --lasting`, stored in `simlab/move_params.json`):
+  - for 44 calibration events, the shift seen 1–2 weeks after the event was still there 3–7 weeks later (share left
+    1.01–1.11, 90% ranges 0.84–1.31);
+  - moves on random dates kept 0.83–0.92;
+  - the design's 10-day half-life would fade 90% of an effect in five weeks. Decision for Matteo (D19).
+
 ## 2026-09-28 (Statistics session): voter groups, moves and the daily filter (roadmap A3 groups, A6 daily)
 
 - **Voter groups** (`simlab/groups.py`, 11 tests; `python -m simlab.groups --fit`) for all 50 states, DC and the

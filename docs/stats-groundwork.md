@@ -429,13 +429,17 @@ State: N and R_r for every race (House seats join on 9 Oct). Each day:
 The stats-only twin is the same code with Δ = 0.
 
 **Built 28 Sep** (`simlab/moves.py`, `levels.build(moves=...)`, run daily by `python -m simlab.statsday`):
-- **Formulation.** The filter is computed in its smoother form, which is equivalent for this linear model:
-  - each day the poll average is re-run with every poll compared against the latent less the story effects in force
-    on its field date;
-  - then today's effects are added back.
+- **Formulation** (changed after Matteo's decision 5, 28 Sep). Each day:
+  - the statistical level is re-estimated from polls less the story effects in force on their field dates, then
+    blended with the fundamentals;
+  - each race's story effects today go on top in full, with or without polls. A race without its own stories takes
+    the nation's.
 
-  A story therefore moves the level only as far as the polls since it haven't already shown it. Late polls land on
-  their field dates, and a saved day re-runs exactly.
+  The earlier version put the effects inside the poll part, which scaled them by the poll weight and left unpolled
+  races with national effects only.
+
+  Polls correct the level; from 12 Oct the weekly filter's dials learn, state by state, how much of the simulated
+  effect the polls confirm. Late polls land on their field dates, and a saved day re-runs exactly.
 - **Story effects.** Each story's effect is its full §3.2 move at today's attention, fading from `first_seen` with its
   half-life. The attention is read fresh each day, so the effect path is re-estimated with it.
 - **Output.** `filter_state.json` has the `levels.json` shape. The Monte Carlo runs the headline on it and the twin on
@@ -739,6 +743,20 @@ Raised by the fits (§5.10). Matteo approved all five on 28 Sep, as recommended:
   - *D9 in practice:* measured on top of pollster house effects, the sponsor shift is +2.2 (D) and −2.9 (R). This is
     the re-estimated shift D9 asked for; the raw 4.7 already includes partisan pollsters' own lean.
 
+Raised by the build (28 Sep evening); Matteo's answers:
+- **D14. Turnout size.** c_t = c_s. Yes, as a starting point only: both sizes are ranges drawn per simulated
+  election, traceable from source to forecast, and updated by the weekly filter.
+- **D15. Fat tails keep the fitted spread.** Yes, with extremes tied to what the simulation says; the size ranges do
+  that.
+- **D16. "Democrats reach 51".** Brief given; open. Recommended: three outcomes (Republicans control; Democrats with
+  King and Sanders control; the new independents decide).
+- **D17. Montana.** No three-way work while Alme leads by about 20; flagged.
+- **D18. News moves every race.** Yes, in full, polls or not (§5.6 formulation).
+- **D19. How long news lasts** (raised by D18). Open. The calibration events' shifts lasted 3–7 weeks; the 10-day
+  prior would fade them by 90% before election day.
+- **D20. Simulate only the races where it matters** (Matteo's question). Open. Proposed: three tiers set daily from
+  the stats-only forecast.
+
 ## 9. Notes for engine-design.md
 
 - **Race ids:** one stable id per race across all files (state, office, seat or district), with special or ranked-choice
@@ -796,8 +814,8 @@ are listed on the methods page.
 | Group turnout party gap | CES validated odds ratio within cell | assumption | check against NC voter file |
 | Persuadable share pi | Senate voters (CES 2018/2022 post wave, `voted_sen`) unsure before (`intent_sen` "Not Sure"/"No One") or voting otherwise than intended; `weight_post` | fitted; 2024 a little lower | shrunk state → division → nation, 50 |
 | Mobilisable share mu | respondents on an active registration (`vv_regstatus`): turnout intention "Probably", "Undecided" or missing, or a validated vote (`vv_turnout_gvm`) against their intention; `weight` | fitted; self-report gives nearly the same | shrunk as pi |
-| Switching size c_s | 0.21 | fitted on 45 events (0.19–0.23 leave-one-out) | refit weekly |
-| Turnout size c_t | = c_s | prior: equal responsiveness of the movable pools; no data yet | needs Matteo's call; early vote and weekly filter |
-| Story half-life | 10 days, all types | engine-design prior | weekly filter |
-| Story effects on unpolled races | national part only (through the fundamentals) | design (§5.4 blend) | known limit |
-| Uncertainty of moves | none added | assumption | review with the weekly filter |
+| Switching size c_s | 0.21 on average; each simulated election draws its own (lognormal, mean 1 × 0.21, 90% range 0.08–0.41) | fitted on 45 events (0.19–0.23 leave-one-out); the range covers the transfer to state races | decided (Matteo, 28 Sep: flexible, not tied to one value); refit weekly |
+| Turnout size c_t | = c_s on average; 90% range 0.05–0.53 | prior: no data yet | decided (Matteo, 28 Sep); early vote and weekly filter |
+| Story half-life | 10 days, all types | engine-design prior; **the calibration events' shifts lasted** (share left 1.01–1.11 after 3–7 weeks, 90% ranges 0.84–1.31; random dates 0.83–0.92; `python -m simlab.moves --lasting`) | open: Matteo |
+| Story effects on unpolled races | in full, like polled races | Matteo, 28 Sep (decision 5) | decided |
+| Uncertainty of moves | the size multipliers above | Matteo, 28 Sep (decision 1) | decided |
