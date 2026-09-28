@@ -20,14 +20,15 @@ from pathlib import Path
 from .core import HOSTS, JEV, LLMS, RUNS
 
 SCHEMA = 1
+# (name, module, arguments, steps whose outputs it reads)
 STEPS = [
     ("news", "simlab.newsday",
-     lambda d, data, o: ["--date", d, "--snap", str(data / "snapshots"), "--out", str(data / "derived")]),
+     lambda d, data, o: ["--date", d, "--snap", str(data / "snapshots"), "--out", str(data / "derived")], []),
     ("reactions", "simlab.harness",
      lambda d, data, o: ["--date", d, "--out", str(data / "derived"), "--wording", o["wording"]]
-     + (["--kev", o["kev"]] if o["kev"] else [])),
-    ("statistics", "simlab.statsday", lambda d, data, o: ["--date", d, "--data", str(data)]),
-    ("post kit", "simlab.publish.kit", lambda d, data, o: ["--date", d, "--data", str(data)]),
+     + (["--kev", o["kev"]] if o["kev"] else []), ["news"]),
+    ("statistics", "simlab.statsday", lambda d, data, o: ["--date", d, "--data", str(data)], ["reactions"]),
+    ("post kit", "simlab.publish.kit", lambda d, data, o: ["--date", d, "--data", str(data)], ["statistics"]),
 ]
 
 
@@ -53,13 +54,17 @@ def _summary(stdout: str):
 
 def run_steps(day: str, data: Path, opts: dict, runner=_subprocess, exists=_exists) -> list[dict]:
     out, stopped = [], False
-    for name, module, args in STEPS:
+    for name, module, args, needs in STEPS:
         step = {"name": name, "module": module}
         if stopped:
             out.append({**step, "status": "not run"})
             continue
         if not exists(module):
-            out.append({**step, "status": "skipped"})
+            out.append({**step, "status": "skipped", "reason": "not built yet"})
+            continue
+        missing = [n for n in needs if not any(s["name"] == n and s["status"] == "ok" for s in out)]
+        if missing:
+            out.append({**step, "status": "skipped", "reason": "needs " + ", ".join(missing)})
             continue
         t0 = time.time()
         code, stdout, stderr = runner(module, args(day, data, opts))

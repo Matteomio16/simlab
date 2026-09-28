@@ -28,13 +28,15 @@ class Steps(unittest.TestCase):
         self.assertIn("giving up", steps[1]["error"])
         self.assertEqual([c[0] for c in runner.calls], ["simlab.newsday", "simlab.harness"])
 
-    def test_unbuilt_step_is_skipped_without_stopping(self):
+    def test_unbuilt_step_is_skipped_and_so_are_steps_that_need_it(self):
         runner = fake_runner({})
         steps = daily.run_steps("2026-10-05", Path("/data"), {"wording": "reaction", "kev": "https://kev"}, runner,
                                 exists=lambda m: m != "simlab.statsday")
-        self.assertEqual([s["status"] for s in steps], ["ok", "ok", "skipped", "ok"])
+        self.assertEqual([s["status"] for s in steps], ["ok", "ok", "skipped", "skipped"])
+        self.assertEqual(steps[3]["reason"], "needs statistics")
         harness_args = [c[1] for c in runner.calls if c[0] == "simlab.harness"][0]
         self.assertEqual(harness_args[-4:], ["--wording", "reaction", "--kev", "https://kev"])
+        self.assertNotIn("simlab.publish.kit", [c[0] for c in runner.calls])
 
 
 class Record(unittest.TestCase):
