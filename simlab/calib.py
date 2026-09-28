@@ -194,7 +194,7 @@ def senate_table() -> pd.DataFrame:
         if set(top2.party_simplified) != {"DEMOCRAT", "REPUBLICAN"}:
             continue
         d, r = (top2[top2.party_simplified == x].iloc[0] for x in ("DEMOCRAT", "REPUBLICAN"))
-        rows.append({"year": y, "st": st, "D": d.candidate, "R": r.candidate,
+        rows.append({"year": y, "st": st, "special": bool(sp), "D": d.candidate, "R": r.candidate,
                      "m": two_party(d.candidatevotes, r.candidatevotes)})
     t = pd.DataFrame(rows)
     t["wlast"] = np.where(t.m > 0, t.D.map(_surname), t.R.map(_surname))
@@ -306,11 +306,14 @@ def he_polls(window: int = 150) -> pd.DataFrame:
     return q.reset_index(drop=True)
 
 
-def house_effects(q: pd.DataFrame, tau: float = 3.0, ns2: float = 4.0, bw: float = 7.0, rounds: int = 6):
+def house_effects(q: pd.DataFrame, tau: float = 3.0, ns2: float = 4.0, bw: float = 7.0, rounds: int = 6,
+                  prior: pd.Series | None = None):
     """Each poll against a consensus of the other pollsters' polls in the same race (Gaussian time weights, SD `bw`
-    days); a pollster's effect is its shrunken mean residual (prior N(0, tau^2)), centred on the average pollster;
-    sponsored polls get a shift pooled by sponsor party on top. Alternates `rounds` times."""
-    h = pd.Series(0.0, index=q.pollster.unique())
+    days); a pollster's effect is its shrunken mean residual (prior N(prior mean, tau^2), mean 0 unless `prior` gives
+    one), centred on the average pollster; sponsored polls get a shift pooled by sponsor party on top. Alternates
+    `rounds` times."""
+    m = (prior if prior is not None else pd.Series(dtype=float)).reindex(q.pollster.unique()).fillna(0.0)
+    h = m.copy()
     sp = {"DEM": 0.0, "REP": 0.0}
     for _ in range(rounds):
         adj = q.y - q.pollster.map(h) - q.partisan.map(sp).fillna(0.0)
@@ -326,7 +329,7 @@ def house_effects(q: pd.DataFrame, tau: float = 3.0, ns2: float = 4.0, bw: float
         res, w = (q.y - cons)[ok], 1.0 / (q.s2[ok] + ns2 + cvar[ok])
         num = ((res - q.partisan[ok].map(sp).fillna(0.0)) * w).groupby(q.pollster[ok]).sum()
         den = w.groupby(q.pollster[ok]).sum()
-        h = (num / (den + 1 / tau ** 2)).reindex(h.index).fillna(0.0)
+        h = ((num + m.reindex(num.index) / tau ** 2) / (den + 1 / tau ** 2)).reindex(h.index).fillna(m)
         h -= np.average(h[den.index], weights=den)
         r2 = res - q.pollster[ok].map(h)
         sp = {p: float(np.average(r2[q.partisan[ok] == p], weights=w[q.partisan[ok] == p])) for p in ("DEM", "REP")}

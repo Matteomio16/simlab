@@ -2,6 +2,29 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Statistics session): backtest of the stats-only chain, Senate 2018–2022
+
+- `python -m simlab.backtest` (new `simlab/backtest.py`; Matteo's go-ahead) runs the chain of stats-groundwork
+  §5.1–5.4 as it would have run 35, 14 and 1 days before each election. It covers 91 Senate races (D v R finalists;
+  Georgia 2020 left out) and scores them against the results and against 538's lite, classic and deluxe forecasts
+  from the same days.
+- No peeking:
+  - polls count only once 538 had logged them;
+  - house effects use that cycle's polls known by then, with priors from earlier cycles;
+  - fundamentals, the generic-ballot correction and the error sizes are refitted without the tested cycle.
+- Results (Brier; lower is better):
+  - eve 0.039 for ours, against 538 deluxe 0.048, classic 0.053 and lite 0.054;
+  - 35 days out 0.042 against 0.048;
+  - competitive races on eve 0.096 against 0.116;
+  - average margin miss on eve 4.4 points, against 4.9 for 538 deluxe.
+- By cycle: worse than 538 deluxe in 2018 (0.061 v 0.052); better in 2020 (0.031 v 0.046) and 2022 (0.024 v 0.044).
+  Gains concentrate in a few races. The model's shape was chosen after seeing these years, though its coefficients
+  weren't fitted on the tested year.
+- Reading: the stats-only chain is at least in 538's league; three elections can't show a real edge. Details in
+  stats-groundwork §5.11. Per-race output in `runs/backtest_senate_2018_2022.csv`.
+- `calib.house_effects` takes prior means; `calib.senate_table` keeps the special-election flag. The calibration
+  outputs are unchanged (re-run checked).
+
 ## 2026-09-28 (Statistics session): decisions D9–D13; approval test; pollster house-effect priors
 
 Decided by Matteo, as recommended in `docs/stats-groundwork.md` §8 (CLAUDE.md §5 updated):

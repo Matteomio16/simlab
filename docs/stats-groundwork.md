@@ -58,6 +58,11 @@ Words used below:
    - Fundamentals alone miss by 7.5–8 points per race.
    - Sponsored polls lean about 4.7 points toward their sponsor.
    Four small choices followed from this (D9–D12), plus a data request (D13). Matteo approved all five on 28 Sep.
+10. **Backtest (§5.11):** on the 2018–2022 Senate races, the stats-only chain scored better than 538's published
+    forecasts at 35, 14 and 1 days out (eve Brier 0.039 against 0.048 for 538 deluxe; average margin miss 4.4 against
+    4.9).
+    - The edge comes from 2020 and 2022; in 2018 we were slightly worse.
+    - Three elections are too few to call it real. But it is a demanding twin for the simulation to beat.
 
 ## 2. Inputs: where each comes from and its shape
 
@@ -529,7 +534,55 @@ party, holding out each cycle 1998–2022 in turn:
   effects in the model, the shift to apply is this one (D9's "re-estimated" shift). Applying the raw 4.7 on top would
   count the lean twice.
 
-Still to do: a backtest of the full pilot chain on 2018–2024.
+### 5.11 Backtest: the stats-only chain on the 2018–2022 Senate races (28 Sep)
+
+`python -m simlab.backtest` runs the chain of §5.1–5.4 as it would have run 35, 14 and 1 days before each election. It
+scores it against the results and against 538's own forecasts made on the same days (lite = polls, classic = polls +
+fundamentals, deluxe = classic + expert ratings). Per-race output: `runs/backtest_senate_2018_2022.csv`.
+
+**Races:** 91, those with a Democrat and a Republican as the top two. Georgia 2020 is left out (both seats went to
+runoffs), as are Louisiana and races with an independent as a finalist.
+
+**No peeking:**
+- a poll counts only once 538 had logged it by the forecast date;
+- pollster house effects use that cycle's polls known by then, with priors from earlier cycles only;
+- the fundamentals, the generic-ballot correction and every error size are refitted without the tested cycle.
+
+The Brier score is the average squared error of the win probability: 0 is perfect, 0.25 a coin flip. "Competitive"
+means races where our model or 538 classic gave between 10% and 90%.
+
+| Model | 35 days: all | 35 days: competitive | 14 days: all | 14 days: competitive | Eve: all | Eve: competitive | Wrong calls on eve |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| **Ours (stats-only)** | **0.042** | **0.101** | **0.040** | **0.095** | **0.039** | **0.096** | 5 |
+| Polls only | 0.062 | 0.147 | 0.058 | 0.137 | 0.050 | 0.121 | 6 |
+| Fundamentals only | 0.053 | 0.129 | 0.054 | 0.127 | 0.055 | 0.132 | 8 |
+| 538 lite | 0.059 | 0.139 | 0.057 | 0.133 | 0.054 | 0.132 | 7 |
+| 538 classic | 0.055 | 0.135 | 0.056 | 0.133 | 0.053 | 0.129 | 7 |
+| 538 deluxe | 0.048 | 0.118 | 0.050 | 0.120 | 0.048 | 0.116 | 7 |
+
+- **Margin on election eve**, average miss: ours 4.4 points, 538 deluxe 4.9, 538 classic 5.2, polls only 5.3,
+  fundamentals only 6.1. Log loss ranks the models the same way.
+- **By cycle** (eve Brier, ours against 538 deluxe):
+  - 2018: 0.061 v 0.052, worse. Our own polls-only line did better that year.
+  - 2020: 0.031 v 0.046, better. The fundamentals held back the big polling miss.
+  - 2022: 0.024 v 0.044, better. 538 deluxe leaned 2.9 points Republican that year; we leaned 0.9 Democratic.
+- **Our margin bias:** it leaned Democratic every year: +2.0 (2018), +3.7 (2020), +0.9 (2022).
+- **Calibration** (all dates pooled):
+  - races we gave 10–30% went 0 of 19, and 30–50% went 27% (predicted 41%);
+  - 70–90% went 85% (predicted 82%).
+  - If anything, we were a little underconfident.
+
+How far to trust it:
+- **Three elections:** too few to call the edge real. Gains and losses concentrate in a handful of races:
+  - gains: North Dakota 2018, Iowa and Maine 2020, Georgia and Nevada 2022;
+  - losses: Florida and West Virginia 2018, North Carolina 2022.
+- **Hindsight in the design:** the coefficients were fitted without the tested year, but the model's shape (the prior
+  over-performance term, the 2012–24 window) was chosen after seeing these elections. 538's forecasts were published
+  live.
+- **What can be claimed:** the stats-only chain is at least in 538's league on these races. That makes it a demanding
+  twin: the simulation has to beat it, not a poll average.
+
+Not yet backtested: 2024, because 2024 generic-ballot polls aren't on disk, and the House.
 
 Fitting the statistics on 1998–2024 is not the LLM-contamination problem; that applies to the agent layer.
 
