@@ -59,28 +59,35 @@ NEWS = {"ohio": '("Sherrod Brown" OR "Jon Husted")', "north-carolina": '("Roy Co
         "texas": '("James Talarico" OR "Ken Paxton")',
         "national": '("midterm elections" OR "midterms" OR "Senate majority" OR "generic ballot")'}
 GDELT = "https://api.gdeltproject.org/api/v2/doc/doc"
+GDELT_BUDGET_S = 480
 PAGEVIEWS = "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user"
 CANDIDATES = ["Sherrod_Brown", "Jon_Husted", "Roy_Cooper", "Michael_Whatley", "James_Talarico", "Ken_Paxton"]
 
 
-def get(url: str, params: dict | None = None, tries: int = 3, wait: float = 5.0) -> requests.Response:
-    """GET with retries on connection errors, 429 and 5xx; returns the last response."""
+def get(url: str, params: dict | None = None, tries: int = 3, wait: float = 5.0,
+        deadline: float | None = None) -> requests.Response:
+    """GET with retries on connection errors, 429 and 5xx; returns the last response or raises the last error. No
+    request or retry runs past `deadline` (a time.monotonic() value)."""
     for i in range(tries):
+        left = None if deadline is None else deadline - time.monotonic()
         try:
-            r = requests.get(url, params=params, headers=UA, timeout=90)
-            if r.status_code < 500 and r.status_code != 429:
-                return r
-        except requests.RequestException:
-            if i == tries - 1:
-                raise
-        if i < tries - 1:
-            time.sleep(wait * (i + 1))
-    return r
+            last = requests.get(url, params=params, headers=UA, timeout=90 if left is None else max(5.0, min(90.0, left)))
+            if last.status_code < 500 and last.status_code != 429:
+                return last
+        except requests.RequestException as e:
+            last = e
+        pause = wait * (i + 1)
+        if i == tries - 1 or (deadline is not None and time.monotonic() + pause >= deadline):
+            break
+        time.sleep(pause)
+    if isinstance(last, Exception):
+        raise last
+    return last
 
 
-def one(url: str, params: dict | None = None, tries: int = 3, wait: float = 5.0):
+def one(url: str, params: dict | None = None, tries: int = 3, wait: float = 5.0, deadline: float | None = None):
     def fetch():
-        r = get(url, params, tries, wait)
+        r = get(url, params, tries, wait, deadline)
         return r.status_code, r.content
     return fetch
 
@@ -203,16 +210,20 @@ def snapshot(out: Path) -> dict:
     run.save("markets", "kalshi", KALSHI, combined(
         {t: (KALSHI, {"series_ticker": t, "status": "open", "with_nested_markets": "true"}) for t in KALSHI_SERIES}))
     run.save("markets", "polymarket", GAMMA, combined({s: (GAMMA, {"slug": s}) for s in POLYMARKET_SLUGS}))
-    for race, query in NEWS.items():
-        time.sleep(6)
-        run.save("news", f"gdelt-{race}", GDELT, one(GDELT, {
-            "query": f"{query} sourcecountry:US sourcelang:english", "mode": "ArtList", "format": "json",
-            "maxrecords": 250, "sort": "DateDesc", "timespan": "6h"}, tries=5, wait=20.0))
     if key := _key("MEDIACLOUD_API_KEY"):
         mediacloud(run, key)
     end = run.when.date()
     run.save("pageviews", "candidates", PAGEVIEWS, combined(
         {a: (f"{PAGEVIEWS}/{a}/daily/{end - timedelta(days=10):%Y%m%d}/{end:%Y%m%d}", {}) for a in CANDIDATES}))
+    stop = time.monotonic() + GDELT_BUDGET_S   # last, and bounded: a rate-limited GDELT must not cost the whole run
+    for race, query in NEWS.items():
+        if time.monotonic() + 6 >= stop:
+            run.error("news", f"gdelt-{race}", GDELT, f"skipped: GDELT's {GDELT_BUDGET_S // 60}-minute budget is used up")
+            continue
+        time.sleep(6)
+        run.save("news", f"gdelt-{race}", GDELT, one(GDELT, {
+            "query": f"{query} sourcecountry:US sourcelang:english", "mode": "ArtList", "format": "json",
+            "maxrecords": 250, "sort": "DateDesc", "timespan": "6h"}, tries=5, wait=20.0, deadline=stop))
     m = run.close()
     print(f"{sum('file' in f for f in m['files'])} of {len(m['files'])} files saved to {run.dir}")
     return m
