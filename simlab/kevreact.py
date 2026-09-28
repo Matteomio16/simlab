@@ -19,8 +19,11 @@ Development = the test bench itself: the null, mirror and events tests' exact st
 archetypes, so a run's rows.json answers them offline (`score`). Its targets only feed Kev's own report (null test:
 no change; events: the same mapping from the measured shift; mirror: no-change placeholder).
 
-    python -m simlab.kevreact                 # data/kev/react-v1/
-    python -m simlab.kevreact score react-v1  # null, mirror and events tests from the run, vs GLM and Jev
+react-v2 (VERSIONS["v2"]) adds events3.json's 2001-2024 events: react-v1 fitted its 26 training events at 0.96 on new
+personas but did not generalise, so the lever is more distinct events, not more personas per event.
+
+    python -m simlab.kevreact [v1|v2]         # data/kev/react-v1/ or react-v2/
+    python -m simlab.kevreact score react-v2  # null, mirror and events tests from the run, vs GLM and Jev
 """
 from __future__ import annotations
 
@@ -41,7 +44,6 @@ from .core import RUNS as BENCH
 from .personas import render
 
 HERE = Path(__file__).parent
-OUT = DATA / "kev" / "react-v1"
 KIT_RUNS = HERE.parent / "kev-finetune" / "runs"
 EVENTS2 = json.loads((HERE / "events2.json").read_text(encoding="utf-8"))
 ARCH = json.loads((HERE / "archetypes.json").read_text(encoding="utf-8"))
@@ -143,8 +145,8 @@ def people_points(ev: dict) -> float:
     return s / 2 if "margin" in ev["measure"] or ev["measure"].startswith("generic") else s
 
 
-def select_events() -> tuple[list[dict], list[dict]]:
-    measured = [e for e in EVENTS2 if e.get("z") is not None]
+def select_events(events: list[dict] = EVENTS2) -> tuple[list[dict], list[dict]]:
+    measured = [e for e in events if e.get("z") is not None]
     directional = [e for e in measured if abs(e["z"]) >= 1 and e["shift_detrended"] is not None
                    and e["shift_toward_D"] * e["shift_detrended"] > 0 and not e["confounded_with"]]
     return directional, [e for e in measured if abs(e["z"]) < 0.5]
@@ -200,23 +202,32 @@ def sample(pool: list[dict], strata: dict, n: int, rng: random.Random) -> list[d
     return [pool[i] for i in sorted(out)]
 
 
-def build(per_event: int = 40, per_null: int = 8, per_mirror: int = 10, calibration: float = 0.15,
-          seed: int = 0) -> None:
+VERSIONS = {"v1": {"per_event": 40, "per_null": 8, "per_mirror": 10, "events": ("events2.json",)},
+            "v2": {"per_event": 20, "per_null": 4, "per_mirror": 5, "events": ("events2.json", "events3.json")}}
+
+
+def build(version: str = "v1", calibration: float = 0.15, seed: int = 0) -> None:
+    """v1: events2 only. v2: events2 + events3 (40 clear events instead of 11), with fewer personas per event and fewer
+    rule records, since react-v1 fitted its training events at 0.96 and the number of distinct events is the lever."""
+    cfg = VERSIONS[version]
+    out = DATA / "kev" / f"react-{version}"
     rng = random.Random(seed)
     pool, strata = persona_pool()
     z = g_scale()
     g = lambda pid: G_RAW[pid] / z
-    directional, flat = select_events()
+    events = [e for f in cfg["events"] for e in json.loads((HERE / f).read_text(encoding="utf-8"))]
+    directional, flat = select_events(events)
     train = []
     for ev in directional + flat:
         s = people_points(ev) if ev in directional else 0.0
         news = f"({ev['date']}) {ev['description']}"
-        for p in sample(pool, strata, per_event, rng):
+        for p in sample(pool, strata, cfg["per_event"], rng):
             qs = {}
             for name in ("event", "support"):
                 ask_both(qs, name, reaction(int(np.sign(s)), s, g(p["pid"])))
             train.append({"state": probes.reaction_state(p["text_events"], news), "questions": qs,
-                          "_meta": {"kind": "events2", "id": ev["id"], "s": round(s, 3)}})
+                          "_meta": {"kind": "events", "id": ev["id"], "s": round(s, 3)}})
+    per_null, per_mirror = cfg["per_null"], cfg["per_mirror"]
     for news in TRAIN_NULL_NEWS:
         for p in sample(pool, strata, per_null, rng):
             qs = {}
@@ -234,21 +245,21 @@ def build(per_event: int = 40, per_null: int = 8, per_mirror: int = 10, calibrat
     rng.shuffle(train)
     k = round(calibration * len(train))
     parts = {"calibration": train[:k], "train": train[k:], "development": development(g)}
-    OUT.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
     for name, recs in parts.items():
-        (OUT / f"{name}.jsonl").write_text("\n".join(json.dumps({"state": r["state"], "questions": r["questions"]})
+        (out / f"{name}.jsonl").write_text("\n".join(json.dumps({"state": r["state"], "questions": r["questions"]})
                                                      for r in recs) + "\n", encoding="utf-8")
-    kinds = lambda recs: {k: sum(1 for r in recs if r["_meta"]["kind"] == k) for k in ("events2", "null", "mirror")}
-    manifest = {"seed": seed, "k_per_point": K, "background": BACKGROUND, "strong_share": STRONG, "cap": CAP,
-                "mirror_points": MIRROR_S, "g_raw": G_RAW, "g_scale": round(z, 4),
+    kinds = lambda recs: {k: sum(1 for r in recs if r["_meta"]["kind"] == k) for k in ("events", "null", "mirror")}
+    manifest = {"version": version, **cfg, "seed": seed, "k_per_point": K, "background": BACKGROUND,
+                "strong_share": STRONG, "cap": CAP, "mirror_points": MIRROR_S, "g_raw": G_RAW, "g_scale": round(z, 4),
                 "directional": {e["id"]: round(people_points(e), 3) for e in directional},
                 "no_change": [e["id"] for e in flat],
-                "sources": {f.name: hashlib.sha256(f.read_bytes()).hexdigest()
-                            for f in (HERE / "events2.json", HERE / "archetypes.json", HERE / "events.json")},
+                "sources": {f: hashlib.sha256((HERE / f).read_bytes()).hexdigest()
+                            for f in (*cfg["events"], "archetypes.json", "events.json")},
                 "records": {n: len(r) for n, r in parts.items()},
                 "train_kinds": kinds(parts["train"]), "calibration_kinds": kinds(parts["calibration"]),
                 "questions": {n: sum(len(r["questions"]) for r in recs) for n, recs in parts.items()}}
-    (OUT / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
+    (out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
     print(json.dumps({k: manifest[k] for k in ("g_scale", "directional", "records", "train_kinds", "questions")},
                      indent=1))
 
@@ -283,7 +294,8 @@ class Lookup:
 
     def __init__(self, run: str, temperature: float = 1.0):
         self.name = f"kev-{run}"
-        dev = [json.loads(line) for line in (OUT / "development.jsonl").read_text(encoding="utf-8").splitlines()
+        dev = [json.loads(line) for line in
+               (DATA / "kev" / run / "development.jsonl").read_text(encoding="utf-8").splitlines()
                if line.strip()]
         self.p = {}
         for r in json.loads((KIT_RUNS / run / "development" / "rows.json").read_text(encoding="utf-8")):
@@ -328,4 +340,4 @@ def score(run: str, temperature: float = 1.0) -> dict:
 
 
 if __name__ == "__main__":
-    score(sys.argv[2]) if sys.argv[1:2] == ["score"] else build()
+    score(sys.argv[2]) if sys.argv[1:2] == ["score"] else build(sys.argv[1] if sys.argv[1:] else "v1")

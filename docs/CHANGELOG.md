@@ -2,6 +2,30 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-28 (Kev session): Matteo's answers on Kev react-v2; more real events (events3)
+
+- Matteo, 28 Sep, "yes to all four":
+  1. download UCSB's Gallup approval tables (Bush, Obama; 0.6 MB);
+  2. download the Wikipedia national poll lists for 2008-2024 (1.9 MB, CC BY-SA);
+  3. a Modal budget of at most $5 for react-v2: one run of about $2 after offline checks, a second only if the first
+     comes close;
+  4. if react-v2 still fails, Kev stays out of reactions, with no further reaction runs before the election.
+  He also confirmed that the House seats (A11) are this session's.
+- Diagnosis behind react-v2: react-v1 fitted its 26 training events at 0.96 on new personas (size rank 0.84) but not
+  the 19 held-out ones, so the lever is the number of distinct events.
+- New `simlab/events3.py` → `simlab/events3.json`: 112 events 2001-2024, none within 14 days of a test event. Measured
+  with events2's fixed rule (days +5..+14 vs -7..-1, detrended, z from quiet days) on:
+  - Gallup approval (each day is the mean of the last 14 days' readings, the one-pollster analogue of a poll average);
+  - the national D-R margin from the Wikipedia poll lists, with events2's average.
+  29 clear (|z| >= 1, detrended agrees, unconfounded), 34 no change, 38 confounded. With events2: 40 clear and 49
+  no-change events, against react-v1's 11 and 15.
+- `simlab/kevreact.py` builds `react-v2`:
+  - events2 + events3, with 20 personas per event instead of 40;
+  - 4 personas per null item and 5 per party-swap template;
+  - 1,887 training records, 500 replay records;
+  - the development file (the test bench) identical to react-v1's.
+  Training started 28 Sep; Modal spend in September before it was $7.71 of $30.
+
 ## 2026-09-28 (Statistics session): Matteo's answers on the statistics decisions; news sizes as ranges; news moves every race
 
 Matteo's answers, 28 Sep evening (stats-groundwork §8, D14–D20):
