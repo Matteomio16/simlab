@@ -14,6 +14,7 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 from scipy.optimize import minimize_scalar
 
 HERE = Path(__file__).parent
@@ -151,6 +152,22 @@ def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> 
     return out
 
 
+LAGS = [(5, 14), (19, 28), (26, 35), (33, 42), (40, 49)]
+
+
+def lasting_share(events: list[tuple], lags: list[tuple] = LAGS) -> tuple[dict, int]:
+    """How much of the shift seen on days +5..+14 after an event is still there later. `events` holds (daily series,
+    event date, sign toward D). Each window's shift is measured against days -7..-1; the share is the regression
+    through the origin of the later shift on the first, over events with every window."""
+    def win(s, d, a, b):
+        x = s[(s.index >= d + pd.Timedelta(days=a)) & (s.index <= d + pd.Timedelta(days=b))]
+        return x.mean() if len(x) >= 3 else np.nan
+    x = np.array([[sign * (win(s, d, a, b) - win(s, d, -7, -1)) for a, b in lags] for s, d, sign in events])
+    x = x[~np.isnan(x).any(axis=1)]
+    return {f"+{a}..{b}": round(float(np.dot(x[:, 0], x[:, i]) / np.dot(x[:, 0], x[:, 0])), 3)
+            for i, (a, b) in enumerate(lags) if i}, len(x)
+
+
 def paths(m: dict, part: str = "all") -> dict:
     """{race_id or "US": [(first_seen, full effect, half-life)]} from moves.json's main block, for levels.build: the
     whole effect, or only its switching ("s") or turnout ("t") part."""
@@ -171,12 +188,43 @@ def movers(m: dict, top: int = 5, least: float = 0.01) -> dict:
     return out
 
 
+def lasting_evidence(seed: int = 0) -> dict:
+    """lasting_share on the calibration events (the series events2 measured them on), with a bootstrap over events,
+    the 7 clearest events (|z| >= 2), and random dates at least 21 days from any event."""
+    from . import events2
+    ap, gb = events2.approval(), events2.generic()
+    ev = [e for e in json.loads((HERE / "events2.json").read_text(encoding="utf-8")) if e["shift_toward_D"] is not None]
+    item = lambda e: ((ap.approve, pd.Timestamp(e["date"]), -1 if e["president_party"] == "R" else 1)
+                      if e["measure"].startswith("approval") else (gb, pd.Timestamp(e["date"]), 1))
+    items = [item(e) for e in ev]
+    share, n = lasting_share(items)
+    rng = np.random.default_rng(seed)
+    boot = [lasting_share([items[i] for i in rng.integers(0, len(items), len(items))])[0] for _ in range(500)]
+    dates = [pd.Timestamp(e["date"]) for e in ev]
+    placebo = [(ap.approve, t, -1 if ap.party.asof(t) == "R" else 1) for t in ap.index[30:-60:5]
+               if min(abs((t - d).days) for d in dates) > 21]
+    return {"events": n, "share_left": share,
+            "range_90": {k: [round(float(np.percentile([b[k] for b in boot], q)), 2) for q in (5, 95)] for k in share},
+            "clearest_events": lasting_share([i for i, e in zip(items, ev) if abs(e["z"] or 0) >= 2])[0],
+            "random_dates": lasting_share(placebo)[0] | {"dates": lasting_share(placebo)[1]},
+            "how": "shift on each later window minus days -7..-1, regressed through the origin on the days +5..+14 "
+                   "shift; the series events2 measured the events on (538 and VoteHub approval and generic-ballot "
+                   "averages)", "computed": date.today().isoformat()}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fit", action="store_true", help="fit c_s on runs/events2_groups__glm.jsonl")
+    ap.add_argument("--lasting", action="store_true", help="measure how long the calibration events' shifts lasted")
     a = ap.parse_args()
+    if a.lasting:
+        params = json.loads(PARAMS.read_text(encoding="utf-8"))
+        params["lasting_evidence"] = lasting_evidence()
+        PARAMS.write_text(json.dumps(params, indent=1), encoding="utf-8")
+        print(json.dumps(params["lasting_evidence"]))
+        return
     if not a.fit:
-        ap.error("nothing to do (use --fit)")
+        ap.error("nothing to do (use --fit or --lasting)")
     from .core import RUNS
     rows = [r for r in _jsonl(RUNS / "events2_groups__glm.jsonl") if not r.get("parse_error")]
     pimu = json.loads((HERE / "pimu.json").read_text(encoding="utf-8"))["national"]

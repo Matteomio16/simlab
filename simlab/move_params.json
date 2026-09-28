@@ -56,5 +56,47 @@
   ],
   "updated_by": "the weekly filter from 12 Oct: per-state dials from the week's polls, then the fit is redone"
  },
- "notes": "dials start at 1 and half-lives at the 10-day prior; the weekly filter tunes both from 12 Oct"
+ "notes": "dials start at 1 and half-lives at the 10-day prior; the weekly filter tunes both from 12 Oct",
+ "lasting_evidence": {
+  "events": 44,
+  "share_left": {
+   "+19..28": 1.007,
+   "+26..35": 1.056,
+   "+33..42": 1.053,
+   "+40..49": 1.105
+  },
+  "range_90": {
+   "+19..28": [
+    0.87,
+    1.15
+   ],
+   "+26..35": [
+    0.86,
+    1.24
+   ],
+   "+33..42": [
+    0.84,
+    1.25
+   ],
+   "+40..49": [
+    0.9,
+    1.31
+   ]
+  },
+  "clearest_events": {
+   "+19..28": 0.933,
+   "+26..35": 1.011,
+   "+33..42": 1.056,
+   "+40..49": 0.995
+  },
+  "random_dates": {
+   "+19..28": 0.923,
+   "+26..35": 0.904,
+   "+33..42": 0.867,
+   "+40..49": 0.834,
+   "dates": 378
+  },
+  "how": "shift on each later window minus days -7..-1, regressed through the origin on the days +5..+14 shift; the series events2 measured the events on (538 and VoteHub approval and generic-ballot averages)",
+  "computed": "2026-09-28"
+ }
 }

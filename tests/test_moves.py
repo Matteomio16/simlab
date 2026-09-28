@@ -5,6 +5,7 @@ from datetime import date
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 from simlab import moves
 from simlab.groups import GROUPS
@@ -120,6 +121,26 @@ class PartsTest(unittest.TestCase):
         self.assertAlmostEqual(e["full"], e["full_s"] + e["full_t"], places=4)
         self.assertEqual(moves.paths(m, "s"), {"OH-S": [("2026-10-01", e["full_s"], 10)]})
         self.assertEqual(moves.paths(m, "t"), {"OH-S": [("2026-10-01", e["full_t"], 10)]})
+
+
+class LastingTest(unittest.TestCase):
+    def series(self, step):
+        days = pd.date_range("2020-01-01", "2021-12-31")
+        out = pd.Series(0.0, index=days)
+        events = [pd.Timestamp(d) for d in ("2020-03-01", "2020-07-01", "2020-11-01", "2021-03-01", "2021-07-01")]
+        for d in events:
+            age = (days - d).days.values
+            out += np.where(age >= 0, step(np.maximum(age, 0)), 0.0)
+        return [(out, d, 1) for d in events]
+
+    def test_a_permanent_shift_lasts(self):
+        share, n = moves.lasting_share(self.series(lambda age: 2.0 + 0 * age))
+        self.assertEqual(n, 5)
+        self.assertAlmostEqual(share["+33..42"], 1.0, places=2)
+
+    def test_a_fading_shift_does_not(self):
+        share, _ = moves.lasting_share(self.series(lambda age: 2.0 * 0.5 ** (age / 10)))
+        self.assertLess(share["+33..42"], 0.3)
 
 
 class ReadTest(unittest.TestCase):
