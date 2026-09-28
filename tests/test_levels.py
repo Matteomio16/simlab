@@ -184,6 +184,29 @@ class AssemblyTest(unittest.TestCase):
         self.assertTrue(lo < ohr["margin"] < hi)
         self.assertGreater(ohr["sd"], 3.0)
 
+    def headline(self, moves):
+        today = date(2026, 9, 28)
+        oh = race("OH", "Jon Husted", "Sherrod Brown", status="Interim appointee nominated", special=True)
+        nc = race("NC", "Michael Whatley", "Roy Cooper", status="Incumbent retiring")
+        gb = poll_frame([4.0] * 12, date(2026, 7, 30), ["A", "B", "C"])
+        senate = poll_frame([2.0] * 8, date(2026, 8, 20), ["A", "B", "D"], race_id="OH-S")
+        rel = {(2024, "OH"): -10.0, (2020, "OH"): -8.0, (2024, "NC"): -2.0, (2020, "NC"): -1.0}
+        empty = pd.DataFrame(columns=["year", "state", "office", "left", "right", "margin", "inc"])
+        args = ([oh, nc], senate, gb, PARAMS, {"pollsters": {}, "aliases": {}}, rel, E, empty, today)
+        return levels.build(*args, lv_gap_value=0.0), levels.build(*args, lv_gap_value=0.0, moves=moves)
+
+    def test_story_effects_the_polls_already_show_change_nothing(self):
+        twin, head = self.headline({"US": [("2026-07-01", 3.0, 1e9)], "OH-S": [("2026-07-01", 3.0, 1e9)]})
+        self.assertAlmostEqual(head["national"]["N"], twin["national"]["N"], places=3)
+        self.assertAlmostEqual(head["races"]["OH-S"]["margin"], twin["races"]["OH-S"]["margin"], places=3)
+
+    def test_story_after_the_last_poll_moves_the_level(self):
+        twin, head = self.headline({"US": [("2026-09-28", 2.0, 10)], "OH-S": [("2026-09-28", 3.0, 10)]})
+        self.assertAlmostEqual(head["national"]["N"] - twin["national"]["N"], 2.0, places=3)
+        w = twin["races"]["OH-S"]["w_polls"]
+        self.assertAlmostEqual(head["races"]["OH-S"]["margin"] - twin["races"]["OH-S"]["margin"], 2.0 + w, places=3)
+        self.assertAlmostEqual(head["races"]["NC"]["margin"] - twin["races"]["NC"]["margin"], 2.0, places=3)
+
 
 if __name__ == "__main__":
     unittest.main()

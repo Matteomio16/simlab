@@ -166,9 +166,11 @@ def _simulate(lv: dict, ids: list[str], params: dict, n: int, seed: int, df: int
 
 
 def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: str, benchmarks: dict | None = None,
-          not_up: dict = NOT_UP, n: int = N_DRAWS, every: int = EVERY, df: int = DF, lo: float = FLOOR) -> tuple[dict, dict]:
-    """forecast.json and draws.json from the headline levels and the stats-only twin's, on the same random numbers."""
-    ids, seed, bm = sorted(head["races"]), seed_for(day), benchmarks or {}
+          not_up: dict = NOT_UP, n: int = N_DRAWS, every: int = EVERY, df: int = DF, lo: float = FLOOR,
+          movers: dict | None = None) -> tuple[dict, dict]:
+    """forecast.json and draws.json from the headline levels and the stats-only twin's, on the same random numbers.
+    The poll-average benchmark is the twin's, which has no story effects in it."""
+    ids, seed, bm, movers = sorted(head["races"]), seed_for(day), benchmarks or {}, movers or {}
     x, lifted = _simulate(head, ids, params, n, seed, df, lo)
     xt, _ = _simulate(twin, ids, params, n, seed, df, lo)
     parties = [left[r] for r in ids]
@@ -176,12 +178,12 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
     races = {}
     for i, r in enumerate(ids):
         lv, b = head["races"][r], bm.get(r, {})
-        poll = lv.get("poll_margin")
+        poll = twin["races"][r].get("poll_margin")
         races[r] = {**race_summary(x[:, i]), "stats_only": race_summary(xt[:, i]), "left_party": left[r],
                     "w_polls": round(float(lv.get("w_polls", 0.0)), 3),
                     "benchmarks": {"poll_avg": None if poll is None else round(float(poll), 2),
                                    "market": b.get("market"), "cook": b.get("cook")},
-                    "movers": []}
+                    "movers": movers.get(r, [])}
     twin_senate = senate_summary(seats_t, not_up)
     senate = senate_summary(seats, not_up) | {"stats_only": {k: v for k, v in twin_senate.items() if k.startswith("p_")},
                                               "benchmarks": {"market": bm.get("US-S", {}).get("market")}}

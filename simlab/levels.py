@@ -208,10 +208,23 @@ def _poll_rows(senate: pd.DataFrame, gb: pd.DataFrame, election: date) -> pd.Dat
     return p
 
 
+def effect(t: np.ndarray, items: list, election: date = ELECTION) -> np.ndarray:
+    """Total story effect on days `t` (relative to election day) from (first_seen date, full effect, half-life)."""
+    out = np.zeros(len(t))
+    for first, full, h in items:
+        t0 = (date.fromisoformat(first) - election).days
+        out += np.where(t >= t0, full * 0.5 ** ((t - t0) / h), 0.0)
+    return out
+
+
 def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params: dict, priors: dict, rel: dict,
           E: dict, statewide: pd.DataFrame, today: date, election: date = ELECTION, entries: list[dict] | None = None,
-          lv_gap_value: float | None = None) -> dict:
-    """Starting levels for every race on `today` (stats-groundwork §5.2-5.4)."""
+          lv_gap_value: float | None = None, moves: dict | None = None) -> dict:
+    """Starting levels for every race on `today` (stats-groundwork §5.2-5.4). With `moves` ({race_id or "US":
+    [(first_seen, full effect, half-life)]}) this is the daily filter (§5.6): each poll is compared with the latent
+    less the story effects in force on its date, and today's effects are added back, so a story moves the level only
+    as far as the polls since it haven't already shown it. Without, it is the stats-only twin."""
+    moves = moves or {}
     d = (election - today).days
     coef, sd_f = params["fundamentals"]["coef"], params["fundamentals"]["sd"]
     q_n, q_r = params["drift_daily_sd"]["national"] ** 2, params["drift_daily_sd"]["race"] ** 2
@@ -226,9 +239,13 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
     p["adj"] = (p.y + np.where(p.population == "lv", 0.0, gap) - p.pollster.map(he["mean"]).fillna(0.0)
                 - p.partisan.map(sp).fillna(0.0))
     p["v"] = (p.s2 + ns2) * np.where(p.partisan.isin(["DEM", "REP"]), 2.0, 1.0) * _flooding(p)
+    for r in set(p.race) & set(moves):
+        sel = (p.race == r).values
+        p.loc[sel, "adj"] -= effect(p.t.values[sel].astype(float), moves[r], election)
+    now = lambda r: float(effect(np.array([-d], dtype=float), moves.get(r, []), election)[0])
     g = p[p.race == "US"]
     grid, nx, npv = local_level(g.t.values.astype(float), g.adj.values, g.v.values, q_n, -d)
-    n_now, pn_now = float(nx[-1]), float(npv[-1])
+    n_now, pn_now = float(nx[-1]) + now("US"), float(npv[-1])
     e_hat = n_now - params["generic_ballot_bias"]["mean"]
     var_n = pn_now + q_n * d + params["national_poll_bias_sd"]["value"] ** 2
     races = {}
@@ -245,7 +262,7 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
                                     q_r, -d, smooth=False)
             recent = int((t >= -d - 30).sum())
             sb = params["race_poll_bias_sd"]["value"] if recent >= 5 else params["race_poll_bias_sd"]["few_polls"]
-            r_poll, v_poll = float(rx[-1]), float(rv[-1] + q_r * d + sb ** 2)
+            r_poll, v_poll = float(rx[-1]) + now(race.race_id) - now("US"), float(rv[-1] + q_r * d + sb ** 2)
             poll_margin = n_now + r_poll
         r_t, var_r, w = blend(r_poll, v_poll, fund - n_now, sd_f)
         races[race.race_id] = {
@@ -260,18 +277,22 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
             "lv_gap": gap, "sponsor_shift": sp, "house_effects": he["mean"].round(3).to_dict(), "races": races}
 
 
-def compute(t: dict, today: date, run_id: str) -> dict:
-    """levels.json for one snapshot's poll tables (polls.build)."""
+def inputs() -> tuple:
+    """The fixed inputs: fitted parameters, pollster priors, state leans, national House vote, candidate records."""
     from .statsdata import mit
     here = Path(__file__).parent
     params = json.loads((here / "stats_params.json").read_text())
     priors = json.loads((here / "house_effect_priors.json").read_text())
     extra = json.loads((here / "statewide_extra.json").read_text())["races"]
-    rel = relative_margins(mit("president"))
-    E = calib.national_house_vote().to_dict()
-    statewide = statewide_races(mit("senate"), mit("house"), extra)
+    return (params, priors, relative_margins(mit("president")), calib.national_house_vote().to_dict(),
+            statewide_races(mit("senate"), mit("house"), extra))
+
+
+def compute(t: dict, today: date, run_id: str, moves: dict | None = None, inp: tuple | None = None) -> dict:
+    """levels.json for one snapshot's poll tables (polls.build); with `moves`, the headline filter state."""
+    params, priors, rel, E, statewide = inp or inputs()
     out = build(t["race_list"], t["senate"], t["generic_ballot"], params, priors, rel, E, statewide, today,
-                entries=t["entries"])
+                entries=t["entries"], moves=moves)
     out.update(run_id=run_id, snapshot=t["snapshot"])
     return out
 

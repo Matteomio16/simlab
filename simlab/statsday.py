@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import groups, levels, montecarlo, polls
+from . import groups, levels, montecarlo, moves, polls
 from .polls import OVERVIEW_PAGE, Race, slug
 
 RCV = {"AK", "ME"}
@@ -85,20 +85,31 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     poll_rows(t["senate"], t["generic_ballot"]).to_csv(out / "polls.csv", index=False)
     races = races_json(t["race_list"])
     _write(out / "races.json", meta | races)
-    lv = levels.compute(t, day, run_id)
+    inp = levels.inputs()
+    lv = levels.compute(t, day, run_id, inp=inp)
     sha = {"levels.json": _write(out / "levels.json", lv)}
     base, pimu = (json.loads(f.read_text(encoding="utf-8")) for f in (groups.BASE, groups.PIMU))
-    _write(out / "groups.json", groups.build(lv, base, pimu, day.isoformat(), run_id))
+    grp = groups.build(lv, base, pimu, day.isoformat(), run_id)
+    _write(out / "groups.json", grp)
+    mp = json.loads(moves.PARAMS.read_text(encoding="utf-8"))
+    _write(out / "params.json", meta | mp | {"fitted_on": mp["fit"]["on"]})
+    mv = moves.build(day, data / "derived", grp, mp, run_id)
+    sha["moves.json"] = _write(out / "moves.json", mv)
+    head = levels.compute(t, day, run_id, moves=moves.paths(mv), inp=inp)
+    sha["filter_state.json"] = _write(out / "filter_state.json", head | {"moves": "moves.json, main block (GLM)",
+                                                                          "dials": mp["dials"]})
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
-    forecast, draws = montecarlo.build(lv, lv, {k: v["left_party"] for k, v in races.items()}, params, day, run_id,
-                                       benchmarks=benchmarks(snap, t["race_list"]))
-    forecast |= {"snapshot": t["snapshot"], "inputs": sha, "stats_only_same_as_headline": True}
+    forecast, draws = montecarlo.build(head, lv, {k: v["left_party"] for k, v in races.items()}, params, day, run_id,
+                                       benchmarks=benchmarks(snap, t["race_list"]), movers=moves.movers(mv))
+    forecast |= {"snapshot": t["snapshot"], "inputs": sha}
     _write(out / "forecast.json", forecast)
     _write(out / "draws.json", draws, compact=True)
     return {"ok": True, "date": day.isoformat(), "run_id": run_id, "snapshot": t["snapshot"], "races": len(races),
             "with_polls": sum(r["n_polls"] > 0 for r in lv["races"].values()), "draws": forecast["draws"],
             "floor_lifted_pairs": forecast["floor_lifted_pairs"],
-            "files": ["polls.csv", "races.json", "levels.json", "groups.json", "forecast.json", "draws.json"]}
+            "stories": sum(len(x["events"]) for k, x in mv.items() if k != "shadow" and isinstance(x, dict) and "events" in x),
+            "files": ["polls.csv", "races.json", "levels.json", "groups.json", "params.json", "moves.json",
+                      "filter_state.json", "forecast.json", "draws.json"]}
 
 
 def main() -> int:

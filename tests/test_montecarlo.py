@@ -77,9 +77,9 @@ AK = Race("AK", False, "Dan S. Sullivan", "Mary Peltola", "D", "2026 United Stat
 OH = Race("OH", True, "Jon Husted", "Sherrod Brown", "D", "2026 United States Senate special election in Ohio")
 
 
-def levels(nc=2.0):
+def levels(nc=2.0, poll=3.0):
     return {"national": {"var": 9.0},
-            "races": {"NC": {"margin": nc, "sd": 5.0, "w_polls": 0.6, "poll_margin": 3.0},
+            "races": {"NC": {"margin": nc, "sd": 5.0, "w_polls": 0.6, "poll_margin": poll},
                       "OH-S": {"margin": -1.0, "sd": 5.5, "w_polls": 0.5, "poll_margin": 0.5},
                       "NE": {"margin": -6.0, "sd": 7.0, "w_polls": 0.0, "poll_margin": None}}}
 
@@ -204,10 +204,10 @@ class BenchmarkTest(unittest.TestCase):
 
 
 class BuildTest(unittest.TestCase):
-    def build(self, twin=None):
+    def build(self, twin=None, movers=None):
         return mc.build(levels(), twin or levels(), {"NC": "D", "OH-S": "D", "NE": "I"}, PARAMS, date(2026, 9, 28),
                         "run-1", benchmarks={"NC": {"market": 0.9, "cook": "Lean D"}, "US-S": {"market": 0.38}},
-                        not_up={"R": 48, "D": 47, "I": 2}, n=4000)
+                        not_up={"R": 48, "D": 47, "I": 2}, n=4000, movers=movers)
 
     def test_forecast_and_draws_follow_the_contract(self):
         f, d = self.build()
@@ -228,6 +228,15 @@ class BuildTest(unittest.TestCase):
 
     def test_rerun_is_identical(self):
         self.assertEqual(self.build(), self.build())
+
+    def test_poll_average_benchmark_comes_from_the_stats_only_twin(self):
+        f, _ = self.build(twin=levels(poll=1.0))
+        self.assertEqual(f["races"]["NC"]["benchmarks"]["poll_avg"], 1.0)
+
+    def test_movers_passed_through(self):
+        mv = {"NC": [{"event_id": "e1", "card": "A story", "delta": 0.4}]}
+        f, _ = self.build(movers=mv)
+        self.assertEqual((f["races"]["NC"]["movers"], f["races"]["NE"]["movers"]), (mv["NC"], []))
 
     def test_stats_only_twin_uses_its_own_levels(self):
         f, _ = self.build(twin=levels(nc=-2.0))

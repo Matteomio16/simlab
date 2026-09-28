@@ -1,0 +1,18 @@
+{
+ "c_s": 0.2055,
+ "c_t": 0.2055,
+ "c_t_rule": "c_t = c_s (prior: a strong reaction moves the same fraction of a group's mobilisable pool as of its persuadable pool); no data identify c_t before early votes and the weekly filter",
+ "dials": {},
+ "half_life_days": {
+  "default": 10
+ },
+ "fit": {
+  "c_s": 0.2055,
+  "events": 45,
+  "rmse": 0.884,
+  "corr": 0.418,
+  "on": "runs/events2_groups__glm.jsonl (GLM, direct wording)",
+  "fitted": "2026-09-28"
+ },
+ "notes": "dials start at 1 and half-lives at the 10-day prior; the weekly filter tunes both from 12 Oct"
+}
