@@ -439,7 +439,7 @@ The stats-only twin is the same code with Δ = 0.
   The earlier version put the effects inside the poll part, which scaled them by the poll weight and left unpolled
   races with national effects only.
 
-  Polls correct the level; from 12 Oct the weekly filter's dials learn, state by state, how much of the simulated
+  Polls correct the level; from 5 Oct the weekly filter's dials learn, state by state, how much of the simulated
   effect the polls confirm. Late polls land on their field dates, and a saved day re-runs exactly.
 - **Story effects.** Each story's effect is its full §3.2 move at today's attention, fading from `first_seen` with its
   half-life. The attention is read fresh each day, so the effect path is re-estimated with it.
@@ -449,7 +449,7 @@ The stats-only twin is the same code with Δ = 0.
 **Innovation monitor:** each poll's surprise, scaled by its expected size, is summed weekly per state (a chi-squared
 test). A state that stays surprising flags the auditor. The maths makes the update; the auditor only explains.
 
-### 5.7 Weekly filter (from Mon 12 Oct)
+### 5.7 Weekly filter (from Mon 5 Oct)
 
 The state takes the Field Guide's factor form: `R_r = region + state + Σ_k λ_rk·f_k + u_r`.
 - **Demographic factors** `f_k` (about six: white non-college, Black, Hispanic, college suburban, rural, age). The
@@ -462,7 +462,8 @@ The state takes the Field Guide's factor form: `R_r = region + state + Σ_k λ_r
 Every Monday the week's polls update the state and re-tune the dials; the result is published and logged. Why a plain
 Kalman update suffices is in §9.
 
-**Built 29 Sep** (`simlab/weekly.py`, 10 tests). It runs on Mondays from 12 Oct inside the statistics step
+**Built 29 Sep** (`simlab/weekly.py`, 12 tests). It runs on Mondays from 5 Oct (Matteo, 29 Sep: the pilot week
+rehearses it) inside the statistics step
 (`--weekly` forces it on another day) and writes `filter_weekly.json`.
 - **Dials:** two per state and for the nation, switching and turnout, learned from every poll since the stories began.
   - The dials only scale known effect paths, so each unit's poll likelihood is an exact quadratic in them. Six Kalman
@@ -800,6 +801,14 @@ Raised by the build (28 Sep evening); Matteo's answers:
     effect in the pilot races changes by 1–5%, and the 3 Nov forecast doesn't change.
   - Caveat: the test scored the vote Kev learned, while d0 comes from midterm Senate races (2018 was the last midterm
     under Trump). d0 stays in `groups_base.json`, and both are scored on 2026 results after 3 Nov.
+- **D22. Correct GLM's lean; rehearse the weekly filter in the pilot** (Matteo, 29 Sep evening).
+  - GLM's support answers get +0.08 on the -2..+2 scale in moves (Kev's shadow rows stay raw), from the pilot. The
+    Engine's benchmark puts GLM to the R side of real measured shifts by -0.27 +/- 0.22 points per event, and all
+    story effects on 28-29 Sep leaned R. Uncorrected, the lean tilts the today view toward R and, since polls are
+    read net of the news, the 3 Nov baseline toward D.
+  - The weekly filter re-estimates the offset (a 5-point grid, prior +0.08 +/- 0.065) and flags a negative
+    estimate for Matteo.
+  - The first weekly update runs on Mon 5 Oct, a private rehearsal a week before the public run.
 
 ## 9. Notes for engine-design.md
 
@@ -865,6 +874,7 @@ are listed on the methods page.
 | Dial prior | national dials N(1, 0.44²) switching and N(1, 0.71²) turnout; a state's deviation sd 0.3 and 0.5 | set so a state's dials have the 28 Sep ranges; tau an assumption | weekly filter updates |
 | Fade-speed grid | 2.75, 3.89, 5.5, 7.78, 11 days; lognormal prior around 5.5 (sd of log 0.5) | Matteo's 5.5 as the centre | weekly filter updates |
 | Surprise flag | last 7 days' standardised poll surprises, chi-squared p < 0.01 | convention | fixed |
+| GLM support offset | +0.08 on GLM's -2..+2 support scale for every group (Kev's shadow rows raw); the weekly filter re-estimates it on a 5-point grid, prior +0.08 +/- 0.065, and flags a negative estimate | Engine's benchmark: -0.27 +/- 0.22 points per real event (45 + 19 events); Matteo, 29 Sep | decided; weekly filter updates |
 | Simulation tiers | simulate: stats-only 10–90%, Cook toss-up/tilt/lean, or market 10–90%; watch: 3–97%, Likely, or 5–95%; statistics otherwise; pilot always simulate; a week of memory | Matteo, 28 Sep (D20); thresholds an assumption | decided |
 | Story effects on unpolled races | in full, like polled races | Matteo, 28 Sep (decision 5) | decided |
 | Uncertainty of moves | the size multipliers above | Matteo, 28 Sep (decision 1) | decided |

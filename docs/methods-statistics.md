@@ -76,14 +76,17 @@ isn't tied to a single estimate. Each race shows how its forecast changes if the
 
 ## The weekly filter
 
-Every Monday from 12 October, the filter compares how the polls actually moved with what the simulated reactions
-predicted.
+Every Monday (first on 5 October, privately; the public run starts on 12 October), the filter compares how the
+polls actually moved with what the simulated reactions predicted.
 - **The dials:** it sets two dials per state, one for vote switching and one for turnout. A dial above 1 means the
   news moves that state more than simulated; below 1, less. It never changes a reaction's direction.
 - **Borrowing strength:** states with few polls stay close to the national dial. The dials' uncertainty goes into
   every simulated election.
 - **Fade speed:** it also checks how fast news fades, weighing half-lives from about 3 to 11 days.
 - **Surprises:** it flags any state whose polls surprise the forecast in the latest week.
+- **The reaction model's lean:** the model we use for reactions sits slightly on the Republican side of real past
+  opinion shifts, by about a quarter of a point per event. A small fixed correction takes that out, and the filter
+  re-estimates it every week.
 
 ## The simulated elections
 
@@ -133,6 +136,7 @@ predicted.
    how fast news fades and flags surprising states.
 6. **Simulated elections:** name the four shared errors, and the House seats sharing them.
 7. **Add the House** once it is public (12 Oct).
-8. **Pending Matteo's decision:** the reaction model leans slightly toward Republicans on real events (about a quarter
-   of a point per event). If Matteo approves the correction, add one line: "a small fixed correction, re-estimated
-   every week".
+8. **Approved by Matteo (29 Sep):** add the reaction model's lean to the weekly filter section: "The model we use for
+   reactions sits slightly on the Republican side of real past opinion shifts, by about a quarter of a point per
+   event; a small fixed correction takes that out, re-estimated every week." The filter runs every Monday; its first
+   run (5 October) is private.
