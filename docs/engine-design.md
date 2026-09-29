@@ -147,16 +147,12 @@ As stats-groundwork §5.6–5.8:
 - **Innovation monitor:** it flags states whose polls keep surprising the forecast. The weekly auditor (MiMo) explains
   them and never changes numbers.
 
-### 3.4 Kev in shadow mode (Matteo, 28 Sep)
+### 3.4 Kev (Matteo, 29 Sep)
 
-Kev answers the same group questions every day. Its rows go to `reactions.jsonl` with `model: "kev"` and `shadow: true`.
-Statistics computes Kev's moves alongside GLM's but never applies them. Every week, the scoring checks which model's
-moves better matched the following polls.
-
-Kev react-v2 joins the numbers on 12 Oct only if it passes three checks on held-out events:
-- its direction is at least as good as GLM's
-- its size-tracking is above zero
-- GLM and Kev averaged beat GLM alone
+GLM gives the reactions on its own. Kev react-v1 failed the held-out checks on 28 Sep and react-v2 failed them on
+29 Sep (direction 11 of 13 against GLM's 13; GLM and Kev averaged did worse than GLM alone). So there is no Kev shadow
+mode and no Kev serving unless Matteo reopens it. The harness keeps a `--kev URL` option that would add shadow rows
+(`shadow: true`, never applied); the daily job doesn't pass it.
 
 ## 4. The news pipeline (Engine)
 
@@ -204,7 +200,6 @@ Kev react-v2 joins the numbers on 12 Oct only if it passes three checks on held-
 - **Cost at full scale:** about 35 races × (5 race + 3 national stories) × 28 groups × 2 questions × 2 orders ≈ 31,000
   prompts a day. At the measured $0.03 per 1,000 decisions asked both ways, that is about $0.5 a day, or $15 a month;
   House seats add about half. The ledger checks this during the pilot.
-- **Kev shadow:** the same questions go to Kev on Modal once a day, as one burst.
 
 ## 6. Snapshots and the daily job (Engine)
 
@@ -227,7 +222,7 @@ Kev react-v2 joins the numbers on 12 Oct only if it passes three checks on held-
   | Step | Command | Owner |
   | --- | --- | --- |
   | News | `python -m simlab.newsday --date D --snap <data>/snapshots --out <data>/derived` | Engine (built) |
-  | Reactions | `python -m simlab.harness --date D --out <data>/derived [--wording ...] [--kev URL]` | Engine (built) |
+  | Reactions | `python -m simlab.harness --date D --out <data>/derived [--wording ...]` | Engine (built) |
   | Statistics | `python -m simlab.statsday --date D --data <data>`: polls, levels and groups, moves, filter, Monte Carlo | Statistics |
   | Post kit | `python -m simlab.publish.kit --date D --data <data>`, writing to `derived/D/post-kit/` in the pilot | Content & site |
 - **Secrets:** the deploy key, and the OpenRouter key, which Matteo adds as a repository secret. The private pilot uses
@@ -282,4 +277,3 @@ A writer may add fields. Renaming or removing a field needs a note to the readin
 | `pi` and `mu` estimates for OH, NC, TX (all 35 states by 12 Oct) | Statistics | Thu 1 Oct |
 | Reaction wording (backlash test) | Engine | Tue 29 Sep |
 | Weights of the attention formula, checked against Matteo's spot-check answers | Engine | Thu 1 Oct |
-| Kev react-v2 and its three checks | Kev session | ~10 Oct |

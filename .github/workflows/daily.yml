@@ -1,12 +1,15 @@
-# Once a day, 30 minutes after the 09:17 UTC snapshot: news -> reactions -> statistics -> post kit (simlab/daily.py),
-# outputs committed to the private data repo (derived/<date>/). Runs on schedule only when the repository variable
-# PIPELINE_ON is "true" (from the pilot, 5 Oct); a manual run works any time. Logs are public: the steps print
-# statuses and counts, never data. Package versions come from uv.lock.
+# Once a day from 09:47 UTC: news -> reactions -> statistics -> post kit (simlab/daily.py), outputs committed to the
+# private data repo (derived/<date>/). GitHub drops most scheduled triggers (the snapshot job saw 3 of ~17 hourly ones
+# fire on 28 Sep), so the trigger repeats every 15 minutes until 14:47 and a scheduled run only proceeds when it is past
+# 09:47 UTC and the day has no run.json yet. Runs on schedule only when the repository variable PIPELINE_ON is "true"
+# (from the pilot, 5 Oct); a manual run works any time. Logs are public: the steps print statuses and counts, never
+# data. Package versions come from uv.lock.
 name: daily
 
 on:
   schedule:
     - cron: "47 9 * * *"
+    - cron: "2,17,32,47 10-14 * * *"
   workflow_dispatch:
     inputs:
       date:
@@ -41,23 +44,41 @@ jobs:
             /README.md
             /derived/
           sparse-checkout-cone-mode: false
+      - name: Due?
+        id: due
+        if: github.event_name == 'schedule'
+        working-directory: data-repo
+        run: |
+          # a trigger delayed past midnight must not run the new day before its news window closes (09:30 UTC)
+          if (( 10#$(date -u +%H%M) < 947 )); then
+            echo "before 09:47 UTC"; echo "run=false" >> "$GITHUB_OUTPUT"
+          elif [ -f "derived/${DAY}/run.json" ]; then
+            echo "${DAY} has already run"; echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: The day's snapshots (its news window starts the day before; repeats are looked up 2 days back)
+        if: steps.due.outputs.run != 'false'
         working-directory: data-repo
         run: git sparse-checkout add $(for k in 2 1 0; do echo "/snapshots/$(date -u -d "$DAY -$k day" +%F)/"; done)
       - uses: astral-sh/setup-uv@v6
+        if: steps.due.outputs.run != 'false'
       - run: uv sync --frozen
+        if: steps.due.outputs.run != 'false'
       - uses: actions/cache@v4
+        if: steps.due.outputs.run != 'false'
         with:
           path: runs/cache.sqlite
           key: llm-cache-${{ env.DAY }}-${{ github.run_id }}
           restore-keys: llm-cache-${{ env.DAY }}-
       - name: Run the day
+        if: steps.due.outputs.run != 'false'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           SIMLAB_BUDGET_USD: "2"
-        run: uv run python -m simlab.daily --date "$DAY" --data data-repo --kev "${{ vars.KEV_URL }}"
+        run: uv run python -m simlab.daily --date "$DAY" --data data-repo
       - name: Push outputs to the data repo
-        if: always()
+        if: always() && steps.due.outputs.run != 'false'
         working-directory: data-repo
         run: |
           git config user.name "github-actions[bot]"
