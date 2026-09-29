@@ -6,14 +6,19 @@ plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing)
 ## Brand
 
 - **Name:** NotAPoll.org. Handles in `docs/content-plan.md` §1. Every image's header wordmark reads "NotAPoll.org", the
-  ".org" in the simulation purple, so the address travels with every screenshot (`frame.SITE`).
-- **Profile images and pinned post:** `python -m simlab.publish.brand` → `kits/brand/`: avatar (1080×1080, the
-  logomark on indigo), X header (1500×500), Bluesky banner (3000×1000), the "Start here" carousel and `post.md` with
+  ".org" in purple, so the address travels with every screenshot (`frame.SITE`).
+- **Logo** (Matteo, 29 Sep; the logo kit is `brand/`, masters in `brand/final/`, rebuilt by `python -m brand.final`):
+  H1, "two hills", a blue and a red hill with a purple overlap, beside the wordmark "NotAPoll.org" in Newsreader 560
+  (".org" purple). On images the mark is drawn natively (`frame.hills`): hills 1.18 × cap height on the wordmark's
+  baseline, 0.42 × cap height from the N; blue and red are the theme's party colours, the overlap and ".org" are
+  `#7A4FC0` on paper and `#B98DD6` on dark themes. The ballot-box mark is retired (still behind
+  `NOTAPOLL_LOGO=grid`, `NOTAPOLL_WORDMARK=theme`).
+- **Profile images and pinned post:** `python -m simlab.publish.brand` → `kits/brand/`: avatar (the logo kit's, D on
+  white), X header and Bluesky banner (the logo kit's, as approved), the "Start here" carousel and `post.md` with
   the bios (Instagram 150, X 160, Bluesky 256 characters, counted by the script). The avatar alone carries no label:
   at profile size it can't.
 - **Type** (SIL Open Font License, unmodified files in `simlab/publish/fonts/`, from Google Fonts' repository):
-  Lab Notebook (every daily post, the wordmark included) uses IBM Plex Sans for headlines, text and numbers (wordmark
-  weight 700) and IBM Plex Mono for kickers, sources and the label strip. Newsreader, Libre Franklin, Archivo and
+  Lab Notebook (every daily post) uses IBM Plex Sans for headlines, text and numbers and IBM Plex Mono for kickers, sources and the label strip. Newsreader, Libre Franklin, Archivo and
   Bricolage belong to the special editions and the retired directions only. The static weights matplotlib needs are cut
   from the variable fonts on first use (`fonts/_static/`, not committed).
 - **Colours and type per theme:** `simlab/publish/themes.py` and `docs/creative-directions.md`. Lab Notebook: graph
@@ -25,7 +30,7 @@ plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing)
   use the special editions below.
 - **Swing band:** every theme draws a blue, purple, red band along the top of the label strip: the brand's election
   signature.
-- **Every image:** the logomark (a ballot box holding a 3x3 grid of simulated voters) and wordmark at the top; the
+- **Every image:** the logo (H1 and the wordmark) at the top right; the
   strip "SOCIAL SIMULATION, NOT A POLL" with the date at the bottom; a source line above it. The strip is drawn by the
   canvas itself, so no image can leave without it.
 - **Forecast images** also carry the run stamp ("RUN <hash> · 40,000 SIMULATED ELECTIONS") and the race tag: the
@@ -100,10 +105,9 @@ The site should read as the same brand as the posts. Shared pieces, all in `siml
   `#7E879A`, Dem `#2F6DB5`, Rep `#D1432F`, independent grey `#7E879A`, purple `#6D2E8C` (our number and toss-ups),
   toss-up fill `#EEE6F7`, highlighter `#E6DAF3`, indigo strip `#2A2152`. Dark mode: the special-edition night colours in
   `themes.MAP` (Dem `#4F8FF7`, Rep `#F0554A`, purple `#9E4FC4` on `#0F1424`), which pass the same colour-blind checks.
-- **Type:** IBM Plex Sans (text, headings, numbers, and the wordmark at weight 700) and IBM Plex Mono (labels,
-  kickers); both on Google Fonts. Not Newsreader: that face is the special editions' only.
-- **Logomark:** a square outline holding a 3x3 grid of dots, the centre dot purple (`frame.Slide.logomark`); wordmark
-  "NotAPoll" with ".org" in purple.
+- **Type:** IBM Plex Sans (text, headings, numbers) and IBM Plex Mono (labels, kickers); the wordmark alone is
+  Newsreader 560. All on Google Fonts.
+- **Logo:** H1 and the wordmark as above; use the SVG masters in `brand/final/` (text outlined, no font dependency).
 - **Signature details:** the blue, purple, red swing band; the label "Social simulation, not a poll" on every view that
   shows a number; the state outline filled with simulated voters (`charts.state_voters`, outlines in `states.json`).
 - **Rules that apply on the site too:** our number always beside the poll average, the market and Cook; 35–65% is a

@@ -17,12 +17,14 @@ from matplotlib.path import Path as MPath
 from PIL import Image
 
 from . import text
-from .frame import LABEL, MARGIN, SITE, Slide, font, pt, typeset
+from . import frame
+from .frame import HILLS, HILLS_H, HILLS_W, LABEL, MARGIN, OVERLAP, SITE, Slide, face_file, font, hills, pt, typeset
 from .geo import outline
 from .labnotes import contact_sheet
 from .themes import LAB
 
 OUT = Path(__file__).resolve().parents[2] / "kits" / "brand"
+KIT = Path(__file__).resolve().parents[2] / "brand" / "final"  # the logo kit (python -m brand.final)
 LOWER48 = [s for s in ("AL AZ AR CA CO CT DE FL GA ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND "
                        "OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC").split()]
 PINNED_DAY = date(2026, 10, 3)
@@ -94,11 +96,39 @@ def save(fig, path: Path, size: tuple[int, int]) -> Path:
 
 
 def avatar(t=LAB) -> Path:
-    """The logomark alone, white on indigo, sized to sit well inside the circular crop."""
+    """The logomark alone on indigo, sized for the circular crop. With the H1 logo: the hills rising from the bottom
+    edge, as in the logo kit's avatar."""
     fig, ax = canvas(1080, 1080, t)
     ax.add_patch(plt.Rectangle((0, 0), 1080, 1080, color=t.strip_bg, lw=0))
-    mark(ax, 1080 / 2 - 260, 1080 / 2 - 260, 520, t.paper, "#B98AD6")
+    if frame.LOGO == "hills":
+        h = 1080 * .56
+        hills(ax, (1080 - HILLS_W * h / HILLS_H) / 2, 1080 + h * .02, h, HILLS["dark"])
+    else:
+        mark(ax, 1080 / 2 - 260, 1080 / 2 - 260, 520, t.paper, "#B98AD6")
     return save(fig, OUT / "avatar.jpg", (1080, 1080))
+
+
+def lockup(ax, t, x: float, baseline: float, px: int):
+    """Mark and "NotAPoll.org" on one baseline, following the frame's logo and wordmark switches."""
+    from PIL import ImageFont
+    if frame.WORDMARK == "serif":
+        f = face_file("newsreader", 560)
+        fp, pf = frame.FontProperties(fname=f, size=pt(px)), ImageFont.truetype(str(f), px)
+    else:
+        from .frame import pil_font
+        fp, pf = font("serif", 700, px, t), pil_font("serif", 700, px, t)
+    if frame.LOGO == "hills":
+        cap = frame.cap_height(fp.get_file()) * px
+        h = 1.18 * cap
+        hills(ax, x, baseline, h, (t.dem, t.rep, OVERLAP["light"]))
+        x += HILLS_W * h / HILLS_H + 0.42 * cap
+        tld = OVERLAP["light"]
+    else:
+        mark(ax, x, baseline - px * .9, px * 1.08, t.ink, t.ai)
+        x += px * 1.46
+        tld = t.ai
+    ax.text(x, baseline, "NotAPoll", fontproperties=fp, color=t.ink, va="baseline")
+    ax.text(x + pf.getlength("NotAPoll"), baseline, ".org", fontproperties=fp, color=tld, va="baseline")
 
 
 def header(t=LAB, w: int = 1500, h: int = 500, scale: int = 1, name: str = "header-x.jpg") -> Path:
@@ -110,11 +140,7 @@ def header(t=LAB, w: int = 1500, h: int = 500, scale: int = 1, name: str = "head
     for gy in np.arange(0, h + 1, 30):
         ax.plot([0, w], [gy, gy], color=t.hairline, lw=pt(1), zorder=0)
     x = 70
-    mark(ax, x, 64, 56, t.ink, t.ai)
-    put(ax, x + 76, 92, "NotAPoll", "serif", 700, 52, t.ink, t, va="center")
-    from .frame import pil_font
-    put(ax, x + 76 + pil_font("serif", 700, 52, t).getlength("NotAPoll"), 92, ".org", "serif", 700, 52, t.ai, t,
-        va="center")
+    lockup(ax, t, x, 112, 52)
     put(ax, x, 170, "The 2026 midterms,", "serif", 600, 56, t.ink, t, va="top")
     put(ax, x, 236, "simulated every day.", "serif", 600, 56, t.ink, t, va="top")
     put(ax, x, 324, LABEL.upper(), "mono", 600, 24, t.ai, t, va="top")
@@ -211,8 +237,27 @@ BIOS = {
 }
 
 
+def headers() -> list[Path]:
+    """The X header and Bluesky banner: the logo kit's approved files when present (Matteo, 29 Sep), else ours."""
+    import shutil
+    if frame.LOGO == "hills" and (KIT / "header-x.jpg").exists() and (KIT / "banner-bluesky.jpg").exists():
+        OUT.mkdir(parents=True, exist_ok=True)
+        return [Path(shutil.copy(KIT / n, OUT / n)) for n in ("header-x.jpg", "banner-bluesky.jpg")]
+    return [header(), header(w=1500, h=500, scale=2, name="banner-bluesky.jpg")]
+
+
+AVATAR_PICKED = True  # Matteo, 29 Sep: D on white; brand/final/avatar.jpg is copied (file name stays if it changes)
+
+
 def write():
-    out = [avatar(), header(), header(w=1500, h=500, scale=2, name="banner-bluesky.jpg")]
+    import shutil
+    if frame.LOGO != "hills":
+        out = [avatar()]
+    elif AVATAR_PICKED:
+        out = [Path(shutil.copy(KIT / "avatar.jpg", OUT / "avatar.jpg"))]
+    else:
+        out = []  # kits/brand/avatar.jpg stays as it is until the pick
+    out += headers()
     slides, caption, thread = pinned()
     paths = [s.save(OUT / "pinned" / f"slide-{i}.jpg") for i, (s, _) in enumerate(slides, 1)]
     contact_sheet(paths, OUT / "pinned" / "contact.jpg", scale=0.3)

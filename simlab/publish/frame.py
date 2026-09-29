@@ -7,6 +7,7 @@ first use, into fonts/_static/ (not committed).
 """
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass, field, replace
 from datetime import date
@@ -26,6 +27,13 @@ from PIL import Image, ImageFont
 
 LABEL = "Social simulation, not a poll"
 SITE = "notapoll.org"  # Matteo, 28 Sep (relayed by the roadmap session): images show the domain
+# The logo: H1, two hills, with the wordmark in Newsreader 560 (Matteo, 29 Sep; the kit is brand/final.py). The old
+# ballot-box mark and the theme-face wordmark stay behind switches: NOTAPOLL_LOGO=grid, NOTAPOLL_WORDMARK=theme.
+LOGO = os.environ.get("NOTAPOLL_LOGO", "hills")
+WORDMARK = os.environ.get("NOTAPOLL_WORDMARK", "serif")
+OVERLAP = {"light": "#7A4FC0", "dark": "#B98DD6"}  # the hills' overlap and ".org": on paper, on indigo or dark
+HILLS = {"light": ("#2A78D6", "#E34948", "#7A4FC0"), "dark": ("#5B9BEA", "#F0605F", "#B98DD6")}  # the kit's own set
+HILLS_W, HILLS_H = 104.8, 49.5  # the mark's native size in the logo kit
 
 DPI = 100
 W, H = 1080, 1350
@@ -131,6 +139,32 @@ def _ink(t: Text, bb):
     _, top, _, bot = font.getbbox(t.get_text(), anchor="ls")  # y grows downward: top < 0 above the baseline
     base = bb.y0 + max(font.getbbox("lp", anchor="ls")[3], bot)  # display y grows upward
     return type(bb).from_extents(bb.x0, base - bot, bb.x1, base - top)
+
+
+@cache
+def cap_height(path: str) -> float:
+    """Capital height as a share of the font size."""
+    f = TTFont(path)
+    return f["OS/2"].sCapHeight / f["head"].unitsPerEm
+
+
+def tone(t: "Theme") -> str:
+    """ "light" or "dark", from the paper colour."""
+    r, g, b = (int(t.paper[i:i + 2], 16) for i in (1, 3, 5))
+    return "dark" if 0.2126 * r + 0.7152 * g + 0.0722 * b < 128 else "light"
+
+
+def hills(ax, x: float, baseline: float, height: float, colors, zorder: int = 3):
+    """The H1 mark (logo kit): a blue hill and a red hill, purple where they overlap, standing on `baseline` (y down)."""
+    k = height / HILLS_H
+    u = np.linspace(-2.4, 102.4, 400)
+    hill = lambda c: np.maximum(50 * np.exp(-(u - c) ** 2 / (2 * 13 * 13)) - 0.5, 0)
+    f1, f2 = hill(37), hill(63)
+    px = x + (u + 2.4) * k
+    for f, col in ((f1, colors[0]), (f2, colors[1]), (np.minimum(f1, f2), colors[2])):
+        m = f > 0
+        ax.fill(np.r_[px[m][0], px[m], px[m][-1]], np.r_[baseline, baseline - f[m] * k, baseline], color=col, lw=0,
+                zorder=zorder)
 
 
 def pil_font(role: str, weight: int, px: int, theme: Theme = BROADSHEET) -> ImageFont.FreeTypeFont:
@@ -267,11 +301,23 @@ class Slide:
 
     def wordmark(self, y: float, weight: int, color: str, tld: str):
         """Logomark and "NotAPoll.org" at the top right; the ".org" in the simulation colour doubles as the address."""
-        f = self.pil("serif", weight, 40)
-        self._put(self.w - MARGIN, y, ".org", "serif", weight, 40, tld, ha="right", va="center", zorder=2)
+        px = 42 if WORDMARK == "serif" else 40
+        if WORDMARK == "serif":
+            fp, f = FontProperties(fname=face_file("newsreader", 560), size=pt(px)), _pil(str(face_file("newsreader", 560)), px)
+        else:
+            fp, f = self.font("serif", weight, px), self.pil("serif", weight, px)
+        base = y + 14  # the text sits on one baseline; the hills stand on it too
+        purple = OVERLAP[tone(self.t)] if LOGO == "hills" else tld
+        self.ax.text(self.w - MARGIN, base, ".org", fontproperties=fp, color=purple, ha="right", va="baseline", zorder=2)
         right = self.w - MARGIN - f.getlength(".org")
-        self._put(right, y, "NotAPoll", "serif", weight, 40, color, ha="right", va="center", zorder=2)
-        self.logomark(right - f.getlength("NotAPoll") - 58, y - 22, 44, color)
+        self.ax.text(right, base, "NotAPoll", fontproperties=fp, color=color, ha="right", va="baseline", zorder=2)
+        left = right - f.getlength("NotAPoll")
+        if LOGO == "hills":  # the kit's rule: hills 1.18 x cap height, 0.42 x cap height from the N
+            cap = cap_height(fp.get_file()) * px
+            h = 1.18 * cap
+            hills(self.ax, left - 0.42 * cap - HILLS_W * h / HILLS_H, base, h, (self.t.dem, self.t.rep, purple))
+        else:
+            self.logomark(left - 58, y - 22, 44, color)
 
     def logomark(self, x: float, y: float, size: float, color: str):
         """The NotAPoll mark: a ballot box holding a 3x3 grid of simulated voters instead of a tick."""

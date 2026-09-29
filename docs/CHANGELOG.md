@@ -525,6 +525,18 @@ Matteo's answers, 28 Sep evening (stats-groundwork §8, D14–D20):
 - Gap before the GitHub Actions rehearsals (3 Oct): the levels read the MIT files, which are gitignored. Their fixed
   inputs (lean, candidate records, the national House vote by year) need to be frozen into a committed file.
 
+## 2026-09-29 (Content & site): H1 logo on every image; launch pack; pilot dry run
+
+- **Logo** (Matteo, 29 Sep, relayed by the logo and roadmap sessions): H1 "two hills" with the wordmark in Newsreader
+  560 replaces the ballot-box mark and the Plex wordmark on every image (`frame.hills`, `frame.LOGO`,
+  `frame.WORDMARK`; the old look stays behind `NOTAPOLL_LOGO=grid NOTAPOLL_WORDMARK=theme`). The hills use the
+  theme's party colours with the kit's purple overlap. `kits/brand/` takes the kit's avatar (D on white), X header and
+  Bluesky banner. All designs pass the layout guard with the new header.
+- **Launch pack:** `python -m simlab.publish.launch` → `kits/launch/`: profiles (images, one bio per platform), the
+  pinned post and Lab notes 1–3, each with slides, caption, thread, alt text and checks, plus `CHECKLIST.md`.
+- **Pilot dry run:** the kit on a copy of the 29 Sep data dated 5 Oct, with the video: 5 races, 15 slides, 0 problems
+  (`kits/pilot-preview/2026-10-05/`).
+
 ## 2026-09-28 (Content & site): labs.scaliastudio.dev
 
 Matteo confirmed (relayed by the roadmap session): the Scalia-side address is labs.scaliastudio.dev, replacing
