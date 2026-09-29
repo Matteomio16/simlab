@@ -49,8 +49,8 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   - statistics: none.
   House seats get "their district's U.S. House race" wording once Statistics adds them. The daily job runs the pilot
   races until 11 Oct and every race from 12 Oct. On a busy day that is about 13,500 GLM prompts, about 50 minutes and
-  $0.16. Media Cloud asks for every race once its key is in; GDELT stays on the pilot races and the nation, because
-  it answers only one or two queries a run from GitHub.
+  $0.16. Media Cloud asks for every race once its key is in. GDELT stays on the pilot races and the nation, because
+  from GitHub it rate-limits a run's later queries: 1 or 2 of its 4 failed in each run of 28-29 Sep.
 - **The daily job can't silently skip a day.** GitHub fired only 3 of about 17 hourly snapshot triggers on 28 Sep, so
   the daily job now triggers every 15 minutes from 09:47 to 14:47 UTC and runs once. A trigger delayed past midnight
   can't run the new day before its news window closes.
