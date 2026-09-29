@@ -33,7 +33,7 @@ SCHEMA = 1
 CONFIG = newsraces.load()
 LEGACY = {"ohio": "OH-S", "north-carolina": "NC", "texas": "TX", "national": "US"}  # snapshot names before A13
 SNAP_RACES = {**{rid.lower(): rid for rid in CONFIG}, **LEGACY}
-PILOT = ["OH-S", "NC", "TX"]
+PILOT = newsraces.PILOT
 RACE_TEXT = {rid: c["text"] for rid, c in CONFIG.items()}
 SURNAMES = {rid: {n.split()[-1] for n in re.findall(r'"([^"]+)"', c["query"])} for rid, c in CONFIG.items() if rid != "US"}
 CAPS = {"simulate": (5, 3), "watch": (2, 0), "statistics": (0, 0)}  # (race, national) stories a race reacts to a day
@@ -306,7 +306,8 @@ def label(story: dict, asker, national_races: list[str] = PILOT) -> dict:
 
 
 CANDIDATE_PAGES = {"OH-S": ["Sherrod_Brown", "Jon_Husted"], "NC": ["Roy_Cooper", "Michael_Whatley"],
-                   "TX": ["James_Talarico", "Ken_Paxton"]}
+                   "TX": ["James_Talarico", "Ken_Paxton"], "IA": ["Josh_Turek", "Ashley_Hinson"],
+                   "ME": ["Troy_Jackson", "Susan_Collins"]}
 
 
 def load_pageviews(snap_root: Path, day: date) -> dict:

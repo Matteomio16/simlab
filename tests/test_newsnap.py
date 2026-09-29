@@ -66,6 +66,12 @@ class Gdelt(unittest.TestCase):
         self.assertEqual(run.errors, ["gdelt-texas"])
 
 
+class Pilot(unittest.TestCase):
+    def test_the_pilot_races_and_the_nation_are_asked_first(self):
+        self.assertEqual(newsnap.PILOT, {"ohio", "north-carolina", "texas", "ia", "me", "national"})
+        self.assertEqual(newsnap.first_races(None), newsnap.PILOT)
+
+
 class Queries(unittest.TestCase):
     def test_every_race_and_the_nation_with_the_pilot_file_names(self):
         qs = newsnap.queries()

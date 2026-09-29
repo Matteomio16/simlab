@@ -17,14 +17,14 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from . import snap
+from . import newsraces, snap
 
 # Only outlets whose feeds answer a declared bot and whose licences allow reuse (29 Sep). The States Newsroom
 # sites (CC BY-NC-ND) refuse bots with 403, so they aren't here.
 RSS_FEEDS = {"signal-ohio": ("OH", "Signal Ohio", "https://signalohio.org/feed/"),
              "signal-cleveland": ("OH", "Signal Cleveland", "https://signalcleveland.org/feed/"),
              "texas-tribune": ("TX", "The Texas Tribune", "https://www.texastribune.org/feeds/main/")}
-PILOT = {"ohio", "north-carolina", "texas", "national"}
+PILOT = {snap.LEGACY.get(r, r.lower()) for r in newsraces.PILOT} | {"national"}
 EVERY_H = 6
 
 

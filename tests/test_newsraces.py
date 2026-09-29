@@ -32,6 +32,11 @@ class Describe(unittest.TestCase):
         self.assertEqual(sorted(cfg), ["OH-S", "US"])
         self.assertEqual(cfg["US"]["text"], RACES["national"][1])
 
+    def test_the_pilot_is_one_list_of_five_races_in_the_race_file(self):
+        # Matteo, 29 Sep: the private pilot (5-11 Oct) is Ohio, North Carolina, Texas, Iowa and Maine
+        self.assertEqual(newsraces.PILOT, ["OH-S", "NC", "TX", "IA", "ME"])
+        self.assertTrue(set(newsraces.PILOT) <= set(newsraces.load()))
+
     def test_the_committed_file_covers_the_pilot(self):
         cfg = newsraces.load()
         for rid, name in (("OH-S", "Ohio"), ("NC", "North Carolina"), ("TX", "Texas")):

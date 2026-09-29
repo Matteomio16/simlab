@@ -193,7 +193,7 @@ class Labels(unittest.TestCase):
 
     def test_national_story_gets_a_gate_per_race(self):
         lab = newsday.label(self.story("US"), FakeAsker())
-        self.assertEqual(sorted(lab["gate"]), ["NC", "OH-S", "TX", "US"])
+        self.assertEqual(sorted(lab["gate"]), ["IA", "ME", "NC", "OH-S", "TX", "US"])
 
 
 def cov(n, d=1):
@@ -483,8 +483,11 @@ class Scale(unittest.TestCase):
 
     def test_active_races(self):
         tiers = {"GA": "watch", "AL": "statistics", "OH-S": "simulate", "NC": "simulate", "TX": "simulate"}
-        self.assertEqual(newsday.active("pilot", tiers), ["OH-S", "NC", "TX"])
+        self.assertEqual(newsday.active("pilot", tiers), ["OH-S", "NC", "TX", "IA", "ME"])
         self.assertEqual(newsday.active("all", tiers), ["GA", "NC", "OH-S", "TX"])
+
+    def test_every_pilot_race_reads_its_candidates_pageviews(self):
+        self.assertEqual(sorted(newsday.CANDIDATE_PAGES), sorted(newsday.PILOT))
 
     def test_a_watch_race_takes_only_its_two_biggest_race_stories(self):
         evs = [self.ev("GA-1", "race", 0.7, ["GA"]), self.ev("GA-2", "race", 0.6, ["GA"]),
