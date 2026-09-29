@@ -60,7 +60,7 @@ jobs:
       - name: The day's snapshots (its news window starts the day before; repeats are looked up 2 days back)
         if: steps.due.outputs.run != 'false'
         working-directory: data-repo
-        run: git sparse-checkout add $(for k in 2 1 0; do echo "/snapshots/$(date -u -d "$DAY -$k day" +%F)/"; done)
+        run: git sparse-checkout add $(for k in 2 1 0; do d=$(date -u -d "$DAY -$k day" +%F); echo "/snapshots/$d/ /news/$d/"; done)
       - uses: astral-sh/setup-uv@v6
         if: steps.due.outputs.run != 'false'
       - run: uv sync --frozen

@@ -14,15 +14,19 @@ import json
 import math
 import re
 import threading
+import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
+from urllib.parse import urlparse
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from . import newsraces
 from .news import _clean
+from .newsnap import RSS_FEEDS
 from .probes import NEWS_QUESTIONS
 
 SCHEMA = 1
@@ -86,6 +90,31 @@ def parse_mediacloud(raw: bytes, race_id: str) -> list[dict]:
     return out
 
 
+def parse_rss(raw: bytes, feed: str) -> list[dict]:
+    """Items of a state outlet's feed that name one of that state's candidates in full (title or summary), once per
+    race they name. Surnames alone aren't enough: local outlets carry many unrelated Browns and Coopers."""
+    state, outlet, _ = RSS_FEEDS[feed]
+    try:
+        root = ET.fromstring(raw)
+    except ET.ParseError:
+        return []
+    names = {rid: re.findall(r'"([^"]+)"', c["query"]) for rid, c in CONFIG.items() if c.get("state") == state}
+    out = []
+    for item in root.iter("item"):
+        title, link = (item.findtext("title") or "").strip(), (item.findtext("link") or "").strip()
+        summary = re.sub(r"<[^>]+>", " ", item.findtext("description") or "")
+        try:
+            seen = parsedate_to_datetime(item.findtext("pubDate") or "")
+        except (TypeError, ValueError):
+            continue
+        for rid, ns in names.items():
+            if any(n in title or n in summary for n in ns):
+                out.append({"race_id": rid, "title": title, "url": link, "outlet": outlet,
+                            "domain": urlparse(link).netloc.removeprefix("www."),
+                            "seen": _iso(seen if seen.tzinfo else seen.replace(tzinfo=timezone.utc)), "source": "rss"})
+    return out
+
+
 # Google News is not a source: its feed's terms allow only personal news readers (Matteo, 28 Sep); files saved before
 # that decision are ignored.
 PARSERS = {"gdelt": parse_gdelt, "mediacloud": parse_mediacloud}
@@ -100,16 +129,18 @@ def window(day: date) -> tuple[datetime, datetime]:
 
 
 def runs_before(snap_root: Path, day: date, back: int = 2) -> list[tuple[datetime, Path]]:
-    """(start, manifest) of the snapshot runs that started before the day's cutoff, in its folder and the `back` folders
-    before, oldest first."""
+    """(start, manifest) of the runs that started before the day's cutoff, in its folder and the `back` folders before,
+    oldest first: the snapshots, and the news job's runs in the `news` folder beside a `snapshots` folder."""
     out = []
-    for k in range(back, -1, -1):
-        d = day - timedelta(days=k)
-        for m in (snap_root / f"{d:%Y-%m-%d}").glob("*/manifest.json"):
-            try:
-                out.append((datetime.strptime(f"{d:%Y-%m-%d}{m.parent.name}", "%Y-%m-%d%H%M").replace(tzinfo=timezone.utc), m))
-            except ValueError:
-                continue
+    roots = [snap_root] + ([snap_root.with_name("news")] if snap_root.name == "snapshots" else [])
+    for root in roots:
+        for k in range(back, -1, -1):
+            d = day - timedelta(days=k)
+            for m in (root / f"{d:%Y-%m-%d}").glob("*/manifest.json"):
+                try:
+                    out.append((datetime.strptime(f"{d:%Y-%m-%d}{m.parent.name}", "%Y-%m-%d%H%M").replace(tzinfo=timezone.utc), m))
+                except ValueError:
+                    continue
     return sorted(r for r in out if r[0] < window(day)[1])
 
 
@@ -122,9 +153,15 @@ def read_day(snap_root: Path, day: date) -> list[dict]:
     for when, manifest in runs_before(snap_root, day):
         for f in json.loads(manifest.read_text(encoding="utf-8"))["files"]:
             kind, _, slug = f.get("name", "").partition("-")
-            if f.get("source") != "news" or "file" not in f or kind not in PARSERS or slug not in SNAP_RACES:
+            if f.get("source") != "news" or "file" not in f:
                 continue
-            for a in PARSERS[kind](gzip.decompress((manifest.parent / f["file"]).read_bytes()), SNAP_RACES[slug]):
+            if kind == "rss" and slug in RSS_FEEDS:
+                arts = parse_rss(gzip.decompress((manifest.parent / f["file"]).read_bytes()), slug)
+            elif kind in PARSERS and slug in SNAP_RACES:
+                arts = PARSERS[kind](gzip.decompress((manifest.parent / f["file"]).read_bytes()), SNAP_RACES[slug])
+            else:
+                continue
+            for a in arts:
                 a["title"] = _clean(a["title"])
                 key = (a["race_id"], a["url"] or f"{a['title'].lower()}|{a['domain']}")
                 first.setdefault(key, when)

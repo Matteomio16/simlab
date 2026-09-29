@@ -87,6 +87,30 @@ class ReadDay(unittest.TestCase):
         self.assertEqual(day28, ["Crypto PAC to spend $30M against Sherrod Brown"])
         self.assertEqual(day29, ["Husted releases new ad on crime"])
 
+    def test_the_news_jobs_runs_next_to_the_snapshots_are_read_too(self):
+        # 29 Sep: GDELT moved to its own 15-minute job, writing simlab-data/news/ beside simlab-data/snapshots/
+        with tempfile.TemporaryDirectory() as tmp:
+            snaps, news = Path(tmp) / "snapshots", Path(tmp) / "news"
+            snapshot(snaps, "2026-09-28", "0036", {"gdelt-texas": TEXAS})
+            snapshot(news, "2026-09-28", "0115", {"gdelt-ohio": OHIO})
+            arts = newsday.read_day(snaps, date(2026, 9, 28))
+        self.assertEqual(sorted({a["race_id"] for a in arts}), ["OH-S", "TX"])
+
+    def test_rss_items_count_for_a_race_only_when_they_name_its_candidates(self):
+        feed = """<?xml version="1.0"?><rss version="2.0"><channel><title>Signal Ohio</title>
+          <item><title>Brown and Husted trade barbs over tariffs at Columbus forum</title>
+            <link>https://signalohio.org/brown-husted-forum/</link>
+            <pubDate>Mon, 28 Sep 2026 14:05:00 +0000</pubDate><description>Sherrod Brown said...</description></item>
+          <item><title>Paxton sues over new voting rules</title><link>https://signalohio.org/paxton/</link>
+            <pubDate>Mon, 28 Sep 2026 15:00:00 +0000</pubDate><description>Ken Paxton filed...</description></item>
+          <item><title>City council passes the budget</title><link>https://signalohio.org/budget/</link>
+            <pubDate>Mon, 28 Sep 2026 16:00:00 +0000</pubDate><description>Nothing about the race.</description></item>
+        </channel></rss>"""
+        arts = newsday.parse_rss(feed.encode(), "signal-ohio")
+        self.assertEqual([(a["race_id"], a["domain"], a["outlet"], a["seen"], a["source"]) for a in arts],
+                         [("OH-S", "signalohio.org", "Signal Ohio", "2026-09-28T14:05:00+00:00", "rss")])
+        self.assertEqual(newsday.parse_rss(b"<rss><channel", "signal-ohio"), [])
+
     def test_headlines_under_four_words_are_dropped(self):
         stub = OHIO.replace("Brown and Husted clash over tariffs", "GOP-ABC News")
         with tempfile.TemporaryDirectory() as tmp:
