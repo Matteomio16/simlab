@@ -5,6 +5,7 @@ party twist. python -m brand.explore builds the comparison page from these.
 """
 from __future__ import annotations
 
+import itertools
 import math
 
 PAPER, INK, INDIGO, LILAC, PURPLE = "#F5F3EE", "#111110", "#2A2152", "#B98DD6", "#4A3AA7"
@@ -264,12 +265,23 @@ def _arc(cx, cy, r, a0, a1):
     return f"M{x0:.2f},{y0:.2f} A{r},{r} 0 {big} 1 {x1:.2f},{y1:.2f}"
 
 
+_ids = itertools.count()
+
+
+def clip(cx, cy, r, shapes):
+    return ("clip", cx, cy, r, shapes, "fg")
+
+
 def body(shapes, pal) -> str:
     out = []
     for s in shapes:
         kind, role = s[0], s[-1]
         c = pal[role]
-        if kind == "c":
+        if kind == "clip":
+            i = f"k{next(_ids)}"
+            out.append(f'<clipPath id="{i}"><circle cx="{s[1]}" cy="{s[2]}" r="{s[3]}"/></clipPath>'
+                       f'<g clip-path="url(#{i})">{body(s[4], pal)}</g>')
+        elif kind == "c":
             out.append(f'<circle cx="{s[1]:.2f}" cy="{s[2]:.2f}" r="{s[3]:.2f}" fill="{c}"/>')
         elif kind == "p":
             out.append(f'<path d="{s[1]}" fill="{c}"/>')

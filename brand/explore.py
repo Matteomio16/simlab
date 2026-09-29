@@ -14,7 +14,7 @@ from pathlib import Path
 from PIL import Image
 
 from . import marks as m
-from . import round4
+from . import round4, round5
 
 ROOT = Path(__file__).resolve().parent
 KITS = next(p / "kits" for p in [ROOT.parent, *ROOT.parents] if (p / "kits" / "labnotes").exists())
@@ -44,6 +44,7 @@ def roster4():
 ROUNDS = {
     "3": ("NotAPoll Logo Round 3", DIRECTIONS3, lambda: m.MARKS, "intro_round3.html", "A2"),
     "4": ("NotAPoll Logo Round 4", DIRECTIONS4, roster4, "intro_round4.html", "C3.2"),
+    "5": ("NotAPoll Logo Round 5", round5.DIRECTIONS, round5.roster, "intro_round5.html", "H1"),
 }
 TILES = ["brand/pinned/slide-1.jpg", "labnotes/01/slide-1.jpg", "specials/3-chamber.jpg", "labnotes/02/slide-1.jpg",
          "brand/pinned/slide-2.jpg", "specials/1-ballot.jpg", "labnotes/03/slide-1.jpg", "specials/4-seismograph.jpg",
@@ -100,8 +101,8 @@ def build(rnd: str = "4") -> Path:
     data = {k: {"name": v[0], "light": m.svg(v[2](), m.LIGHT, .3, True, True), "dark": m.svg(v[2](), m.DARK, .3, True, True),
                 "bare_light": m.svg(v[2](), m.LIGHT), "bare_dark": m.svg(v[2](), m.DARK)} for k, v in marks.items()}
     sections = []
-    for d, (head, pitch) in directions.items():
-        keys = [k for k in marks if k.startswith(d)]
+    for d, (head, pitch, *only) in directions.items():
+        keys = only[0] if only else [k for k in marks if k.startswith(d)]
         extra = ""
         if d == "A":
             extra = ('<div class="poses"><h4>How Nota (A2) reacts in posts</h4><div class="pose-row">' +
