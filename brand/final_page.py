@@ -25,14 +25,15 @@ def uri(name: str, width: int | None = None) -> str:
 
 
 def avatars() -> str:
-    rows = [("avatar-centred", "A. Centred, indigo", False), ("avatar", "B. Landscape crop, indigo", True),
-            ("avatar-centred-paper", "C. Centred, paper", False), ("avatar-paper", "D. Landscape crop, paper", False)]
+    rows = [("avatar", "Chosen: D, white", True), ("avatar-centred", "A. Centred, indigo", False),
+            ("avatar-crop-indigo", "B. Landscape crop, indigo", False),
+            ("avatar-centred-paper", "C. Centred, paper", False), ("avatar-paper", "D, first size", False)]
     out = []
     for name, label, rec in rows:
         src = uri(f"{name}.svg")
         smalls = "".join(f'<img src="{src}" width="{n}" height="{n}" alt="">' for n in (48, 32, 20))
         out.append(f'<figure class="av"><img class="round" src="{src}" alt="{label}"><figcaption>'
-                   f'<span class="lbl">{label}{" · exported as avatar.jpg" if rec else ""}</span>'
+                   f'<span class="lbl">{label}{" · avatar.jpg" if rec else ""}</span>'
                    f'<span class="smalls">{smalls}</span></figcaption></figure>')
     return "".join(out)
 
@@ -67,9 +68,8 @@ def build():
         "%AVATARS%": avatars(),
         "%OPTIONS%": options(),
         "%FONTS%": uri("font-compare.png"),
-        "%XPROF%": xprofile("header-x.jpg", "avatar.svg", "X profile · header light, avatar B")
-        + xprofile("header-x.jpg", "avatar-centred.svg", "X profile · header light, avatar A")
-        + xprofile("header-x-dark.png", "avatar-paper.svg", "X profile · header dark, avatar D"),
+        "%XPROF%": xprofile("header-x.jpg", "avatar.svg", "X profile · header light, avatar D white (chosen)")
+        + xprofile("header-x-dark.png", "avatar.svg", "X profile · header dark, avatar D white"),
         "%BSKY%": uri("banner-bluesky.jpg", 1500),
         "%FAV%": "".join(f'<img src="{uri(f"favicon-{n}.png")}" width="{n}" height="{n}" alt="">' for n in (16, 32, 48))
         + f'<img src="{uri("favicon-180.png")}" width="90" height="90" alt="">',
@@ -137,7 +137,7 @@ section{display:grid;gap:16px}
       exactly, and the wordmark is outlined Newsreader, so no file depends on an installed font.</p>
     <div class="pick"><span class="lbl">My read</span><ol>
       <li><b>Lockup: horizontal, on a shared ground.</b> The hills stand on the same baseline as the letters, a little taller than a capital, so the name and the landscape share one ground line. The stacked version is for square spaces: the site's footer, the end card of a video.</li>
-      <li><b>Avatar: B, the landscape crop on indigo.</b> The hills rise from the bottom of the circle and run off its edge. At 32 px it's the most readable of the four and the most confident, the way a fashion house crops its monogram. A is the safe option.</li>
+      <li><b>Avatar: D on white, chosen 29 Sep.</b> The hills rise from the bottom of the circle and run off its edges, with the purple overlap in the lower middle. The other options stay below for the record.</li>
       <li><b>Headers on paper.</b> The paper header sets off the indigo avatar, and the hills stand on the bottom edge on the right, clear of where X puts the avatar.</li>
     </ol></div>
   </section>
