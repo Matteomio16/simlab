@@ -1,6 +1,7 @@
 """Voter groups: the 28 party-ID x white/non-white x degree groups (engine-design §3.1, stats-groundwork §5.5).
 
-    python -m simlab.groups --fit     writes simlab/pimu.json
+    python -m simlab.groups --fit             writes simlab/pimu.json
+    python -m simlab.groups --kev ANSWERS     writes simlab/kev_groups.json (Kev's margins, plus the nation's)
 
 pi, the persuadable share, and mu, the mobilisable share, by state and group, from the CES pre- and post-election
 waves of the 2018 and 2022 midterms (CES cumulative file), shrunk state -> census division -> nation. 2024 is kept as a
@@ -35,6 +36,7 @@ PSEUDO = 50
 COLS = ["year", "st", "weight", "weight_post", "tookpost", "pid7", "race", "hispanic", "educ", "intent_sen",
         "voted_sen", "intent_turnout_self", "voted_turnout_self", "vv_turnout_gvm", "vv_regstatus"]
 PIMU = HERE / "pimu.json"
+KEV = HERE / "kev_groups.json"
 
 
 def group_of(pid7, race, hispanic, educ) -> str | None:
@@ -129,26 +131,44 @@ def shift(d: np.ndarray, e: np.ndarray, target: float) -> np.ndarray:
     return 2 * expit(p + c) - 1
 
 
-def race_groups(base: dict, pimu: dict, margin: float) -> dict:
+def race_groups(base: dict, pimu: dict, margin: float, kev: dict | None = None) -> dict:
     """A race's groups: population share n, turnout t, margin d shifted to the race's level (`margin`, points), and the
-    persuadable and mobilisable shares."""
-    gs = list(base)
+    persuadable and mobilisable shares. d starts from Kev's margin where `kev` has the group, else from the survey's d0."""
+    gs, kev = list(base), kev or {}
     n, t = (np.array([base[g][k] for g in gs]) for k in ("n", "t"))
-    d = shift(np.array([base[g]["d0"] for g in gs]), n * t, margin / 100)
+    d = shift(np.array([kev.get(g, base[g]["d0"]) for g in gs]), n * t, margin / 100)
     return {g: {"n": base[g]["n"], "t": base[g]["t"], "d": round(float(d[i]), 4), "pi": pimu[g]["pi"],
                 "mu": pimu[g]["mu"]} for i, g in enumerate(gs)}
 
 
-def build(levels: dict, base: dict, pimu: dict, day: str, run_id: str) -> dict:
-    """groups.json (engine-design §7): every race's groups at its level, plus the nation's at the national level N."""
+def build(levels: dict, base: dict, pimu: dict, day: str, run_id: str, kev: dict | None = None) -> dict:
+    """groups.json (engine-design §7): every race's groups at its level, plus the nation's at the national level N. The
+    pattern across groups comes from Kev (kev_groups.json) where it answered, else from the survey (Matteo, 29 Sep)."""
+    kev = kev or {}
     out = {"date": day, "run_id": run_id, "schema": 1,
            "units": "n share of adult citizens; t midterm turnout; d D (or independent challenger) minus R among the "
-                    "group's voters, -1..1; pi persuadable and mu mobilisable shares, 0..1"}
+                    "group's voters, -1..1; pi persuadable and mu mobilisable shares, 0..1",
+           "d_source": f"Kev {kev['run']}: 2024 presidential vote by group (simlab/kev_groups.json); survey d0 where "
+                       "Kev has no answer" if kev else
+                       "survey d0: CES 2018/2022 Senate vote by group, House vote for US (simlab/groups_base.json)"}
     for rid, r in levels["races"].items():
         s = rid.split("-")[0]
-        out[rid] = race_groups(base["states"][s], pimu["states"][s], r["margin"])
-    out["US"] = race_groups(base["US"], pimu["national"], levels["national"]["N"])
+        out[rid] = race_groups(base["states"][s], pimu["states"][s], r["margin"], kev.get("states", {}).get(s))
+    out["US"] = race_groups(base["US"], pimu["national"], levels["national"]["N"], kev.get("US"))
     return out
+
+
+def kev_national(states: dict, base: dict, votes: dict) -> dict:
+    """The nation's Kev margin for each group: the states' margins weighted by the group's voters there, the state's
+    2024 presidential votes times the group's share of its midterm voters (n t / sum n t)."""
+    w, d = {}, {}
+    for s, x in states.items():
+        b = base["states"][s]
+        tot = sum(v["n"] * v["t"] for v in b.values())
+        for g, m in x.items():
+            k = votes[s] * b[g]["n"] * b[g]["t"] / tot
+            w[g], d[g] = w.get(g, 0.0) + k, d.get(g, 0.0) + k * m
+    return {g: round(d[g] / w[g], 4) for g in w}
 
 
 POS = {"Strong Democrat": 3, "Not very strong Democrat": 2, "Lean Democrat": 1, "Independent": 0,
@@ -206,11 +226,15 @@ def _lor(d: pd.DataFrame) -> dict:
     return {g: float(logit(pg[g]) - logit(pc[CELL_OF[g]])) for g in pg.index}
 
 
-def _pres_margins(year: int = 2024) -> dict:
+def _pres(year: int = 2024) -> pd.DataFrame:
     from .statsdata import mit
     p = mit("president")
     p = p[(p.year == year) & p.party_simplified.isin(["DEMOCRAT", "REPUBLICAN"]) & ~p.writein.fillna(False).astype(bool)]
-    v = p.pivot_table(index="state_po", columns="party_simplified", values="candidatevotes", aggfunc="sum")
+    return p.pivot_table(index="state_po", columns="party_simplified", values="candidatevotes", aggfunc="sum")
+
+
+def _pres_margins(year: int = 2024) -> dict:
+    v = _pres(year)
     out = ((v.DEMOCRAT - v.REPUBLICAN) / (v.DEMOCRAT + v.REPUBLICAN)).to_dict()
     t = v.sum()
     return out | {"US": float((t.DEMOCRAT - t.REPUBLICAN) / (t.DEMOCRAT + t.REPUBLICAN))}
@@ -271,9 +295,22 @@ def load(years: tuple[int, ...]) -> pd.DataFrame:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fit", action="store_true", help="fit pi and mu and write simlab/pimu.json")
+    ap.add_argument("--kev", metavar="ANSWERS", help="Kev's margins by state and group ({run, states: {st: {group: "
+                    "d}}}): add the nation's and write simlab/kev_groups.json")
     a = ap.parse_args()
+    if a.kev:
+        kev = json.loads(Path(a.kev).read_text(encoding="utf-8"))
+        base = json.loads(BASE.read_text(encoding="utf-8"))
+        missing = [f"{s} {g}" for s in base["states"] for g in GROUPS if g not in kev["states"].get(s, {})]
+        v = _pres()
+        kev["US"] = kev_national(kev["states"], base, (v.DEMOCRAT + v.REPUBLICAN).to_dict())
+        kev["US_method"] = "the states' margins weighted by 2024 presidential votes x the group's share of midterm voters"
+        KEV.write_text(json.dumps(kev, indent=1), encoding="utf-8")
+        print(f"Kev groups: {len(kev['states'])} states; {len(missing)} state-group pairs without an answer use the "
+              f"survey's d0{': ' + ', '.join(missing[:10]) if missing else ''} -> {KEV}")
+        return
     if not a.fit:
-        ap.error("nothing to do (use --fit)")
+        ap.error("nothing to do (use --fit or --kev)")
     mid = load((2018, 2022))
     out = fit(mid)
     check = load((2024,))

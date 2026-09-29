@@ -1,0 +1,326 @@
+{
+ "AK": {
+  "state": "AK",
+  "state_name": "Alaska",
+  "office": "senate",
+  "district": null,
+  "text": "Alaska U.S. Senate election: Mary Peltola (Democrat) vs Dan S. Sullivan (Republican)",
+  "query": "(\"Mary Peltola\" OR \"Dan Sullivan\")",
+  "mediacloud": "(\"Mary Peltola\" OR \"Dan Sullivan\") AND (Senate OR election OR campaign)"
+ },
+ "AL": {
+  "state": "AL",
+  "state_name": "Alabama",
+  "office": "senate",
+  "district": null,
+  "text": "Alabama U.S. Senate election: Everett Wess (Democrat) vs Barry Moore (Republican)",
+  "query": "(\"Everett Wess\" OR \"Barry Moore\")",
+  "mediacloud": "(\"Everett Wess\" OR \"Barry Moore\") AND (Senate OR election OR campaign)"
+ },
+ "AR": {
+  "state": "AR",
+  "state_name": "Arkansas",
+  "office": "senate",
+  "district": null,
+  "text": "Arkansas U.S. Senate election: Hallie Shoffner (Democrat) vs Tom Cotton (Republican)",
+  "query": "(\"Hallie Shoffner\" OR \"Tom Cotton\")",
+  "mediacloud": "(\"Hallie Shoffner\" OR \"Tom Cotton\") AND (Senate OR election OR campaign)"
+ },
+ "CO": {
+  "state": "CO",
+  "state_name": "Colorado",
+  "office": "senate",
+  "district": null,
+  "text": "Colorado U.S. Senate election: John Hickenlooper (Democrat) vs Mark Baisley (Republican)",
+  "query": "(\"John Hickenlooper\" OR \"Mark Baisley\")",
+  "mediacloud": "(\"John Hickenlooper\" OR \"Mark Baisley\") AND (Senate OR election OR campaign)"
+ },
+ "DE": {
+  "state": "DE",
+  "state_name": "Delaware",
+  "office": "senate",
+  "district": null,
+  "text": "Delaware U.S. Senate election: Chris Coons (Democrat) vs Michael Katz (Republican)",
+  "query": "(\"Chris Coons\" OR \"Michael Katz\")",
+  "mediacloud": "(\"Chris Coons\" OR \"Michael Katz\") AND (Senate OR election OR campaign)"
+ },
+ "FL-S": {
+  "state": "FL",
+  "state_name": "Florida",
+  "office": "senate",
+  "district": null,
+  "text": "Florida U.S. Senate special election: Angie Nixon (Democrat) vs Ashley Moody (Republican)",
+  "query": "(\"Angie Nixon\" OR \"Ashley Moody\")",
+  "mediacloud": "(\"Angie Nixon\" OR \"Ashley Moody\") AND (Senate OR election OR campaign)"
+ },
+ "GA": {
+  "state": "GA",
+  "state_name": "Georgia",
+  "office": "senate",
+  "district": null,
+  "text": "Georgia U.S. Senate election: Jon Ossoff (Democrat) vs Mike Collins (Republican)",
+  "query": "(\"Jon Ossoff\" OR \"Mike Collins\")",
+  "mediacloud": "(\"Jon Ossoff\" OR \"Mike Collins\") AND (Senate OR election OR campaign)"
+ },
+ "IA": {
+  "state": "IA",
+  "state_name": "Iowa",
+  "office": "senate",
+  "district": null,
+  "text": "Iowa U.S. Senate election: Josh Turek (Democrat) vs Ashley Hinson (Republican)",
+  "query": "(\"Josh Turek\" OR \"Ashley Hinson\")",
+  "mediacloud": "(\"Josh Turek\" OR \"Ashley Hinson\") AND (Senate OR election OR campaign)"
+ },
+ "ID": {
+  "state": "ID",
+  "state_name": "Idaho",
+  "office": "senate",
+  "district": null,
+  "text": "Idaho U.S. Senate election: Todd Achilles (independent) vs Jim Risch (Republican)",
+  "query": "(\"Todd Achilles\" OR \"Jim Risch\")",
+  "mediacloud": "(\"Todd Achilles\" OR \"Jim Risch\") AND (Senate OR election OR campaign)"
+ },
+ "IL": {
+  "state": "IL",
+  "state_name": "Illinois",
+  "office": "senate",
+  "district": null,
+  "text": "Illinois U.S. Senate election: Juliana Stratton (Democrat) vs Don Tracy (Republican)",
+  "query": "(\"Juliana Stratton\" OR \"Don Tracy\")",
+  "mediacloud": "(\"Juliana Stratton\" OR \"Don Tracy\") AND (Senate OR election OR campaign)"
+ },
+ "KS": {
+  "state": "KS",
+  "state_name": "Kansas",
+  "office": "senate",
+  "district": null,
+  "text": "Kansas U.S. Senate election: Adam Hamilton (Democrat) vs Roger Marshall (Republican)",
+  "query": "(\"Adam Hamilton\" OR \"Roger Marshall\")",
+  "mediacloud": "(\"Adam Hamilton\" OR \"Roger Marshall\") AND (Senate OR election OR campaign)"
+ },
+ "KY": {
+  "state": "KY",
+  "state_name": "Kentucky",
+  "office": "senate",
+  "district": null,
+  "text": "Kentucky U.S. Senate election: Charles Booker (Democrat) vs Andy Barr (Republican)",
+  "query": "(\"Charles Booker\" OR \"Andy Barr\")",
+  "mediacloud": "(\"Charles Booker\" OR \"Andy Barr\") AND (Senate OR election OR campaign)"
+ },
+ "LA": {
+  "state": "LA",
+  "state_name": "Louisiana",
+  "office": "senate",
+  "district": null,
+  "text": "Louisiana U.S. Senate election: Jamie Davis (Democrat) vs Julia Letlow (Republican)",
+  "query": "(\"Jamie Davis\" OR \"Julia Letlow\")",
+  "mediacloud": "(\"Jamie Davis\" OR \"Julia Letlow\") AND (Senate OR election OR campaign)"
+ },
+ "MA": {
+  "state": "MA",
+  "state_name": "Massachusetts",
+  "office": "senate",
+  "district": null,
+  "text": "Massachusetts U.S. Senate election: Ed Markey (Democrat) vs John Deaton (Republican)",
+  "query": "(\"Ed Markey\" OR \"John Deaton\")",
+  "mediacloud": "(\"Ed Markey\" OR \"John Deaton\") AND (Senate OR election OR campaign)"
+ },
+ "ME": {
+  "state": "ME",
+  "state_name": "Maine",
+  "office": "senate",
+  "district": null,
+  "text": "Maine U.S. Senate election: Troy Jackson (Democrat) vs Susan Collins (Republican)",
+  "query": "(\"Troy Jackson\" OR \"Susan Collins\")",
+  "mediacloud": "(\"Troy Jackson\" OR \"Susan Collins\") AND (Senate OR election OR campaign)"
+ },
+ "MI": {
+  "state": "MI",
+  "state_name": "Michigan",
+  "office": "senate",
+  "district": null,
+  "text": "Michigan U.S. Senate election: Abdul El-Sayed (Democrat) vs Mike Rogers (Republican)",
+  "query": "(\"Abdul El-Sayed\" OR \"Mike Rogers\")",
+  "mediacloud": "(\"Abdul El-Sayed\" OR \"Mike Rogers\") AND (Senate OR election OR campaign)"
+ },
+ "MN": {
+  "state": "MN",
+  "state_name": "Minnesota",
+  "office": "senate",
+  "district": null,
+  "text": "Minnesota U.S. Senate election: Peggy Flanagan (Democrat) vs Michele Tafoya (Republican)",
+  "query": "(\"Peggy Flanagan\" OR \"Michele Tafoya\")",
+  "mediacloud": "(\"Peggy Flanagan\" OR \"Michele Tafoya\") AND (Senate OR election OR campaign)"
+ },
+ "MS": {
+  "state": "MS",
+  "state_name": "Mississippi",
+  "office": "senate",
+  "district": null,
+  "text": "Mississippi U.S. Senate election: Scott Colom (Democrat) vs Cindy Hyde-Smith (Republican)",
+  "query": "(\"Scott Colom\" OR \"Cindy Hyde-Smith\")",
+  "mediacloud": "(\"Scott Colom\" OR \"Cindy Hyde-Smith\") AND (Senate OR election OR campaign)"
+ },
+ "MT": {
+  "state": "MT",
+  "state_name": "Montana",
+  "office": "senate",
+  "district": null,
+  "text": "Montana U.S. Senate election: Seth Bodnar (independent) vs Kurt Alme (Republican)",
+  "query": "(\"Seth Bodnar\" OR \"Kurt Alme\")",
+  "mediacloud": "(\"Seth Bodnar\" OR \"Kurt Alme\") AND (Senate OR election OR campaign)"
+ },
+ "NC": {
+  "state": "NC",
+  "state_name": "North Carolina",
+  "office": "senate",
+  "district": null,
+  "text": "North Carolina U.S. Senate election: Roy Cooper (Democrat) vs Michael Whatley (Republican)",
+  "query": "(\"Roy Cooper\" OR \"Michael Whatley\")",
+  "mediacloud": "(\"Roy Cooper\" OR \"Michael Whatley\") AND (Senate OR election OR campaign)"
+ },
+ "NE": {
+  "state": "NE",
+  "state_name": "Nebraska",
+  "office": "senate",
+  "district": null,
+  "text": "Nebraska U.S. Senate election: Dan Osborn (independent) vs Pete Ricketts (Republican)",
+  "query": "(\"Dan Osborn\" OR \"Pete Ricketts\")",
+  "mediacloud": "(\"Dan Osborn\" OR \"Pete Ricketts\") AND (Senate OR election OR campaign)"
+ },
+ "NH": {
+  "state": "NH",
+  "state_name": "New Hampshire",
+  "office": "senate",
+  "district": null,
+  "text": "New Hampshire U.S. Senate election: Chris Pappas (Democrat) vs John E. Sununu (Republican)",
+  "query": "(\"Chris Pappas\" OR \"John Sununu\")",
+  "mediacloud": "(\"Chris Pappas\" OR \"John Sununu\") AND (Senate OR election OR campaign)"
+ },
+ "NJ": {
+  "state": "NJ",
+  "state_name": "New Jersey",
+  "office": "senate",
+  "district": null,
+  "text": "New Jersey U.S. Senate election: Cory Booker (Democrat) vs Justin Murphy (Republican)",
+  "query": "(\"Cory Booker\" OR \"Justin Murphy\")",
+  "mediacloud": "(\"Cory Booker\" OR \"Justin Murphy\") AND (Senate OR election OR campaign)"
+ },
+ "NM": {
+  "state": "NM",
+  "state_name": "New Mexico",
+  "office": "senate",
+  "district": null,
+  "text": "New Mexico U.S. Senate election: Ben Ray Luján (Democrat) vs Larry Marker (Republican)",
+  "query": "(\"Ben Ray Luján\" OR \"Ben Luján\" OR \"Larry Marker\")",
+  "mediacloud": "(\"Ben Ray Luján\" OR \"Ben Luján\" OR \"Larry Marker\") AND (Senate OR election OR campaign)"
+ },
+ "OH-S": {
+  "state": "OH",
+  "state_name": "Ohio",
+  "office": "senate",
+  "district": null,
+  "text": "Ohio U.S. Senate special election: Sherrod Brown (Democrat) vs Jon Husted (Republican)",
+  "query": "(\"Sherrod Brown\" OR \"Jon Husted\")",
+  "mediacloud": "(\"Sherrod Brown\" OR \"Jon Husted\") AND (Senate OR election OR campaign)"
+ },
+ "OK": {
+  "state": "OK",
+  "state_name": "Oklahoma",
+  "office": "senate",
+  "district": null,
+  "text": "Oklahoma U.S. Senate election: N'Kiyla Jasmine Thomas (Democrat) vs Kevin Hern (Republican)",
+  "query": "(\"N'Kiyla Jasmine Thomas\" OR \"N'Kiyla Thomas\" OR \"Kevin Hern\")",
+  "mediacloud": "(\"N'Kiyla Jasmine Thomas\" OR \"N'Kiyla Thomas\" OR \"Kevin Hern\") AND (Senate OR election OR campaign)"
+ },
+ "OR": {
+  "state": "OR",
+  "state_name": "Oregon",
+  "office": "senate",
+  "district": null,
+  "text": "Oregon U.S. Senate election: Jeff Merkley (Democrat) vs David Brock Smith (Republican)",
+  "query": "(\"Jeff Merkley\" OR \"David Brock Smith\" OR \"David Smith\")",
+  "mediacloud": "(\"Jeff Merkley\" OR \"David Brock Smith\" OR \"David Smith\") AND (Senate OR election OR campaign)"
+ },
+ "RI": {
+  "state": "RI",
+  "state_name": "Rhode Island",
+  "office": "senate",
+  "district": null,
+  "text": "Rhode Island U.S. Senate election: Jack Reed (Democrat) vs Raymond McKay (Republican)",
+  "query": "(\"Jack Reed\" OR \"Raymond McKay\")",
+  "mediacloud": "(\"Jack Reed\" OR \"Raymond McKay\") AND (Senate OR election OR campaign)"
+ },
+ "SC": {
+  "state": "SC",
+  "state_name": "South Carolina",
+  "office": "senate",
+  "district": null,
+  "text": "South Carolina U.S. Senate election: Annie Andrews (Democrat) vs Darline Graham (Republican)",
+  "query": "(\"Annie Andrews\" OR \"Darline Graham\")",
+  "mediacloud": "(\"Annie Andrews\" OR \"Darline Graham\") AND (Senate OR election OR campaign)"
+ },
+ "SD": {
+  "state": "SD",
+  "state_name": "South Dakota",
+  "office": "senate",
+  "district": null,
+  "text": "South Dakota U.S. Senate election: Brian Bengs (independent) vs Mike Rounds (Republican)",
+  "query": "(\"Brian Bengs\" OR \"Mike Rounds\")",
+  "mediacloud": "(\"Brian Bengs\" OR \"Mike Rounds\") AND (Senate OR election OR campaign)"
+ },
+ "TN": {
+  "state": "TN",
+  "state_name": "Tennessee",
+  "office": "senate",
+  "district": null,
+  "text": "Tennessee U.S. Senate election: Marquita Bradshaw (Democrat) vs Bill Hagerty (Republican)",
+  "query": "(\"Marquita Bradshaw\" OR \"Bill Hagerty\")",
+  "mediacloud": "(\"Marquita Bradshaw\" OR \"Bill Hagerty\") AND (Senate OR election OR campaign)"
+ },
+ "TX": {
+  "state": "TX",
+  "state_name": "Texas",
+  "office": "senate",
+  "district": null,
+  "text": "Texas U.S. Senate election: James Talarico (Democrat) vs Ken Paxton (Republican)",
+  "query": "(\"James Talarico\" OR \"Ken Paxton\")",
+  "mediacloud": "(\"James Talarico\" OR \"Ken Paxton\") AND (Senate OR election OR campaign)"
+ },
+ "VA": {
+  "state": "VA",
+  "state_name": "Virginia",
+  "office": "senate",
+  "district": null,
+  "text": "Virginia U.S. Senate election: Mark Warner (Democrat) vs Bert Mizusawa (Republican)",
+  "query": "(\"Mark Warner\" OR \"Bert Mizusawa\")",
+  "mediacloud": "(\"Mark Warner\" OR \"Bert Mizusawa\") AND (Senate OR election OR campaign)"
+ },
+ "WV": {
+  "state": "WV",
+  "state_name": "West Virginia",
+  "office": "senate",
+  "district": null,
+  "text": "West Virginia U.S. Senate election: Rachel Fetty Anderson (Democrat) vs Shelley Moore Capito (Republican)",
+  "query": "(\"Rachel Fetty Anderson\" OR \"Rachel Anderson\" OR \"Shelley Moore Capito\" OR \"Shelley Capito\")",
+  "mediacloud": "(\"Rachel Fetty Anderson\" OR \"Rachel Anderson\" OR \"Shelley Moore Capito\" OR \"Shelley Capito\") AND (Senate OR election OR campaign)"
+ },
+ "WY": {
+  "state": "WY",
+  "state_name": "Wyoming",
+  "office": "senate",
+  "district": null,
+  "text": "Wyoming U.S. Senate election: James W. Byrd (Democrat) vs Harriet Hageman (Republican)",
+  "query": "(\"James Byrd\" OR \"Harriet Hageman\")",
+  "mediacloud": "(\"James Byrd\" OR \"Harriet Hageman\") AND (Senate OR election OR campaign)"
+ },
+ "US": {
+  "state": null,
+  "state_name": null,
+  "office": "national",
+  "district": null,
+  "text": "The 2026 U.S. midterm elections nationally (Senate and House control)",
+  "query": "(\"midterm elections\" OR \"midterms\" OR \"Senate majority\" OR \"generic ballot\")",
+  "mediacloud": "(\"midterm elections\" OR \"midterms\" OR \"Senate majority\" OR \"generic ballot\")"
+ }
+}

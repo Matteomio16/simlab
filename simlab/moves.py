@@ -87,26 +87,31 @@ def _jsonl(path: Path) -> list[dict]:
     return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()] if path.exists() else []
 
 
-def _history(day: date, derived: Path) -> tuple[dict, dict]:
+def _history(day: date, derived: Path) -> tuple[dict, dict, set]:
     """Reactions asked in the last LOOKBACK days, earliest answer per (model, race, event, group), with the day asked;
-    and the latest record of every event up to `day`."""
-    reactions, events = {}, {}
+    the latest record of every event up to `day`; and the (race, event) pairs left out because that day's news no
+    longer selects them (a news re-run after the harness). Files without selections count in full."""
+    reactions, events, dropped = {}, {}, set()
     for k in range(LOOKBACK, -1, -1):
         d = day - timedelta(days=k)
         folder = derived / d.isoformat()
+        todays = {e["event_id"]: e for e in _jsonl(folder / "events.jsonl")}
         for r in _jsonl(folder / "reactions.jsonl"):
-            if not r.get("parse_error"):
+            e = todays.get(r["event_id"])
+            if e is not None and "selected" in e and r["race_id"] not in (e["selected"] or {}):
+                dropped.add((r["race_id"], r["event_id"]))
+            elif not r.get("parse_error"):
                 reactions.setdefault((r["model"], bool(r.get("shadow")), r["race_id"], r["event_id"], r["group"]),
                                      (r, d))
-        for e in _jsonl(folder / "events.jsonl"):
-            events[e["event_id"]] = e
-    return reactions, events
+        events.update(todays)
+    return reactions, events, dropped
 
 
 def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: date) -> dict:
     """One race's moves from its reactions {event_id: {group: (row, day asked)}}."""
     state = race.split("-")[0]
-    dial = params.get("dials", {}).get(state, {})
+    dials = params.get("dials", {})
+    dial = dials.get(state, dials.get("default", {}))
     hl = params["half_life_days"]
     by_event, by_effect, info, by_group = {}, {}, {}, {g: {"dd": 0.0, "dt": 0.0} for g in groups}
     delta = delta_base = delta_t = 0.0
@@ -141,8 +146,11 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
             by_group[g]["dd"] += 100 * dd[g] * share
             by_group[g]["dt"] += 100 * dt[g] * share
         fs, ft = round(100 * race_move(groups, dd, {}), 4), round(100 * race_move(groups, {}, dt), 4)
+        fs0, ft0 = round(100 * race_move(groups, full["base"][2], {}), 4), round(100 * race_move(groups, {}, full["base"][3]), 4)
         info[eid] = {"first_seen": first.isoformat(), "last_seen": last.isoformat(), "type": e.get("type"),
-                     "age_half_life": h_age, "after_news_half_life": h_after, "a": a, "full": round(fs + ft, 4), "full_s": fs, "full_t": ft,
+                     "scope": e.get("scope"),
+                     "age_half_life": h_age, "after_news_half_life": h_after, "a": a, "full": round(fs + ft, 4),
+                     "full_s": fs, "full_t": ft, "full_s_base": fs0, "full_t_base": ft0,
                      "full_base": round(full["base"][0], 4), "election_day": round((fs + ft) * eday, 4),
                      "card": e.get("card", "")}
     return {"delta_margin": round(delta, 4), "delta_margin_base": round(delta_base, 4),
@@ -155,11 +163,12 @@ def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> 
     """moves.json (engine-design §7) for every race in groups.json (and US), GLM's rows in the main block and shadow
     rows (Kev) under "shadow". Reactions to stories no longer in any events.jsonl (a news re-run that changed the
     story ids) can't be placed in time; they are left out and listed under "orphaned_events"."""
-    reactions, events = _history(day, derived)
+    reactions, events, dropped = _history(day, derived)
     races = [k for k in groups if isinstance(groups[k], dict) and k not in ("units",)]
     out = {"date": day.isoformat(), "run_id": run_id, "schema": SCHEMA, "units": UNITS,
            "params": {k: params[k] for k in ("c_s", "c_t")}, "shadow": {},
-           "orphaned_events": sorted({k[3] for k in reactions if k[3] not in events})}
+           "orphaned_events": sorted({k[3] for k in reactions if k[3] not in events}),
+           "deselected_pairs": sorted(f"{race} {eid}" for race, eid in dropped)}
     for shadow in (False, True):
         by_race = {}
         for (model, sh, race, eid, g), v in reactions.items():
@@ -189,24 +198,36 @@ def lasting_share(events: list[tuple], lags: list[tuple] = LAGS) -> tuple[dict, 
             for i, (a, b) in enumerate(lags) if i}, len(x)
 
 
-def paths(m: dict, part: str = "all") -> dict:
-    """{race_id or "US": [(first_seen, last_seen, full effect, age half-life, after-news half-life)]} from
-    moves.json's main block, for
-    levels.build: the whole effect, or only its switching ("s") or turnout ("t") part."""
-    key = {"all": "full", "s": "full_s", "t": "full_t"}[part]
-    return {r: [(v["first_seen"], v["last_seen"], v[key], v["age_half_life"], v["after_news_half_life"])
-                for v in x["events"].values()]
-            for r, x in m.items() if r != "shadow" and isinstance(x, dict) and "events" in x}
+def paths(m: dict, part: str = "all", with_nation: bool = True) -> dict:
+    """{race_id or "US": [(first_seen, last_seen, full effect, age half-life, after-news half-life)]} from moves.json's
+    main block, for levels.build: the whole effect, or only its switching ("s") or turnout ("t") part, at the state's
+    dials or at dial 1 ("s_base", "t_base"). A race whose own reactions include no national stories (the watch tier
+    from 12 Oct) also gets the nation's national stories, unless `with_nation` is False; a simulated race gets them
+    through its own rows, so they aren't added twice. Races without stories are left out, so levels.build gives them
+    the nation's."""
+    key = {"all": "full", "s": "full_s", "t": "full_t", "s_base": "full_s_base", "t_base": "full_t_base"}[part]
+    item = lambda v: (v["first_seen"], v["last_seen"], v[key], v["age_half_life"], v["after_news_half_life"])
+    nation = [item(v) for v in m.get("US", {}).get("events", {}).values()] if with_nation else []
+    extra = takes_nation(m)
+    return {r: [item(v) for v in x["events"].values()] + (nation if r in extra else [])
+            for r, x in m.items() if r != "shadow" and isinstance(x, dict) and x.get("events")}
 
 
-def movers(m: dict, top: int = 5, least: float = 0.01) -> dict:
-    """forecast.json movers: each race's stories with the largest effect on its election-day margin (points), largest
-    first."""
+def takes_nation(m: dict) -> set:
+    """Races with stories of their own but no national stories among them: they take the nation's."""
+    return {r for r, x in m.items() if r not in ("US", "shadow") and isinstance(x, dict) and x.get("events")
+            and not any(v.get("scope") == "national" for v in x["events"].values())}
+
+
+def movers(m: dict, top: int = 5, least: float = 0.01, when: str = "election_day") -> dict:
+    """forecast.json movers: each race's stories with the largest effect on its election-day margin (points), or with
+    `when="today"` on today's margin, largest first."""
     out = {}
     for r, x in m.items():
         if r in ("US", "shadow") or not isinstance(x, dict) or "events" not in x:
             continue
-        ranked = sorted(((e, v["election_day"]) for e, v in x["events"].items()), key=lambda kv: -abs(kv[1]))[:top]
+        size = (lambda e, v: x["by_event_effect"][e]) if when == "today" else (lambda e, v: v["election_day"])
+        ranked = sorted(((e, size(e, v)) for e, v in x["events"].items()), key=lambda kv: -abs(kv[1]))[:top]
         out[r] = [{"event_id": e, "card": x["events"][e]["card"], "delta": round(v, 2)} for e, v in ranked
                   if abs(v) >= least]
     return out

@@ -1,9 +1,9 @@
 # Once a day from 09:47 UTC: news -> reactions -> statistics -> post kit (simlab/daily.py), outputs committed to the
-# private data repo (derived/<date>/). GitHub drops most scheduled triggers (the snapshot job saw 3 of ~17 hourly ones
-# fire on 28 Sep), so the trigger repeats every 15 minutes until 14:47 and a scheduled run only proceeds when it is past
-# 09:47 UTC and the day has no run.json yet. Runs on schedule only when the repository variable PIPELINE_ON is "true"
-# (from the pilot, 5 Oct); a manual run works any time. Logs are public: the steps print statuses and counts, never
-# data. Package versions come from uv.lock.
+# private data repo (derived/<date>/). GitHub fires this repository's schedules only every 5-9 hours (28-29 Sep), so an
+# outside timer (ops/cron, a Cloudflare Worker) starts the run with scheduled=true at 09:47; GitHub's own triggers,
+# every 15 minutes until 14:47, stay as a fallback. A scheduled run only proceeds when it is past 09:47 UTC, the day
+# has no run.json yet and the repository variable PIPELINE_ON is "true" (from the pilot, 5 Oct); a manual run works any
+# time. Logs are public: the steps print statuses and counts, never data. Package versions come from uv.lock.
 name: daily
 
 on:
@@ -15,6 +15,10 @@ on:
       date:
         description: "Day to run (YYYY-MM-DD, default today UTC)"
         required: false
+      scheduled:
+        description: "Started by the outside timer: obey PIPELINE_ON and run once a day"
+        type: boolean
+        default: false
 
 concurrency:
   group: daily
@@ -25,7 +29,7 @@ permissions:
 
 jobs:
   daily:
-    if: github.event_name == 'workflow_dispatch' || vars.PIPELINE_ON == 'true'
+    if: (github.event_name == 'workflow_dispatch' && !inputs.scheduled) || vars.PIPELINE_ON == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
@@ -46,7 +50,7 @@ jobs:
           sparse-checkout-cone-mode: false
       - name: Due?
         id: due
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' || inputs.scheduled
         working-directory: data-repo
         run: |
           # a trigger delayed past midnight must not run the new day before its news window closes (09:30 UTC)
@@ -60,7 +64,7 @@ jobs:
       - name: The day's snapshots (its news window starts the day before; repeats are looked up 2 days back)
         if: steps.due.outputs.run != 'false'
         working-directory: data-repo
-        run: git sparse-checkout add $(for k in 2 1 0; do echo "/snapshots/$(date -u -d "$DAY -$k day" +%F)/"; done)
+        run: git sparse-checkout add $(for k in 2 1 0; do d=$(date -u -d "$DAY -$k day" +%F); echo "/snapshots/$d/ /news/$d/"; done)
       - uses: astral-sh/setup-uv@v6
         if: steps.due.outputs.run != 'false'
       - run: uv sync --frozen
@@ -75,8 +79,10 @@ jobs:
         if: steps.due.outputs.run != 'false'
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          KEV_API_KEY: ${{ secrets.KEV_API_KEY }}
           SIMLAB_BUDGET_USD: "2"
-        run: uv run python -m simlab.daily --date "$DAY" --data data-repo
+        # Kev answers as shadow rows (never applied) when the KEV_URL repository variable is set (Matteo, 29 Sep)
+        run: uv run python -m simlab.daily --date "$DAY" --data data-repo --kev "${{ vars.KEV_URL }}"
       - name: Push outputs to the data repo
         if: always() && steps.due.outputs.run != 'false'
         working-directory: data-repo

@@ -332,11 +332,219 @@ def exposure(models: list[str]) -> None:
               f"{err(kd * d19):.2f} ('no change' {err(np.zeros_like(y19)):.2f})")
 
 
+REACTION_EVENT_Q = {"type": "score", "instructions": "How does hearing this news change this person's support "
+                     "between the Democratic and Republican parties, if at all? Think about how someone like them "
+                     "reacts to the news itself (for example anger, worry or enthusiasm that can rally them behind "
+                     "their side or put them off a party), not only about who the news helps on paper.",
+                     "criteria": ["Moves strongly toward the Republicans", "Moves slightly toward the Republicans",
+                                  "No change", "Moves slightly toward the Democrats",
+                                  "Moves strongly toward the Democrats"]}
+
+
+def _map_resilient(fn, items: list, workers: int = 6, retries: int = 5, pause: float = 25.0) -> list:
+    """Like ThreadPoolExecutor(workers).map(fn, items), but items that raise (the upstream host's own 429 retries
+    in core.py's _post exhausted during a burst of rate-limiting) are retried a few more rounds, pausing between
+    rounds, instead of failing the whole batch over one stubborn item. Raises only if items are still failing after
+    all rounds."""
+    from concurrent.futures import ThreadPoolExecutor
+    import time
+    results: list = [None] * len(items)
+    todo = list(range(len(items)))
+    for attempt in range(retries + 1):
+        if not todo:
+            break
+        failed = []
+        with ThreadPoolExecutor(workers) as ex:
+            futs = {ex.submit(fn, items[i]): i for i in todo}
+            for fut, i in futs.items():
+                try:
+                    results[i] = fut.result()
+                except Exception:
+                    failed.append(i)
+        if failed and attempt < retries:
+            print(f"  {len(failed)}/{len(todo)} items failed (attempt {attempt + 1}/{retries + 1}); "
+                  f"retrying after {pause:.0f}s")
+            time.sleep(pause)
+        todo = failed
+    if todo:
+        raise RuntimeError(f"{len(todo)} of {len(items)} items still failing after {retries + 1} attempts")
+    return results
+
+
+def reaction_events(models: list[str]) -> dict:
+    """Part 1 of the reaction-wording test (Matteo approved 28 Sep): REACTION_EVENT_Q asks the model to weigh how a
+    kind of person reacts to the news itself (anger, worry, enthusiasm), not only who it helps on paper. Same
+    predicted-shift setup as exposure(), compared against the direct EVENT_Q wording cached in events2__<m>.jsonl
+    and events__<m>.jsonl (field pred / pred["all"])."""
+    from scipy.stats import spearmanr
+    from .askers import LLMAsker, expected
+    from .probes import reaction_state
+    arch = json.loads((HERE / "archetypes.json").read_text())
+    w = np.array([p["weight"] for p in arch])
+    ev2 = [e for e in json.loads((HERE / "events2.json").read_text()) if e["shift_toward_D"] is not None]
+    ev19 = json.loads((HERE / "events.json").read_text())
+    out = {}
+    for m in models:
+        asker = LLMAsker(m, n_orders=2, name=m)
+        res = {}
+        for name, evs in (("events2", ev2), ("events19", ev19)):
+            items = [(e, p) for e in evs for p in arch]
+            preds = _map_resilient(lambda it: asker.ask_many(
+                reaction_state(it[1]["text_events"], f"({it[0]['date']}) {it[0]['description']}"),
+                {"q": REACTION_EVENT_Q}, f"backlash:{m}")["q"], items)
+            x = (np.array([expected(p) for p in preds]).reshape(len(evs), len(arch)) @ w) / w.sum()
+            y = np.array([e["shift_toward_D"] for e in evs], float)
+            if name == "events2":
+                direct = np.array([json.loads(l)["pred"]
+                                   for l in (RUNS / f"events2__{m}.jsonl").read_text().splitlines()])
+            else:
+                direct = np.array([json.loads(l)["pred"]["all"]
+                                   for l in (RUNS / f"events__{m}.jsonl").read_text().splitlines()])
+            res[name] = (x, y, direct)
+            big = np.abs(y) >= 1
+            dir_r = float(np.mean(np.sign(x[big]) == np.sign(y[big])))
+            dir_d = float(np.mean(np.sign(direct[big]) == np.sign(y[big])))
+            sp_r, sp_d = float(spearmanr(np.abs(x), np.abs(y))[0]), float(spearmanr(np.abs(direct), np.abs(y))[0])
+            out.setdefault(m, {})[name] = {"direction_right_reaction": dir_r, "direction_right_direct": dir_d,
+                                            "spearman_reaction": sp_r, "spearman_direct": sp_d, "n": len(evs)}
+            print(f"{m} {name}: direction right (|shift|>=1) reaction-worded {dir_r:.0%} vs direct {dir_d:.0%}; "
+                  f"size-tracking {sp_r:.2f} vs {sp_d:.2f}")
+        (x2, y2, d2), (x19, y19, d19) = res["events2"], res["events19"]
+        w19 = np.array([e["weight"] for e in ev19])
+        err = lambda c: float(np.sqrt(np.average((c - y19) ** 2, weights=w19)))
+        k, kd = (x2 @ y2) / (x2 @ x2), (d2 @ y2) / (d2 @ d2)
+        err_r, err_d, err_0 = err(k * x19), err(kd * d19), err(np.zeros_like(y19))
+        out[m]["error19"] = {"reaction": err_r, "direct": err_d, "no_change": err_0,
+                              "scale_reaction": float(k), "scale_direct": float(kd)}
+        print(f"{m}: scale fitted on events2, error on the 19: reaction-worded {err_r:.2f} vs direct {err_d:.2f} "
+              f"('no change' {err_0:.2f})")
+    return out
+
+
+SUPPORT_REACTION_Q = {"type": "score", "instructions": "How does hearing this news change this person's "
+                       "preference in their state's Senate race, if at all? Think about how someone like them "
+                       "reacts to the news itself (for example anger, worry or enthusiasm that can rally them "
+                       "behind their side or put them off a candidate), not only about who the news helps on "
+                       "paper.", "criteria": ["Moves strongly toward the Republican candidate",
+                       "Moves slightly toward the Republican candidate", "No change",
+                       "Moves slightly toward the Democratic candidate",
+                       "Moves strongly toward the Democratic candidate"]}
+TURNOUT_REACTION_Q = {"type": "score", "instructions": "How does hearing this news change this person's "
+                       "likelihood of voting in November, if at all? Think about how someone like them reacts to "
+                       "the news itself (for example whether it fires them up, alarms them or discourages them), "
+                       "not only about who the news helps on paper.",
+                       "criteria": ["Much less likely to vote", "Somewhat less likely to vote", "No change",
+                                    "Somewhat more likely to vote", "Much more likely to vote"]}
+
+BACKLASH_STORIES = [
+    ("OH0002", "money", False), ("OH0183", "money", False), ("TE0022", "money", False),
+    ("NA0052", "legal", False), ("TE0021", "legal", False), ("TE0092", "legal", False),
+    ("NO0000", "surrogate", False), ("NA0150", "surrogate", False),
+    ("TE0058", "former_ally", False), ("TE0067", "former_ally", False),
+    ("TE0200", "endorsement", False), ("NO0108", "endorsement", False), ("OH0160", "endorsement", False),
+    ("TE0158", "endorsement", False), ("OH0014", "endorsement", False),
+    ("OH0001", "control", True), ("NO0167", "control", True), ("TE0110", "control", True),
+]
+
+
+def backlash_stories() -> list[dict]:
+    """The 15 Part 2 stories where a news story's effect on voters could differ from who it helps on paper (big
+    money, prosecutions, polarising surrogates, attack ads from former allies, controversial endorsements), plus 3
+    controls where backlash is implausible. Picked by hand from news.latest() on 28 Sep 2026."""
+    import re
+    from .news import NEWS
+    dated = sorted(p for p in NEWS.iterdir() if p.is_dir() and re.fullmatch(r"\d{4}-\d{2}-\d{2}", p.name))
+    by_id = {s["story_id"]: s for s in map(json.loads, (dated[-1] / "stories.jsonl").read_text(encoding="utf-8")
+                                           .splitlines())}
+    out = [{"id": sid, "race": by_id[sid]["race"], "title": by_id[sid]["title"], "category": cat, "control": ctrl}
+           for sid, cat, ctrl in BACKLASH_STORIES]
+    (RUNS / "backlash_stories.json").write_text(json.dumps(out, indent=1))
+    return out
+
+
+def _story_state(persona: str, story: dict) -> str:
+    """Persona text with "State: <OH/NC/TX>" swapped for the story's state, so "their state's Senate race" points
+    at the right race; national stories keep the persona's own state."""
+    from .news import RACES
+    from .probes import reaction_state
+    if story["race"] in ("Ohio", "North Carolina", "Texas"):
+        _, _, rest = persona.partition("\n")
+        persona = f"State: {story['race']}\n{rest}"
+    return reaction_state(persona, f"{story['title']}\n{RACES[story['race']][1]}")
+
+
+def _leak_check(asker, stories: list[dict], arch: list[dict]) -> bool:
+    """Ask the direct and reaction support wording bundled in one prompt vs each in its own prompt, on a small
+    sample of stories and archetypes. True (leakage) if bundling makes the two answers suspiciously close, so the
+    full run should ask each wording in its own prompt instead."""
+    from .askers import expected
+    from .probes import REACTION_QUESTIONS
+    picks_a = [a for party in "DIR" for a in [x for x in arch if x["party"] == party][:2]]
+    picks_s = [s for s in stories if not s["control"]][:2] + [s for s in stories if s["control"]][:1]
+    states = [_story_state(a["text"], s) for s in picks_s for a in picks_a]
+    qs = {"d": REACTION_QUESTIONS["support"], "r": SUPPORT_REACTION_Q}
+    bundled = _map_resilient(lambda st: asker.ask_many(st, qs, f"backlash:{asker.name}", groups=[["d", "r"]]),
+                             states, workers=6)
+    separate = _map_resilient(lambda st: asker.ask_many(st, qs, f"backlash:{asker.name}", groups=[["d"], ["r"]]),
+                              states, workers=6)
+    bd, br = np.array([expected(p["d"]) for p in bundled]), np.array([expected(p["r"]) for p in bundled])
+    sd, sr = np.array([expected(p["d"]) for p in separate]), np.array([expected(p["r"]) for p in separate])
+    gap_b, gap_s = float(np.mean(np.abs(br - bd))), float(np.mean(np.abs(sr - sd)))
+    corr_b = float(np.corrcoef(bd, br)[0, 1]) if bd.std() > 0 and br.std() > 0 else 0.0
+    corr_s = float(np.corrcoef(sd, sr)[0, 1]) if sd.std() > 0 and sr.std() > 0 else 0.0
+    print(f"backlash leak check ({len(states)} items): bundled |reaction-direct| {gap_b:.2f} (corr {corr_b:.2f}) "
+          f"vs separate {gap_s:.2f} (corr {corr_s:.2f})")
+    return gap_b < 0.6 * gap_s or (corr_b - corr_s) > 0.2
+
+
+def backlash_test(model: str = "glm") -> list[dict]:
+    """Part 2 of the reaction-wording test: 28 archetypes on backlash_stories(), direct vs reaction wording on
+    support and turnout (never bundling turnout with support), tagged backlash:<model>. Writes
+    runs/backlash__<model>.jsonl (one row per story and archetype) and prints each story's party-weighted means."""
+    from .askers import LLMAsker, expected
+    from .probes import REACTION_QUESTIONS
+    arch = json.loads((HERE / "archetypes.json").read_text())
+    stories = backlash_stories()
+    asker = LLMAsker(model, n_orders=2, name=model)
+    questions = {"support_direct": REACTION_QUESTIONS["support"], "support_reaction": SUPPORT_REACTION_Q,
+                 "turnout_direct": REACTION_QUESTIONS["turnout"], "turnout_reaction": TURNOUT_REACTION_Q}
+    leaking = _leak_check(asker, stories, arch)
+    groups = ([["support_direct"], ["support_reaction"], ["turnout_direct"], ["turnout_reaction"]] if leaking else
+              [["support_direct", "support_reaction"], ["turnout_direct", "turnout_reaction"]])
+    print(f"backlash_test: {'separate' if leaking else 'bundled'} prompts for direct vs reaction wording")
+    items = [(s, a) for s in stories for a in arch]
+    preds = _map_resilient(lambda it: asker.ask_many(_story_state(it[1]["text"], it[0]), questions,
+                                                     f"backlash:{model}", groups=groups), items)
+    rows = [{"story_id": s["id"], "race": s["race"], "category": s["category"], "control": s["control"],
+             "archetype": a["id"], "party": a["party"], "weight": a["weight"],
+             "support_direct": expected(p["support_direct"]), "support_reaction": expected(p["support_reaction"]),
+             "turnout_direct": expected(p["turnout_direct"]), "turnout_reaction": expected(p["turnout_reaction"])}
+            for (s, a), p in zip(items, preds)]
+    (RUNS / f"backlash__{model}.jsonl").write_text("\n".join(json.dumps(r) for r in rows))
+    keys = ("support_direct", "support_reaction", "turnout_direct", "turnout_reaction")
+    agg: dict = {}
+    for r in rows:
+        a = agg.setdefault((r["story_id"], r["party"]), {k: [0.0, 0.0] for k in keys})
+        for k in keys:
+            a[k][0] += r[k] * r["weight"]
+            a[k][1] += r["weight"]
+    print(f"{len(rows)} rows -> runs/backlash__{model}.jsonl")
+    for s in stories:
+        print(f"{s['id']:8} {s['category']:12} {s['title'][:70]}")
+        for party in "DIR":
+            v = agg[(s["id"], party)]
+            print("    " + party + ": " + " ".join(f"{k}={v[k][0] / v[k][1]:+.2f}" for k in keys))
+    return rows
+
+
 if __name__ == "__main__":
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "transfer":
         transfer(sys.argv[2].split(",") if len(sys.argv) > 2 else ["jev", "glm"])
     elif len(sys.argv) > 1 and sys.argv[1] == "exposure":
         exposure(sys.argv[2].split(",") if len(sys.argv) > 2 else ["jev", "glm"])
+    elif len(sys.argv) > 1 and sys.argv[1] == "backlash":
+        reaction_events(["glm"])
+        backlash_test("glm")
     else:
         build()

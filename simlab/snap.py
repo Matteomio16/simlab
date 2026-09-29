@@ -11,10 +11,9 @@ HTTP status, raw size and SHA-256 of the raw content, or the error. Sources, all
   (CC BY-SA).
 - markets, benchmark only (never assimilated): PredictIt (all markets), Kalshi and Polymarket (Senate and House
   control, every Senate race).
-- news: GDELT headlines for each pilot race and the national midterms (news.RACES queries), the last 24 hours each run
-  so a later run fills a failed query's gap. GDELT allows one request per 5 s and often rate-limits shared IPs, so each
-  query retries with longer waits and the query order rotates each run. Google News is not used: its
-  feed's terms allow only personal news readers (Matteo, 28 Sep). Media Cloud joins once its key exists.
+- news: Media Cloud, for every race in newsraces.json, once its key exists. GDELT and the state outlets' RSS feeds
+  moved to their own 15-minute job (simlab/newsnap.py, 29 Sep), because GDELT refuses an address for minutes after
+  one success. Google News is not used: its feed's terms allow only personal news readers (Matteo, 28 Sep).
 - pageviews: daily Wikipedia views of the pilot candidates' articles, last 10 days.
 Sources that need keys (FEC, FRED, EIA) and early-vote aggregates join once their keys and files exist. Nothing raw
 is printed: the job runs in a public repo whose logs are public.
@@ -58,7 +57,9 @@ WIKI_PAGES = ["2026 United States Senate elections", "2026 United States House o
               *(f"2026 United States Senate election in {s}" for s in REGULAR.values()),
               *(f"2026 United States Senate special election in {s}" for s in SPECIAL.values()),
               *(f"2026 United States House of Representatives elections in {s}" for s in MULTI_DISTRICT),
-              *(f"2026 United States House of Representatives election in {s}" for s in AT_LARGE)]
+              *(f"2026 United States House of Representatives election in {s}" for s in AT_LARGE),
+              *(f"2026 United States House of Representatives elections in California (districts {r})"
+                for r in ("1\u201326", "27\u201352"))]
 KALSHI = "https://api.elections.kalshi.com/trade-api/v2/events"
 KALSHI_SERIES = ["CONTROLS", "CONTROLH", *(f"SENATE{c}" for c in REGULAR), *(f"SENATE{c}S" for c in SPECIAL)]
 GAMMA = "https://gamma-api.polymarket.com/events"
@@ -66,13 +67,10 @@ POLYMARKET_SLUGS = ["which-party-will-win-the-senate-in-2026", "which-party-will
                     "balance-of-power-2026-midterms", "alabama-senate-election-winner-154",
                     *(f"{s.lower().replace(' ', '-')}-senate-election-winner"
                       for s in sorted({*REGULAR.values(), *SPECIAL.values()} - {"Alabama"}))]
-NEWS = {"ohio": '("Sherrod Brown" OR "Jon Husted")', "north-carolina": '("Roy Cooper" OR "Michael Whatley")',
-        "texas": '("James Talarico" OR "Ken Paxton")',
-        "national": '("midterm elections" OR "midterms" OR "Senate majority" OR "generic ballot")'}
-GDELT = "https://api.gdeltproject.org/api/v2/doc/doc"
-GDELT_BUDGET_S = 480
+GDELT = "https://api.gdeltproject.org/api/v2/doc/doc"  # asked by simlab/newsnap.py
 PAGEVIEWS = "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user"
-CANDIDATES = ["Sherrod_Brown", "Jon_Husted", "Roy_Cooper", "Michael_Whatley", "James_Talarico", "Ken_Paxton"]
+CANDIDATES = ["Sherrod_Brown", "Jon_Husted", "Roy_Cooper", "Michael_Whatley", "James_Talarico", "Ken_Paxton",
+              "Josh_Turek", "Ashley_Hinson", "Troy_Jackson", "Susan_Collins"]
 
 
 def get(url: str, params: dict | None = None, tries: int = 3, wait: float = 5.0,
@@ -133,30 +131,39 @@ def _key(name: str) -> str:
     return ""
 
 
+NEWS_RACES = Path(__file__).with_name("newsraces.json")  # every race's queries (simlab/newsraces.py builds it)
+LEGACY = {"OH-S": "ohio", "NC": "north-carolina", "TX": "texas", "US": "national"}  # file names from the pilot
+MEDIACLOUD_BUDGET_S = 300
+
+
 def mediacloud(run: "Run", key: str) -> None:
-    """The last day's stories per race query in Media Cloud's US national collection. The key rides in a header, so it
-    never reaches the URL, the manifest or the logs."""
-    end = run.when.date()
-    for race, query in NEWS.items():
-        params = {"q": query, "start": f"{end - timedelta(days=1)}", "end": f"{end}",
+    """The last day's stories for every race in newsraces.json and the nation, from Media Cloud's US national
+    collection. Bounded: a 429 or 5xx is retried once after 30 s, a second 429 skips the remaining races, and so does
+    the end of the 5-minute budget; each skipped race is recorded. The key rides in a header, so it never reaches the
+    URL, the manifest or the logs."""
+    end, stop, limited = run.when.date(), time.monotonic() + MEDIACLOUD_BUDGET_S, False
+    for rid, race in json.loads(NEWS_RACES.read_text(encoding="utf-8")).items():
+        name = f"mediacloud-{LEGACY.get(rid, rid.lower())}"
+        if limited or time.monotonic() >= stop:
+            run.error("news", name, MEDIACLOUD, "skipped: Media Cloud rate-limited" if limited else
+                      f"skipped: Media Cloud's {MEDIACLOUD_BUDGET_S // 60}-minute budget is used up")
+            continue
+        params = {"q": race["mediacloud"], "start": f"{end - timedelta(days=1)}", "end": f"{end}",
                   "platform": "onlinenews-mediacloud", "cs": MC_US_NATIONAL, "page_size": 1000}
 
         def fetch(params=params):
-            for i in range(3):
+            nonlocal limited
+            for i in range(2):
                 r = requests.get(MEDIACLOUD, params=params, headers={**UA, "Authorization": f"Token {key}"},
-                                 timeout=90)
+                                 timeout=max(5.0, min(90.0, stop - time.monotonic())))
                 if r.status_code < 500 and r.status_code != 429:
                     break
-                time.sleep(10 * (i + 1))
+                if i == 0:
+                    time.sleep(30)
+            limited = r.status_code == 429
             return r.status_code, r.content
-        run.save("news", f"mediacloud-{race}", MEDIACLOUD, fetch)
-
-
-def gdelt_order(when: datetime) -> list[str]:
-    """The GDELT queries, starting one later each 3-hour slot: GDELT tends to answer a run's first query and
-    rate-limit the rest, so no race should always come last."""
-    names, k = list(NEWS), int(when.timestamp() // (3 * 3600))
-    return names[k % len(names):] + names[:k % len(names)]
+        run.save("news", name, MEDIACLOUD, fetch)
+        time.sleep(1)
 
 
 def slug(title: str) -> str:
@@ -233,15 +240,6 @@ def snapshot(out: Path) -> dict:
     end = run.when.date()
     run.save("pageviews", "candidates", PAGEVIEWS, combined(
         {a: (f"{PAGEVIEWS}/{a}/daily/{end - timedelta(days=10):%Y%m%d}/{end:%Y%m%d}", {}) for a in CANDIDATES}))
-    stop = time.monotonic() + GDELT_BUDGET_S   # last, and bounded: a rate-limited GDELT must not cost the whole run
-    for race in gdelt_order(run.when):
-        if time.monotonic() + 6 >= stop:
-            run.error("news", f"gdelt-{race}", GDELT, f"skipped: GDELT's {GDELT_BUDGET_S // 60}-minute budget is used up")
-            continue
-        time.sleep(6)
-        run.save("news", f"gdelt-{race}", GDELT, one(GDELT, {
-            "query": f"{NEWS[race]} sourcecountry:US sourcelang:english", "mode": "ArtList", "format": "json",
-            "maxrecords": 250, "sort": "DateDesc", "timespan": "24h"}, tries=5, wait=20.0, deadline=stop))
     m = run.close()
     print(f"{sum('file' in f for f in m['files'])} of {len(m['files'])} files saved to {run.dir}")
     return m

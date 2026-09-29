@@ -87,6 +87,30 @@ class ReadDay(unittest.TestCase):
         self.assertEqual(day28, ["Crypto PAC to spend $30M against Sherrod Brown"])
         self.assertEqual(day29, ["Husted releases new ad on crime"])
 
+    def test_the_news_jobs_runs_next_to_the_snapshots_are_read_too(self):
+        # 29 Sep: GDELT moved to its own 15-minute job, writing simlab-data/news/ beside simlab-data/snapshots/
+        with tempfile.TemporaryDirectory() as tmp:
+            snaps, news = Path(tmp) / "snapshots", Path(tmp) / "news"
+            snapshot(snaps, "2026-09-28", "0036", {"gdelt-texas": TEXAS})
+            snapshot(news, "2026-09-28", "0115", {"gdelt-ohio": OHIO})
+            arts = newsday.read_day(snaps, date(2026, 9, 28))
+        self.assertEqual(sorted({a["race_id"] for a in arts}), ["OH-S", "TX"])
+
+    def test_rss_items_count_for_a_race_only_when_they_name_its_candidates(self):
+        feed = """<?xml version="1.0"?><rss version="2.0"><channel><title>Signal Ohio</title>
+          <item><title>Brown and Husted trade barbs over tariffs at Columbus forum</title>
+            <link>https://signalohio.org/brown-husted-forum/</link>
+            <pubDate>Mon, 28 Sep 2026 14:05:00 +0000</pubDate><description>Sherrod Brown said...</description></item>
+          <item><title>Paxton sues over new voting rules</title><link>https://signalohio.org/paxton/</link>
+            <pubDate>Mon, 28 Sep 2026 15:00:00 +0000</pubDate><description>Ken Paxton filed...</description></item>
+          <item><title>City council passes the budget</title><link>https://signalohio.org/budget/</link>
+            <pubDate>Mon, 28 Sep 2026 16:00:00 +0000</pubDate><description>Nothing about the race.</description></item>
+        </channel></rss>"""
+        arts = newsday.parse_rss(feed.encode(), "signal-ohio")
+        self.assertEqual([(a["race_id"], a["domain"], a["outlet"], a["seen"], a["source"]) for a in arts],
+                         [("OH-S", "signalohio.org", "Signal Ohio", "2026-09-28T14:05:00+00:00", "rss")])
+        self.assertEqual(newsday.parse_rss(b"<rss><channel", "signal-ohio"), [])
+
     def test_headlines_under_four_words_are_dropped(self):
         stub = OHIO.replace("Brown and Husted clash over tariffs", "GOP-ABC News")
         with tempfile.TemporaryDirectory() as tmp:
@@ -169,7 +193,7 @@ class Labels(unittest.TestCase):
 
     def test_national_story_gets_a_gate_per_race(self):
         lab = newsday.label(self.story("US"), FakeAsker())
-        self.assertEqual(sorted(lab["gate"]), ["NC", "OH-S", "TX", "US"])
+        self.assertEqual(sorted(lab["gate"]), ["IA", "ME", "NC", "OH-S", "TX", "US"])
 
 
 def cov(n, d=1):
@@ -231,6 +255,12 @@ class Cards(unittest.TestCase):
     def test_no_valid_card_gives_empty(self):
         self.assertEqual(newsday.write_card(self.story, [FakeChat(["not json", "{}"])]), "")
 
+    def test_a_card_never_mentions_the_headlines_or_the_reporting(self):
+        # 29 Sep: 4 of 24 cards said "according to the headline(s)" or "according to the reporting"
+        self.assertFalse(newsday.card_ok("Trump's approval fell to a record low, according to the headline.", []))
+        self.assertFalse(newsday.card_ok("The push has spared farms so far, according to the reporting.", []))
+        self.assertTrue(newsday.card_ok("The governor's office said the steel plant will open in May.", []))
+
     def test_cards_that_claim_an_electoral_effect_are_rejected(self):
         bad = ["Republicans are facing negative effects in the 2026 midterm elections due to a conflict between "
                "President Trump and Iran.",
@@ -249,16 +279,27 @@ class Cards(unittest.TestCase):
 
 
 class Scopes(unittest.TestCase):
-    def test_national_copy_of_a_race_story_does_not_count_twice_for_that_race(self):
+    def test_a_national_copy_that_names_the_races_candidates_is_that_races_story_only(self):
+        # 29 Sep: the national feed carried "Paxton, Talarico spar over gas tax" and Jev gated it 0.59 for Ohio
         race = {"event_id": "OH-S-1", "scope": "race", "races": ["OH-S"], "gate": {"OH-S": 0.9}}
         nat = {"event_id": "US-1", "scope": "national", "races": ["OH-S", "NC", "TX", "US"],
                "gate": {"OH-S": 0.9, "NC": 0.8, "TX": 0.2, "US": 0.9}}
         stories = {"OH-S-1": {"race_id": "OH-S", "titles": ["Trump to travel to Ohio to stump for Sen. Jon Husted"]},
                    "US-1": {"race_id": "US", "titles": ["Trump to travel to Ohio to stump for Jon Husted"]}}
         newsday.dedupe_scopes([race, nat], stories)
-        self.assertEqual(nat["gate"], {"OH-S": 0.0, "NC": 0.8, "TX": 0.2, "US": 0.9})
+        self.assertEqual(nat["gate"], {"OH-S": 0.0, "NC": 0.0, "TX": 0.0, "US": 0.0})
         self.assertEqual(nat["covered_by"], {"OH-S": "OH-S-1"})
         self.assertEqual(race["gate"], {"OH-S": 0.9})
+
+    def test_a_national_story_a_race_also_carried_still_counts_for_the_others(self):
+        race = {"event_id": "OH-S-1", "scope": "race", "races": ["OH-S"], "gate": {"OH-S": 0.9}}
+        nat = {"event_id": "US-1", "scope": "national", "races": ["OH-S", "NC", "TX", "US"],
+               "gate": {"OH-S": 0.9, "NC": 0.8, "TX": 0.7, "US": 0.9}}
+        stories = {"OH-S-1": {"race_id": "OH-S",
+                              "titles": ["Trump administration loosens and lowers federal fuel economy standards"]},
+                   "US-1": {"race_id": "US", "titles": ["Trump administration lowers federal fuel economy standards"]}}
+        newsday.dedupe_scopes([race, nat], stories)
+        self.assertEqual(nat["gate"], {"OH-S": 0.0, "NC": 0.8, "TX": 0.7, "US": 0.9})
 
     def test_same_event_in_other_words_counts_once(self):
         def ev(eid, a):
@@ -329,6 +370,21 @@ class Run(unittest.TestCase):
             self.assertNotIn("titles", e)
         self.assertEqual({p["event_id"] for p in private}, {e["event_id"] for e in events})
         self.assertTrue(all(e["card"] for e in events if e["selected"]))
+
+    def test_a_story_whose_headline_is_about_a_poll_is_a_poll_story(self):
+        # 29 Sep: Jev typed "Trump's approval rating falls to record low" as national news, and 2 of the 9 spot-check
+        # headlines that name a poll as something else; poll stories must never get reactions
+        raw = gdelt(("Trump approval rating falls to a record low in new survey", "20260928T080000Z", "a.com"),
+                    ("Brown and Husted clash over tariffs", "20260928T080000Z", "cleveland.com"))
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": raw})
+            newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [FakeChat(['{"card": "%s"}' % GOOD] * 5)])
+            events = newsday._jsonl(derived / "2026-09-28" / "events.jsonl")
+            private = {p["event_id"]: p for p in newsday._jsonl(derived / "2026-09-28" / "news_private.jsonl")}
+        types = {private[e["event_id"]]["titles"][0][:16]: (e["type"], e["selected"]) for e in events}
+        self.assertEqual(types["Trump approval r"], ("poll", {}))
+        self.assertNotEqual(types["Brown and Husted"][0], "poll")
 
     def test_a_failing_label_call_skips_that_story_and_is_retried_next_day(self):
         class Flaky(FakeAsker):
@@ -409,6 +465,49 @@ class Run(unittest.TestCase):
         self.assertEqual({e["event_id"] for e in day2}, day1)
         self.assertEqual(asker2.states, [])
         self.assertTrue(all(e["first_seen"].startswith("2026-09-28") for e in day2))
+
+
+class Scale(unittest.TestCase):
+    def ev(self, eid, scope, a, races):
+        return {"event_id": eid, "scope": scope, "gate": {r: 0.9 for r in races}, "type": "other", "salience": 1.0,
+                "attention": {"a": a}, "first_seen": "2026-10-12T07:00:00+00:00"}
+
+    def test_tiers_come_from_yesterdays_races_json_and_the_pilot_always_simulates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp) / "2026-10-11"
+            d.mkdir()
+            (d / "races.json").write_text(json.dumps({"date": "2026-10-11", "GA": {"tier": "watch"},
+                                                      "OH-S": {"tier": "statistics"}}), encoding="utf-8")
+            tiers = newsday.load_tiers(Path(tmp), date(2026, 10, 12))
+        self.assertEqual((tiers["GA"], tiers["OH-S"], tiers["TX"]), ("watch", "simulate", "simulate"))
+
+    def test_active_races(self):
+        tiers = {"GA": "watch", "AL": "statistics", "OH-S": "simulate", "NC": "simulate", "TX": "simulate"}
+        self.assertEqual(newsday.active("pilot", tiers), ["OH-S", "NC", "TX", "IA", "ME"])
+        self.assertEqual(newsday.active("all", tiers), ["GA", "NC", "OH-S", "TX"])
+
+    def test_every_pilot_race_reads_its_candidates_pageviews(self):
+        self.assertEqual(sorted(newsday.CANDIDATE_PAGES), sorted(newsday.PILOT))
+
+    def test_a_watch_race_takes_only_its_two_biggest_race_stories(self):
+        evs = [self.ev("GA-1", "race", 0.7, ["GA"]), self.ev("GA-2", "race", 0.6, ["GA"]),
+               self.ev("GA-3", "race", 0.3, ["GA"]), self.ev("GA-4", "race", 0.55, ["GA"]),
+               self.ev("US-1", "national", 0.9, ["GA", "US"])]
+        newsday.select(evs, ["GA"], {"GA": "watch"})
+        self.assertEqual([e["event_id"] for e in evs if e["selected"].get("GA")], ["GA-1", "GA-2"])
+        self.assertEqual(evs[4]["selected"], {"US": True})
+
+    def test_a_watch_race_merge_checks_only_what_it_could_select(self):
+        evs = [self.ev("GA-1", "race", 0.7, ["GA"]), self.ev("GA-3", "race", 0.3, ["GA"])]
+        stories = {e["event_id"]: {"titles": [f"Story {e['event_id']}"], "outlet_names": []} for e in evs}
+        chat = FakeChat(['{"same": true}'] * 5)
+        newsday.merge_same_events(evs, stories, [chat], ["GA"], {"GA": "watch"})
+        self.assertEqual(chat.calls, 0)
+
+    def test_national_stories_are_gated_for_the_simulated_races(self):
+        story = {"race_id": "US", "titles": ["Senate passes a spending bill"], "outlet_names": []}
+        labels = newsday.label(story, FakeAsker(), ["OH-S", "IA"])
+        self.assertEqual(sorted(labels["gate"]), ["IA", "OH-S", "US"])
 
 
 if __name__ == "__main__":

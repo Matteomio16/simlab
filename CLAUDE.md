@@ -187,8 +187,9 @@ Decided by Matteo, 28 Sep (engine; details in `docs/engine-design.md`, `docs/roa
   persuadable share for vote choice and the mobilisable share for turnout, both estimated from CES pre- and
   post-election waves.
 - **Models:** GLM gives the reactions on its own. Kev react-v1 failed the held-out test on 28 Sep (size-tracking 0.00,
-  errors correlated 0.75 with GLM's, averaging worse than GLM alone), so there is no Kev shadow mode, no react-v2 and no
-  Kev serving (B4) unless Matteo reopens it (Matteo, 29 Sep).
+  errors correlated 0.75 with GLM's, averaging worse than GLM alone); react-v2 failed too on 29 Sep (direction 11/13,
+  averaging worse). Matteo reopened it on 29 Sep: Kev react-v2-2 runs in shadow mode (answers every day, never applied,
+  scored weekly against GLM), served on Modal (B4); Kev weights are kept. No further reaction training runs.
 - **News:**
   - Jev labels the news, with outlet names removed.
   - Attention comes from coverage data; the model's guess only breaks ties.
@@ -197,7 +198,7 @@ Decided by Matteo, 28 Sep (engine; details in `docs/engine-design.md`, `docs/roa
 - **Daily job:** it runs on GitHub Actions at 09:47 UTC and writes its outputs to the private data repo. Its schedule is
   switched on at the pilot (repository variable `PIPELINE_ON`); manual runs work any time.
 
-Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork.md` §8, D14–D20, and `docs/CHANGELOG.md`):
+Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork.md` §8, D14–D21, and `docs/CHANGELOG.md`):
 - **News sizes are ranges, not single values.** Each simulated election draws its own switching and turnout sizes:
   they average the fitted 0.21, turnout equals switching as a starting point, and they can go well up or down. No
   single data point drives the result (the Hungary lesson).
@@ -223,6 +224,9 @@ Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork
   - A race runs on statistics alone only when the stats-only forecast, Cook and the market all call it safe: an
     unsimulated flip would count against the simulation.
 - **Montana:** no three-way model while it isn't competitive; it is on the watch list.
+- **Voter groups (Matteo, 29 Sep):** each group's starting split comes from Kev ces-v3b in every race, House and
+  Senate, with the survey numbers where Kev has no answer; each race's level stays statistical. The survey numbers are
+  kept for the check after 3 Nov.
 
 ## 6. Reference material (read, don't duplicate)
 

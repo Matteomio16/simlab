@@ -2,6 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from simlab import daily
 
@@ -38,8 +39,33 @@ class Steps(unittest.TestCase):
         self.assertEqual(harness_args[-4:], ["--wording", "reaction", "--kev", "https://kev"])
         self.assertNotIn("simlab.publish.kit", [c[0] for c in runner.calls])
 
+    def test_every_step_that_takes_it_gets_the_days_run_id(self):
+        o = {"wording": "direct", "kev": "", "scope": "pilot", "run_id": "2026-10-05-abc1234"}
+        for name, _, args, _ in daily.STEPS:
+            a = args("2026-10-05", Path("/data"), o)
+            if name == "post kit":
+                self.assertNotIn("--run-id", a)
+            else:
+                self.assertEqual(a[a.index("--run-id") + 1], "2026-10-05-abc1234")
+
+    def test_the_news_step_runs_the_pilot_until_the_full_run(self):
+        self.assertEqual(daily.scope_for("2026-10-11", None), "pilot")
+        self.assertEqual(daily.scope_for("2026-10-12", None), "all")
+        self.assertEqual(daily.scope_for("2026-10-05", "all"), "all")
+        args = daily.STEPS[0][2]("2026-10-12", Path("/data"), {"wording": "direct", "kev": "", "scope": "all"})
+        self.assertEqual(args[-2:], ["--scope", "all"])
+
 
 class Record(unittest.TestCase):
+    def test_many_tiny_calls_add_up(self):
+        # 29 Sep: 112 GLM rows (about $0.00001 a call) showed as harness 0.0, because each addition was rounded
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "spend.jsonl"
+            ledger.write_text("\n".join(json.dumps({"ts": 100 + i, "model": "glm", "usd": 1.4e-05, "tag": "harness:glm"})
+                                        for i in range(500)) + "\n", encoding="utf-8")
+            with mock.patch.object(daily, "RUNS", Path(tmp)):
+                self.assertEqual(daily._spend(0, 10_000), {"harness": 0.007})
+
     def test_run_record_names_inputs_models_and_steps(self):
         with tempfile.TemporaryDirectory() as tmp:
             data = Path(tmp)

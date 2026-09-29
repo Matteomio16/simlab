@@ -12,9 +12,10 @@ plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing)
   the bios (Instagram 150, X 160, Bluesky 256 characters, counted by the script). The avatar alone carries no label:
   at profile size it can't.
 - **Type** (SIL Open Font License, unmodified files in `simlab/publish/fonts/`, from Google Fonts' repository):
-  Newsreader for headlines and the wordmark, Libre Franklin for text and numbers, IBM Plex Mono for kickers, sources and
-  the label strip. The static weights matplotlib needs are cut from the variable fonts on first use
-  (`fonts/_static/`, not committed).
+  Lab Notebook (every daily post, the wordmark included) uses IBM Plex Sans for headlines, text and numbers (wordmark
+  weight 700) and IBM Plex Mono for kickers, sources and the label strip. Newsreader, Libre Franklin, Archivo and
+  Bricolage belong to the special editions and the retired directions only. The static weights matplotlib needs are cut
+  from the variable fonts on first use (`fonts/_static/`, not committed).
 - **Colours and type per theme:** `simlab/publish/themes.py` and `docs/creative-directions.md`. Lab Notebook: graph
   paper `#F7F7F2` with lilac rules, navy ink `#1C2A4A`, Dem `#2F6DB5`, Rep `#D1432F`, and election purple `#6D2E8C`
   for the simulation's own number and for toss-ups (zone fill `#EEE6F7`, lilac highlighter `#E6DAF3`, verdict stamps
@@ -53,7 +54,9 @@ real people.
 | `text.py` | Rule check for captions and posts: the label, and no "poll", "survey", "voters say" or "% of voters" for model outputs |
 | `specials.py` | The five special editions: `python -m simlab.publish.specials` → `kits/specials/` |
 | `labnotes.py` | The making-of series: `python -m simlab.publish.labnotes 1 2 3` → `kits/labnotes/NN/` (slides, contact sheet, `post.md`) |
-| to build | `kit.py` (the daily kit from the forecast file), `reel.py` (the 9:16 video) |
+| `kit.py` | The daily kit from the forecast file (below) |
+| `reel.py` | "Every future", the 9:16 video: `python -m simlab.publish.reel NC TX` → `kits/reels/`; the kit adds it with `--reel` |
+| `brand.py` | Profile images, the pinned post and bios |
 
 Tests: `python -m unittest tests.test_publish`.
 
@@ -73,6 +76,23 @@ numbers only: no photos or drawings of candidates. Race numbers still sit beside
 Layouts are examples until Matteo picks; they need `races.json` candidates, the forecast history, Senate holdover
 seats and the Senate-control market price from the engine before they can run daily.
 
+## Every future (the 9:16 video)
+
+1080×1920, 30 fps, H.264 with `+faststart`, no sound (music added in the Instagram app when posting by hand), 16 s,
+about 0.8 MB, about a minute to render. The race's 100 simulated elections land one by one as dots, slowly at first and
+then faster, while the counter reads "N of M simulated elections won by the Democrat"; the closing card adds the
+verdict label, the "if the election were today" number, and the poll average, market and Cook. Content stays inside
+the Reels safe area (220 px top, 340 px bottom), the label strip included. The closing frame goes through the same
+layout guard as the slides, and the last frame is saved as the cover. The kit renders it for the first featured race
+with `--reel` (`reel.mp4`, `reel-cover.jpg`, alt text in `alt_text.json`); a failed video becomes a problem in
+`note.md` and blocks approval, not the kit.
+
+## Lab notes file format (read by the website session)
+
+`kits/labnotes/NN/post.md` keeps this shape; tell the website session before changing it: first line
+`# Lab notes NN: <title>`; a `Planned date: <Day DD Mon YYYY>` line; `## Slides and alt text` with items
+``N. `slide-N.jpg`: <alt text>``; `## Instagram caption` with the caption body.
+
 ## For the website session (C6 moved there, 29 Sep)
 
 The site should read as the same brand as the posts. Shared pieces, all in `simlab/publish/`:
@@ -80,7 +100,8 @@ The site should read as the same brand as the posts. Shared pieces, all in `siml
   `#7E879A`, Dem `#2F6DB5`, Rep `#D1432F`, independent grey `#7E879A`, purple `#6D2E8C` (our number and toss-ups),
   toss-up fill `#EEE6F7`, highlighter `#E6DAF3`, indigo strip `#2A2152`. Dark mode: the special-edition night colours in
   `themes.MAP` (Dem `#4F8FF7`, Rep `#F0554A`, purple `#9E4FC4` on `#0F1424`), which pass the same colour-blind checks.
-- **Type:** IBM Plex Sans (text, headings, numbers) and IBM Plex Mono (labels, kickers); both on Google Fonts.
+- **Type:** IBM Plex Sans (text, headings, numbers, and the wordmark at weight 700) and IBM Plex Mono (labels,
+  kickers); both on Google Fonts. Not Newsreader: that face is the special editions' only.
 - **Logomark:** a square outline holding a 3x3 grid of dots, the centre dot purple (`frame.Slide.logomark`); wordmark
   "NotAPoll" with ".org" in purple.
 - **Signature details:** the blue, purple, red swing band; the label "Social simulation, not a poll" on every view that
@@ -95,7 +116,7 @@ Command for the daily job (roadmap A8): `python -m simlab.publish.kit --date YYY
 writes `derived/<date>/post-kit/`, exits 1 if the kit can't be built, and prints a one-line JSON summary last
 (`ok`, `races`, `slides`, `problems`, `approvable`, `out`). Before 12 Oct every slide's kicker says "PILOT · INTERNAL,
 NOT FOR POSTING". Layouts: The Stamp, Where everyone stands, 100 futures (Matteo, 28 Sep). A slide
-takes about 1 s to render. Featured races: OH, NC and TX before 12 Oct; from 12 Oct the three closest races plus the
+takes about 1 s to render. Featured races: the pilot five (OH, NC, TX, IA, ME) before 12 Oct; from 12 Oct the three closest races plus the
 biggest 7-day mover (`--races NC,GA` overrides). `note.md` still lists every race. The summary adds `featured`.
 Tests: `python -m unittest tests.test_kit`.
 

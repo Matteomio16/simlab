@@ -99,5 +99,35 @@ class BaseTest(unittest.TestCase):
         self.assertEqual((out["US"][A]["pi"], out["US"][A]["d"]), (0.5, 0.04))
 
 
+class KevTest(unittest.TestCase):
+    B = groups.GROUPS[1]
+    BASE = {A: {"n": 0.6, "t": 0.5, "d0": 0.4}, B: {"n": 0.4, "t": 0.25, "d0": -0.6}}
+    PIMU = {A: {"pi": 0.1, "mu": 0.2}, B: {"pi": 0.3, "mu": 0.4}}
+
+    def test_race_groups_take_kevs_margins_where_given_and_d0_elsewhere(self):
+        out = groups.race_groups(self.BASE, self.PIMU, -5.0, {A: 0.9})
+        d = groups.shift(np.array([0.9, -0.6]), np.array([0.3, 0.1]), -0.05)
+        self.assertEqual((out[A]["d"], out[self.B]["d"]), (round(float(d[0]), 4), round(float(d[1]), 4)))
+
+    def test_groups_json_uses_kev_for_races_and_the_nation_and_names_the_source(self):
+        levels = {"national": {"N": 1.0}, "races": {"OH-S": {"margin": 2.0}, "NC": {"margin": -3.0}}}
+        base = {"states": {"OH": self.BASE, "NC": self.BASE}, "US": self.BASE}
+        pimu = {"states": {"OH": self.PIMU, "NC": self.PIMU}, "national": self.PIMU}
+        kev = {"run": "ces-v3b", "states": {"OH": {A: 0.9, self.B: -0.9}}, "US": {A: 0.1, self.B: -0.1}}
+        out = groups.build(levels, base, pimu, "2026-10-02", "run-1", kev)
+        self.assertEqual(out["OH-S"], groups.race_groups(self.BASE, self.PIMU, 2.0, kev["states"]["OH"]))
+        self.assertEqual(out["NC"], groups.race_groups(self.BASE, self.PIMU, -3.0))
+        self.assertEqual(out["US"], groups.race_groups(self.BASE, self.PIMU, 1.0, kev["US"]))
+        self.assertIn("ces-v3b", out["d_source"])
+        self.assertNotIn("Kev", groups.build(levels, base, pimu, "2026-10-02", "run-1")["d_source"])
+
+    def test_the_nations_kev_margin_weights_each_state_by_the_groups_voters(self):
+        base = {"states": {"X": {A: {"n": 0.5, "t": 0.5}, self.B: {"n": 0.5, "t": 0.5}},
+                           "Y": {A: {"n": 0.25, "t": 0.5}, self.B: {"n": 0.75, "t": 0.5}}}}
+        out = groups.kev_national({"X": {A: 0.2, self.B: 0.0}, "Y": {A: 0.6}}, base, {"X": 100.0, "Y": 100.0})
+        self.assertAlmostEqual(out[A], (50 * 0.2 + 25 * 0.6) / 75, places=4)
+        self.assertEqual(out[self.B], 0.0)
+
+
 if __name__ == "__main__":
     unittest.main()

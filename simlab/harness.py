@@ -11,17 +11,24 @@ model) is asked once: earlier days' rows are skipped. Logs print counts only.
 from __future__ import annotations
 
 import json
+import os
+import sys
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
 from pathlib import Path
 
+from . import newsraces
 from .askers import expected
 from .probes import REACTION_QUESTIONS, reaction_state
 from .tests import EVENT_Q
 
 SCHEMA = 1
 HERE = Path(__file__).parent
-STATE_NAME = {"OH-S": "Ohio", "NC": "North Carolina", "TX": "Texas"}
+CONFIG = newsraces.load()
+STATE_NAME = {rid: c["state_name"] for rid, c in CONFIG.items() if c.get("state_name")}
+THREADS = int(os.environ.get("SIMLAB_THREADS", "16"))  # GLM answered ~270 prompts a minute at 16 (29 Sep)
+MAX_FAILS = 20  # calls that failed after their retries before a model is left out for the rest of the run
 GROUPS = [["support"], ["turnout"]]
 REACTS = ("Think about how someone like them reacts to the news itself (for example anger, worry or enthusiasm that can "
           "rally them behind their side or put them off a {what}), not only about who the news helps on paper.")
@@ -53,6 +60,9 @@ def questions(race_id: str, wording: str = "direct") -> dict:
     if wording == "reaction":
         support["instructions"] = REACTION_TEXT["US" if race_id == "US" else "race"]
         turnout["instructions"] = REACTION_TEXT["turnout"]
+    if CONFIG.get(race_id, {}).get("office") == "house":
+        support["instructions"] = support["instructions"].replace("their state's Senate race",
+                                                                  "their district's U.S. House race")
     return {"support": support, "turnout": turnout}
 
 
@@ -76,19 +86,24 @@ def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> t
              for e in events for r in sorted(e.get("selected") or {})
              for p in personas(r) for name, asker, shadow in askers
              if (r, e["event_id"], p["group"], name) not in skip]
+    fails, lock = {name: 0 for name, _, _ in askers}, threading.Lock()
 
     def one(t):
         r, e, p, name, asker, shadow = t
+        if fails[name] >= MAX_FAILS:  # the model is down: its remaining rows wait for the next run
+            return None
         kw = {"groups": GROUPS} if hasattr(asker, "chat") else {}
         try:
             a = asker.ask_many(reaction_state(p["text"], e["card"]), questions(r, wording), f"harness:{name}", **kw)
         except Exception:
+            with lock:
+                fails[name] += 1
             return None
         return {"schema": SCHEMA, "race_id": r, "event_id": e["event_id"], "group": p["group"], "model": name,
                 "shadow": shadow, "wording": wording, "support": round(expected(a["support"]), 4),
                 "turnout": round(expected(a["turnout"]), 4),
                 "parse_error": bool(a["support"].get("_parse_error") or a["turnout"].get("_parse_error"))}
-    with ThreadPoolExecutor(16) as ex:
+    with ThreadPoolExecutor(THREADS) as ex:
         results = list(ex.map(one, tasks))
     rows = [r for r in results if r is not None]
     return rows, len(results) - len(rows)
@@ -125,8 +140,14 @@ def main() -> None:
     a = ap.parse_args()
     askers = [("glm", LLMAsker("glm", n_orders=2, name="glm"), False)]
     if a.kev:
-        askers.append(("kev", DecisionAsker("kev-latest", endpoint=a.kev.rstrip("/") + "/v1/systemone",
-                                            n_orders=2, name="kev"), True))
+        import requests
+        url, key = a.kev.rstrip("/"), os.environ.get("KEV_API_KEY", "")
+        try:  # Kev's GPU scales to zero: one long request wakes it (about 60 s); if it doesn't answer, no Kev today
+            requests.get(f"{url}/v1/models", headers={"Authorization": f"Bearer {key}"}, timeout=600).raise_for_status()
+            askers.append(("kev", DecisionAsker("kev-latest", endpoint=f"{url}/v1/systemone", api_key=key, n_orders=2,
+                                                name="kev"), True))
+        except requests.RequestException as e:
+            print(f"kev: not asked today ({type(e).__name__})", file=sys.stderr)
     print(json.dumps(run(a.date, a.out, a.run_id or f"{a.date}-manual", askers, a.wording)))
 
 

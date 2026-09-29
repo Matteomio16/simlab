@@ -388,9 +388,10 @@ This is the stats-only forecast. The headline differs only through the reactions
   turnout. The party gap within a demographic cell comes from CES validated turnout as an odds ratio. This is an
   assumption: CES validated turnout levels are unusable (match rates), but relative party gaps within a cell may be
   fine. Check it against the NC voter file's party registration by vote history.
-- **Vote margin** `d_g` for race r: CES 2022 + 2018 Senate vote by group, pooled by region and shrunk to the state.
-  Then every group is shifted equally on the logit scale until the electorate adds up to the race's starting level
-  (§5.4).
+- **Vote margin** `d_g` for race r: Kev ces-v3b's 2024 presidential vote by group in the state (`simlab/kev_groups.json`;
+  D21), else the survey's d0: CES 2022 + 2018 Senate vote by group, pooled by region and shrunk to the state. Then
+  every group is shifted equally on the logit scale until the electorate adds up to the race's starting level (§5.4),
+  so the source sets only the pattern across groups.
 
 Output per race: 28 rows (electorate share, turnout, D share, R share). These rows turn simulated group reactions into
 a race move:
@@ -460,6 +461,27 @@ The state takes the Field Guide's factor form: `R_r = region + state + Σ_k λ_r
 
 Every Monday the week's polls update the state and re-tune the dials; the result is published and logged. Why a plain
 Kalman update suffices is in §9.
+
+**Built 29 Sep** (`simlab/weekly.py`, 10 tests). It runs on Mondays from 12 Oct inside the statistics step
+(`--weekly` forces it on another day) and writes `filter_weekly.json`.
+- **Dials:** two per state and for the nation, switching and turnout, learned from every poll since the stories began.
+  - The dials only scale known effect paths, so each unit's poll likelihood is an exact quadratic in them. Six Kalman
+    runs recover it; the likelihood reuses the daily filter's poll table and national path.
+  - States pool with a national dial in a hierarchical normal model solved in closed form, so a state with few polls
+    borrows from the nation.
+  - The prior is set so a state's dials have the ranges approved on 28 Sep: national sd 0.44 and 0.71, a state's
+    deviation sd (tau) 0.3 and 0.5.
+  - `params.json` then carries the dials, and moves applies them.
+  - The Monte Carlo draws each election's dials jointly from the posterior. A race's own stories follow its state's
+    dials and the nation's stories follow the national ones.
+- **Fade speed:** five age half-lives from 2.75 to 11 days, weighed by the polls' evidence (the dials integrated out)
+  against a lognormal prior around Matteo's 5.5 days. The geometric mean becomes the next week's half-life.
+- **Surprise monitor:** each race's standardised poll surprises over the last 7 days, flagged when the chi-squared test
+  gives p < 0.01. Flags go to the auditor, which explains and never changes numbers.
+- **Dry run on 29 Sep:** the dials stayed at their prior because every story so far began after the last poll
+  (26 Sep). They will start moving as polls arrive after stories.
+- **Not built:** the demographic factor state (polls in one race informing demographically similar races) and the
+  regional poll-bias terms. The Monte Carlo already shares errors by nation, census division and state.
 
 ### 5.8 Monte Carlo
 
@@ -767,6 +789,17 @@ Raised by the build (28 Sep evening); Matteo's answers:
   - Statistics alone only when the stats-only forecast (beyond 97/3), Cook ("Solid") and the market (beyond 95/5) all
     call a race safe, because an unsimulated flip would count against the simulation.
   - The pilot races always simulate, and a race keeps its most competitive tier of the past week.
+- **D21. Kev's voter-group margins in every race** (Matteo, 29 Sep). Each group's starting margin comes from Kev
+  ces-v3b in the House and the Senate: its 2024 presidential vote by group in the state, and for the nation the states'
+  average weighted by the group's voters. The survey's d0 fills any group Kev hasn't answered. Why:
+  - One source for the whole forecast. The case for splitting (surveys are thin in districts) was wrong: Kev only
+    knows the state, so its district numbers are its state numbers shifted to each district, as d0's would be.
+  - Kev was closer on the only test (held-out OH, NC and TX against their 2024 votes): 4.2 against 5.1 points per group
+    once both are shifted to the state's level, within noise.
+  - It changes little. d enters only the turnout part of news effects, as a pattern. On 29 Sep data, today's news
+    effect in the pilot races changes by 1–5%, and the 3 Nov forecast doesn't change.
+  - Caveat: the test scored the vote Kev learned, while d0 comes from midterm Senate races (2018 was the last midterm
+    under Trump). d0 stays in `groups_base.json`, and both are scored on 2026 results after 3 Nov.
 
 ## 9. Notes for engine-design.md
 
@@ -823,11 +856,15 @@ are listed on the methods page.
 | Market benchmark | Kalshi + Polymarket bid-ask midpoints, normalised over candidates, averaged | display only | fixed |
 | Dials before the first weekly update | 1 | assumption | weekly filter |
 | Group turnout party gap | CES validated odds ratio within cell | assumption | check against NC voter file |
+| Group vote margin d | Kev ces-v3b's 2024 presidential vote by group and state (nation: the states weighted by 2024 votes × the group's share of midterm voters); the survey's d0 (CES 2018/2022 Senate vote) where Kev has no answer; shifted to each race's level | Matteo, 29 Sep (D21); Kev closer on held-out 2024 votes, within noise | decided; both scored on 2026 results |
 | Persuadable share pi | Senate voters (CES 2018/2022 post wave, `voted_sen`) unsure before (`intent_sen` "Not Sure"/"No One") or voting otherwise than intended; `weight_post` | fitted; 2024 a little lower | shrunk state → division → nation, 50 |
 | Mobilisable share mu | respondents on an active registration (`vv_regstatus`): turnout intention "Probably", "Undecided" or missing, or a validated vote (`vv_turnout_gvm`) against their intention; `weight` | fitted; self-report gives nearly the same | shrunk as pi |
 | Switching size c_s | 0.21 on average; each simulated election draws its own (lognormal, mean 1 × 0.21, 90% range 0.08–0.41) | fitted on 45 events (0.19–0.23 leave-one-out); the range covers the transfer to state races | decided (Matteo, 28 Sep: flexible, not tied to one value); refit weekly |
 | Turnout size c_t | = c_s on average; 90% range 0.05–0.53 | prior: no data yet | decided (Matteo, 28 Sep); early vote and weekly filter |
 | How long a story lasts | every story: a 5.5-day half-life from its first day; one-off types also a 1-day half-life once out of the news; economy and national: no extra drop; the 3 Nov forecast counts what remains, taking coverage to end today; a today view counts today's effects | Matteo, 28 Sep (D19); the calibration events' shifts held (share left 1.01–1.11 after 3–7 weeks, 90% ranges 0.84–1.31; random dates 0.83–0.92; `python -m simlab.moves --lasting`) | decided (Matteo, 29 Sep: 45% / 15% / under 10% after one, two, three weeks); weekly filter tunes |
+| Dial prior | national dials N(1, 0.44²) switching and N(1, 0.71²) turnout; a state's deviation sd 0.3 and 0.5 | set so a state's dials have the 28 Sep ranges; tau an assumption | weekly filter updates |
+| Fade-speed grid | 2.75, 3.89, 5.5, 7.78, 11 days; lognormal prior around 5.5 (sd of log 0.5) | Matteo's 5.5 as the centre | weekly filter updates |
+| Surprise flag | last 7 days' standardised poll surprises, chi-squared p < 0.01 | convention | fixed |
 | Simulation tiers | simulate: stats-only 10–90%, Cook toss-up/tilt/lean, or market 10–90%; watch: 3–97%, Likely, or 5–95%; statistics otherwise; pilot always simulate; a week of memory | Matteo, 28 Sep (D20); thresholds an assumption | decided |
 | Story effects on unpolled races | in full, like polled races | Matteo, 28 Sep (decision 5) | decided |
 | Uncertainty of moves | the size multipliers above | Matteo, 28 Sep (decision 1) | decided |

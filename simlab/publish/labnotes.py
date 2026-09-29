@@ -80,16 +80,19 @@ def ep01(theme: Theme = LAB) -> Post:
         ("Is this story relevant to the race?", "Jev", f"Said “no change” to {null_jev:.0%} of irrelevant news"),
         ("Which way does each group react?", "GLM-5.3 Flash",
          f"Right direction on {glm_dir * 13:.0f} of 13 real events that moved opinion"),
-        ("Where does each race start?", "Plain statistics", "Smaller errors than every model at matching 2024 groups nationwide"),
+        ("Where does each race start?", "Plain statistics",
+         "Smaller errors than every off-the-shelf model at matching 2024 groups nationwide"),
         ("How big is a reaction?", "No model", "Sizes come from real past shifts, not from the models"),
     ])
     d.text("Kev, untuned, got no job. We trained our own (Lab notes 08).", px=30, color=theme.ink2)
     d.source("Scores: null, mirror, events and fidelity tests, 27–28 Sep 2026.")
 
-    e = Slide(day, f"{k} · WHAT WE CHANGED", theme).headline("The simulation doesn't set the numbers. It moves them.", px=80)
-    e.text("Statistics and real polls set where each race starts. The synthetic voters only simulate how the day's news "
+    e = Slide(day, f"{k} · WHAT WE CHANGED", theme).headline("Statistics set where each race starts. The simulation "
+                                                             "moves it.", px=80)
+    e.text("Statistics and the poll average set each race's starting numbers. Each voter group's starting split comes from "
+           "Kev, a model we trained on real survey answers. The synthetic voters then simulate how the day's news "
            "shifts support and turnout, and a weekly check against new polls decides how much of that to keep.",
-           px=40, color=theme.ink2, after=1.2)
+           px=38, color=theme.ink2, after=1.0)
     e.text("Next: how an outlet's name flipped a model's answer on 41% of stories.", "serif", 600, 48, after=1.2)
     closing(e)
 
@@ -102,8 +105,9 @@ def ep01(theme: Theme = LAB) -> Post:
             "match how groups voted and turned out in 2024."),
         (d, "Results table. Relevance: Jev. Direction of reactions: GLM-5.3 Flash. Starting numbers: plain "
             "statistics. Size of reactions: no model."),
-        (e, "So the simulation doesn't set the numbers, it moves them. Statistics and polls set the start; synthetic voters simulate "
-            "how news shifts support and turnout."),
+        (e, "Statistics set where each race starts; the simulation moves it. Statistics and the poll average set each race's "
+            "starting numbers, each voter group's starting split comes from a model trained on real survey answers, "
+            "and synthetic voters simulate how news shifts support and turnout."),
     ], f"""Before we forecast a single race, we tested six models as synthetic voters.
 
 The question: can a synthetic voter react to news the way real groups of people do? Four checks, identical for every model:
@@ -112,7 +116,7 @@ The question: can a synthetic voter react to news the way real groups of people 
 3. React correctly to 19 real events since 2012
 4. Match how groups actually voted and turned out in 2024
 
-No model was good at everything, so each got one job, or none. Jev is best at spotting news that doesn't matter. GLM gets the direction of reactions right. And plain statistics had smaller errors than every model at matching how groups voted nationwide, so the simulation never sets the starting numbers. It only simulates how the news moves them.
+No model was good at everything, so each got one job, or none. Jev is best at spotting news that doesn't matter. GLM gets the direction of reactions right. And plain statistics had smaller errors than every off-the-shelf model at matching how groups voted nationwide, so statistics and the poll average set each race's starting numbers. Each voter group's starting split comes from Kev, a model we trained on real survey answers (more in a later Lab note). The simulation then plays out how the news moves them.
 
 Why test first? In April, our first simulation called Hungary's winner but came up 16 points short on the size.
 
@@ -128,10 +132,11 @@ Total cost of these tests: $1.52. The forecast goes public on Monday 12 October.
         f"to about 1 story in {1 / null_kev:.0f}.",
         f"Which way does a group react to real news? GLM-5.3 Flash got the direction right on {glm_dir * 13:.0f} of 13 "
         f"events that moved opinion.",
-        "Where does each race start? Nationwide, plain statistics beat every model at matching how groups voted in 2024. "
-        "So the simulation never sets the starting numbers; it only simulates how the news moves them.",
+        "Where does each race start? Plain statistics beat every off-the-shelf model at matching how groups voted in "
+        "2024, so statistics and the poll average set each race's starting numbers. Group splits come from a model we trained on "
+        "real survey answers.",
         "Total cost of the tests: $1.52. The forecast goes public on 12 October; the making-of runs daily until then.",
-    ])
+    ], allow=("survey",))  # "survey answers" are the real respondents Kev learned from, not a model output
 
 
 def ep02(theme: Theme = LAB) -> Post:

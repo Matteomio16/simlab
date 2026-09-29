@@ -1,0 +1,84 @@
+{
+ "fitted": "2026-09-29, python -m simlab.housefit",
+ "source": "data/results/1976-2024-house.tab (MIT Election Lab)",
+ "method": "Gelman-King district regression m_t = a_year + b*m_t-1 + psi*I_t + c*I_t-1 on consecutive House elections in the same district with both years contested by a D and an R; a_year (the national swing) is fit by demeaning within year rather than as a coefficient, since the forecast supplies it separately. Incumbency is a property of the person: I_t is +1/-1 when the district's D/R candidate won ANY general in the same state two years earlier (matched by normalised name), wherever in the state they won it (incumbent_moved flags a changed district number), 0 for an open seat or a member-vs-member race after redistricting; I_t-1 is the same check for whoever ran in that district one cycle earlier. A second fit splits I_t into first-term and senior incumbents. The b/psi/c fit itself still only uses consecutive-cycle pairs on the same district lines: redistricted pairs (decennial years for all states, listed mid-decade redraws, or a change in the state's district count) are skipped, as is Louisiana's jungle primary before 2008 and any district-year where a second candidate of the same party took 15%+ of the vote (a jungle race not really D-vs-R). The district error is from leave-one-election-cycle-out residuals: refit without year y, set that year's swing to the mean residual (as the forecast does once it knows the swing), collect residuals. 90% intervals are a cluster bootstrap by election year (500 resamples of years, with replacement, refit each time).",
+ "n_pairs": 3856,
+ "n_uncontested_skipped": 398,
+ "n_same_party_split_skipped": 28,
+ "n_incumbent_moved_district": 13,
+ "years": "1996-2024",
+ "b": 0.854,
+ "psi": 7.369,
+ "c": -3.538,
+ "psi_first": 7.461,
+ "psi_senior": 7.323,
+ "n_first_termers": 591,
+ "n_senior_incumbents": 2810,
+ "n_unknown_seniority": 3,
+ "b_2010_2024": 0.909,
+ "psi_2010_2024": 3.893,
+ "c_2010_2024": -2.621,
+ "b_2014_2024": 0.884,
+ "psi_2014_2024": 4.424,
+ "c_2014_2024": -1.766,
+ "psi_first_2014_2024": 4.85,
+ "psi_senior_2014_2024": 4.191,
+ "per_year_psi": {
+  "1996": 6.837,
+  "1998": 6.752,
+  "2000": 7.048,
+  "2004": 7.049,
+  "2006": 7.2,
+  "2008": 7.305,
+  "2010": 7.974,
+  "2014": 7.602,
+  "2016": 7.364,
+  "2018": 7.766,
+  "2020": 7.931,
+  "2024": 7.619
+ },
+ "sd": {
+  "all": 10.52,
+  "close_lt15": 11.04,
+  "open": 15.53,
+  "incumbent": 9.52
+ },
+ "sd_2014_2024": {
+  "all": 8.51,
+  "close_lt15": 8.35,
+  "open": 11.34,
+  "incumbent": 7.9
+ },
+ "sd_by_year": {
+  "1996": 13.76,
+  "1998": 13.17,
+  "2000": 11.71,
+  "2004": 9.75,
+  "2006": 10.23,
+  "2008": 10.93,
+  "2010": 12.03,
+  "2014": 8.29,
+  "2016": 10.45,
+  "2018": 9.04,
+  "2020": 6.47,
+  "2024": 8.33
+ },
+ "ci90_bootstrap_by_year": {
+  "psi": [
+   5.586,
+   9.317
+  ],
+  "psi_first": [
+   5.352,
+   9.77
+  ],
+  "psi_senior": [
+   5.493,
+   9.239
+  ],
+  "sd_2014_2024": [
+   7.624,
+   9.424
+  ]
+ }
+}

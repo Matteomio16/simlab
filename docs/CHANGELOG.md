@@ -10,13 +10,224 @@ Decided by Matteo (design in `docs/superpowers/specs/2026-09-29-notapoll-site-de
 - **Two launches.** Sat 3 Oct: home, methods, Lab notes, About, with no forecast numbers of any kind. Mon 12 Oct: Senate
   overview and race pages. Week of 19 Oct: track record, changelog, archive. Election-night page by 3 Nov.
 - **Written for both audiences in layers**: a plain sentence and one number on top, the data below.
-- **Look:** 538 / Silver Bulletin clarity, an editorial touch (Newsreader headlines), the post kit's Lab Notebook tokens,
-  research-lab calm, nothing salesy.
-- **Stack as scaliastudio.dev:** Next.js 16 static export on a Cloudflare Worker; charts are React SVG (not vega-embed);
-  the home swarm is Canvas 2D (three.js/WebGL maybe later).
+- **Look (redesigned the same day):** American newsroom and institutional: Libre Franklin and Source Serif 4, navy
+  masthead, heavy section rules, hairline tables, light only; restrained motion (count-ups, filling squares, scroll
+  reveals, hover cards, map tiles that zoom into the state before opening its race page). A tile map switchable
+  between our simulation, Cook and the markets, and a national-swing simulator that recounts the stored draws.
+- **Stack as scaliastudio.dev:** Next.js 16 static export on a Cloudflare Worker; charts are React SVG (not
+  vega-embed).
 - **Preview** on an unlisted workers.dev address with sample data; Cloudflare Access later. **Deploys** from GitHub
   Actions (`.github/workflows/site.yml`) with a token Matteo creates.
 - **Lab notes** go on the site only after Matteo approves each one (`site/scripts/import-labnote.mjs`).
+
+## 2026-09-29 (Kev session): early-vote snapshots (A12, NC first); Kev live in shadow mode; Iowa and Maine in the pilot
+
+- **Matteo, 29 Sep ("yes to all"):**
+  - voter-level early-vote files are kept as counts plus the raw file's hash, never raw (this also keeps them under
+    GitHub's 100 MB limit);
+  - NCSBE's two files are fetched daily;
+  - the pilot races are OH-S, NC, TX, IA and ME;
+  - early vote comes before the House work, with House fundamentals due Fri 2 Oct and the House finished by 9 Oct;
+  - House seat error: SD 5.5 for seats forecast within 15 points, 9 beyond;
+  - the 435 seats are anchored each day to the national House vote;
+  - Kev serves shadow mode at full load. The Engine's count is about 3,400 requests a day, about 7 minutes of GPU
+    time.
+- **`simlab/earlyvote.py`** and `.github/workflows/earlyvote.yml` (every 30 minutes, a HEAD request per file, a
+  download only when Last-Modified changes). The output goes to simlab-data `earlyvote/<state>/YYYY-MM-DD/HHMM/`.
+  - NC's absentee file (one row per ballot; one-stop voting joins it from 15 Oct) is counted by county,
+    congressional district, party, race, ethnicity, gender, age band, request type, delivery, return status, return
+    date and same-day registration. Today it holds 13,705 ballots, 0.8 MB.
+  - NCSBE's county request counts (22.9 MB) are kept as published: 0.9 MB gzipped.
+  - Two tests check that no name, address or voter id survives the counting.
+  - Ohio, Texas, Iowa and Maine join once their files and sizes are confirmed.
+- **Kev react-v2-2 serves shadow mode:** https://mattemio9--kev-finetune-api.modal.run (bearer key: Modal secret
+  `kev-serve`, GitHub secret `KEV_API_KEY`; L4, one container, 60 s idle).
+  - About 9 requests/s warm; about 60 s cold start.
+  - Answers match the scoring run (0.953 vs 0.954).
+  - The Engine wired it into the daily job (b07decc). It runs once the `KEV_URL` repository variable is set.
+- **Iowa and Maine pageviews:** Hinson, Turek, Collins and Troy Jackson (who replaced Platner as the Democratic
+  nominee) join the snapshot's candidate pageviews. News for every race was already covered by newsraces.json.
+- **House, first fit on the 2026 inputs.** The Engine's `data/house/` holds The Downballot's 2024 presidential results
+  on the 2026 lines and ACS citizen adults by race and degree. Fitted on 2022 and 2024:
+  - House margin minus the national House vote = 0.97 × presidential lean + 4.5 × incumbent;
+  - predicting one cycle from the other, given the national swing, the error SD is 4.9 (2022) and 4.6 (2024) for
+    seats within 15 points, and about 10 overall because safe seats vary more.
+
+## 2026-09-29 evening (Engine session): news on GDELT alone; workflows started on time; Kev shadow wired
+
+- **Matteo: Media Cloud's sign-up is stuck, so the engine must work on GDELT alone.** Built:
+  - GDELT moved from the 3-hourly snapshot to its own news job every 15 minutes (`simlab/newsnap.py`,
+    `.github/workflows/news.yml`, writing `simlab-data/news/`). GDELT refuses an address for several minutes after one
+    success (seen from GitHub and from home), so each run asks only the most overdue queries within about 9 minutes,
+    contested races and the nation first. A query saved in the last 6 hours isn't asked again; one that failed is
+    asked by the next run, and every query covers 24 hours, so a refused query is filled later.
+  - Every race gets a GDELT query, not just the pilot.
+  - RSS from the state outlets that answer a declared bot and allow reuse: Signal Ohio, Signal Cleveland and the Texas
+    Tribune. An item counts for a race only when it names one of that state's candidates in full. All 19 States
+    Newsroom sites refused with 403, so they aren't used.
+  - Media Cloud stays optional: if its key comes, it plugs in as planned.
+- **GitHub fires this repository's schedules only every 5-9 hours**, whatever the cron says (snapshot runs on 28-29
+  Sep: 09:40, 20:44, 01:13, 07:28, 16:09; none of the 28 quarter-hour triggers in between). So neither the 09:47 daily
+  job nor a 15-minute news job can rely on it. `ops/cron/` holds a Cloudflare Worker that starts the workflows on
+  time through GitHub's API (news every 15 minutes, snapshots every 3 hours, the daily job at 09:47 with
+  `scheduled=true`, so `PIPELINE_ON` and the once-a-day rule still apply). It needs Matteo: a fine-grained GitHub token
+  that can only run Actions on the repo, and `npx wrangler deploy` on his Cloudflare account (steps in its README).
+- **Kev shadow mode wired** (Matteo reopened it, 29 Sep). Kev react-v2-2 is served on Modal behind a key. The harness
+  wakes its GPU with one long request, sends the key, and skips Kev for the day if it doesn't answer. Any model is
+  dropped after 20 failed calls, so an outage can't stall GLM. Tested live: 28 groups in 13 s after a 51 s wake-up.
+  The daily job passes it once the `KEV_URL` repository variable is set. The load is about 530 requests a day in the
+  pilot and 3,400 at full scale (one request per group and story), so no sampling is needed.
+
+## 2026-09-29 (Kev session): Kev's voter-group margins for all 51 states delivered (A11 request)
+
+- Kev ces-v3b answered the 28 voter groups in all 51 states (`python -m simlab.kevdata groups`, then Modal
+  `evaluate --run ces-v3b --name ces-v3b-groups`, about $0.50; `python -m simlab.kevdata answers ces-v3b-groups`). The
+  persona text is the training strata's own, the pres24 question comes in 3 option orders averaged at temperature
+  1.0, and d = (harris - trump) / (harris + trump).
+- `python -m simlab.groups --kev kev-finetune/runs/ces-v3b-groups/answers.json` wrote `simlab/kev_groups.json`: 1,428
+  pairs, none falling back to d0. statsday picks it up from the next run.
+- Checks:
+  - the 60 held-out OH/NC/TX pairs match the test's answers within 3.5 points (other option orders);
+  - Kev's margins never break the party order (strong > leaner > weak > independent, each side) by more than 5
+    points, against 23 breaks in d0;
+  - Kev puts independents at -0.14 on average (d0 +0.06), leaners and weak Republicans further right (-0.95 and
+    -0.76 against -0.80 and -0.62), and Democrats about the same.
+  The groups, moves and levels tests pass (59).
+
+## 2026-09-29 (Statistics session): Kev's voter-group margins for the Senate too
+
+- **Matteo, 29 Sep:** every race, House and Senate, takes each voter group's starting margin from Kev ces-v3b. The
+  survey numbers (d0) are kept alongside for the check after 3 Nov. This replaces the split agreed earlier today (Kev
+  for House districts only).
+- **Why:**
+  - One source for the whole forecast. The case for the split, that surveys are thin in districts, was wrong: Kev only
+    knows the state, so its district numbers are its state numbers shifted to each district, as d0's would be.
+  - Kev was closer on the only test (held-out OH, NC and TX against their 2024 votes): 4.2 against 5.1 points per
+    group once both are shifted to the state's level, within noise.
+  - It changes little. A group's margin enters only the turnout part of news effects, and only as a pattern, since
+    each race's groups are shifted to its level. On 29 Sep data, today's news effect in the three pilot races changes
+    by 1–5%, and the 3 Nov forecast doesn't change. The two sources differ mainly on independents and weak partisans.
+  - Caveat: the test scored the vote Kev learned (2024 presidential), while d0 comes from midterm Senate races.
+- **Built** (`simlab/groups.py`, `simlab/statsday.py`; 3 tests):
+  - `groups.build` takes Kev's margin wherever `simlab/kev_groups.json` has the state and group, and d0 elsewhere.
+    `groups.json` names its source in `d_source`.
+  - `python -m simlab.groups --kev ANSWERS` turns Kev's answers (`{run, states: {state: {group: d}}}`) into that
+    file and adds the nation's: the states' margins weighted by 2024 presidential votes times the group's share of
+    midterm voters.
+  - statsday reads the file when it exists. Until the Kev session delivers it, every race stays on d0.
+  - A trial run of 29 Sep on a copy of the data matches the real run exactly without the file.
+
+## 2026-09-29 (Kev session): Kev back in; Kev's voter groups tested; House incumbency and district error fitted
+
+- **Matteo, 29 Sep:**
+  - keep Kev's weights;
+  - Kev react-v2-2 runs in shadow mode on Modal (pilot first, then a daily sample sized to October's $18 serving reserve);
+  - test ces-v3 against Statistics' voter-group numbers, then use it for the House districts;
+  - reaction training stays closed, with shadow mode supplying the evidence;
+  - start the House seats (A11).
+  The serving key is Matteo's to create (Modal secret `kev-serve` and GitHub secret `KEV_API_KEY`); no deploy before it
+  exists.
+- **Kev's voter groups against Statistics'** (`python -m simlab.kevscore --groups ces-v3b`). The test covers the 28 party-ID x
+  white/non-white x degree groups in OH, NC and TX: 60 of the 84 group-state pairs, those with at least 20 CES
+  validated 2024 voters. It
+  measures the error of each group's D-R margin in points, weighted by the group's voters (n x t):
+
+  | | Kev ces-v3b | Statistics (d0) | Kev minus Statistics, 95% |
+  |---|---|---|---|
+  | as given | 5.1 | 7.3 | -4.4 to -0.4 |
+  | both shifted to the state's level (as the engine uses them) | 4.2 | 5.1 | -2.1 to +0.3 |
+  | by state, shifted: OH / NC / TX | 3.9 / 1.9 / 6.7 | 4.3 / 4.1 / 6.9 | |
+
+  Kev is better in every state, but the engine-relevant (shifted) gap isn't conclusive. Averaging the two doesn't beat
+  Kev alone (4.4). ces-v3a is close behind (4.5). Caveat: this scores 2024 presidential votes, and d0 comes from the
+  2018/2022 midterms, while Kev learned 2024 patterns in the other 47 states. Part of Kev's edge is knowing 2024's
+  shifts (Texas above all).
+- **House fit** (`python -m simlab.housefit` → `simlab/house_params.json`; MIT House 1976-2024, 3,856 district pairs
+  on unchanged lines). Model: margin = year effect + b × last margin + psi × incumbent + c × last incumbent.
+  Incumbents are matched by person across the state, so renumbered districts keep their member. Each year is
+  predicted from the others, given the national swing.
+  - Incumbency is worth 4.4 points on 2014-2024 (7.4 on 1996-2024, 90% interval 5.6-9.3), shrinking over time. It
+    agrees with the Senate's 4.1.
+  - First-termers and senior members get the same effect (7.5 and 7.3; 4.9 and 4.2 on 2014-2024), so the Field
+    Guide's "first-termers get half" isn't supported.
+  - District error when unpolled, 2014-2024: SD 8.5 (90% 7.6-9.4); 7.9 with an incumbent running, 11.3 for open
+    seats, 8.4 for seats predicted within 15. That fits the placeholder 7-9, with open seats wider.
+  - These errors come from a model built on the previous House result. The forecast uses presidential lean on the
+    current lines, so treat them as a guide until house.py is checked on 2024.
+
+## 2026-09-29 (Engine session): every race by tier from 12 Oct; the daily job can't be skipped; poll stories caught
+
+- **Scale-up built (roadmap A13).** `simlab/newsraces.json`, built from Statistics' `races.json`, gives every race its
+  description and news queries. The news step selects by the previous day's tier:
+  - simulate: 5 race stories and 3 national stories a day;
+  - watch: its 2 biggest race stories, and the nation's move for national news (Statistics built that part);
+  - statistics: none.
+  House seats get "their district's U.S. House race" wording once Statistics adds them. The daily job runs the pilot
+  races until 11 Oct and every race from 12 Oct. On a busy day that is about 13,500 GLM prompts, about 50 minutes and
+  $0.16. Media Cloud asks for every race once its key is in. GDELT stays on the pilot races and the nation, because
+  from GitHub it rate-limits a run's later queries: 1 or 2 of its 4 failed in each run of 28-29 Sep.
+- **The daily job can't silently skip a day.** GitHub fired only 3 of about 17 hourly snapshot triggers on 28 Sep, so
+  the daily job now triggers every 15 minutes from 09:47 to 14:47 UTC and runs once. A trigger delayed past midnight
+  can't run the new day before its news window closes.
+- **Poll stories caught.** Jev typed an approval-rating story as national news, and 2 of the 9 spot-check headlines
+  that name a poll as something else. A story whose main headline is about a poll, a survey, an approval rating or a
+  forecast is now a poll story, so it gets no reactions.
+- **Cards no longer say "according to the headline"** (4 of 24 did on 29 Sep).
+- **Reaction wording stays direct** (the backlash test Matteo approved on 28 Sep). Asking groups to think about how
+  they react to the news itself lost accuracy on real events:
+  - direction right on 85% of the 45 training events that moved opinion, against 92% for the direct wording;
+  - on the 19 held-out events, 80% against 100%, and an error of 3.22 against 3.05 points;
+  - size-tracking fell from 0.26 to −0.11.
+  The direct wording already shows backlash where it's real: on 28 Sep, Trump's backing of Husted moved strong
+  Democrats toward Brown and raised their turnout. On 15 stories picked for possible backlash (big money, prosecutions,
+  polarising surrogates, former allies, controversial endorsements) and 3 controls, both wordings moved Democratic
+  groups toward the Democrat and raised their turnout on Republican-helping money stories. The reaction-aware wording
+  mostly added turnout everywhere (average size 0.52 against 0.30), as much on the controls as on the backlash stories.
+  So it adds no signal specific to backlash. Results: `runs/backlash__glm.jsonl`; code: `simlab/events2.py backlash`.
+- **A national copy of a race's own story counts for that race only** when its headline names that race's
+  candidates. The national feed carried "Paxton, Talarico spar over gas tax", and Jev gated it relevant to Ohio.
+- **Spot-check: all 32 of Matteo's stories count.** All 32 were saved on the page; the local copy held only the 16
+  exported on 28 Sep, and now holds all 32. On all 32:
+  - Jev matched 102 of 126 labels and GLM 95 (on the first 16: 54 and 50 of 63);
+  - event type: Jev 29 of 32, GLM 26 (Jev's misses: two "other" stories typed national, one endorsement typed other);
+  - relevant: Jev 29 of 30, GLM 28 (two "unsure" answers left out); side helped on its face: Jev 26 of 32, GLM 24;
+  - attention: both overrate it. They said "some" where Matteo said "very little" on 10 (Jev) and 13 (GLM) of 32.
+  So Jev keeps the labels (Matteo's decision of 28 Sep).
+- **Attention weights:** the spot-check couldn't test them. 29 of the 32 stories had one outlet in the old Google News
+  store, so the coverage formula gave almost all of them the same score. To re-check in the pilot week on real
+  coverage.
+- **House data for A11** (without the Redistricting Data Hub, Matteo 29 Sep), in `data/house/` (local):
+  - 2024 presidential results on the lines used in 2026, for all 435 districts, from The Downballot (9 Jul 2026). That
+    includes the 181 seats in the 10 states with new maps: TX, MO, NC, AL, FL, LA, TN, OH, CA and UT;
+  - ACS 2024 citizen adults by race and degree per district, from the Census API. These are the 2024 lines, so in
+    the redrawn states a district number there is the old district. The Kev session says that is enough for 9 Oct.
+  - The new plans' block files wait until after 9 Oct, and only for simulated seats in redrawn states.
+- **Kev shadow mode** (Matteo reopened it, 29 Sep): the harness already writes shadow rows with `--kev URL`. The daily
+  job will pass it once the Kev session sends the URL, the key's secret name and the daily sample size.
+
+## 2026-09-29 (Statistics session): the weekly filter (roadmap A6, weekly part)
+
+Matteo: "go ahead with the weekly filter". Built to stats-groundwork §5.7 and engine-design §3.3 (`simlab/weekly.py`):
+- **News dials.** Each state, and the nation, gets two dials, switching and turnout: 1 means the polls confirm the
+  simulated effect, 0 means they show none of it. They are learned from every poll since the stories began.
+  - The likelihood is an exact quadratic in the dials; states pool with a national dial in closed form.
+  - The prior matches the approved size ranges.
+  - The Monte Carlo now draws each simulated election's dials from the result, replacing the fixed ranges, so the
+    ranges tighten or move as the polls speak.
+- **Fade speed:** the polls weigh five half-lives around Matteo's 5.5 days.
+- **Surprise monitor:** flags races whose last week of polls surprised the forecast (p < 0.01), for the auditor.
+- **Schedule:** Mondays from 12 Oct inside the statistics step; `python -m simlab.weekly` or `statsday --weekly` by
+  hand. Output in `filter_weekly.json`; the dials in force go in each day's `params.json`.
+- **Dry run on 29 Sep:** nothing learned yet, correctly: every story so far began after the last poll.
+- **Fixes found on the way:**
+  - races with no stories of their own weren't getting the national stories' effect, because empty story lists
+    blocked the fallback; all 32 now carry it;
+  - watch-tier races (from 12 Oct) keep the nation's national stories, and simulated races aren't counted twice (the
+    Engine's point).
+- **For Content:** `races[rid].today.movers` (today's stories, by today's effect), `forecast.news_dials`, and
+  `if_weaker`/`if_stronger` now use the national dial's 10th/90th percentile.
+- **Not built:** the demographic factor state and regional poll-bias terms, left for Matteo's call.
+- The daily step takes about 36 seconds (12 level runs: two views, each with the parts per dial).
 
 ## 2026-09-29 (Engine session): the news day, a broken spending ledger, one story counted once
 

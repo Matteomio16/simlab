@@ -3,6 +3,7 @@ import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest import mock
 
 from simlab import harness
 
@@ -72,6 +73,21 @@ class React(unittest.TestCase):
         self.assertEqual({(r["model"], r["shadow"]) for r in rows}, {("kev", True)})
         self.assertEqual(len(rows), 28)
 
+    def test_a_model_that_keeps_failing_is_dropped_for_the_day_and_the_others_carry_on(self):
+        # a Kev outage must not stall GLM for hours: each failed call has already used up its retries
+        class Down:
+            calls = 0
+
+            def ask_many(self, state, questions, tag=""):
+                Down.calls += 1
+                raise RuntimeError("giving up after 8 tries")
+        with mock.patch.object(harness, "THREADS", 1):
+            rows, failed = harness.react(EVENTS[:1], [("glm", FakeLLM(), False), ("kev", Down(), True)], "direct",
+                                         skip=set())
+        self.assertEqual(Down.calls, harness.MAX_FAILS)
+        self.assertEqual((len(rows), failed), (28, 28))
+        self.assertEqual({r["model"] for r in rows}, {"glm"})
+
     def test_a_failing_call_does_not_sink_the_run(self):
         class Flaky(FakeLLM):
             def ask_many(self, state, questions, tag="", groups=None):
@@ -103,6 +119,18 @@ class Run(unittest.TestCase):
         self.assertEqual((s1["rows"], s2["rows"]), (84, 0))
         self.assertEqual(len(rows), 84)
         self.assertTrue(all(r["date"] == "2026-09-28" and r["run_id"] == "r1" for r in rows))
+
+
+class Scale(unittest.TestCase):
+    def test_every_race_lives_in_its_state(self):
+        self.assertTrue(harness.personas("GA")[0]["text"].startswith("State: Georgia\n"))
+
+    def test_a_house_race_is_asked_as_a_house_race(self):
+        with mock.patch.dict(harness.CONFIG, {"TX-28": {"office": "house", "state_name": "Texas"}}):
+            for wording in ("direct", "reaction"):
+                text = harness.questions("TX-28", wording)["support"]["instructions"]
+                self.assertIn("their district's U.S. House race", text)
+                self.assertNotIn("Senate", text)
 
 
 if __name__ == "__main__":
