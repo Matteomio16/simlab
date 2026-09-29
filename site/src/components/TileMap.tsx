@@ -18,7 +18,7 @@ export default function TileMap({ tiles, className = "" }: { tiles: Tile[]; clas
         const x = c * (S + GAP);
         const y = r * (S + GAP);
         const body = (
-          <g>
+          <g className={t ? "tile" : undefined}>
             <title>{t ? t.title : `${st}: no Senate race in 2026`}</title>
             <rect x={t ? x : x + 0.5} y={t ? y : y + 0.5} width={t ? S : S - 1} height={t ? S : S - 1} fill={t ? t.fill : "var(--paper)"} stroke={t ? "none" : "var(--rule)"} />
             <text x={x + 5} y={y + 15} fill={t ? t.ink : "var(--axis)"} style={{ fontSize: 12.5, fontWeight: 700, letterSpacing: "0.02em" }}>

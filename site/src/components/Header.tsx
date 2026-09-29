@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Lockup } from "./Brand";
+import NextUpdate from "./NextUpdate";
 
 export default function Header({ forecast }: { forecast: boolean }) {
   const links = [
@@ -13,7 +14,10 @@ export default function Header({ forecast }: { forecast: boolean }) {
       <div className="bg-navy text-navy-fg">
         <div className="mx-auto flex h-8 max-w-[1200px] items-center justify-between px-4 text-[0.7rem] font-semibold uppercase tracking-[0.08em] sm:px-6">
           <span>U.S. Midterms · November 3, 2026</span>
-          <span className="hidden sm:inline">Social simulation, not a poll</span>
+          <span className="flex items-center gap-5">
+            {forecast && <NextUpdate />}
+            <span className="hidden sm:inline">Social simulation, not a poll</span>
+          </span>
         </div>
       </div>
       <div className="border-b border-rule">

@@ -3,6 +3,9 @@ import MapPanel from "@/components/MapPanel";
 import RaceTable, { type Row } from "@/components/RaceTable";
 import Simulator from "@/components/Simulator";
 import Waffle from "@/components/Waffle";
+import Reveal from "@/components/Reveal";
+import CountUp from "@/components/CountUp";
+import RaceCards from "@/components/RaceCards";
 import { HistoryLine, Responsive, SeatHistogram } from "@/components/charts";
 import { SimLabel } from "@/components/Brand";
 import type { Tile } from "@/components/TileMap";
@@ -23,7 +26,7 @@ function Figure({ n, label, color }: { n: number; label: string; color: string }
     <div>
       <p className="label-muted">{label}</p>
       <p className="mt-1 whitespace-nowrap leading-none">
-        <span className="text-[2.4rem] font-extrabold tracking-[-0.02em] sm:text-[3.25rem]" style={{ color }}>{n}</span>
+        <span className="text-[2.4rem] font-extrabold tracking-[-0.02em] sm:text-[3.25rem]" style={{ color }}><CountUp value={n} /></span>
         <span className="ml-1 text-sm font-semibold text-muted sm:ml-1.5 sm:text-lg">in 100</span>
       </p>
     </div>
@@ -91,7 +94,7 @@ export default function Overview() {
           {`In ${forecast.draws.toLocaleString("en-US")} simulated elections, Republicans keep 50 or more seats, enough with the Vice President’s tie-break, in ${nR} of every 100. The simulation moves each race from its statistical starting line as synthetic voters react to the news.`}
         </p>
 
-        <div className="mt-10 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1.25fr_1fr]">
+        <Reveal className="mt-10 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1.25fr_1fr]">
           <div>
             <div className="grid grid-cols-3 gap-4">
               <Figure n={nR} label="Republicans hold" color="var(--rep)" />
@@ -123,13 +126,23 @@ export default function Overview() {
             </dl>
             <p className="note mt-2">All figures are Republican control; the market is the Republican price.</p>
           </div>
-        </div>
+        </Reveal>
         <div className="mt-6">
           <SimLabel date={longDate(forecast.date)} sample={IS_SAMPLE} />
         </div>
       </section>
 
-      <section className="mt-16 section-rule">
+
+      <Reveal as="section" className="mt-14">
+        <div className="flex items-baseline justify-between gap-4">
+          <p className="label">The closest races</p>
+          <a href="#races" className="text-sm font-semibold underline underline-offset-4">All 35 races</a>
+        </div>
+        <div className="mt-4">
+          <RaceCards rows={[...rows].sort((a, b) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5)).slice(0, 4)} />
+        </div>
+      </Reveal>
+      <Reveal as="section" className="mt-16 section-rule">
         <p className="label">The map</p>
         <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">35 races, beside the benchmarks</h2>
         <p className="mt-2 max-w-2xl text-ink-2">
@@ -146,9 +159,9 @@ export default function Overview() {
             ]}
           />
         </div>
-      </section>
+      </Reveal>
 
-      <section className="mt-16 section-rule">
+      <Reveal as="section" className="mt-16 section-rule">
         <p className="label">Simulator</p>
         <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">What if the country shifts?</h2>
         <p className="mt-2 max-w-2xl text-ink-2">
@@ -158,18 +171,18 @@ export default function Overview() {
         <div className="mt-8">
           <Simulator races={simRaces} />
         </div>
-      </section>
+      </Reveal>
 
-      <section className="mt-16 section-rule">
-        <p className="label">Every race</p>
+      <Reveal as="section" className="mt-16 section-rule">
+        <p className="label" id="races">Every race</p>
         <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">Race by race</h2>
         <div className="mt-6">
           <RaceTable rows={rows} />
         </div>
-      </section>
+      </Reveal>
 
       {moved.length > 0 && (
-        <section className="mt-16 section-rule">
+        <Reveal as="section" className="mt-16 section-rule">
           <p className="label">What moved</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">The stories behind today&rsquo;s changes</h2>
           <p className="mt-2 max-w-2xl text-ink-2">
@@ -189,17 +202,17 @@ export default function Overview() {
               </li>
             ))}
           </ul>
-        </section>
+        </Reveal>
       )}
 
       {history.senate.length > 1 && (
-        <section className="mt-16 section-rule">
+        <Reveal as="section" className="mt-16 section-rule">
           <p className="label">Over time</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">Republican chance of keeping the Senate</h2>
           <div className="mt-6 max-w-[860px]">
             <Responsive desktop={860} render={(w) => <HistoryLine w={w} label="Chance Republicans hold the Senate" points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} />} />
           </div>
-        </section>
+        </Reveal>
       )}
     </div>
   );

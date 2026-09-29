@@ -11,7 +11,7 @@ export default function Waffle({ r, d, i }: { r: number; d: number; i: number })
     <div className="grid grid-cols-[repeat(25,minmax(0,1fr))] gap-[3px]" role="img"
       aria-label={`Of 100 simulated elections, Republicans hold the Senate in ${r}, Democrats reach 51 in ${d}, independents decide in ${i}.`}>
       {cells.map((c, k) => (
-        <span key={k} className="aspect-square" style={{ background: c }} />
+        <span key={k} className="waffle-cell aspect-square" style={{ background: c, ["--i" as string]: k }} />
       ))}
     </div>
   );

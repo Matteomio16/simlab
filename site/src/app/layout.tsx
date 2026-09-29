@@ -25,7 +25,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${franklin.variable} ${serif.variable} ${plex.variable}`}>
+    <html lang="en" className={`${franklin.variable} ${serif.variable} ${plex.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body className="min-h-screen font-sans text-ink">
         {HAS_FORECAST && IS_SAMPLE && <SampleBanner />}
         <Header forecast={HAS_FORECAST} />

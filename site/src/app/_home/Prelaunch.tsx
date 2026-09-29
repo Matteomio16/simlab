@@ -1,5 +1,6 @@
 import Link from "next/link";
 import DaysTo from "@/components/DaysTo";
+import Reveal from "@/components/Reveal";
 import TileMap, { Legend } from "@/components/TileMap";
 import { loadRaceMeta, raceTitle } from "@/lib/data";
 import { allNotes } from "@/lib/labnotes";
@@ -77,7 +78,7 @@ export default function Prelaunch({ today }: { today: string }) {
         </div>
       </section>
 
-      <section className="mt-16 section-rule">
+      <Reveal as="section" className="mt-16 section-rule">
         <p className="label">How the forecast works</p>
         <ol className="mt-4 grid gap-x-10 md:grid-cols-2 lg:grid-cols-4">
           {STEPS.map(([title, body], i) => (
@@ -89,9 +90,9 @@ export default function Prelaunch({ today }: { today: string }) {
             </li>
           ))}
         </ol>
-      </section>
+      </Reveal>
 
-      <section className="mt-16 section-rule">
+      <Reveal as="section" className="mt-16 section-rule">
         <div className="flex items-baseline justify-between gap-4">
           <p className="label">The races</p>
           <p className="note">Democrats and independents listed first</p>
@@ -124,9 +125,9 @@ export default function Prelaunch({ today }: { today: string }) {
           </tbody>
         </table>
         <p className="note mt-3">Candidates as nominated or expected; updated as primaries and appointments settle.</p>
-      </section>
+      </Reveal>
 
-      <section className="mt-16 section-rule">
+      <Reveal as="section" className="mt-16 section-rule">
         <div className="flex items-baseline justify-between gap-4">
           <p className="label">Lab notes</p>
           {notes.length > 0 && <Link href="/lab-notes" className="text-sm font-semibold underline underline-offset-4">All notes</Link>}
@@ -149,7 +150,7 @@ export default function Prelaunch({ today }: { today: string }) {
             ))}
           </ul>
         )}
-      </section>
+      </Reveal>
     </div>
   );
 }
