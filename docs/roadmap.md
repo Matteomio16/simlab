@@ -64,7 +64,7 @@ Checkpoints and fallbacks:
 | A5 | GLM harness | Asks each voter group how its support and turnout move, following the model-recipes rules. Sizes come from real data, not the model. Logs proposed vs applied changes | Engine | Fri 2 Oct | built 28 Sep (`simlab/harness.py`); first real run 28 Sep |
 | A6 | Filter | Daily update from new polls; weekly ensemble Kalman update, which re-tunes each state's sensitivity dials | Statistics | Fri 2 Oct (daily), Mon 12 Oct (weekly) | daily filter built 28 Sep (47e1852; `simlab/moves.py`, story effects from group reactions, c_s fitted, headline and twin in the Monte Carlo); news fades with age (5.5-day half-life; one-off stories drop within a day once out of the news); weekly filter built 29 Sep (`simlab/weekly.py`, 8fe9c69): per-state news dials learned from the polls (exact update, pooled with a national dial), fade-speed grid, surprise monitor; runs Mondays from 12 Oct inside the statistics step. Left for Matteo: the demographic factor state |
 | A7 | Monte Carlo | 40,000 correlated simulated elections → "wins 7 in 10", ranges, Senate control, House seats | Statistics | Thu 1 Oct | done 28 Sep (e7fb30f; `simlab/montecarlo.py`, run by `python -m simlab.statsday`, ~14 s, 35 races); `house` null until A11 |
-| A8 | Daily job | One command a day on GitHub Actions, with a run record, a spend line and an alert if a run is missed | Engine | Sat 3 Oct | built 28 Sep (`simlab/daily.py`, `daily.yml`); off until `PIPELINE_ON` on 5 Oct. 29 Sep: triggers every 15 minutes from 09:47 to 14:47 UTC and runs once a day, because GitHub drops most scheduled triggers |
+| A8 | Daily job | One command a day on GitHub Actions, with a run record, a spend line and an alert if a run is missed | Engine | Sat 3 Oct | built 28 Sep (`simlab/daily.py`, `daily.yml`); `PIPELINE_ON` switched on Thu 1 Oct (Matteo, 29 Sep). 29 Sep: triggers every 15 minutes from 09:47 to 14:47 UTC and runs once a day, because GitHub drops most scheduled triggers |
 | A9 | Scoring | Weekly scores against the poll average, the markets, Cook and the stats-only forecast | Kev | first on Mon 19 Oct | test metrics exist |
 | A10 | Rehearsals | Two full dry runs on GitHub Actions | all, led by Engine | Sat 3 – Sun 4 Oct | the levels' gap is closed (frozen inputs in `simlab/levels_inputs.json`); the statistics chain writes everything in about 10 s but hasn't run on Actions yet |
 | A11 | House seats | Voter groups re-weighted to each district on the new 2026 maps; district baselines and polls; the other ~395 seats from the fundamentals map | Kev (moved from Statistics 28 Sep, Matteo's call); starts once A2's House maps and 2024 results by district land, ~Wed 30 Sep | Fri 9 Oct | not started; interface agreed with Statistics; the persuadable and mobilisable shares it needs are in `simlab/pimu.json` (e782daa). Kev's group margins now serve every race (Matteo, 29 Sep): Kev answers the 28 groups in all 51 states by Fri 2 Oct, and `python -m simlab.groups --kev ANSWERS` writes `simlab/kev_groups.json` for the Senate and `house_groups.json` |
@@ -109,7 +109,7 @@ Checkpoints and fallbacks:
 
 ## The pilot week (5–11 Oct, private)
 
-The daily loop for Ohio, North Carolina and Texas:
+The daily loop for Ohio, North Carolina and Texas, plus two more races (recommended Iowa and Maine; Matteo, 29 Sep):
 1. data
 2. news
 3. reactions
@@ -164,7 +164,7 @@ once use up the Claude plan's limits faster. If the limits bite, pause Content &
 | Thu 1 Oct | Put free API keys in `.env` (FEC, Census, FRED, EIA) and create a Redistricting Data Hub account |
 | Fri 2 Oct | Create the accounts; confirm Kev stays out of reactions and B4 is dropped (react-v1 failed B2) |
 | Fri 9 Oct | Cloudflare: point labs.scaliastudio.dev at the site |
-| Sat 10 Oct | Publishing and ethics review; OSF yes or no; a production OpenRouter key with a monthly cap (the private pilot runs on the test key, which has about $8 left) |
+| Sat 10 Oct | Publishing and ethics review; OSF yes or no; raise the test OpenRouter key's cap (no production key: the test key stays, Matteo 29 Sep; `SIMLAB_BUDGET_USD` follows the cap) |
 | from 12 Oct | About 30 minutes a day approving posts |
 
 GitHub access for the scheduled jobs: Claude sets up a deploy key that can only write to the private data repo
