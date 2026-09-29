@@ -142,10 +142,10 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict,
     headline is linear in the effects, so the parts times the dials must add up to it."""
     run = lambda mv_paths: levels.compute(t, day, run_id, moves=mv_paths, inp=inp, election=election)
     twin, head = levels.compute(t, day, run_id, inp=inp, election=election), run(moves.paths(mv))
-    base = {k: moves.paths(mv, f"{k}_base") for k in ("s", "t")}
-    own = {k: {r: x for r, x in base[k].items() if r != "US"} for k in base}
-    runs = {f"own_{k}": run(own[k] | {"US": []})["races"] for k in base} | {
-        f"us_{k}": run({"US": base[k].get("US", [])} | {r: [] for r in own[k]})["races"] for k in base}
+    own = {k: {r: x for r, x in moves.paths(mv, f"{k}_base", with_nation=False).items() if r != "US"} for k in "st"}
+    nation, takes = {k: moves.paths(mv, f"{k}_base").get("US", []) for k in "st"}, moves.takes_nation(mv)
+    runs = {f"own_{k}": run(own[k] | {"US": []})["races"] for k in "st"} | {
+        f"us_{k}": run({"US": nation[k]} | {r: nation[k] if r in takes else [] for r in own[k]})["races"] for k in "st"}
     part = lambda name: {r: runs[name][r]["margin"] - twin["races"][r]["margin"] for r in twin["races"]}
     news = {"switching": part("own_s"), "turnout": part("own_t"), "switching_us": part("us_s"),
             "turnout_us": part("us_t"), "unit": {r: r.split("-")[0] for r in own["s"]},

@@ -144,6 +144,7 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
         fs, ft = round(100 * race_move(groups, dd, {}), 4), round(100 * race_move(groups, {}, dt), 4)
         fs0, ft0 = round(100 * race_move(groups, full["base"][2], {}), 4), round(100 * race_move(groups, {}, full["base"][3]), 4)
         info[eid] = {"first_seen": first.isoformat(), "last_seen": last.isoformat(), "type": e.get("type"),
+                     "scope": e.get("scope"),
                      "age_half_life": h_age, "after_news_half_life": h_after, "a": a, "full": round(fs + ft, 4),
                      "full_s": fs, "full_t": ft, "full_s_base": fs0, "full_t_base": ft0,
                      "full_base": round(full["base"][0], 4), "election_day": round((fs + ft) * eday, 4),
@@ -192,15 +193,25 @@ def lasting_share(events: list[tuple], lags: list[tuple] = LAGS) -> tuple[dict, 
             for i, (a, b) in enumerate(lags) if i}, len(x)
 
 
-def paths(m: dict, part: str = "all") -> dict:
-    """{race_id or "US": [(first_seen, last_seen, full effect, age half-life, after-news half-life)]} from
-    moves.json's main block, for
-    levels.build: the whole effect, or only its switching ("s") or turnout ("t") part, at the state's dials or at dial 1
-    ("s_base", "t_base"). Races without stories are left out, so levels.build gives them the nation's."""
+def paths(m: dict, part: str = "all", with_nation: bool = True) -> dict:
+    """{race_id or "US": [(first_seen, last_seen, full effect, age half-life, after-news half-life)]} from moves.json's
+    main block, for levels.build: the whole effect, or only its switching ("s") or turnout ("t") part, at the state's
+    dials or at dial 1 ("s_base", "t_base"). A race whose own reactions include no national stories (the watch tier
+    from 12 Oct) also gets the nation's national stories, unless `with_nation` is False; a simulated race gets them
+    through its own rows, so they aren't added twice. Races without stories are left out, so levels.build gives them
+    the nation's."""
     key = {"all": "full", "s": "full_s", "t": "full_t", "s_base": "full_s_base", "t_base": "full_t_base"}[part]
-    return {r: [(v["first_seen"], v["last_seen"], v[key], v["age_half_life"], v["after_news_half_life"])
-                for v in x["events"].values()]
+    item = lambda v: (v["first_seen"], v["last_seen"], v[key], v["age_half_life"], v["after_news_half_life"])
+    nation = [item(v) for v in m.get("US", {}).get("events", {}).values()] if with_nation else []
+    extra = takes_nation(m)
+    return {r: [item(v) for v in x["events"].values()] + (nation if r in extra else [])
             for r, x in m.items() if r != "shadow" and isinstance(x, dict) and x.get("events")}
+
+
+def takes_nation(m: dict) -> set:
+    """Races with stories of their own but no national stories among them: they take the nation's."""
+    return {r for r, x in m.items() if r not in ("US", "shadow") and isinstance(x, dict) and x.get("events")
+            and not any(v.get("scope") == "national" for v in x["events"].values())}
 
 
 def movers(m: dict, top: int = 5, least: float = 0.01, when: str = "election_day") -> dict:

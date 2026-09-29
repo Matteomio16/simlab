@@ -209,6 +209,27 @@ class DialTest(unittest.TestCase):
         self.assertAlmostEqual(e["full_s"], 0.5 * e["full_s_base"], places=4)
 
 
+class NationTest(unittest.TestCase):
+    ev = lambda self, scope, full: {"first_seen": "2026-10-12", "last_seen": "2026-10-12", "scope": scope,
+                                    "age_half_life": 5.5, "after_news_half_life": 1, "full": full, "full_s": full,
+                                    "full_t": 0.0, "full_s_base": full, "full_t_base": 0.0, "election_day": 0.0,
+                                    "card": ""}
+    def m(self):
+        return {"US": {"events": {"n1": self.ev("national", 1.0)}},
+                "GA": {"events": {"g1": self.ev("race", 2.0)}},
+                "OH-S": {"events": {"o1": self.ev("race", 3.0), "n1": self.ev("national", 4.0)}}}
+
+    def test_a_watch_race_keeps_the_nations_national_stories(self):
+        p = moves.paths(self.m())
+        self.assertEqual(sorted(x[2] for x in p["GA"]), [1.0, 2.0])
+        self.assertEqual(sorted(x[2] for x in p["OH-S"]), [3.0, 4.0])
+        self.assertEqual(moves.takes_nation(self.m()), {"GA"})
+
+    def test_own_stories_only(self):
+        p = moves.paths(self.m(), with_nation=False)
+        self.assertEqual(([x[2] for x in p["GA"]], sorted(x[2] for x in p["OH-S"])), ([2.0], [3.0, 4.0]))
+
+
 class ReadTest(unittest.TestCase):
     ev = lambda first, last, full, eday, card: {"first_seen": first, "last_seen": last, "age_half_life": 5.5,
                                                 "after_news_half_life": 1, "full": full, "full_s": full, "full_t": 0.0,
