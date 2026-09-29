@@ -26,7 +26,7 @@ MEANINGFUL = 0.03  # a smaller 7-day move in the win chance is "no meaningful ch
 MOVER_MIN = 0.5  # margin points on 3 Nov; smaller story effects stay in note.md, out of public captions
 LAUNCH = date(2026, 10, 12)
 LIMITS = {"instagram": 2200, "thread": 280}
-PILOT = ("OH-S", "NC", "TX")
+PILOT = ("OH-S", "NC", "TX", "IA", "ME")
 FEATURED = 4  # races per daily post from the launch: the closest races plus the biggest mover
 COOK = {"Tossup": "Toss-up", "Toss Up": "Toss-up"}
 
@@ -56,7 +56,7 @@ def featured(rs: list[dict], day: date, only: list[str] | None = None) -> list[d
     if only:
         return [r for r in rs if r["rid"] in only]
     if day < LAUNCH:
-        return [r for r in rs if r["rid"] in PILOT] or rs[:FEATURED]
+        return [r for rid in PILOT for r in rs if r["rid"] == rid] or rs[:FEATURED]
     close = sorted(rs, key=lambda r: abs(r["p"] - 0.5))[:FEATURED - 1]
     moved = sorted((r for r in rs if r not in close), key=lambda r: -abs(r["p"] - (r["prev"] or r["p"])))
     return close + moved[:1]

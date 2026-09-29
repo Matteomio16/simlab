@@ -116,7 +116,7 @@ Command for the daily job (roadmap A8): `python -m simlab.publish.kit --date YYY
 writes `derived/<date>/post-kit/`, exits 1 if the kit can't be built, and prints a one-line JSON summary last
 (`ok`, `races`, `slides`, `problems`, `approvable`, `out`). Before 12 Oct every slide's kicker says "PILOT · INTERNAL,
 NOT FOR POSTING". Layouts: The Stamp, Where everyone stands, 100 futures (Matteo, 28 Sep). A slide
-takes about 1 s to render. Featured races: OH, NC and TX before 12 Oct; from 12 Oct the three closest races plus the
+takes about 1 s to render. Featured races: the pilot five (OH, NC, TX, IA, ME) before 12 Oct; from 12 Oct the three closest races plus the
 biggest 7-day mover (`--races NC,GA` overrides). `note.md` still lists every race. The summary adds `featured`.
 Tests: `python -m unittest tests.test_kit`.
 
