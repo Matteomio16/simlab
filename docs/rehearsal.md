@@ -32,7 +32,10 @@ The Worker starts `daily.yml` at 09:47 UTC with `scheduled=true`. Nobody starts 
 
 ## Sunday 4 Oct: failure drills
 
-Run each by hand (Actions → daily → Run workflow, with the day), after the day's scheduled run.
+The scheduled run comes first. Sunday is the post kit's first video day (`--reel auto`: a 9:16 video of the first
+featured race). Pass: the kit's summary has `"reel": true` and `problems` 0, and the job is still under 45 minutes.
+
+Then run each drill by hand (Actions → daily → Run workflow, with the day).
 
 1. **The same day again.** News gives the same event ids; the harness asks nothing new; statistics shows
    `deselected_pairs` 0. Pass: every step ok, no new reaction rows.
