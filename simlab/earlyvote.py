@@ -45,7 +45,7 @@ import pandas as pd
 import requests
 
 UA = {"User-Agent": "simlab/0.1 (research; +https://scaliastudio.dev)"}
-ENABLED = ("nc",)  # a state joins the daily job only after Matteo's OK on its files and sizes
+ENABLED = ("nc", "ia", "tx")  # a state joins only after Matteo's OK: small aggregates yes, voter-level files by name
 NCSBE = "https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2026_11_03/"
 NC_BY = ["county_desc", "cong_dist_desc", "voter_party_code", "race", "ethnicity", "gender", "age_band",
          "ballot_req_type", "ballot_req_delivery_type", "ballot_rtn_status", "ballot_rtn_dt", "sdr"]

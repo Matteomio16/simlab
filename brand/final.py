@@ -356,7 +356,8 @@ def build() -> list[Path]:
     mono_pal = {**LIGHT, "blue": LIGHT["ink"], "red": LIGHT["ink"]}
     save("mark-mono", fit(mark(0, 0, 100, mono_pal), 400, 200, 8), 400, 200)
 
-    save("avatar", avatar_bleed(DARK), 1080, 1080, DARK["bg"], png=True, jpg=True)
+    save("avatar", avatar_bleed(LIGHT, share=.72), 1080, 1080, LIGHT["bg"], png=True, jpg=True)  # Matteo, 29 Sep: D white
+    save("avatar-crop-indigo", avatar_bleed(DARK), 1080, 1080, DARK["bg"])
     (OUT / "avatar-options").mkdir(exist_ok=True)
     for key, (fn, _) in AVATARS.items():
         for tag, pal in (("indigo", DARK), ("white", LIGHT)):
