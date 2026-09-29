@@ -104,5 +104,36 @@ class Tiers(unittest.TestCase):
         self.assertNotIn("XX-40", sim)
 
 
+
+def fake_base(day):
+    from datetime import timedelta
+    from simlab import levels
+    gb = pd.DataFrame([{"pollster": f"P{i}", "start": day - timedelta(days=3 * i + 2), "end": day - timedelta(days=3 * i),
+                        "population": "lv", "partisan": "", "dem": 48.0, "rep": 44.0, "n": 1000,
+                        "margin": 100 * 4 / 92} for i in range(8)])
+    s = pd.DataFrame({"state": ["OH"] * 4, "district": [1, 2, 3, 4], "new_map": [False] * 4,
+                      "pres24": [-10.0, 0.0, 10.0, 60.0], "votes24": [3e5] * 4, "inc": [0] * 4,
+                      "fixed": [None, None, None, "D"], "nominees": [{}] * 4}, index=["OH-1", "OH-2", "OH-3", "OH-4"])
+    params, priors = levels.inputs()[:2]
+    return {"day": day, "seats": s, "t": {"senate": pd.DataFrame(), "generic_ballot": gb, "entries": []},
+            "params": params, "priors": priors, "polls": pd.DataFrame()}
+
+
+class Build(unittest.TestCase):
+    def test_story_paths(self):
+        from datetime import date
+        day = date(2026, 9, 29)
+        base, lv = fake_base(day), {"national": {"E_hat": 2.0, "var": 16.0}}
+        twin = house.build(base, lv)["races"]
+        head = house.build(base, lv, {"US": [("2026-09-28", "2026-12-01", 2.0, None, None)],
+                                      "OH-3": [("2026-09-28", "2026-12-01", -1.0, None, None)]})["races"]
+        self.assertAlmostEqual(head["OH-1"]["margin"] - twin["OH-1"]["margin"], 2.0, places=2)
+        self.assertEqual((head["OH-1"]["story_effect"], head["OH-1"]["story_effect_3nov"]), (2.0, 2.0))
+        self.assertAlmostEqual(head["OH-3"]["margin"] - twin["OH-3"]["margin"], -1.0, places=2)
+        self.assertEqual(head["OH-4"]["margin"], 100.0)
+        self.assertEqual(head["OH-4"]["story_effect"], 0.0)
+        self.assertEqual(twin["OH-1"]["sd"], house.SD_CLOSE if abs(twin["OH-1"]["fundamentals"]) < house.CLOSE else house.SD_SAFE)
+
+
 if __name__ == "__main__":
     unittest.main()
