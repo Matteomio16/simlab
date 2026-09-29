@@ -73,6 +73,21 @@ class React(unittest.TestCase):
         self.assertEqual({(r["model"], r["shadow"]) for r in rows}, {("kev", True)})
         self.assertEqual(len(rows), 28)
 
+    def test_a_model_that_keeps_failing_is_dropped_for_the_day_and_the_others_carry_on(self):
+        # a Kev outage must not stall GLM for hours: each failed call has already used up its retries
+        class Down:
+            calls = 0
+
+            def ask_many(self, state, questions, tag=""):
+                Down.calls += 1
+                raise RuntimeError("giving up after 8 tries")
+        with mock.patch.object(harness, "THREADS", 1):
+            rows, failed = harness.react(EVENTS[:1], [("glm", FakeLLM(), False), ("kev", Down(), True)], "direct",
+                                         skip=set())
+        self.assertEqual(Down.calls, harness.MAX_FAILS)
+        self.assertEqual((len(rows), failed), (28, 28))
+        self.assertEqual({r["model"] for r in rows}, {"glm"})
+
     def test_a_failing_call_does_not_sink_the_run(self):
         class Flaky(FakeLLM):
             def ask_many(self, state, questions, tag="", groups=None):
