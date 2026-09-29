@@ -2,6 +2,33 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 night (Kev session): House simulated seats (polls, voter groups, story effects)
+
+- **District polls:**
+  - Sources: Wikipedia's district poll tables and VoteHub's us-representative entries, merged as for the Senate
+    (`polls.merge`). `polls.poll_tables` and `wiki_polls` take an optional heading level, since district sections
+    nest one level deeper; the Senate is unchanged.
+  - Each seat is blended exactly as a Senate race: the day's likely-voter gap, pollster leans and sponsor shift,
+    relative to the national path, then an inverse-variance blend with the fundamentals.
+  - 29 Sep: 192 polls in 84 seats; poll weight 0.17-0.60.
+  - District polls run 5.7 points more Democratic than the fundamentals. About 2.8 of that is the generic ballot's
+    bias, which the Senate also carries; the rest is likely campaign polls not marked partisan. Worth watching once
+    results can score it.
+  - `house_polls.csv` lists them.
+- **Voter groups for the 40 simulated seats** (`house_groups.json`, same shape as groups.json):
+  - n: the district's citizen adults by white/non-white x degree (ACS; old lines in the 10 redrawn states), split by
+    the state's party mix within each cell and tilted (`groups.tilt`) to the district's 2024 presidential margin;
+  - d: Kev's group margins shifted to the seat's level;
+  - t, pi and mu: the state's.
+  Checks: n sums to 1, and the groups' voters reproduce the seat's margin.
+- **Tiers are stable:** a seat simulated on any of the last 6 days stays simulated, as Senate races do.
+- **Story effects (for Statistics' wiring):** `house.prepare` is the once-a-day part (about 6 s). `house.build(base,
+  levels, paths, election)` applies moves.paths by levels.build's rules (about 0.7 s), so statsday can call it for the
+  twin, the headline, the four news parts and the today view. `house.write` writes the files. The 40 seats'
+  groups join groups.json in Statistics' moves, so one moves.json covers both chambers. House news starts once the
+  Engine adds the simulated seats to newsraces.json (from 12 Oct).
+- 29 Sep, stats-only: 222.6 expected Democratic seats at a national House vote of D+4.5.
+
 ## 2026-09-29 night (Engine session): the site's daily publish step
 
 Matteo approved (in the Website session) publishing each day's forecast to the site from 12 Oct. `daily.yml` now has a
