@@ -1,0 +1,11 @@
+{
+  // Starts the simlab workflows on time (src/index.js). No public URL: it only runs on its cron triggers.
+  "name": "simlab-cron",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": false,
+  "triggers": {
+    // Workers Free allows 5 cron triggers per account; these are 4
+    "crons": ["*/15 * * * *", "7 */3 * * *", "47 9 * * *", "13 * * * *"]
+  }
+}
