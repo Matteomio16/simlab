@@ -11,17 +11,21 @@ model) is asked once: earlier days' rows are skipped. Logs print counts only.
 from __future__ import annotations
 
 import json
+import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
 from pathlib import Path
 
+from . import newsraces
 from .askers import expected
 from .probes import REACTION_QUESTIONS, reaction_state
 from .tests import EVENT_Q
 
 SCHEMA = 1
 HERE = Path(__file__).parent
-STATE_NAME = {"OH-S": "Ohio", "NC": "North Carolina", "TX": "Texas"}
+CONFIG = newsraces.load()
+STATE_NAME = {rid: c["state_name"] for rid, c in CONFIG.items() if c.get("state_name")}
+THREADS = int(os.environ.get("SIMLAB_THREADS", "16"))  # GLM answered ~270 prompts a minute at 16 (29 Sep)
 GROUPS = [["support"], ["turnout"]]
 REACTS = ("Think about how someone like them reacts to the news itself (for example anger, worry or enthusiasm that can "
           "rally them behind their side or put them off a {what}), not only about who the news helps on paper.")
@@ -53,6 +57,9 @@ def questions(race_id: str, wording: str = "direct") -> dict:
     if wording == "reaction":
         support["instructions"] = REACTION_TEXT["US" if race_id == "US" else "race"]
         turnout["instructions"] = REACTION_TEXT["turnout"]
+    if CONFIG.get(race_id, {}).get("office") == "house":
+        support["instructions"] = support["instructions"].replace("their state's Senate race",
+                                                                  "their district's U.S. House race")
     return {"support": support, "turnout": turnout}
 
 
@@ -88,7 +95,7 @@ def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> t
                 "shadow": shadow, "wording": wording, "support": round(expected(a["support"]), 4),
                 "turnout": round(expected(a["turnout"]), 4),
                 "parse_error": bool(a["support"].get("_parse_error") or a["turnout"].get("_parse_error"))}
-    with ThreadPoolExecutor(16) as ex:
+    with ThreadPoolExecutor(THREADS) as ex:
         results = list(ex.map(one, tasks))
     rows = [r for r in results if r is not None]
     return rows, len(results) - len(rows)

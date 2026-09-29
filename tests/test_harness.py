@@ -3,6 +3,7 @@ import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest import mock
 
 from simlab import harness
 
@@ -103,6 +104,18 @@ class Run(unittest.TestCase):
         self.assertEqual((s1["rows"], s2["rows"]), (84, 0))
         self.assertEqual(len(rows), 84)
         self.assertTrue(all(r["date"] == "2026-09-28" and r["run_id"] == "r1" for r in rows))
+
+
+class Scale(unittest.TestCase):
+    def test_every_race_lives_in_its_state(self):
+        self.assertTrue(harness.personas("GA")[0]["text"].startswith("State: Georgia\n"))
+
+    def test_a_house_race_is_asked_as_a_house_race(self):
+        with mock.patch.dict(harness.CONFIG, {"TX-28": {"office": "house", "state_name": "Texas"}}):
+            for wording in ("direct", "reaction"):
+                text = harness.questions("TX-28", wording)["support"]["instructions"]
+                self.assertIn("their district's U.S. House race", text)
+                self.assertNotIn("Senate", text)
 
 
 if __name__ == "__main__":
