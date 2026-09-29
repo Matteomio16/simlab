@@ -101,6 +101,20 @@ class TextCheckTest(unittest.TestCase):
             reel.reveal(s, r)
             self.assertEqual(s.layout_problems(), [], name)
 
+    def test_opponent_wording(self):
+        from simlab.publish import racecards as rc
+        from simlab.publish.themes import LAB
+        base = rc.RACE | {"state": "Texas 28", "usps": "TX", "code": "TX-28", "office": "House", "p": 0.7}
+        self.assertEqual(rc.who(base, cap=True), "The Democrat")
+        o = base | {"left_party": "O", "candidates": {"left": "Jane Smith", "right": "Tom Roe"}}
+        self.assertEqual(rc.who(o), "Smith")
+        self.assertEqual(rc.verdict(o["p"], rc.lean(o)), "Leans Smith")
+        self.assertEqual(rc.who(base | {"left_party": "O"}), "the other candidate")
+        self.assertEqual(rc.verdict(0.9, rc.lean(base | {"left_party": "O"})), "Likely Other candidate")
+        for r in (o, base | {"left_party": "O"}, base | {"left_party": "I"}):
+            for name in ("4-stamp", "2-ladder", "3-futures"):
+                self.assertEqual(rc.LAYOUTS[name](LAB, r).layout_problems(), [], (name, r.get("candidates")))
+
     def test_special_editions_render(self):
         from simlab.publish import specials
         with tempfile.TemporaryDirectory() as tmp:

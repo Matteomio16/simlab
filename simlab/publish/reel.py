@@ -30,7 +30,7 @@ def schedule(n: int = 100, first: float = 0.22, last: float = 0.035) -> np.ndarr
 def build(r: dict, t=LAB):
     """The canvas with its static parts drawn, plus what each frame needs."""
     s = Slide(r.get("day", rc.DAY), r.get("kicker", "EVERY FUTURE · EXAMPLE"), rc.replace(t, dem=t.ind)
-              if r.get("left_party", "D") == "I" else t, size=(W, H), run=r["run"])
+              if r.get("left_party", "D") in ("I", "O") else t, size=(W, H), run=r["run"])
     t = s.t
     y0 = s.y
     hw = rc.tag(s, r, box_h=110)
@@ -91,7 +91,7 @@ def reel(r: dict, out: Path, t=LAB) -> dict:
         sc.set_offsets(np.array(xy) if xy else np.empty((0, 2)))
         sc.set_color(cols)
         count.set_text(str(dem))
-        label.set_text(f"of {landed} simulated elections won by the {who}" if landed else "")
+        label.set_text(f"of {landed} simulated elections won by {who}" if landed else "")
         if not revealed and now >= drops[-1] + FALL + 0.5:
             reveal(s, r)
             revealed = True
