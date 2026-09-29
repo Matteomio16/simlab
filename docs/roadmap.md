@@ -90,7 +90,7 @@ Checkpoints and fallbacks:
 | B1 | Kev react-v1: trained on real measured shifts and design rules, never on GLM's answers | Thu 1 Oct | done 28 Sep (23 min, about $2.30; no loss of Kev's public skills) |
 | B2 | Kev verdict on the 19 held-out events. Does it track size (GLM scores 0.26)? Are its errors independent of GLM's? Does Kev + GLM beat GLM alone? | Fri 2 Oct | done 28 Sep: fails. Size-tracking 0.00 (GLM 0.29, Jev 0.28); errors correlate 0.75 with GLM's; Kev + GLM 2.61 error vs GLM alone 2.32. Passes null (0.961) and is best on mirror (flip correlation 0.961, lean +0.002). Scores in `kev-finetune/runs/react-v1/react_scores_T1.json` |
 | B3 | Freeze the routing table above | Sat 3 Oct | draft; after B2, reactions go to GLM alone (asked both ways), with Jev as the gate |
-| B4 | Kev serving on Modal (one GPU, scale to zero, one burst a day), if it passes B2 | Sun 11 Oct | not needed after B2, unless Matteo decides otherwise |
+| B4 | Kev serving on Modal (one GPU, scale to zero, one burst a day), if it passes B2 | Sun 11 Oct | Matteo reopened it 29 Sep: react-v2-2 in shadow mode (answers daily, never applied, scored weekly against GLM); deploy waits on Matteo's Modal serving key |
 
 ## Track C: content and distribution
 
