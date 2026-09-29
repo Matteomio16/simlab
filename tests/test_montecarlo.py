@@ -308,6 +308,27 @@ class BuildTest(unittest.TestCase):
         self.assertLess(nc["stats_only"]["p_dem_win"], nc["p_dem_win"])
 
 
+class StoryTest(unittest.TestCase):
+    NEWS = {"switching": {}, "turnout": {}, "unit": {},
+            "posterior": {"labels": ["national"], "mean": [1.0, 1.0], "cov": [[1e-10, 0.0], [0.0, 1e-10]]},
+            "tau": [1e-5, 1e-5]}
+
+    def test_a_national_storys_strength_is_shared_and_a_race_storys_is_its_own(self):
+        z = mc.story_noise({"NC": {"n1": 2.0, "a": 1.0}, "OH-S": {"n1": 1.0, "b": 1.0}}, ["NC", "OH-S"], 0.4, 100_000, 1)
+        self.assertAlmostEqual(float(np.std(z[:, 0])), 0.4 * np.sqrt(5), delta=0.01)
+        self.assertAlmostEqual(float(np.corrcoef(z.T)[0, 1]), 2 / np.sqrt(10), delta=0.01)
+        self.assertEqual(float(np.abs(mc.story_noise({"NC": {"a": 1.0}}, ["NC", "OH-S"], 0.0, 10, 1)).max()), 0.0)
+
+    def test_story_strength_widens_only_the_races_its_stories_touch(self):
+        run = lambda sd: mc.build(levels(), levels(), {"NC": "D", "OH-S": "D", "NE": "I"}, PARAMS, date(2026, 9, 28),
+                                  "run-1", not_up={"R": 48, "D": 47, "I": 2}, n=20000,
+                                  news=self.NEWS | {"stories": {"NC": {"a": 6.0}}, "story_sd": sd})[0]["races"]
+        off, on = run(0.0), run(0.4)
+        spread = lambda r: r["margin"]["p90"] - r["margin"]["p10"]
+        self.assertGreater(spread(on["NC"]), spread(off["NC"]) + 0.2)
+        self.assertEqual((on["OH-S"]["margin"], on["NE"]["margin"]), (off["OH-S"]["margin"], off["NE"]["margin"]))
+
+
 def house(nc1=3.0):
     seat = lambda m, sd, tier, fixed=None: {"margin": m, "sd": sd, "fixed": fixed, "tier": tier}
     return {"levels": {"races": {"NC-1": seat(nc1, 5.5, "simulate"), "NC-2": seat(-12.0, 9.0, "statistics"),

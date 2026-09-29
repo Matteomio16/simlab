@@ -138,6 +138,25 @@ def apply_weekly(mp: dict, wk: dict | None) -> dict:
     return out
 
 
+def _stories(mv: dict, when: str) -> dict:
+    """{race_id: {story: effect}}: each story's effect on each race at its dials, on 3 Nov ("election_day") or today,
+    for the story-strength draws. A race without its own stories takes the nation's, and a race whose own stories
+    include no national ones adds the nation's (moves.paths' rule). The effects leave out the offset that polls read
+    net of the news give them, so the draws err on the wide side."""
+    us, takes = mv.get("US", {}), moves.takes_nation(mv)
+    value = (lambda x, e, v: v["election_day"]) if when == "election_day" else (
+        lambda x, e, v: x.get("by_event_effect", {}).get(e, 0.0))
+    out = {}
+    for r, x in mv.items():
+        if r in ("US", "shadow") or not isinstance(x, dict) or "events" not in x:
+            continue
+        src = [(x, e, v) for e, v in x["events"].items()]
+        if not src or r in takes:
+            src += [(us, e, v) for e, v in us.get("events", {}).items()]
+        out[r] = {e: round(float(value(xx, e, v)), 4) for xx, e, v in src}
+    return out
+
+
 def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict,
             election: date = levels.ELECTION) -> tuple[dict, dict, dict]:
     """Stats-only and headline levels for one election day, and each race's story effect at dial 1 split four ways:
@@ -152,7 +171,8 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict,
     part = lambda name: {r: runs[name][r]["margin"] - twin["races"][r]["margin"] for r in twin["races"]}
     news = {"switching": part("own_s"), "turnout": part("own_t"), "switching_us": part("us_s"),
             "turnout_us": part("us_t"), "unit": {r: r.split("-")[0] for r in own["s"]},
-            "posterior": mp["dial_posterior"], "tau": mp["dial_prior"]["tau"]}
+            "posterior": mp["dial_posterior"], "tau": mp["dial_prior"]["tau"],
+            "stories": _stories(mv, "today" if election == day else "election_day"), "story_sd": mp.get("story_sd", 0.0)}
     dials = mp.get("dials", {})
     k = lambda unit, x: dials.get(unit, dials.get("default", {})).get(f"k_{x}", 1.0)
     gap = max(abs(head["races"][r]["margin"] - twin["races"][r]["margin"]

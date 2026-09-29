@@ -114,6 +114,20 @@ class TierTest(unittest.TestCase):
         self.assertEqual({r: out[r]["tier"] for r in out}, {"IA": "simulate", "ME": "simulate"})
 
 
+class StoriesTest(unittest.TestCase):
+    MV = {"date": "2026-10-01", "shadow": {},
+          "US": {"events": {"n1": {"election_day": 0.1, "scope": "national"}}, "by_event_effect": {"n1": 0.5}},
+          "OH-S": {"events": {"a": {"election_day": 0.2, "scope": "race"}, "n1": {"election_day": 0.3, "scope": "national"}},
+                   "by_event_effect": {"a": 1.0, "n1": 0.6}},
+          "IA": {"events": {"b": {"election_day": 0.05, "scope": "race"}}, "by_event_effect": {"b": 0.4}},
+          "WY": {"events": {}, "by_event_effect": {}}}
+
+    def test_each_races_stories_on_3_november_and_today(self):
+        eday, now = statsday._stories(self.MV, "election_day"), statsday._stories(self.MV, "today")
+        self.assertEqual(eday, {"OH-S": {"a": 0.2, "n1": 0.3}, "IA": {"b": 0.05, "n1": 0.1}, "WY": {"n1": 0.1}})
+        self.assertEqual(now, {"OH-S": {"a": 1.0, "n1": 0.6}, "IA": {"b": 0.4, "n1": 0.5}, "WY": {"n1": 0.5}})
+
+
 class WeeklyTest(unittest.TestCase):
     MP = {"dials": {}, "age_half_life_days": 5.5,
           "dial_prior": {"mean": [1.0, 1.0], "sd": [0.44, 0.71], "tau": [0.3, 0.5]}}

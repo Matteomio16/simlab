@@ -196,6 +196,17 @@ def _simulate(lv: dict, ids: list[str], params: dict, n: int, seed: int, df: int
     return draw(mu, sd, c, n, seed, df, first=len(ids)), lifted
 
 
+def story_noise(stories: dict, ids: list[str], sd: float, n: int, seed: int) -> np.ndarray:
+    """Each story's strength drawn once per simulated election (sd relative to its effect) and applied to its effect in
+    every race it touches ({race: {story: effect}}): a national story's draw is shared by all its races, a race
+    story's is its own race's (Matteo, 29 Sep)."""
+    ev = sorted({e for r in ids for e in stories.get(r, {})})
+    if not ev or not sd:
+        return np.zeros((n, len(ids)))
+    effects = np.array([[stories.get(r, {}).get(e, 0.0) for r in ids] for e in ev])
+    return (np.random.default_rng([seed, 3]).standard_normal((n, len(ev))) * sd) @ effects
+
+
 def _dials(news: dict, units: list[str], n: int, seed: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Per race, the dials' posterior mean and a draw per simulated election: the national dials plus the unit's
     deviation, drawn jointly from the weekly filter's posterior; a unit it hasn't seen gets its deviation from the
@@ -225,7 +236,9 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
     the weekly filter's posterior of the dials ("posterior": {labels, mean, cov}, "tau"). Every simulated election
     draws its own dials, so the forecast is not tied to the fitted sizes and races with strong simulated reactions get
     wider, story-driven tails. Each race also reports its win chance with the national dials at their 10th and 90th
-    percentiles.
+    percentiles. With "stories" ({race_id: {story: effect}}) and "story_sd", each story's strength is also drawn per
+    election (story_noise): the news uncertainty has three layers, the overall scale (national dial), each state's
+    sensitivity (its deviation) and each story's strength.
 
     `house` ({"levels": house_levels.json, "left": {seat: "D" or "O"}}) adds the House: its contested seats are drawn
     with the Senate's national, regional and state errors, and the seat totals give the majority (218). The seats take
@@ -238,6 +251,7 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
     (x, xh), (xt, xth) = np.hsplit(x, [len(ids)]), np.hsplit(xt, [len(ids)])
     parties = [left[r] for r in ids]
     if news:
+        x = x + story_noise(news.get("stories", {}), ids, news.get("story_sd", 0.0), n, seed)
         part = lambda k: np.array([news.get(k, {}).get(r, 0.0) for r in ids])
         ds, dt, us, ut = part("switching"), part("turnout"), part("switching_us"), part("turnout_us")
         k_hat, k_draw, nat, nat_sd = _dials(news, [news["unit"].get(r, "US") for r in ids] + ["US"], n, seed + 1)

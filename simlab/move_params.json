@@ -2,6 +2,8 @@
  "c_s": 0.2055,
  "c_t": 0.2055,
  "c_t_rule": "c_t = c_s (prior: a strong reaction moves the same fraction of a group's mobilisable pool as of its persuadable pool); no data identify c_t before early votes and the weekly filter",
+ "story_sd": 0.0,
+ "story_sd_rule": "each story's strength drawn once per simulated election, sd relative to its effect, applied in every race it touches (a national story's draw shared by its races, a race story's its own): the story layer of the news uncertainty beside the overall scale (national dial) and each state's sensitivity (its deviation). Estimate 0.42 from the 45 calibration events (residual scatter beyond their measurement error, method of moments, 29 Sep); 0 until Matteo decides.",
  "support_offset": 0.08,
  "support_offset_prior": {
   "mean": 0.08,
