@@ -24,7 +24,7 @@ from . import moves
 from .levels import ELECTION, effect, local_level
 
 PRIOR_VAR = 1e6  # diffuse start, as levels.local_level
-WEEKLY_FROM = date(2026, 10, 12)  # Mondays from here run the update inside the daily statistics step
+WEEKLY_FROM = date(2026, 10, 5)  # Mondays from here run the update inside the daily statistics step (Matteo, 29 Sep)
 POINTS = [(0, 0), (1, 0), (2, 0), (0, 1), (0, 2), (1, 1)]
 
 
