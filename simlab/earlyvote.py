@@ -11,25 +11,23 @@ the job runs in a public repo whose logs are public.
 - nc: NCSBE's absentee file (one row per ballot, by mail and, from 15 Oct, one-stop early voting) counted by county,
   congressional district, party, race, ethnicity, gender, age band, request type, delivery, return status, return
   date and same-day registration; and NCSBE's own county counts of requests, kept as published.
-- me: the Secretary of State's absentee voter file (one row per ballot; its name changes with each update, so the
-  voter-data page is read for the current link), counted by town, congressional district, party, ballot type,
-  request, issue and return methods, dates and return status.
+- me: the Secretary of State's absentee voter file (one row per ballot request with the voter's record number, no
+  names; its name changes with each update, so the voter-data page is read for the current link), counted by town,
+  congressional district, party, ballot type, request, issue and return methods, dates and return status.
 - ia: the Secretary of State's daily absentee PDFs by county and by congressional district, kept as published (links
   read from the statistics page; only files uploaded from September 2026, which excludes the primary's).
 - tx: the Secretary of State's early-vote system (Civix): its election list, which shows when the general
   election's early-voting days start (~19 Oct); the turnout files join once the first day exists to test on.
 
-Ohio is not here: the Secretary of State's site blocks scripts and publishes no file.
+Ohio is not here: the Secretary of State's site blocks scripts and publishes no file (skipped for the pilot, Matteo, 29 Sep).
 
     python -m simlab.earlyvote --out ../simlab-data/earlyvote [--state me]
 """
 from __future__ import annotations
 
 import argparse
-import csv
 import gzip
 import hashlib
-import io
 import json
 import os
 import re
@@ -45,7 +43,7 @@ import pandas as pd
 import requests
 
 UA = {"User-Agent": "simlab/0.1 (research; +https://scaliastudio.dev)"}
-ENABLED = ("nc", "ia", "tx")  # a state joins only after Matteo's OK: small aggregates yes, voter-level files by name
+ENABLED = ("nc", "ia", "tx", "me")  # a state joins only after Matteo's OK: small aggregates yes, voter-level files by name
 NCSBE = "https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2026_11_03/"
 NC_BY = ["county_desc", "cong_dist_desc", "voter_party_code", "race", "ethnicity", "gender", "age_band",
          "ballot_req_type", "ballot_req_delivery_type", "ballot_rtn_status", "ballot_rtn_dt", "sdr"]
@@ -53,10 +51,11 @@ AGE_BANDS = ([17, 29, 44, 64, 200], ["18-29", "30-44", "45-64", "65+"])
 MAINE_PAGE = "https://www.maine.gov/sos/elections-voting/voter-data"
 MAINE_FILE = re.compile(r'href="([^"]*inline-files/11-3-26[^"]*AB%20Voter%20File[^"]*\.txt)"', re.I)
 # www.maine.gov/sos/elections-voting/absenteelayout: 27 fields in this order
-MAINE_FIELDS = ["municipality", "designators", "voter_record", "last_name", "first_name", "middle_name", "suffix",
-                "party", "ib", "ward_precinct", "cong_dist", "senate_dist", "house_dist", "da_dist", "county_comm_dist",
-                "ballot_type", "request_method", "requested", "issue_method", "issued", "return_method", "received",
-                "received_time", "duplicate_seq", "return_status", "challenge_reason", "rejection_reason"]
+# the file's own header (29 Sep 2026: 23 pipe-separated fields, no names), mapped to the names kept
+MAINE_COLUMNS = {"RES MUNICIPALITY": "municipality", "CG": "cong_dist", "P": "party", "Ballot Type": "ballot_type",
+                 "Req Type": "request_method", "Req Date": "requested", "Issued Type": "issue_method",
+                 "Issued Date": "issued", "Rec Type": "return_method", "Rec Date": "received",
+                 "Status": "return_status"}
 MAINE_BY = ["municipality", "cong_dist", "party", "ballot_type", "request_method", "requested", "issue_method",
             "issued", "return_method", "received", "return_status"]
 IOWA_PAGE = "https://sos.iowa.gov/iowans/election-results-statistics"
@@ -80,16 +79,11 @@ def nc_counts(path: Path) -> tuple[bytes, int]:
 
 
 def me_counts(path: Path) -> tuple[bytes, int]:
-    """Maine's one-row-per-ballot file -> counts by MAINE_BY, read by position from the published layout (the
-    delimiter is sniffed and a header row, if any, skipped). Names and voter numbers never leave this function."""
-    text = path.read_bytes().decode("latin-1")
-    first = text.split("\n", 1)[0]
-    sep = max(("|", "\t", ","), key=first.count)
-    rows = list(csv.reader(io.StringIO(text), delimiter=sep))
-    if rows and any(w in " ".join(rows[0]).lower() for w in ("voter record", "last name", "municipality")):
-        rows = rows[1:]
-    rows = [r for r in rows if len(r) >= len(MAINE_FIELDS)]
-    d = pd.DataFrame([r[:len(MAINE_FIELDS)] for r in rows], columns=MAINE_FIELDS)[MAINE_BY].apply(lambda s: s.str.strip())
+    """Maine's one-row-per-ballot file -> counts by MAINE_BY, read by the file's header (pipe-separated). Only the
+    MAINE_COLUMNS fields are read; voter numbers never leave this function."""
+    d = pd.read_csv(path, sep="|", dtype=str, encoding="latin-1", keep_default_na=False,
+                    usecols=lambda c: c.strip() in MAINE_COLUMNS)
+    d = d.rename(columns=lambda c: MAINE_COLUMNS[c.strip()])[MAINE_BY].apply(lambda s: s.str.strip())
     for c in ("requested", "issued", "received"):
         d[c] = pd.to_datetime(d[c], format="%m/%d/%Y", errors="coerce").dt.strftime("%Y-%m-%d").fillna("")
     counts = d.groupby(MAINE_BY).size().rename("n").reset_index()
