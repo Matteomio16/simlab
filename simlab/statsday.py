@@ -208,20 +208,19 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     inp = levels.inputs()
     lv = levels.compute(t, day, run_id, inp=inp)
     sha = {"levels.json": _write(out / "levels.json", lv)}
-    house, house_note = None, None
+    hb, house_note = None, None
     if (data / "house" / "inputs.json").exists():
         try:  # the House (Kev session, house.py) must not stop the Senate forecast
-            from .house import run as house_run
-            note = house_run(day, data, lv)
-            hl, hr = (json.loads((out / f"house_{k}.json").read_text(encoding="utf-8")) for k in ("levels", "races"))
-            seats = {r: x for r, x in hr.items() if isinstance(x, dict)}
-            house = {"levels": hl, "left": {r: x["left_party"] for r, x in seats.items()}, "races": seats}
-            house_note = {k: note[k] for k in ("seats", "uncontested", "tiers")}
+            from . import house as hs
+            hb = hs.prepare(day, data, lv, run_id=run_id)
+            hs.write(hb, hb["twin"], out)
+            house_note = {k: v for k, v in hs.summary(hb).items() if k in ("seats", "uncontested", "tiers")}
         except Exception as e:
-            house_note = {"error": f"{type(e).__name__}: {e}"[:120]}
+            hb, house_note = None, {"error": f"{type(e).__name__}: {e}"[:120]}
     base, pimu = (json.loads(f.read_text(encoding="utf-8")) for f in (groups.BASE, groups.PIMU))
     kev = json.loads(groups.KEV.read_text(encoding="utf-8")) if groups.KEV.exists() else None
-    grp = groups.build(lv, base, pimu, day.isoformat(), run_id, kev)
+    grp = groups.build(lv, base, pimu, day.isoformat(), run_id, kev) | (
+        {r: g for r, g in hb["groups"].items() if isinstance(g, dict)} if hb else {})
     _write(out / "groups.json", grp)
     mp = apply_weekly(json.loads(moves.PARAMS.read_text(encoding="utf-8")), latest_weekly(data, day))
     mv = moves.build(day, data / "derived", grp, mp, run_id)
@@ -237,18 +236,27 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
                                                                           "dials": mp["dials"]})
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
     bench, left = benchmarks(snap, t["race_list"]), {k: v["left_party"] for k, v in races.items()}
+    now_twin, now_head, now_news = _levels(t, day, run_id, mv, inp, mp, election=day)
+    house = now_house = None
+    if hb:
+        try:  # the seats take the day's stories by levels.build's rules (house.build), the twin none
+            paths, left_h = moves.paths(mv), {r: x["left_party"] for r, x in hb["races"].items()}
+            house = {"levels": hs.build(hb, head, paths), "twin": hb["twin"], "left": left_h}
+            now_house = {"levels": hs.build(hb, now_head, paths, election=day),
+                         "twin": hs.build(hb, now_twin, election=day), "left": left_h}
+        except Exception as e:
+            house_note = {"error": f"{type(e).__name__}: {e}"[:120]}
     forecast, draws = montecarlo.build(head, lv, left, params, day, run_id, benchmarks=bench, movers=moves.movers(mv),
                                        news=news, house=house)
-    now_twin, now_head, now_news = _levels(t, day, run_id, mv, inp, mp, election=day)
     forecast = montecarlo.attach_today(forecast, montecarlo.build(now_head, now_twin, left, params, day, run_id,
-                                                                  news=now_news, house=house)[0],
+                                                                  news=now_news, house=now_house)[0],
                                        movers=moves.movers(mv, when="today"))
     forecast |= {"snapshot": t["snapshot"], "inputs": sha}
     history = [json.loads(f.read_text(encoding="utf-8")) for k in range(1, 7)
                if (f := data / "derived" / (day - timedelta(days=k)).isoformat() / "races.json").exists()]
     stats = {r: x["stats_only"]["p_dem_win"] for r, x in forecast["races"].items()}
     races = tiers(races, stats, bench, history)
-    _write(out / "races.json", meta | races | (house["races"] if house else {}))
+    _write(out / "races.json", meta | races | (hb["races"] if hb else {}))
     _write(out / "forecast.json", forecast)
     _write(out / "draws.json", draws, compact=True)
     return {"ok": True, "date": day.isoformat(), "run_id": run_id, "snapshot": t["snapshot"], "races": len(races),
@@ -259,8 +267,8 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
             "stories": sum(len(x["events"]) for k, x in mv.items() if k != "shadow" and isinstance(x, dict) and "events" in x),
             "house": house_note,
             "files": ["polls.csv", "races.json", "levels.json", "groups.json", "params.json", "moves.json",
-                      "filter_state.json", "forecast.json", "draws.json"] + (["house_levels.json", "house_races.json"]
-                                                                              if house else [])}
+                      "filter_state.json", "forecast.json", "draws.json"] + (
+                ["house_levels.json", "house_races.json", "house_groups.json", "house_polls.csv"] if hb else [])}
 
 
 def main() -> int:
