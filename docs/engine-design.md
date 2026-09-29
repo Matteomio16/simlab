@@ -299,5 +299,5 @@ A writer may add fields. Renaming or removing a field needs a note to the readin
 | Item | Owner | By |
 | --- | --- | --- |
 | `pi` and `mu` estimates for OH, NC, TX (all 35 states by 12 Oct) | Statistics | Thu 1 Oct |
-| Weights of the attention formula. The spot-check couldn't test them (29 Sep): 15 of the 16 stories Matteo rated had one outlet and one day in the old Google News store, so all scored 0.2. Re-check on about 20 GDELT and Media Cloud stories in the pilot week | Engine | Fri 9 Oct |
+| Weights of the attention formula. The spot-check couldn't test them (29 Sep): 29 of the 32 stories Matteo rated had one outlet in the old Google News store, so the formula scored almost all of them the same. Re-check on about 20 GDELT and Media Cloud stories in the pilot week | Engine | Fri 9 Oct |
 | Full-scale rehearsal (A13) once Media Cloud's key is in: time, spend and failures at `--scope all` | Engine | Fri 9 Oct |

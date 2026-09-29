@@ -77,7 +77,7 @@ Checkpoints and fallbacks:
 | Job | Model | Why (measured) |
 | --- | --- | --- |
 | "Does this story change anything for this race?" | Jev | Says "no change" to 99–100% of irrelevant news; cheapest |
-| Labels: event type, side helped, salience | Jev, confirmed or changed after Matteo's spot-check | Cheap. Outlet names are removed first, because they sway every model |
+| Labels: event type, side helped, salience | Jev (Matteo's 32-story spot-check: 102 of 126 labels right, GLM 95; type 29 of 32, GLM 26) | Cheap. Outlet names are removed first, because they sway every model |
 | Direction of each group's reaction | GLM-5.3 Flash, each scale asked both ways | Right direction on 92% of events that moved opinion |
 | The most important stories (high salience, close races) | GLM alone (Kev failed B2 on 28 Sep) | Averaging only cancels bias if the two models' errors are independent |
 | Size of reactions | Real past shifts, then tuned per state by the filter | No model tracks size |

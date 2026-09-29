@@ -67,9 +67,16 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   Democrats toward Brown and raised their turnout.
 - **A national copy of a race's own story counts for that race only** when its headline names that race's
   candidates. The national feed carried "Paxton, Talarico spar over gas tax", and Jev gated it relevant to Ohio.
-- **Attention weights:** the spot-check couldn't test them. 15 of the 16 stories Matteo rated had one outlet and one
-  day in the old Google News store, so all scored 0.2. Matteo's ratings followed the story type (polls, big money and a
-  scandal "some"; endorsements and appearances "very little"). To re-check in the pilot week on real coverage.
+- **Spot-check: all 32 of Matteo's stories count.** All 32 were saved on the page; the local copy held only the 16
+  exported on 28 Sep, and now holds all 32. On all 32:
+  - Jev matched 102 of 126 labels and GLM 95 (on the first 16: 54 and 50 of 63);
+  - event type: Jev 29 of 32, GLM 26 (Jev's misses: two "other" stories typed national, one endorsement typed other);
+  - relevant: Jev 29 of 30, GLM 28 (two "unsure" answers left out); side helped on its face: Jev 26 of 32, GLM 24;
+  - attention: both overrate it. They said "some" where Matteo said "very little" on 10 (Jev) and 13 (GLM) of 32.
+  So Jev keeps the labels (Matteo's decision of 28 Sep).
+- **Attention weights:** the spot-check couldn't test them. 29 of the 32 stories had one outlet in the old Google News
+  store, so the coverage formula gave almost all of them the same score. To re-check in the pilot week on real
+  coverage.
 - **Kev shadow mode** (Matteo reopened it, 29 Sep): the harness already writes shadow rows with `--kev URL`. The daily
   job will pass it once the Kev session sends the URL, the key's secret name and the daily sample size.
 
