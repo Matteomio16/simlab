@@ -2,6 +2,20 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 night (Statistics session): Matteo's answers on the floor, story strength and CLAUDE.md
+
+- **Correlation floor (D23):** 0.25 among Senate races only, on the polling and fundamentals error, never the news. A
+  story about one state stays in that state's race ("a Maine story doesn't matter for Alaska"). House seats keep the
+  shared national, regional and state errors without the floor. Already built that way.
+- **Story strength on** (`story_sd` 0.42 in `simlab/move_params.json`, a7ac434) from the 3 Oct dry run. The news
+  uncertainty now has three layers: the overall scale, each state's sensitivity, and each story's strength.
+- **CLAUDE.md §5** (the project file, with Matteo's OK), added:
+  - the three news-uncertainty layers;
+  - GLM's lean correction;
+  - the Senate-only floor;
+  - the weekly filter from 5 Oct;
+  - Iowa and Maine in the pilot.
+
 ## 2026-09-29 night (Statistics session): news uncertainty by story; House seats take the news
 
 - **Matteo's two layers** (via the roadmap session): news uncertainty should vary by state sensitivity and by story
@@ -51,6 +65,18 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   groups join groups.json in Statistics' moves, so one moves.json covers both chambers. House news starts once the
   Engine adds the simulated seats to newsraces.json (from 12 Oct).
 - 29 Sep, stats-only: 222.6 expected Democratic seats at a national House vote of D+4.5.
+
+## 2026-09-29 night (Engine session): Matteo's answers on the full run
+
+- **Full-scale rehearsal on Wed 7 Oct: yes.** Every Senate race and simulated House seat, once, after the day's pilot
+  run. `daily.yml` has a `full_rehearsal` input: the run works on a copy of the data and saves to
+  `simlab-data/rehearsal/<day>-all/`, so the pilot's record stays clean, and it is never published. Pass criteria in
+  `docs/rehearsal.md`.
+- **The three site switches go together on Sun 11 Oct**, after the go: `SITE_PUBLISH=on`, `SITE_MODE=forecast`,
+  `SITE_DATA=live`.
+- **Media Cloud:** Matteo retries the sign-up. If a key comes, it goes in as the repository secret
+  `MEDIACLOUD_API_KEY` (and the same line in `.env` for local runs); the snapshot job then asks Media Cloud for every
+  Senate race and the nation with no other change.
 
 ## 2026-09-29 night (Engine session): news for the simulated House seats
 
