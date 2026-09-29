@@ -99,9 +99,10 @@ def state_dial(post: dict, state: str, prior: dict) -> dict:
 
 
 def _paths(m: dict, part: str, h_age: float | None = None) -> dict:
-    """Effect paths at dial 1 for one part ("s" or "t"), with the age half-life replaced by `h_age` if given."""
+    """Each race's own effect paths at dial 1 for one part ("s" or "t"), and the nation's under "US", with the age
+    half-life replaced by `h_age` if given."""
     return {r: [(f, l, x, h_age or ha, hf) for f, l, x, ha, hf in items]
-            for r, items in moves.paths(m, f"{part}_base").items()}
+            for r, items in moves.paths(m, f"{part}_base", with_nation=False).items()}
 
 
 def units(p, m: dict, params: dict, d: int, election=ELECTION, dials_us=(1.0, 1.0), h_age: float | None = None) -> dict:
@@ -117,6 +118,7 @@ def units(p, m: dict, params: dict, d: int, election=ELECTION, dials_us=(1.0, 1.
     if np.any(su) or np.any(tu):
         out["US"] = quadratic(lambda k: loglik(tg, yg - k[0] * su - k[1] * tu, vg, q_n)[0])
     grid, nx, npv = local_level(tg, yg - dials_us[0] * su - dials_us[1] * tu, vg, q_n, -d)
+    takes = moves.takes_nation(m)
     for race in sorted(r for r in ps if r != "US"):
         rp = p[p.race == race]
         t = rp.t.values.astype(float)
@@ -124,6 +126,9 @@ def units(p, m: dict, params: dict, d: int, election=ELECTION, dials_us=(1.0, 1.
         if not len(rp) or not (np.any(s) or np.any(u)):
             continue
         y0, v = rp.adj.values - np.interp(t, grid, nx), rp.v.values + np.interp(t, grid, npv)
+        if race in takes:
+            y0 = y0 - dials_us[0] * effect(t, ps.get("US", []), election) - dials_us[1] * effect(t, pt.get("US", []),
+                                                                                                  election)
         a, b, c = quadratic(lambda k: loglik(t, y0 - k[0] * s - k[1] * u, v, q_r)[0])
         st = race.split("-")[0]
         out[st] = (out[st][0] + a, out[st][1] + b, out[st][2] + c) if st in out else (a, b, c)
@@ -165,12 +170,16 @@ def surprises(p, m: dict, params: dict, d: int, dials: dict, election=ELECTION, 
     yg = g.adj.values - ku[0] * effect(tg, ps.get("US", []), election) - ku[1] * effect(tg, pt.get("US", []), election)
     out = {"US": _flag(tg, loglik(tg, yg, g.v.values, q_n)[1], d, days, alpha)}
     grid, nx, npv = local_level(tg, yg, g.v.values, q_n, -d)
+    takes = moves.takes_nation(m)
     for race in sorted(set(p.race) - {"US"}):
         rp = p[p.race == race]
         t = rp.t.values.astype(float)
-        k = dials.get(race.split("-")[0], ku) if race in ps else ku
-        s, u = (effect(t, x.get(race, x.get("US", [])), election) for x in (ps, pt))
-        y = rp.adj.values - k[0] * s - k[1] * u - np.interp(t, grid, nx)
+        nat = [effect(t, x.get("US", []), election) for x in (ps, pt)]
+        own = [effect(t, x[race], election) for x in (ps, pt)] if race in ps else [0.0, 0.0]
+        k = dials.get(race.split("-")[0], ku)
+        with_nat = race not in ps or race in takes
+        y = (rp.adj.values - k[0] * own[0] - k[1] * own[1] - (ku[0] * nat[0] + ku[1] * nat[1]) * with_nat
+             - np.interp(t, grid, nx))
         out[race] = _flag(t, loglik(t, y, rp.v.values + np.interp(t, grid, npv), q_r)[1], d, days, alpha)
     return out
 

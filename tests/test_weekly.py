@@ -64,22 +64,23 @@ PARAMS = {"drift_daily_sd": {"national": 0.3, "race": 0.5}}
 ELECTION = weekly.ELECTION
 
 
-def story(first, full_s, h_age=None, h_after=None, full_t=0.0):
+def story(first, full_s, h_age=None, h_after=None, full_t=0.0, scope="race"):
     return {"first_seen": first, "last_seen": first, "full_s_base": full_s, "full_t_base": full_t,
-            "age_half_life": h_age, "after_news_half_life": h_after}
+            "age_half_life": h_age, "after_news_half_life": h_after, "scope": scope}
 
 
 def synthetic(k_us, k_oh, h_true=None, noise=0.3, seed=0):
-    """GB and Ohio polls from t = -80 to -30 with a national story at -60 and an Ohio story at -50."""
+    """GB and Ohio polls from t = -80 to -30 with a national story at -60 and an Ohio story at -50. Ohio wasn't asked the
+    national story, so its polls carry the nation's effect at the national dial."""
     from datetime import timedelta
     import pandas as pd
     rng = np.random.default_rng(seed)
     t = np.arange(-80.0, -29.0)
-    m = {"US": {"events": {"n1": story(str(ELECTION + timedelta(days=-60)), 3.0, h_true)}},
+    m = {"US": {"events": {"n1": story(str(ELECTION + timedelta(days=-60)), 3.0, h_true, scope="national")}},
          "OH-S": {"events": {"o1": story(str(ELECTION + timedelta(days=-50)), 4.0, h_true)}}}
     shape = lambda t0: np.where(t >= t0, 1.0 if h_true is None else 0.5 ** (np.maximum(t - t0, 0) / h_true), 0.0)
     gb = 2.0 + k_us * 3.0 * shape(-60) + rng.normal(0, noise, len(t))
-    oh = 2.0 - 1.0 + k_oh * 4.0 * shape(-50) + rng.normal(0, noise, len(t))
+    oh = 2.0 - 1.0 + k_us * 3.0 * shape(-60) + k_oh * 4.0 * shape(-50) + rng.normal(0, noise, len(t))
     p = pd.DataFrame({"race": ["US"] * len(t) + ["OH-S"] * len(t), "t": np.r_[t, t], "adj": np.r_[gb, oh],
                       "v": noise ** 2})
     return p, m
