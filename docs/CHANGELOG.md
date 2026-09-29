@@ -2,6 +2,29 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 (Statistics session): Kev's voter-group margins for the Senate too
+
+- **Matteo, 29 Sep:** every race, House and Senate, takes each voter group's starting margin from Kev ces-v3b. The
+  survey numbers (d0) are kept alongside for the check after 3 Nov. This replaces the split agreed earlier today (Kev
+  for House districts only).
+- **Why:**
+  - One source for the whole forecast. The case for the split, that surveys are thin in districts, was wrong: Kev only
+    knows the state, so its district numbers are its state numbers shifted to each district, as d0's would be.
+  - Kev was closer on the only test (held-out OH, NC and TX against their 2024 votes): 4.2 against 5.1 points per
+    group once both are shifted to the state's level, within noise.
+  - It changes little. A group's margin enters only the turnout part of news effects, and only as a pattern, since
+    each race's groups are shifted to its level. On 29 Sep data, today's news effect in the three pilot races changes
+    by 1–5%, and the 3 Nov forecast doesn't change. The two sources differ mainly on independents and weak partisans.
+  - Caveat: the test scored the vote Kev learned (2024 presidential), while d0 comes from midterm Senate races.
+- **Built** (`simlab/groups.py`, `simlab/statsday.py`; 3 tests):
+  - `groups.build` takes Kev's margin wherever `simlab/kev_groups.json` has the state and group, and d0 elsewhere.
+    `groups.json` names its source in `d_source`.
+  - `python -m simlab.groups --kev ANSWERS` turns Kev's answers (`{run, states: {state: {group: d}}}`) into that
+    file and adds the nation's: the states' margins weighted by 2024 presidential votes times the group's share of
+    midterm voters.
+  - statsday reads the file when it exists. Until the Kev session delivers it, every race stays on d0.
+  - A trial run of 29 Sep on a copy of the data matches the real run exactly without the file.
+
 ## 2026-09-29 (Kev session): Kev back in; Kev's voter groups tested; House incumbency and district error fitted
 
 - **Matteo, 29 Sep:**

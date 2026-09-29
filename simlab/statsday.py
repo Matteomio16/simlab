@@ -186,7 +186,8 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     lv = levels.compute(t, day, run_id, inp=inp)
     sha = {"levels.json": _write(out / "levels.json", lv)}
     base, pimu = (json.loads(f.read_text(encoding="utf-8")) for f in (groups.BASE, groups.PIMU))
-    grp = groups.build(lv, base, pimu, day.isoformat(), run_id)
+    kev = json.loads(groups.KEV.read_text(encoding="utf-8")) if groups.KEV.exists() else None
+    grp = groups.build(lv, base, pimu, day.isoformat(), run_id, kev)
     _write(out / "groups.json", grp)
     mp = apply_weekly(json.loads(moves.PARAMS.read_text(encoding="utf-8")), latest_weekly(data, day))
     mv = moves.build(day, data / "derived", grp, mp, run_id)
