@@ -80,3 +80,4 @@ PowerShell sets variables with `$env:SITE_MODE = "forecast"; npm run dev`.
 | Public changelog, first entry dated 3 Oct | `content/changelog.md` | editing the file |
 | Track record and archive appear from 12 Oct only; changelog from 3 Oct | `scripts/postbuild.mjs`, footer | moving routes in or out of the prelaunch drop list |
 | House control block on the overview, shown once `forecast.json` has `house` (shape confirmed by Statistics, 29 Sep); House race pages come with the 12 Oct House launch | `src/app/_home/Overview.tsx`, `src/lib/types.ts` | — |
+| Page colour white, not the kit's cream #F5F3EE (Matteo, 29 Sep) | `src/app/globals.css` (`--paper`) | — |
