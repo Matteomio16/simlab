@@ -186,8 +186,9 @@ Decided by Matteo, 28 Sep (engine; details in `docs/engine-design.md`, `docs/roa
   persuadable share for vote choice and the mobilisable share for turnout, both estimated from CES pre- and
   post-election waves.
 - **Models:** GLM gives the reactions on its own. Kev react-v1 failed the held-out test on 28 Sep (size-tracking 0.00,
-  errors correlated 0.75 with GLM's, averaging worse than GLM alone), so there is no Kev shadow mode, no react-v2 and no
-  Kev serving (B4) unless Matteo reopens it (Matteo, 29 Sep).
+  errors correlated 0.75 with GLM's, averaging worse than GLM alone); react-v2 failed too on 29 Sep (direction 11/13,
+  averaging worse). Matteo reopened it on 29 Sep: Kev react-v2-2 runs in shadow mode (answers every day, never applied,
+  scored weekly against GLM), served on Modal (B4); Kev weights are kept. No further reaction training runs.
 - **News:**
   - Jev labels the news, with outlet names removed.
   - Attention comes from coverage data; the model's guess only breaks ties.

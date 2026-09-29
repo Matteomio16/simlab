@@ -2,6 +2,44 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 (Kev session): Kev back in; Kev's voter groups tested; House incumbency and district error fitted
+
+- **Matteo, 29 Sep:**
+  - keep Kev's weights;
+  - Kev react-v2-2 runs in shadow mode on Modal (pilot first, then a daily sample sized to October's $18 serving reserve);
+  - test ces-v3 against Statistics' voter-group numbers, then use it for the House districts;
+  - reaction training stays closed, with shadow mode supplying the evidence;
+  - start the House seats (A11).
+  The serving key is Matteo's to create (Modal secret `kev-serve` and GitHub secret `KEV_API_KEY`); no deploy before it
+  exists.
+- **Kev's voter groups against Statistics'** (`python -m simlab.kevscore --groups ces-v3b`). The test covers the 28 party-ID x
+  white/non-white x degree groups in OH, NC and TX: 60 of the 84 group-state pairs, those with at least 20 CES
+  validated 2024 voters. It
+  measures the error of each group's D-R margin in points, weighted by the group's voters (n x t):
+
+  | | Kev ces-v3b | Statistics (d0) | Kev minus Statistics, 95% |
+  |---|---|---|---|
+  | as given | 5.1 | 7.3 | -4.4 to -0.4 |
+  | both shifted to the state's level (as the engine uses them) | 4.2 | 5.1 | -2.1 to +0.3 |
+  | by state, shifted: OH / NC / TX | 3.9 / 1.9 / 6.7 | 4.3 / 4.1 / 6.9 | |
+
+  Kev is better in every state, but the engine-relevant (shifted) gap isn't conclusive. Averaging the two doesn't beat
+  Kev alone (4.4). ces-v3a is close behind (4.5). Caveat: this scores 2024 presidential votes, and d0 comes from the
+  2018/2022 midterms, while Kev learned 2024 patterns in the other 47 states. Part of Kev's edge is knowing 2024's
+  shifts (Texas above all).
+- **House fit** (`python -m simlab.housefit` → `simlab/house_params.json`; MIT House 1976-2024, 3,856 district pairs
+  on unchanged lines). Model: margin = year effect + b × last margin + psi × incumbent + c × last incumbent.
+  Incumbents are matched by person across the state, so renumbered districts keep their member. Each year is
+  predicted from the others, given the national swing.
+  - Incumbency is worth 4.4 points on 2014-2024 (7.4 on 1996-2024, 90% interval 5.6-9.3), shrinking over time. It
+    agrees with the Senate's 4.1.
+  - First-termers and senior members get the same effect (7.5 and 7.3; 4.9 and 4.2 on 2014-2024), so the Field
+    Guide's "first-termers get half" isn't supported.
+  - District error when unpolled, 2014-2024: SD 8.5 (90% 7.6-9.4); 7.9 with an incumbent running, 11.3 for open
+    seats, 8.4 for seats predicted within 15. That fits the placeholder 7-9, with open seats wider.
+  - These errors come from a model built on the previous House result. The forecast uses presidential lean on the
+    current lines, so treat them as a guide until house.py is checked on 2024.
+
 ## 2026-09-29 (Statistics session): the weekly filter (roadmap A6, weekly part)
 
 Matteo: "go ahead with the weekly filter". Built to stats-groundwork §5.7 and engine-design §3.3 (`simlab/weekly.py`):

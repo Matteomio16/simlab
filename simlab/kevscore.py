@@ -7,6 +7,7 @@ regression baseline of the fidelity test. Kev's own report scores hard labels, w
 
     python -m simlab.kevscore ces-v2 [--temperature 1.0]
     python -m simlab.kevscore ces-v1 ces-v2 ces-v3a ces-v3b     # paired comparison on the cells all runs answer
+    python -m simlab.kevscore --groups ces-v3b                  # the 28 voter groups against groups_base.json's d0
 """
 from __future__ import annotations
 
@@ -130,10 +131,57 @@ def compare(runs: list[str], temperature: float = 1.0, draws: int = 2000, seed: 
         print("; ".join(line))
 
 
+def groups(run: str, draws: int = 2000, seed: int = 0) -> dict:
+    """Kev's 2024 margin for the engine's voter groups (party ID x white/non-white x degree) in the held-out states
+    against Statistics' d0 (groups_base.json), both scored on CES validated voters. 'shifted' moves both to the
+    state's true level with groups.shift, as the engine does, so only the pattern across groups is compared."""
+    from .groups import BASE, shift
+    code = {"Ohio": "OH", "North Carolina": "NC", "Texas": "TX"}
+    base = json.loads(BASE.read_text(encoding="utf-8"))["states"]
+    dev = jsonl(DATA / "kev" / run / "development.jsonl")
+    kev, truth = defaultdict(list), {}
+    for r in json.loads((RUNS / run / "development" / "rows.json").read_text(encoding="utf-8")):
+        rec = dev[int(r["id"].split("/")[1])]
+        f = dict(line.split(": ", 1) for line in rec["state"].split("\n"))
+        if not r["question"].startswith("pres24") or "Party identification" not in f:
+            continue
+        key = (code[f["State"]], f"{f['Party identification']} / {f['Race/ethnicity'].lower()} / {f['Education']}")
+        p = dict(zip(r["keys"], softmax(np.array(r["logits"]))))
+        t = rec["questions"][r["question"]]["target"]
+        kev[key].append((p["harris"] - p["trump"]) / (p["harris"] + p["trump"]))
+        truth[key] = (t["harris"] - t["trump"]) / (t["harris"] + t["trump"])
+    keys = sorted(truth)
+    y = np.array([truth[k] for k in keys])
+    w = np.array([base[s][g]["n"] * base[s][g]["t"] for s, g in keys])
+    st = np.array([s for s, _ in keys])
+    raw = {"kev": np.array([np.mean(kev[k]) for k in keys]), "stats": np.array([base[s][g]["d0"] for s, g in keys])}
+    shifted = {m: v.copy() for m, v in raw.items()}
+    for m, v in shifted.items():
+        for s in code.values():
+            i = st == s
+            v[i] = shift(raw[m][i], w[i], float(np.dot(w[i], y[i]) / w[i].sum()))
+    rng = np.random.default_rng(seed)
+    boot = [rng.integers(0, len(y), len(y)) for _ in range(draws)]
+    out = {"run": run, "groups": len(keys)}
+    for label, v in (("raw", raw), ("shifted", shifted)):
+        e = {m: np.abs(x - y) * 100 for m, x in v.items()}
+        diff = [np.average(e["kev"][b], weights=w[b]) - np.average(e["stats"][b], weights=w[b]) for b in boot]
+        out[label] = {"kev": np.average(e["kev"], weights=w), "stats": np.average(e["stats"], weights=w),
+                      "kev_minus_stats_95": list(np.percentile(diff, [2.5, 97.5])),
+                      "by_state": {s: {m: np.average(e[m][st == s], weights=w[st == s]) for m in e} for s in code.values()}}
+    out = json.loads(json.dumps(out, default=float), parse_float=lambda x: round(float(x), 2))
+    print(json.dumps(out, indent=1))
+    return out
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("runs", nargs="+", help="one run to score, or several to compare (the first is the reference)")
     ap.add_argument("--data", default=None, help="training data folder under data/kev (default: the run name)")
     ap.add_argument("--temperature", type=float, default=1.0)
+    ap.add_argument("--groups", action="store_true", help="score the engine's voter groups against groups_base.json")
     a = ap.parse_args()
-    score(a.runs[0], a.data, a.temperature) if len(a.runs) == 1 else compare(a.runs, a.temperature)
+    if a.groups:
+        [groups(r) for r in a.runs]
+    else:
+        score(a.runs[0], a.data, a.temperature) if len(a.runs) == 1 else compare(a.runs, a.temperature)
