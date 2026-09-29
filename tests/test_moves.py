@@ -98,6 +98,17 @@ class BuildTest(unittest.TestCase):
         self.assertEqual(m["deselected_pairs"], ["NC e1"])
         self.assertIn("e1", m["OH-S"]["events"])
 
+    def test_a_story_selected_for_several_seats_counts_in_each_and_seats_without_groups_are_flagged(self):
+        self.groups["OH-9"] = self.groups["OH-S"]
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            e1 = event("OH-H-1", "2026-10-01T08:00:00+00:00", 1.0, races=("OH-9", "OH-13", "OH-1")) | {
+                "selected": {"OH-9": True, "OH-13": True}}
+            write_day(root, "2026-10-01", [e1], [reaction("OH-H-1", A, 1.0, 0.0, race=r) for r in ("OH-9", "OH-13")])
+            m = self.build(root, "2026-10-01")
+        self.assertIn("OH-H-1", m["OH-9"]["events"])
+        self.assertEqual((m["ungrouped_races"], m["deselected_pairs"]), (["OH-13"], []))
+
     def test_reactions_to_stories_missing_from_the_news_file_are_flagged(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
