@@ -30,20 +30,47 @@ from .newsnap import RSS_FEEDS
 from .probes import NEWS_QUESTIONS
 
 SCHEMA = 1
-CONFIG = newsraces.load()
 LEGACY = {"ohio": "OH-S", "north-carolina": "NC", "texas": "TX", "national": "US"}  # snapshot names before A13
-SNAP_RACES = {**{rid.lower(): rid for rid in CONFIG}, **LEGACY}
 PILOT = newsraces.PILOT
-RACE_TEXT = {rid: c["text"] for rid, c in CONFIG.items()}
-SURNAMES = {rid: {n.split()[-1] for n in re.findall(r'"([^"]+)"', c["query"])} for rid, c in CONFIG.items() if rid != "US"}
 CAPS = {"simulate": (5, 3), "watch": (2, 0), "statistics": (0, 0)}  # (race, national) stories a race reacts to a day
 WATCH_MIN_A = 0.5  # a watch race reacts only to its biggest stories (engine-design §3)
 
 
+def configure(races: dict | None = None) -> None:
+    """The race tables: the Senate races and the nation (newsraces.json), plus the simulated House seats and their
+    state groups in a races.json (GROUPS: group -> seats; a group's stories are gated for each of its seats)."""
+    global CONFIG, SNAP_RACES, RACE_TEXT, SURNAMES, GROUPS
+    CONFIG = {**newsraces.load(), **newsraces.house(races or {})}
+    SNAP_RACES = {**{rid.lower(): rid for rid in CONFIG}, **LEGACY}
+    RACE_TEXT = {rid: c["text"] for rid, c in CONFIG.items()}
+    SURNAMES = {rid: {n.split()[-1] for n in re.findall(r'"([^"]+)"', c["query"])} for rid, c in CONFIG.items()
+                if rid != "US"}
+    GROUPS = {rid: c["seats"] for rid, c in CONFIG.items() if c.get("seats")}
+
+
+configure()
+
+
+def prev_races(derived_root: Path, day: date) -> dict:
+    """The previous day's races.json. If it lists no House seats (its House step failed), the seats of the newest of
+    the two days before are used."""
+    def read(k):
+        p = derived_root / f"{day - timedelta(days=k):%Y-%m-%d}" / "races.json"
+        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+    def seats(raw):
+        return {r: v for r, v in raw.items() if isinstance(v, dict) and v.get("office") == "house"}
+    raw = read(1)
+    if raw and not seats(raw):
+        for k in (2, 3):
+            if found := seats(read(k)):
+                return {**raw, **found}
+    return raw
+
+
 def load_tiers(derived_root: Path, day: date) -> dict:
     """Each race's tier from the previous day's races.json; the pilot races always simulate."""
-    p = derived_root / f"{day - timedelta(days=1):%Y-%m-%d}" / "races.json"
-    raw = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+    raw = prev_races(derived_root, day)
     return {**{r: v.get("tier", "statistics") for r, v in raw.items() if isinstance(v, dict)},
             **{r: "simulate" for r in PILOT}}
 
@@ -98,7 +125,8 @@ def parse_rss(raw: bytes, feed: str) -> list[dict]:
         root = ET.fromstring(raw)
     except ET.ParseError:
         return []
-    names = {rid: re.findall(r'"([^"]+)"', c["query"]) for rid, c in CONFIG.items() if c.get("state") == state}
+    names = {rid: re.findall(r'"([^"]+)"', c["query"]) for rid, c in CONFIG.items()
+             if c.get("state") == state and not c.get("seats")}
     out = []
     for item in root.iter("item"):
         title, link = (item.findtext("title") or "").strip(), (item.findtext("link") or "").strip()
@@ -293,10 +321,11 @@ def _sides(p: dict) -> dict:
 
 
 def label(story: dict, asker, national_races: list[str] = PILOT) -> dict:
-    """Jev's labels, asked with outlet names removed: the gate for each race the story could matter to (a national
-    story: the simulated races and the nation), then the story's own labels (type, who it helps on its face, whose
-    voters it fires up or puts off, salience)."""
-    races = [story["race_id"]] if story["race_id"] != "US" else list(national_races) + ["US"]
+    """Jev's labels, asked with outlet names removed: the gate for each race the story could matter to (a state's House
+    group: each of its seats; a national story: the simulated races and the nation), then the story's own labels
+    (type, who it helps on its face, whose voters it fires up or puts off, salience)."""
+    rid = story["race_id"]
+    races = GROUPS.get(rid) or ([rid] if rid != "US" else list(national_races) + ["US"])
     gate = {r: round(asker.ask_many(story_text(story, r), GATE_Q, "newsday:gate")["relevant"].get("true", 0.0), 3)
             for r in races}
     a = asker.ask_many(story_text(story, story["race_id"]), LABEL_QS, "newsday:labels")
@@ -511,7 +540,7 @@ def dedupe_scopes(events: list[dict], stories: dict, sim: float = 0.55, races: l
     Ohio), so it counts for no other race either."""
     for nat in (e for e in events if e["scope"] == "national"):
         for r in races or PILOT:
-            local = [e for e in events if e["scope"] == "race" and e["races"] == [r]]
+            local = [e for e in events if e["scope"] == "race" and r in e["races"]]
             if not local:
                 continue
             docs = [" ".join(stories[nat["event_id"]]["titles"])] + [" ".join(stories[e["event_id"]]["titles"])
@@ -552,10 +581,12 @@ def load_known(derived_root: Path, day: date, lookback: int = 7) -> list[dict]:
 def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chats: list, scope: str = "pilot") -> dict:
     """One day: read, cluster, carry over, label new stories, score attention, select, write cards, write files.
     `scope`: the pilot races, or every race not on statistics alone (by the previous day's tiers)."""
+    configure(prev_races(derived_root, day))
     tiers = load_tiers(derived_root, day)
     races = active(scope, tiers)
     national_races = [r for r in races if tiers.get(r) == "simulate"]
-    arts = [a for a in read_day(snap_root, day) if a["race_id"] in races or a["race_id"] == "US"]
+    keep = set(races) | {CONFIG[r]["group"] for r in races if CONFIG[r].get("group")} | {"US"}
+    arts = [a for a in read_day(snap_root, day) if a["race_id"] in keep]
     known = load_known(derived_root, day)
     stories = carry_over(make_stories(arts), known)
     views = load_pageviews(snap_root, day)
@@ -582,7 +613,8 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         events.append({"schema": SCHEMA, "date": f"{day}", "run_id": run_id, "event_id": s["event_id"],
                        "first_seen": s["first_seen"], "last_seen": s["last_seen"],
                        "scope": "national" if national else "race",
-                       "races": national_races + ["US"] if national else [s["race_id"]], **labels,
+                       "races": national_races + ["US"] if national else GROUPS.get(s["race_id"], [s["race_id"]]),
+                       **labels,
                        "attention": attention(s, spike_ratio(views, s["race_id"])),
                        "card": valid_card((k or {}).get("card", ""), s["outlet_names"])})
         private.append({"schema": SCHEMA, "date": f"{day}", "event_id": s["event_id"], "race_id": s["race_id"],

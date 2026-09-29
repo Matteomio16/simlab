@@ -29,11 +29,20 @@ RSS_FEEDS = {"signal-ohio": ("OH", "Signal Ohio", "https://signalohio.org/feed/"
              "maine-monitor": ("ME", "The Maine Monitor", "https://themainemonitor.org/feed/")}  # free to republish
 PILOT = {snap.LEGACY.get(r, r.lower()) for r in newsraces.PILOT} | {"national"}
 EVERY_H = 6
+EVERY_H_HOUSE = 12  # a state's House seats get a few articles a day, and each answer covers 24 hours
 
 
-def queries() -> dict[str, str]:
-    """{file slug: GDELT query} for every race in newsraces.json and the nation (pilot races keep their old names)."""
+def every_h(slug: str) -> float:
+    return EVERY_H_HOUSE if slug.endswith("-h") else EVERY_H
+
+
+def queries(races_json: Path | None = None) -> dict[str, str]:
+    """{file slug: GDELT query} for every race in newsraces.json and the nation (pilot races keep their old names),
+    plus one per state for the simulated House seats in the latest races.json ("oh-h")."""
     races = json.loads(snap.NEWS_RACES.read_text(encoding="utf-8"))
+    if races_json and races_json.exists():
+        races |= {g: c for g, c in newsraces.house(json.loads(races_json.read_text(encoding="utf-8"))).items()
+                  if c.get("seats")}
     return {snap.LEGACY.get(rid, rid.lower()): c["query"] for rid, c in races.items()}
 
 
@@ -53,13 +62,13 @@ def last_saved(root: Path, now: datetime, back: int = 2) -> dict[str, datetime]:
     return out
 
 
-def due(slugs: list[str], last: dict, now: datetime, first: set = frozenset(), every_h: float = EVERY_H) -> list[str]:
-    """The queries not saved in the last `every_h` hours: those in `first` (the races that simulate or watch, and the
-    nation) before the rest, the nation first among equals (it reaches every race), and the longest unsaved (never
-    saved counts as longest) first. Until the full run the pilot races and the nation come before all others: they are
-    the only races the daily job simulates, and GDELT answers only a few queries a run."""
+def due(slugs: list[str], last: dict, now: datetime, first: set = frozenset()) -> list[str]:
+    """The queries not saved in the last 6 hours (a state's House seats: 12): those in `first` (the races that simulate
+    or watch, and the nation) before the rest, the nation first among equals (it reaches every race), and the longest
+    unsaved (never saved counts as longest) first. Until the full run the pilot races and the nation come before all
+    others: they are the only races the daily job simulates, and GDELT answers only a few queries a run."""
     never = datetime.min.replace(tzinfo=timezone.utc)
-    late = [s for s in slugs if now - last.get(f"gdelt-{s}", never) >= timedelta(hours=every_h)]
+    late = [s for s in slugs if now - last.get(f"gdelt-{s}", never) >= timedelta(hours=every_h(s))]
     top = PILOT if f"{now:%Y-%m-%d}" < newsraces.FULL_RUN else first
     return sorted(late, key=lambda s: (s not in top, s not in first, last.get(f"gdelt-{s}", never), s != "national", s))
 
@@ -85,12 +94,13 @@ def rss(run) -> None:
 
 
 def first_races(races_json: Path | None) -> set[str]:
-    """File slugs asked first: the pilot races and the nation, plus every race that simulates or watches in races.json."""
+    """File slugs asked first: the pilot races and the nation, plus every race that simulates or watches in races.json
+    (a House seat through its state's group)."""
     out = set(PILOT)
     if races_json and races_json.exists():
         for rid, r in json.loads(races_json.read_text(encoding="utf-8")).items():
             if isinstance(r, dict) and r.get("tier") in ("simulate", "watch"):
-                out.add(snap.LEGACY.get(rid, rid.lower()))
+                out.add(f"{r['state'].lower()}-h" if r.get("office") == "house" else snap.LEGACY.get(rid, rid.lower()))
     return out
 
 
@@ -103,7 +113,7 @@ def main() -> None:
     now = datetime.now(timezone.utc)
     run = snap.Run(a.out, now)
     rss(run)
-    qs = queries()
+    qs = queries(a.races)
     order = due(list(qs), last_saved(a.out, now), now, first_races(a.races))
     gdelt(run, qs, order, a.budget)
     m = run.close()

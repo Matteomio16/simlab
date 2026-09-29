@@ -52,6 +52,23 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   Engine adds the simulated seats to newsraces.json (from 12 Oct).
 - 29 Sep, stats-only: 222.6 expected Democratic seats at a national House vote of D+4.5.
 
+## 2026-09-29 night (Engine session): news for the simulated House seats
+
+Matteo approved (in the roadmap session) one news query per state for the simulated House seats (A13):
+- The seats come from the daily `races.json`, which carries the House rows from the 30 Sep run with Kev's tiers (a
+  seat simulated on any of the last 6 days stays simulated). They are built when the news job and the news step run
+  (`newsraces.house`), so they follow the tiers; `simlab/newsraces.json` stays Senate-only.
+- GDELT gets one query per state with every seat's candidates, asked every 12 hours: a state's seats get only a few
+  articles a day (Ohio's four: 7 on 29 Sep). On 29 Sep's seats that is 18 queries beside the 36 Senate and national
+  ones.
+- A story from a state's query is gated for each of its seats, so each seat keeps only the stories about its own race.
+  One story can be selected for several seats (`races` lists them), with one card and one strength draw.
+- House seats get national stories as the Senate races do. Their prompts are the same across a state's seats, so the
+  answer cache charges once per state.
+- Estimate: about $0.17 a day (reactions and gates) and 30 more minutes on the daily job, from 12 Oct.
+- Also: until 12 Oct the news job asks the pilot races and the nation before the other contested races (GDELT
+  answered 0-3 queries a run on 29 Sep evening).
+
 ## 2026-09-29 night (Engine session): the site's daily publish step
 
 Matteo approved (in the Website session) publishing each day's forecast to the site from 12 Oct. `daily.yml` now has a

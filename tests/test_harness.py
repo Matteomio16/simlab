@@ -132,6 +132,12 @@ class Scale(unittest.TestCase):
                 self.assertIn("their district's U.S. House race", text)
                 self.assertNotIn("Senate", text)
 
+    def test_a_simulated_house_seat_lives_in_its_state_without_being_in_the_race_file(self):
+        # the seats come from the daily races.json (newsraces.house), not the committed race file
+        self.assertNotIn("OH-9", harness.CONFIG)
+        self.assertTrue(harness.personas("OH-9")[0]["text"].startswith("State: Ohio\n"))
+        self.assertIn("their district's U.S. House race", harness.questions("OH-9")["support"]["instructions"])
+
 
 if __name__ == "__main__":
     unittest.main()
