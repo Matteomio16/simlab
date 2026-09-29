@@ -64,8 +64,8 @@ PARAMS = {"drift_daily_sd": {"national": 0.3, "race": 0.5}}
 ELECTION = weekly.ELECTION
 
 
-def story(first, full_s, h_age=None, h_after=None, full_t=0.0, scope="race"):
-    return {"first_seen": first, "last_seen": first, "full_s_base": full_s, "full_t_base": full_t,
+def story(first, full_s, h_age=None, h_after=None, full_t=0.0, scope="race", unit=0.0):
+    return {"first_seen": first, "last_seen": first, "full_s_base": full_s, "full_t_base": full_t, "full_s_unit": unit,
             "age_half_life": h_age, "after_news_half_life": h_after, "scope": scope}
 
 
@@ -84,6 +84,38 @@ def synthetic(k_us, k_oh, h_true=None, noise=0.3, seed=0):
     p = pd.DataFrame({"race": ["US"] * len(t) + ["OH-S"] * len(t), "t": np.r_[t, t], "adj": np.r_[gb, oh],
                       "v": noise ** 2})
     return p, m
+
+
+def offset_synthetic(b_true, noise=0.3, seed=0):
+    """Ohio polls from t = -80 to -30 around a flat nation: a story at -60 worth 4 points that the support offset
+    doesn't touch, and one at -50 made only of the offset's effect (10 points per unit of offset)."""
+    from datetime import timedelta
+    import pandas as pd
+    rng = np.random.default_rng(seed)
+    t = np.arange(-80.0, -29.0)
+    day = lambda k: str(ELECTION + timedelta(days=k))
+    m = {"OH-S": {"events": {"a": story(day(-60), 4.0), "b": story(day(-50), 0.0, unit=10.0)}}}
+    oh = 1.0 + 4.0 * (t >= -60) + b_true * 10.0 * (t >= -50) + rng.normal(0, noise, len(t))
+    gb = 2.0 + rng.normal(0, noise, len(t))
+    return pd.DataFrame({"race": ["US"] * len(t) + ["OH-S"] * len(t), "t": np.r_[t, t], "adj": np.r_[gb, oh],
+                         "v": noise ** 2}), m
+
+
+class OffsetTest(unittest.TestCase):
+    PRIOR = {"mean": [1.0, 1.0], "sd": [0.5, 0.5], "tau": [0.3, 0.3]}
+
+    def test_offset_grid_finds_the_true_support_offset(self):
+        p, m = offset_synthetic(0.2)
+        g = weekly.offset_grid(p, m, PARAMS, 30, self.PRIOR, [0.0, 0.1, 0.2, 0.3, 0.4], used=0.0, mean=0.2, sd=1.0)
+        self.assertEqual(max(g["weights"], key=g["weights"].get), "0.2")
+        self.assertAlmostEqual(g["offset"], 0.2, delta=0.05)
+        self.assertFalse(g["flag"])
+
+    def test_an_offset_pulled_below_zero_is_flagged(self):
+        p, m = offset_synthetic(-0.2)
+        g = weekly.offset_grid(p, m, PARAMS, 30, self.PRIOR, [-0.4, -0.2, 0.0, 0.2, 0.4], used=0.0, mean=0.0, sd=1.0)
+        self.assertLess(g["offset"], 0)
+        self.assertTrue(g["flag"])
 
 
 class UnitsTest(unittest.TestCase):
