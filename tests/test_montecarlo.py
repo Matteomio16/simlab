@@ -168,6 +168,21 @@ class SummaryTest(unittest.TestCase):
         self.assertAlmostEqual(s["p_d_caucus_51"], 1 / 3, places=4)
 
 
+class TodayTest(unittest.TestCase):
+    def test_today_view_sits_beside_the_3_november_forecast(self):
+        run = lambda nc: mc.build(levels(nc=nc), levels(nc=nc), {"NC": "D", "OH-S": "D", "NE": "I"}, PARAMS,
+                                  date(2026, 9, 28), "run-1", not_up={"R": 48, "D": 47, "I": 2}, n=4000)
+        f, _ = run(2.0)
+        now, _ = run(6.0)
+        out = mc.attach_today(f, now)
+        nc = out["races"]["NC"]
+        self.assertEqual(nc["today"], {"p_dem_win": now["races"]["NC"]["p_dem_win"], "margin": now["races"]["NC"]["margin"],
+                                       "stats_only": now["races"]["NC"]["stats_only"]})
+        self.assertGreater(nc["today"]["p_dem_win"], nc["p_dem_win"])
+        self.assertEqual(out["senate"]["today"]["p_r_50plus"], now["senate"]["p_r_50plus"])
+        self.assertIn("stats_only", out["senate"]["today"])
+
+
 class IndependentsTest(unittest.TestCase):
     def test_share_where_the_new_independents_hold_the_balance(self):
         seats = {"R": np.array([49, 50, 48]), "D": np.array([48, 47, 49]), "I": np.array([3, 3, 3])}

@@ -24,10 +24,14 @@
  "dials": {},
  "half_life_days": {
   "default": 1,
-  "economy": 60,
-  "national": 60
+  "economy": 10,
+  "national": 10
  },
- "lasting_rule": "Matteo, 28 Sep: a story keeps its full effect while it is still in the news (first_seen to last_seen), then fades. One-off stories (endorsements, scandals, debates, ads, candidates' policy news, other) fade with a 1-day half-life once out of the news; lasting topics (economy: prices, jobs, gas; national: president, Congress, war, disasters) with 60 days, in line with the calibration events, whose shifts held for 3-7 weeks (lasting_evidence). The 3 Nov forecast counts what is expected to remain of each story then, taking its coverage to end today. Similar headlines are one story (the Engine's clustering), so a continuing story extends rather than stacks.",
+ "fade_from_first_seen": [
+  "economy",
+  "national"
+ ],
+ "lasting_rule": "Matteo, 28-29 Sep: one-off stories (endorsements, scandals, debates, ads, candidates' policy news, other) keep their full effect while in the news (first_seen to last_seen), then fade with a 1-day half-life. Lasting topics (economy: prices, jobs, gas; national: president, Congress, war, disasters) fade from their first day, even while in the news, with a 10-day half-life: full strength at first, about 60% after a week, a quarter after three weeks, an eighth after 30 days (Matteo: 'lasts about 30 days', importance decreasing, 'after 3 weeks already not that important'). The calibration events' shifts held longer (lasting_evidence); the weekly filter tests this against polls. The 3 Nov forecast counts what is expected to remain of each story then; forecast.json's today view counts today's effects.",
  "fit": {
   "c_s": 0.2055,
   "events": 45,

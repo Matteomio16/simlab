@@ -89,6 +89,15 @@ class BuildTest(unittest.TestCase):
         self.assertAlmostEqual(later["OH-S"]["by_event"]["e1"], full * (0.5 - 0.5 ** 0.9), places=4)
         self.assertEqual(later["OH-S"]["events"]["e1"]["first_seen"], "2026-10-01")
 
+    def test_reactions_to_stories_missing_from_the_news_file_are_flagged(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            write_day(root, "2026-10-01", [event("e1", "2026-10-01T08:00:00+00:00", 1.0)],
+                      [reaction("e1", A, 1.0, 0.0), reaction("gone", A, 1.0, 0.0), reaction("gone", B, 1.0, 0.0)])
+            m = self.build(root, "2026-10-01")
+        self.assertEqual(m["orphaned_events"], ["gone"])
+        self.assertEqual(list(m["OH-S"]["events"]), ["e1"])
+
     def test_contract_fields_and_shadow_rows_kept_apart(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
@@ -111,7 +120,8 @@ class CoverageTest(unittest.TestCase):
                        B: {"n": 0.5, "t": 0.5, "d": -0.8, "pi": 0.1, "mu": 0.2}}}
 
     def run_days(self, etype):
-        params = {"c_s": 0.5, "c_t": 0.0, "dials": {}, "half_life_days": {"default": 1, "economy": 60}}
+        params = {"c_s": 0.5, "c_t": 0.0, "dials": {}, "half_life_days": {"default": 1, "economy": 10},
+                  "fade_from_first_seen": ["economy"]}
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             e = event("e1", "2026-10-01T08:00:00+00:00", 1.0) | {"type": etype}
@@ -127,10 +137,12 @@ class CoverageTest(unittest.TestCase):
         self.assertAlmostEqual(m["2026-10-08"]["by_event_effect"]["e1"], full / 8, places=4)
         self.assertEqual(m["2026-10-05"]["events"]["e1"]["last_seen"], "2026-10-05")
 
-    def test_lasting_topics_fade_slowly_and_count_on_election_day(self):
+    def test_lasting_topics_fade_from_the_first_day_even_while_in_the_news(self):
         oneoff, lasting = self.run_days("endorsement"), self.run_days("economy")
-        self.assertAlmostEqual(lasting["2026-10-08"]["by_event_effect"]["e1"], 10 * 0.5 ** (3 / 60), places=4)
-        self.assertAlmostEqual(lasting["2026-10-05"]["events"]["e1"]["election_day"], 10 * 0.5 ** (29 / 60), places=4)
+        self.assertAlmostEqual(lasting["2026-10-05"]["by_event_effect"]["e1"], 10 * 0.5 ** (4 / 10), places=4)
+        self.assertAlmostEqual(lasting["2026-10-08"]["by_event_effect"]["e1"], 10 * 0.5 ** (7 / 10), places=4)
+        self.assertAlmostEqual(lasting["2026-10-05"]["events"]["e1"]["election_day"], 10 * 0.5 ** (33 / 10), places=4)
+        self.assertEqual(lasting["2026-10-05"]["events"]["e1"]["hold_until"], "2026-10-01")
         self.assertLess(oneoff["2026-10-05"]["events"]["e1"]["election_day"], 1e-6)
 
 
@@ -172,8 +184,9 @@ class LastingTest(unittest.TestCase):
 
 
 class ReadTest(unittest.TestCase):
-    ev = lambda first, last, full, eday, card: {"first_seen": first, "last_seen": last, "half_life": 10, "full": full,
-                                                "full_s": full, "full_t": 0.0, "election_day": eday, "card": card}
+    ev = lambda first, last, full, eday, card: {"first_seen": first, "last_seen": last, "hold_until": last,
+                                                "half_life": 10, "full": full, "full_s": full, "full_t": 0.0,
+                                                "election_day": eday, "card": card}
     M = {"date": "2026-10-11", "params": {"c_s": 0.2, "c_t": 0.2}, "shadow": {"OH-S": {"events": {}}},
          "OH-S": {"events": {"e1": ev("2026-10-01", "2026-10-03", 2.0, 0.2, "c1"),
                              "e2": ev("2026-10-05", "2026-10-05", -0.5, -0.9, "c2"),

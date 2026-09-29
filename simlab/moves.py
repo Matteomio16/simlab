@@ -47,8 +47,9 @@ def decay(days: float, half_life: float) -> float:
 
 
 def held(since_first: float, since_last: float, half_life: float) -> float:
-    """A story's share of its full effect: none before it was first seen, all of it while it is still in the news,
-    then fading with its half-life from the day it was last seen (Matteo, 28 Sep)."""
+    """A story's share of its full effect: none before it was first seen, all of it until `since_last` reaches 0
+    (while a one-off story is in the news; lasting topics fade from their first day), then fading with its half-life
+    (Matteo, 28-29 Sep)."""
     return 0.0 if since_first < 0 else 1.0 if since_last <= 0 else 0.5 ** (since_last / half_life)
 
 
@@ -112,13 +113,14 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
             continue
         first = datetime.fromisoformat(e["first_seen"]).date()
         last = datetime.fromisoformat(e.get("last_seen") or e["first_seen"]).date()
+        hold = first if e.get("type") in params.get("fade_from_first_seen", []) else last
         asked = min(d for _, d in answers.values())
-        tau, lag = (day - first).days, (day - last).days
+        tau, lag = (day - first).days, (day - hold).days
         h, a = hl.get(e.get("type"), hl["default"]), float(e.get("attention", {}).get("a", 0.0))
         known = 1.0 if asked < day else 0.0
         share = held(tau, lag, h)
         step = share - known * held(tau - 1, lag - 1, h)
-        eday = held((ELECTION - first).days, (ELECTION - min(last, day)).days, h)
+        eday = held((ELECTION - first).days, (ELECTION - min(hold, day)).days, h)
         full = {}
         for base, (ks, kt) in (("dials", (dial.get("k_s", 1.0), dial.get("k_t", 1.0))), ("base", (1.0, 1.0))):
             ch = {g: group_change(r["support"], r["turnout"], groups[g]["pi"], groups[g]["mu"], a, params["c_s"],
@@ -135,7 +137,8 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
             by_group[g]["dd"] += 100 * dd[g] * share
             by_group[g]["dt"] += 100 * dt[g] * share
         fs, ft = round(100 * race_move(groups, dd, {}), 4), round(100 * race_move(groups, {}, dt), 4)
-        info[eid] = {"first_seen": first.isoformat(), "last_seen": last.isoformat(), "type": e.get("type"),
+        info[eid] = {"first_seen": first.isoformat(), "last_seen": last.isoformat(), "hold_until": hold.isoformat(),
+                     "type": e.get("type"),
                      "half_life": h, "a": a, "full": round(fs + ft, 4), "full_s": fs, "full_t": ft,
                      "full_base": round(full["base"][0], 4), "election_day": round((fs + ft) * eday, 4),
                      "card": e.get("card", "")}
@@ -147,11 +150,13 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
 
 def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> dict:
     """moves.json (engine-design §7) for every race in groups.json (and US), GLM's rows in the main block and shadow
-    rows (Kev) under "shadow"."""
+    rows (Kev) under "shadow". Reactions to stories no longer in any events.jsonl (a news re-run that changed the
+    story ids) can't be placed in time; they are left out and listed under "orphaned_events"."""
     reactions, events = _history(day, derived)
     races = [k for k in groups if isinstance(groups[k], dict) and k not in ("units",)]
     out = {"date": day.isoformat(), "run_id": run_id, "schema": SCHEMA, "units": UNITS,
-           "params": {k: params[k] for k in ("c_s", "c_t")}, "shadow": {}}
+           "params": {k: params[k] for k in ("c_s", "c_t")}, "shadow": {},
+           "orphaned_events": sorted({k[3] for k in reactions if k[3] not in events})}
     for shadow in (False, True):
         by_race = {}
         for (model, sh, race, eid, g), v in reactions.items():
@@ -182,10 +187,10 @@ def lasting_share(events: list[tuple], lags: list[tuple] = LAGS) -> tuple[dict, 
 
 
 def paths(m: dict, part: str = "all") -> dict:
-    """{race_id or "US": [(first_seen, last_seen, full effect, half-life)]} from moves.json's main block, for
+    """{race_id or "US": [(first_seen, hold_until, full effect, half-life)]} from moves.json's main block, for
     levels.build: the whole effect, or only its switching ("s") or turnout ("t") part."""
     key = {"all": "full", "s": "full_s", "t": "full_t"}[part]
-    return {r: [(v["first_seen"], v["last_seen"], v[key], v["half_life"]) for v in x["events"].values()]
+    return {r: [(v["first_seen"], v["hold_until"], v[key], v["half_life"]) for v in x["events"].values()]
             for r, x in m.items() if r != "shadow" and isinstance(x, dict) and "events" in x}
 
 

@@ -25,14 +25,20 @@ def put(path: Path, obj) -> None:
 
 
 class SnapshotTest(unittest.TestCase):
-    def test_latest_run_of_the_day_unless_named(self):
+    def test_latest_run_before_the_news_cutoff_unless_named(self):
         with tempfile.TemporaryDirectory() as d:
             day = Path(d) / "snapshots" / "2026-09-28"
             for hhmm in ("0036", "0941", "0617"):
                 (day / hhmm).mkdir(parents=True)
             (day.parent / "2026-09-29" / "0017").mkdir(parents=True)
-            self.assertEqual(statsday.snapshot_for(Path(d), date(2026, 9, 28)).name, "0941")
+            self.assertEqual(statsday.snapshot_for(Path(d), date(2026, 9, 28)).name, "0617")
             self.assertEqual(statsday.snapshot_for(Path(d), date(2026, 9, 28), "0036").name, "0036")
+            self.assertEqual(statsday.snapshot_for(Path(d), date(2026, 9, 29)).name, "0017")
+
+    def test_after_the_cutoff_only_when_nothing_came_before(self):
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "snapshots" / "2026-09-28" / "0941").mkdir(parents=True)
+            self.assertEqual(statsday.snapshot_for(Path(d), date(2026, 9, 28)).name, "0941")
 
     def test_no_run_that_day(self):
         with tempfile.TemporaryDirectory() as d:

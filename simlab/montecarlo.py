@@ -221,3 +221,14 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
                              "seats": {"senate": {k: v[keep].tolist() for k, v in ss.items()}}}
     draws = meta | {"every": every} | sample(x, seats) | {"stats_only": sample(xt, seats_t)}
     return forecast, draws
+
+
+def attach_today(forecast: dict, today: dict) -> dict:
+    """Adds the "if the election were today" view (a build with election day set to today: no drift, stories at
+    today's strength) beside each race's and the Senate's 3 Nov numbers (Matteo, 29 Sep)."""
+    for r, x in forecast["races"].items():
+        t = today["races"][r]
+        x["today"] = {"p_dem_win": t["p_dem_win"], "margin": t["margin"], "stats_only": t["stats_only"]}
+    keys = ("p_r_50plus", "p_d_caucus_51", "p_independents_decide")
+    forecast["senate"]["today"] = {k: today["senate"][k] for k in keys} | {"stats_only": today["senate"]["stats_only"]}
+    return forecast

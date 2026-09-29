@@ -1,6 +1,6 @@
 """Statistics step of the daily job: python -m simlab.statsday --date YYYY-MM-DD --data <path to simlab-data>
 
-Reads the day's latest snapshot run (or --snapshot HHMM) and writes to derived/<date>/: polls.csv, races.json,
+Reads the day's latest snapshot run before 09:30 UTC (or --snapshot HHMM) and writes to derived/<date>/: polls.csv, races.json,
 levels.json, groups.json, forecast.json and draws.json (engine-design §7). Moves and the filter join as they are built;
 until then the headline and the stats-only twin run on the same levels. Exits 1 on failure; the last stdout line
 is a one-line JSON summary, which holds no forecast numbers.
@@ -26,13 +26,18 @@ RCV = {"AK", "ME"}
 SCHEMA = 1
 
 
+CUTOFF = "0930"  # UTC, as simlab.newsday.CUTOFF: runs that start before it belong to that day's job
+
+
 def snapshot_for(data: Path, day: date, hhmm: str | None = None) -> Path:
+    """The run named `hhmm`, else the day's latest run that started before the news cutoff, so a re-run later in the
+    day reads the same polls as the day's job (the latest run of the day if none came before)."""
     runs = sorted(p for p in (data / "snapshots" / day.isoformat()).glob("*") if p.is_dir())
     if hhmm:
         runs = [p for p in runs if p.name == hhmm]
     if not runs:
         raise FileNotFoundError(f"no snapshot run for {day}" + (f" at {hhmm}" if hhmm else ""))
-    return runs[-1]
+    return ([p for p in runs if p.name < CUTOFF] or runs)[-1] if not hhmm else runs[-1]
 
 
 def races_json(race_list: list[Race]) -> dict:
@@ -112,6 +117,23 @@ def benchmarks(snap: Path, race_list: list[Race]) -> dict:
     return out
 
 
+def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, sigma: dict,
+            election: date = levels.ELECTION) -> tuple[dict, dict, dict]:
+    """Stats-only and headline levels for one election day, and each race's story effect split into its switching and
+    turnout parts. The headline is linear in the effects, so the parts must add up."""
+    twin = levels.compute(t, day, run_id, inp=inp, election=election)
+    head = levels.compute(t, day, run_id, moves=moves.paths(mv), inp=inp, election=election)
+    part = {k: levels.compute(t, day, run_id, moves=moves.paths(mv, k), inp=inp, election=election)["races"]
+            for k in ("s", "t")}
+    news = {name: {r: part[k][r]["margin"] - twin["races"][r]["margin"] for r in twin["races"]}
+            for name, k in (("switching", "s"), ("turnout", "t"))}
+    gap = max(abs(head["races"][r]["margin"] - twin["races"][r]["margin"] - news["switching"][r] - news["turnout"][r])
+              for r in twin["races"])
+    if gap > 1e-6:
+        raise ValueError(f"story effects don't add up across their parts (gap {gap:.2e})")
+    return twin, head, news | {"sigma": sigma}
+
+
 def _git_sha() -> str:
     return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
                           cwd=Path(__file__).parent).stdout.strip()
@@ -143,21 +165,17 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     _write(out / "params.json", meta | mp | {"fitted_on": mp["fit"]["on"]})
     mv = moves.build(day, data / "derived", grp, mp, run_id)
     sha["moves.json"] = _write(out / "moves.json", mv)
-    head = levels.compute(t, day, run_id, moves=moves.paths(mv), inp=inp)
+    sigma = {k[-1]: mp["uncertainty"][k]["sigma_log"] for k in ("c_s", "c_t")}
+    lv, head, news = _levels(t, day, run_id, mv, inp, sigma)
     sha["filter_state.json"] = _write(out / "filter_state.json", head | {"moves": "moves.json, main block (GLM)",
                                                                           "dials": mp["dials"]})
-    part = {k: levels.compute(t, day, run_id, moves=moves.paths(mv, k), inp=inp)["races"] for k in ("s", "t")}
-    news = {name: {r: part[k][r]["margin"] - lv["races"][r]["margin"] for r in lv["races"]}
-            for name, k in (("switching", "s"), ("turnout", "t"))}
-    gap = max(abs(head["races"][r]["margin"] - lv["races"][r]["margin"] - news["switching"][r] - news["turnout"][r])
-              for r in lv["races"])
-    if gap > 1e-6:
-        raise ValueError(f"story effects don't add up across their parts (gap {gap:.2e})")
-    news["sigma"] = {k[-1]: mp["uncertainty"][k]["sigma_log"] for k in ("c_s", "c_t")}
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
-    bench = benchmarks(snap, t["race_list"])
-    forecast, draws = montecarlo.build(head, lv, {k: v["left_party"] for k, v in races.items()}, params, day, run_id,
-                                       benchmarks=bench, movers=moves.movers(mv), news=news)
+    bench, left = benchmarks(snap, t["race_list"]), {k: v["left_party"] for k, v in races.items()}
+    forecast, draws = montecarlo.build(head, lv, left, params, day, run_id, benchmarks=bench, movers=moves.movers(mv),
+                                       news=news)
+    now_twin, now_head, now_news = _levels(t, day, run_id, mv, inp, sigma, election=day)
+    forecast = montecarlo.attach_today(forecast, montecarlo.build(now_head, now_twin, left, params, day, run_id,
+                                                                  news=now_news)[0])
     forecast |= {"snapshot": t["snapshot"], "inputs": sha}
     history = [json.loads(f.read_text(encoding="utf-8")) for k in range(1, 7)
                if (f := data / "derived" / (day - timedelta(days=k)).isoformat() / "races.json").exists()]
@@ -170,6 +188,7 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
             "with_polls": sum(r["n_polls"] > 0 for r in lv["races"].values()), "draws": forecast["draws"],
             "floor_lifted_pairs": forecast["floor_lifted_pairs"],
             "tiers": {k: sum(r["tier"] == k for r in races.values()) for k in TIER_RANK},
+            "orphaned_events": len(mv["orphaned_events"]),
             "stories": sum(len(x["events"]) for k, x in mv.items() if k != "shadow" and isinstance(x, dict) and "events" in x),
             "files": ["polls.csv", "races.json", "levels.json", "groups.json", "params.json", "moves.json",
                       "filter_state.json", "forecast.json", "draws.json"]}

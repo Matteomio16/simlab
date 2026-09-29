@@ -316,11 +316,13 @@ def inputs() -> tuple:
     return (params, priors, *unpack(json.loads(FROZEN.read_text(encoding="utf-8"))))
 
 
-def compute(t: dict, today: date, run_id: str, moves: dict | None = None, inp: tuple | None = None) -> dict:
-    """levels.json for one snapshot's poll tables (polls.build); with `moves`, the headline filter state."""
+def compute(t: dict, today: date, run_id: str, moves: dict | None = None, inp: tuple | None = None,
+            election: date = ELECTION) -> dict:
+    """levels.json for one snapshot's poll tables (polls.build); with `moves`, the headline filter state; with
+    `election` set to today, the "if the election were today" levels."""
     params, priors, rel, E, statewide = inp or inputs()
     out = build(t["race_list"], t["senate"], t["generic_ballot"], params, priors, rel, E, statewide, today,
-                entries=t["entries"], moves=moves)
+                election=election, entries=t["entries"], moves=moves)
     out.update(run_id=run_id, snapshot=t["snapshot"])
     return out
 

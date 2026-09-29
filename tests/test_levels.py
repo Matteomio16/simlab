@@ -234,6 +234,22 @@ class AssemblyTest(unittest.TestCase):
         self.assertLess(nc["story_effect_3nov"], 1e-6)
         self.assertAlmostEqual(nc["margin"], twin["races"]["NC"]["margin"], places=6)
 
+    def test_if_the_election_were_today(self):
+        today = date(2026, 9, 28)
+        nc = race("NC", "Michael Whatley", "Roy Cooper", status="Incumbent retiring")
+        gb = poll_frame([4.0] * 12, date(2026, 7, 30), ["A", "B", "C"])
+        empty = pd.DataFrame(columns=["year", "state", "office", "left", "right", "margin", "inc"])
+        rel = {(2024, "NC"): -2.0, (2020, "NC"): -1.0}
+        args = ([nc], poll_frame([], today, [], race_id="NC"), gb, PARAMS, {"pollsters": {}, "aliases": {}}, rel, E,
+                empty, today)
+        moves = {"NC": [("2026-09-28", "2026-09-28", 1.5, 1.0)]}
+        now_twin = levels.build(*args, election=today, lv_gap_value=0.0)
+        now_head = levels.build(*args, election=today, lv_gap_value=0.0, moves=moves)
+        self.assertEqual(now_head["days_to_election"], 0)
+        self.assertAlmostEqual(now_head["races"]["NC"]["margin"] - now_twin["races"]["NC"]["margin"], 1.5, places=6)
+        later = levels.build(*args, lv_gap_value=0.0)
+        self.assertLess(now_twin["races"]["NC"]["sd"], later["races"]["NC"]["sd"])
+
     def test_polls_while_a_story_was_in_the_news_are_compared_net_of_it(self):
         twin, head = self.headline({"US": [("2026-07-01", "2026-09-27", 3.0, 1.0)],
                                     "OH-S": [("2026-07-01", "2026-09-27", 3.0, 1.0)]})
