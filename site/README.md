@@ -60,6 +60,16 @@ PowerShell sets variables with `$env:SITE_MODE = "forecast"; npm run dev`.
    `publish-day.mjs` and pushes `site/data/live/`.
 9. **Later:** Cloudflare Access (Zero Trust → Access → Applications) can put an email login in front of the preview.
 
+## Go-live checklist (3 Oct)
+
+- [ ] **Matteo has read the methods page** (`content/methods.md`, http://localhost:4310/methods.html) and approved it.
+- [ ] Lab note 01 approved and imported (`node scripts/import-labnote.mjs 01`), or the page says the first note is coming.
+- [ ] Social links switched on in `src/lib/site.ts` for the accounts that exist.
+- [ ] `hello@notapoll.org` forwards to Matteo (Email Routing).
+- [ ] Cloudflare: token and account ID in GitHub secrets; the notapoll.org → Instagram redirect removed.
+- [ ] GitHub variables: `SITE_DEPLOY` = `on`, `SITE_MODE` = `prelaunch`; run the Site workflow; check notapoll.org and www.
+- [ ] Redirect from labs.scaliastudio.dev/midterms to notapoll.org (rule and proxied record in the scaliastudio.dev zone).
+
 ## Defaults chosen while Matteo was away (29 Sep evening), easy to change
 
 | Choice | Where | Change by |
