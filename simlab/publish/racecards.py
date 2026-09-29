@@ -20,11 +20,28 @@ RACE = {"state": "Ohio", "usps": "OH", "code": "OH-SEN", "run": "a3f9c1e", "offi
         "market": 0.55, "cook": "Toss-up", "change": "No meaningful change this week"}
 
 
-LEFT = {"D": ("Democrat", "D"), "I": ("independent", "I")}  # the challenger to the Republican: races.json left_party
+# The Republican's opponent (races.json left_party): a Democrat, an independent, or "O", someone else (House seats
+# with no Democrat running), named when races.json has the candidate.
+LEFT = {"D": ("Democrat", "D"), "I": ("independent", "I"), "O": ("other candidate", "O")}
 
 
-def who(r: dict) -> str:
-    return LEFT[r.get("left_party", "D")][0]
+def surname(r: dict) -> str | None:
+    name = (r.get("candidates") or {}).get("left")
+    return name.split()[-1] if name else None
+
+
+def who(r: dict, cap: bool = False) -> str:
+    """The opponent as a phrase: "the Democrat", "the independent", or the other candidate's surname."""
+    k = r.get("left_party", "D")
+    s = surname(r) if k == "O" else None
+    s = s or f"the {LEFT[k][0]}"
+    return s[0].upper() + s[1:] if cap else s
+
+
+def lean(r: dict) -> str:
+    """What the verdict names when the Republican trails: D, I, or the other candidate's surname."""
+    k = r.get("left_party", "D")
+    return (surname(r) or k) if k == "O" else k
 
 
 def abbr(r: dict) -> str:
@@ -34,7 +51,8 @@ def abbr(r: dict) -> str:
 def verdict(p: float, left: str = "D") -> str:
     if 0.35 <= p <= 0.65:
         return "Toss-up"
-    lean = LEFT[left][0].capitalize() if p > 0.5 else "Republican"
+    word = LEFT[left][0].capitalize() if left in LEFT else left
+    lean = word if p > 0.5 else "Republican"
     return f"Likely {lean}" if max(p, 1 - p) >= 0.8 else f"Leans {lean}"
 
 
@@ -56,7 +74,7 @@ def pct_txt(x) -> str:
 
 def slide(t: Theme, r: dict) -> Slide:
     """The race's canvas; for an independent challenger the left side is drawn in the neutral independent colour."""
-    if r.get("left_party", "D") == "I":
+    if r.get("left_party", "D") in ("I", "O"):
         t = replace(t, dem=t.ind)
     return Slide(r.get("day", DAY), r.get("kicker", "RACE CARD · EXAMPLE"), t, run=r["run"])
 
@@ -110,7 +128,7 @@ def chip(s: Slide, r: dict, y: float | None = None, change: bool = True) -> floa
     """The verdict as a filled label (purple for a toss-up, blue or red otherwise), then the 7-day change."""
     t = s.t
     y = s.y if y is None else y
-    label = verdict(r["p"], abbr(r)).upper()
+    label = verdict(r["p"], lean(r)).upper()
     w = s.pil("mono", 600, 26).getlength(label) + 36
     s.ax.add_patch(FancyBboxPatch((MARGIN, y), w, 48, boxstyle="round,pad=0,rounding_size=6",
                                   color=verdict_color(t, r["p"]), lw=0, zorder=2))
@@ -184,7 +202,7 @@ def ladder(t: Theme, r: dict = RACE) -> Slide:
     title(s, r, hw)
     chip(s, r, s.y + 4)
     y0 = max(s.y, s.tag_bottom) + 56
-    s._put(MARGIN, y0, f"THE {who(r).upper()}’S CHANCE OF WINNING", "mono", 500, 24, t.ink2, va="top")
+    s._put(MARGIN, y0, f"{who(r).upper()}’S CHANCE OF WINNING", "mono", 500, 24, t.ink2, va="top")
     x0, w = MARGIN + 20, s.width - 40
     X = lambda p: x0 + w * p
     y = y0 + 330
@@ -270,7 +288,7 @@ def futures(t: Theme, r: dict = RACE) -> Slide:
     n_dem = int((d > 0).sum())
     s.hero(MARGIN, s.y, f"{n_dem} of 100", 110)
     s.y += 110 * 1.05
-    s.text(f"simulated elections won by the {who(r)}", px=32, color=t.ink2, after=0.6)
+    s.text(f"simulated elections won by {who(r)}", px=32, color=t.ink2, after=0.6)
     dots, radius, base = pile(s, r, d, s.y, 300)
     for x, y, col in dots:
         s.ax.add_patch(plt.Circle((x, y), radius, color=col, lw=0, zorder=2))
@@ -297,8 +315,8 @@ def stamped(t: Theme, r: dict = RACE) -> Slide:
     s._put(rx + s.pil("hero", t.hero_weight, 150).getlength(num) + 18, top + 16, "ON 3 NOV", "mono", 600, 24, t.ai,
            va="top")
     s._put(rx, top + 150, "of 100 simulations", "sans", 400, 30, t.ink2, va="top")
-    s._put(rx, top + 188, f"won by the {who(r)}", "sans", 400, 30, t.ink2, va="top")
-    label = verdict(r["p"], abbr(r)).upper()
+    s._put(rx, top + 188, f"won by {who(r)}", "sans", 400, 30, t.ink2, va="top")
+    label = verdict(r["p"], lean(r)).upper()
     spx = 48
     while spx > 26 and s.pil("hero", t.hero_weight, spx).getlength(label) + spx * 1.4 > rw - 20:
         spx -= 2

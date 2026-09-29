@@ -163,8 +163,8 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
             n = len(paths) + 1
             p = racecards.LAYOUTS[name](theme, r).save(out / "slides" / f"{n:02d}-{m['code']}-{name[2:]}.jpg")
             paths.append(p)
-            alts[p.name] = (f"{r['state']} {r['office']}: {racecards.verdict(r['p'], r['left_party'])}. The "
-                            f"{racecards.who(r)} wins "
+            alts[p.name] = (f"{r['state']} {r['office']}: {racecards.verdict(r['p'], racecards.lean(r))}. "
+                            f"{racecards.who(r, cap=True)} wins "
                             f"{round(r['p'] * 100)} in 100 simulated 3 Nov elections.{today_txt(r)} Poll average "
                             f"{r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
     contact_sheet(paths, out / "contact.jpg", scale=0.3)
@@ -175,16 +175,16 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
         try:
             reel(r, out / "reel.mp4", theme)
             alts["reel.mp4"] = (f"Video: 100 simulated elections for the {r['state']} {r['office']} land one by one as "
-                                f"dots; the {racecards.who(r)} wins {round(r['p'] * 100)} of them. "
-                                f"{racecards.verdict(r['p'], r['left_party'])}.")
+                                f"dots; {racecards.who(r)} wins {round(r['p'] * 100)} of them. "
+                                f"{racecards.verdict(r['p'], racecards.lean(r))}.")
         except Exception as e:
             problems.append(f"reel: {type(e).__name__}: {e}")
 
     lines = [f"Where the races stand, {day:%d %B}: {len(rs)} of our {len(everyone)} races, 40,000 simulated "
              "elections each.", ""]
     for r in rs:
-        lines.append(f"{r['state']} {r['office']}: {racecards.verdict(r['p'], r['left_party'])}. "
-                     f"The {racecards.who(r)} wins "
+        lines.append(f"{r['state']} {r['office']}: {racecards.verdict(r['p'], racecards.lean(r))}. "
+                     f"{racecards.who(r, cap=True)} wins "
                      f"{round(r['p'] * 100)} in 100 simulated 3 Nov elections.{today_txt(r)} Poll average "
                      f"{r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
         top = [mv for mv in sorted(r["movers"], key=lambda mv: -abs(mv.get("delta", 0)))
@@ -198,7 +198,7 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
     caption = "\n".join(lines)
     thread = [f"Where the races stand, in 40,000 simulated elections each: on 3 Nov, and if the election were "
               f"today. {LABEL}."]
-    thread += [f"{r['state']} {r['office']}: {racecards.verdict(r['p'], r['left_party'])}, the {racecards.who(r)} "
+    thread += [f"{r['state']} {r['office']}: {racecards.verdict(r['p'], racecards.lean(r))}, {racecards.who(r)} "
                f"wins {round(r['p'] * 100)} in 100 on 3 Nov.{today_txt(r, short=True)} Poll average {r['poll']}, "
                f"market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}." for r in rs]
 
