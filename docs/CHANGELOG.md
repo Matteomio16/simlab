@@ -66,6 +66,15 @@ Decided by Matteo (design in `docs/superpowers/specs/2026-09-29-notapoll-site-de
     Tribune. An item counts for a race only when it names one of that state's candidates in full. All 19 States
     Newsroom sites refused with 403, so they aren't used.
   - Media Cloud stays optional: if its key comes, it plugs in as planned.
+  - Coverage on GDELT alone (articles naming the candidates, 22-29 Sep; 21 of 36 races measured, the rest were
+    refused during the check):
+    - simulate races: Iowa and Maine 250+ a week (60-80 a day), Alaska 170, North Carolina 150, Kansas 143, Florida
+      54, Nebraska 52, New Hampshire 24, Minnesota 15; Ohio and Texas about 50 and 60-100 a day on 28-29 Sep. The
+      median simulated race has 27 articles in the last day; the thinnest (Minnesota, New Hampshire, Nebraska) have
+      3-4.
+    - watch races: Georgia 102 a week, Arkansas 16, Idaho 8;
+    - statistics races: 6-44 a week (they use no race news).
+    So volume is enough for 12 Oct. The constraint is how often GDELT answers: about 2 queries per 9-minute run.
 - **GitHub fires this repository's schedules only every 5-9 hours**, whatever the cron says (snapshot runs on 28-29
   Sep: 09:40, 20:44, 01:13, 07:28, 16:09; none of the 28 quarter-hour triggers in between). So neither the 09:47 daily
   job nor a 15-minute news job can rely on it. `ops/cron/` holds a Cloudflare Worker that starts the workflows on
