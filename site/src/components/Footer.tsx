@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SITE } from "@/lib/site";
-import { SwingBand, Wordmark } from "./Brand";
+import { Lockup, SwingBand } from "./Brand";
 
 export default function Footer({ forecast }: { forecast: boolean }) {
   const social = SITE.social.filter((s) => s.live);
@@ -10,7 +10,7 @@ export default function Footer({ forecast }: { forecast: boolean }) {
       <div className="bg-navy text-navy-fg">
         <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-12 text-sm sm:px-6 md:grid-cols-[2fr_1fr_1fr]">
           <div>
-            <Wordmark className="text-lg text-white" />
+            <Lockup dark height={34} />
             <p className="mt-3 max-w-md leading-relaxed">
               A forecast of the 2026 US midterms built by social simulation. Synthetic voters and simulated elections;
               every number beside the poll average, the prediction market and the Cook Political Report.

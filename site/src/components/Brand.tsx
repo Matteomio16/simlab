@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-// Logo slot: the mark is being redesigned in its own session ("Design the NotAPoll logo"). Replace Logomark only.
+// The earlier ballot-box mark, kept only for places too small for the hills.
 export function Logomark({ size = 28 }: { size?: number }) {
   const step = size / 4;
   const r = size * 0.085;
@@ -26,11 +26,13 @@ export function Wordmark({ className = "" }: { className?: string }) {
   );
 }
 
-export function Lockup() {
+// The approved lockup from the brand kit (brand/final, `python -m brand.final`): two hills on the wordmark's baseline,
+// text outlined, so it needs no webfont. Swap the files in public/brand to change it.
+export function Lockup({ dark = false, height = 38 }: { dark?: boolean; height?: number }) {
   return (
-    <Link href="/" className="flex items-center gap-2.5 text-ink" aria-label="NotAPoll.org home">
-      <Logomark size={26} />
-      <Wordmark className="text-[1.2rem]" />
+    <Link href="/" className="flex items-center" aria-label="NotAPoll.org home">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={dark ? "/brand/lockup-dark.svg" : "/brand/lockup-light.svg"} alt="NotAPoll.org" style={{ height, width: "auto" }} />
     </Link>
   );
 }

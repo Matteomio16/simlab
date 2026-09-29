@@ -8,7 +8,7 @@ export const alt = "A NotAPoll.org Senate race forecast";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 
-const COLOR = { D: "#2f6db5", R: "#d1432f", I: "#7e879a" } as const;
+const COLOR = { D: "#2a78d6", R: "#e34948", I: "#7e879a" } as const;
 
 export function generateStaticParams() {
   const races = senateRacesSafe();

@@ -1,4 +1,7 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import type { ReactNode } from "react";
+import { ROOT } from "./root";
 
 // Link-preview cards (1200×630), drawn at build time by next/og. Fonts are fetched once per build from Google Fonts,
 // which serves static TrueType files to Node.
@@ -22,28 +25,16 @@ export function ogFonts() {
   return fonts;
 }
 
-const INK = "#121417";
-const SIM = "#6d2e8c";
+const INK = "#111110";
+const LOCKUP = `data:image/svg+xml;base64,${readFileSync(path.join(ROOT, "public", "brand", "lockup-light.svg")).toString("base64")}`;
 
 // The card frame: wordmark on top, content, and the label strip every image carries (publishing.md).
 export function OgFrame({ kicker, children, date, sample, bench }: { kicker: string; children: ReactNode; date?: string; sample?: boolean; bench?: string[] }) {
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#ffffff", fontFamily: "Franklin", color: INK }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "40px 64px 0" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 40, height: 40, border: `3px solid ${INK}`, display: "flex", flexDirection: "column", justifyContent: "space-around", padding: "3px 0" }}>
-            {[0, 1, 2].map((r) => (
-              <div key={r} style={{ display: "flex", justifyContent: "space-around" }}>
-                {[0, 1, 2].map((c) => (
-                  <div key={c} style={{ width: 6, height: 6, borderRadius: 6, background: r === 1 && c === 1 ? SIM : INK }} />
-                ))}
-              </div>
-            ))}
-          </div>
-          <div style={{ display: "flex", fontFamily: "Plex", fontWeight: 700, fontSize: 34 }}>
-            NotAPoll<span style={{ color: SIM }}>.org</span>
-          </div>
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={LOCKUP} alt="" height={58} width={283} />
         <div style={{ display: "flex", fontSize: 22, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", color: "#6b7280" }}>{kicker}</div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, padding: "28px 64px 0", borderTop: `6px solid ${INK}`, margin: "28px 64px 0", paddingLeft: 0, paddingRight: 0 }}>
@@ -56,8 +47,8 @@ export function OgFrame({ kicker, children, date, sample, bench }: { kicker: str
           </div>
         )}
       </div>
-      <div style={{ display: "flex", height: 6, background: "linear-gradient(90deg, #2f6db5 0%, #2f6db5 30%, #6d2e8c 50%, #d1432f 70%, #d1432f 100%)" }} />
-      <div style={{ display: "flex", justifyContent: "space-between", background: "#14213d", color: "#e9ecf3", padding: "14px 64px", fontSize: 22, fontWeight: 800, letterSpacing: 2, textTransform: "uppercase" }}>
+      <div style={{ display: "flex", height: 6, background: "linear-gradient(90deg, #2a78d6 0%, #2a78d6 30%, #7a4fc0 50%, #e34948 70%, #e34948 100%)" }} />
+      <div style={{ display: "flex", justifyContent: "space-between", background: "#2a2152", color: "#ece8f6", padding: "14px 64px", fontSize: 22, fontWeight: 800, letterSpacing: 2, textTransform: "uppercase" }}>
         <span>Social simulation, not a poll</span>
         <span style={{ fontWeight: 600 }}>{sample ? "Sample data · " : ""}{date ?? "notapoll.org"}</span>
       </div>

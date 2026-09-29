@@ -27,7 +27,7 @@ export default async function Image() {
     <OgFrame kicker="2026 Senate forecast" date={longDate(forecast.date)} sample={IS_SAMPLE} bench={[`Statistics only: ${in100(s.stats_only.p_r_50plus)} in 100`, `Prediction market: ${s.benchmarks.market == null ? "n/a" : `${in100(s.benchmarks.market)}%`}`]}>
       <div style={{ display: "flex", fontSize: 40, fontWeight: 600, color: "#3d434c" }}>Republicans hold the Senate in</div>
       <div style={{ display: "flex", alignItems: "baseline", marginTop: 6 }}>
-        <span style={{ fontSize: 190, fontWeight: 800, color: "#d1432f", letterSpacing: -6, lineHeight: 1 }}>{in100(s.p_r_50plus)}</span>
+        <span style={{ fontSize: 190, fontWeight: 800, color: "#e34948", letterSpacing: -6, lineHeight: 1 }}>{in100(s.p_r_50plus)}</span>
         <span style={{ fontSize: 52, fontWeight: 800, marginLeft: 20 }}>of 100 simulated elections</span>
       </div>
       <div style={{ display: "flex", marginTop: 18, fontSize: 30, fontWeight: 600, color: "#6b7280" }}>
