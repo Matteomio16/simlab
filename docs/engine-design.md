@@ -91,12 +91,13 @@ The terms:
 - `k_s` and `k_t` are the state's dials. They start at 1 and the weekly filter tunes them.
 - `a_e` is the story's attention weight, from 0 to 1 (§4).
 
-How long a story lasts (Matteo, 28 Sep evening; replaces the flat 10-day prior):
-- A story keeps its full effect while it is still in the news, from `first_seen` to `last_seen`.
-- Then it fades with a half-life that depends on its type:
-  - one-off stories (endorsements, scandals, debates, ads, candidates' policy news, other): 1 day;
-  - lasting topics (`economy`: prices, jobs, gas; `national`: president, Congress, war, disasters): 60 days. The real
-    calibration events' shifts held for 3–7 weeks (stats-groundwork §10).
+How long a story lasts (Matteo, 28–29 Sep; replaces the flat 10-day prior):
+- One-off stories (endorsements, scandals, debates, ads, candidates' policy news, other) keep their full effect while
+  in the news, from `first_seen` to `last_seen`, then fade with a 1-day half-life.
+- Lasting topics (`economy`: prices, jobs, gas; `national`: president, Congress, war, disasters) fade from their
+  first day, even while in the news, with a 10-day half-life. They are important at first, not that important after
+  three weeks, and over by about 30 days (Matteo, 29 Sep). The real calibration events' shifts held longer
+  (stats-groundwork §10); the weekly filter checks this against polls.
 - The 3 Nov forecast counts what is expected to remain of each story then, taking its coverage to end today.
 - The weekly filter tunes the half-lives. `t` stays within [0, 1] and `d` within [−1, 1].
 

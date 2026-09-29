@@ -2,6 +2,27 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 (Statistics session): lasting topics fade from day one; "if the election were today"
+
+Matteo, 29 Sep:
+- **Fade times: yes, with lasting topics at 30 days, their importance falling throughout.** High in the first days,
+  "after 3 weeks already not that important" but still a bit relevant. A literal 30-day half-life would still leave
+  60% after three weeks, so lasting topics (`economy`, `national`) now fade from their first day, even while in the
+  news, with a 10-day half-life:
+  - full strength at first, about 60% after a week, a quarter after three weeks, an eighth after 30 days;
+  - one-off stories are unchanged: full while in the news, then a 1-day half-life;
+  - on the 3 Nov forecast this means stories from the last two weeks carry most of the simulation's effect.
+- **Posts show both "if the election were today" and "on 3 Nov": yes.** `forecast.json` adds a `today` block to every
+  race and to the Senate: win chance, margin range and the stats-only twin, with election day set to today (no time
+  for opinion to drift, stories at today's strength). The daily step now takes about 20 seconds.
+
+Also:
+- **Orphaned reactions.** The Engine re-ran the 28 Sep news step at 17:19, after the harness had asked at 13:32. The
+  story ids changed, so 19 of the 22 stories with reactions no longer match any news file and can't be placed in
+  time. `moves.json` now lists them under `orphaned_events`, and the daily summary counts them. Flagged to the Engine.
+- **Same snapshot on re-runs.** The statistics step reads the day's latest snapshot run before 09:30 UTC, the Engine's
+  news cutoff, so a re-run later in the day reads the same polls as the day's job.
+
 ## 2026-09-28 (Statistics session): how long news lasts, independents, simulation tiers; decisions on record
 
 Matteo's answers, later on 28 Sep (stats-groundwork §8):
