@@ -61,12 +61,14 @@ def build(out: Path = OUT) -> dict:
         report[f"0{n + 1}-lab-notes-0{n}"] = post_folder(out / f"0{n + 1}-lab-notes-0{n}", p.slides, p.instagram,
                                                           p.thread, p.allow)
     (out / "CHECKLIST.md").write_bytes(CHECKLIST.encode("utf-8"))
+    (prof / "REDIRECT.md").write_bytes(REDIRECT.encode("utf-8"))
     return report
 
 
 CHECKLIST = """# Posting checklist, Sat 3 Oct (then the same for 4 and 5 Oct)
 
-Only after Matteo has approved each post. Around 13:00–15:00 UK (8–10 am US Eastern) is a common choice.
+Only after Matteo has approved each post. Around 13:00–15:00 UK (8–10 am US Eastern) is a common choice. Before the
+first post: the notapoll.org redirect (00-profiles/REDIRECT.md).
 
 1. Instagram: new post → the slides of 01-start-here in order → paste caption.txt → Advanced settings →
    Accessibility → paste each slide's alt text from alt-text.txt → Share. Then pin it to the profile grid.
@@ -77,6 +79,24 @@ Only after Matteo has approved each post. Around 13:00–15:00 UK (8–10 am US 
 4. Check every image shows "SOCIAL SIMULATION, NOT A POLL" and the caption ends with the label line; no boosts.
 5. Sun 4 Oct: 03-lab-notes-02. Mon 5 Oct: 04-lab-notes-03. Each can be scheduled the day before (Instagram's own
    scheduler; Buffer for the rest), each only with Matteo's yes.
+"""
+
+
+REDIRECT = """# notapoll.org → the Instagram profile (until the site is live)
+
+Matteo, 29 Sep. In the Cloudflare dashboard, zone notapoll.org:
+
+1. DNS → Records → Add record: type A, name `@`, IPv4 `192.0.2.1`, Proxy status on (orange cloud). Add a second one:
+   type CNAME, name `www`, target `notapoll.org`, proxied. (192.0.2.1 is a placeholder address: Cloudflare answers
+   before it is ever reached. Redirects only work on proxied records. The email and `_atproto` records stay as they
+   are.)
+2. Rules → Redirect Rules → Create rule. Name: `to instagram`. If incoming requests match: Custom filter expression,
+   Hostname equals `notapoll.org`, Or, Hostname equals `www.notapoll.org`.
+3. Then: Type Static, URL `https://www.instagram.com/notapoll.org/`, Status code 302 (temporary, so browsers don't
+   remember it once the site replaces it), Preserve query string off. Deploy.
+4. Test: open https://notapoll.org and https://www.notapoll.org in a private window; both should land on the
+   Instagram profile.
+5. When the site goes live, delete this rule (and the placeholder A record if the site uses its own).
 """
 
 

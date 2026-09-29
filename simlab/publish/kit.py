@@ -24,6 +24,7 @@ from .themes import LAB
 LAYOUTS = ("4-stamp", "2-ladder", "3-futures")  # provisional until Matteo picks
 MEANINGFUL = 0.03  # a smaller 7-day move in the win chance is "no meaningful change"
 MOVER_MIN = 0.5  # margin points on 3 Nov; smaller story effects stay in note.md, out of public captions
+BIG_MOVE = 0.10  # a 7-day move in a featured race's win chance this large earns the video (Matteo, 29 Sep)
 LAUNCH = date(2026, 10, 12)
 LIMITS = {"instagram": 2200, "thread": 280}
 PILOT = ("OH-S", "NC", "TX", "IA", "ME")
@@ -104,7 +105,18 @@ def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video: bool = False) -> dict:
+def reel_race(rs: list[dict], day: date, video: str) -> dict | None:
+    """Which race gets the 9:16 video: on Sundays the first featured race, after a big move the race that moved most
+    (Matteo, 29 Sep); "always" forces the first featured race, "never" skips it."""
+    if video == "never":
+        return None
+    moved = max(rs, key=lambda r: abs(r["p"] - (r["prev"] if r["prev"] is not None else r["p"])))
+    if moved["prev"] is not None and abs(moved["p"] - moved["prev"]) >= BIG_MOVE:
+        return moved
+    return rs[0] if video == "always" or day.weekday() == 6 else None
+
+
+def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video: str = "auto") -> dict:
     d = data / "derived" / day.isoformat()
     f = load(d / "forecast.json")
     if f is None:
@@ -157,9 +169,9 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
                             f"{r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
     contact_sheet(paths, out / "contact.jpg", scale=0.3)
     (out / "reel.mp4").unlink(missing_ok=True)
-    if video:  # the first featured race as a 9:16 "every future" video; a failure is a problem, not a crash
+    r = reel_race(rs, day, {True: "always", False: "never"}.get(video, video))
+    if r is not None:  # the 9:16 "every future" video; a failure is a problem, not a crash
         from .reel import reel
-        r = rs[0]
         try:
             reel(r, out / "reel.mp4", theme)
             alts["reel.mp4"] = (f"Video: 100 simulated elections for the {r['state']} {r['office']} land one by one as "
@@ -247,7 +259,8 @@ def main(argv=None) -> int:
     ap.add_argument("--date", required=True, type=date.fromisoformat)
     ap.add_argument("--data", type=Path, default=Path(__file__).resolve().parents[3] / "simlab-data")
     ap.add_argument("--races", help="comma-separated race ids to feature instead of the automatic pick")
-    ap.add_argument("--reel", action="store_true", help="also render the 9:16 video for the first featured race")
+    ap.add_argument("--reel", nargs="?", const="always", default="auto", choices=("auto", "always", "never"),
+                    help="the 9:16 video: auto (Sundays and big moves, the default), always, or never")
     a = ap.parse_args(argv)
     try:
         summary = build(a.date, a.data, only=a.races.split(",") if a.races else None, video=a.reel)

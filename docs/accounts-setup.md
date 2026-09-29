@@ -15,9 +15,8 @@ Authenticator). Save every platform's backup codes offline, not in the same emai
    `bsky@notapoll.org` (and `buffer@notapoll.org` if you want Buffer separate).
 4. Send a test email to each alias and check it arrives.
 
-Optional but advised before the first post: since images show notapoll.org and the site comes later, add a redirect
-rule (Rules → Redirect Rules) from notapoll.org to labs.scaliastudio.dev/midterms, or a one-page holding site, so
-the address never leads nowhere.
+Before the first post (Matteo, 29 Sep): redirect notapoll.org to the Instagram profile until the site is live, so the
+address on every image leads somewhere. Exact steps: `kits/launch/00-profiles/REDIRECT.md`.
 
 ## 2. Instagram, then Threads
 

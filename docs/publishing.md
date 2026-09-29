@@ -90,7 +90,9 @@ verdict label, the "if the election were today" number, and the poll average, ma
 the Reels safe area (220 px top, 340 px bottom), the label strip included. The closing frame goes through the same
 layout guard as the slides, and the last frame is saved as the cover. The kit renders it for the first featured race
 with `--reel` (`reel.mp4`, `reel-cover.jpg`, alt text in `alt_text.json`); a failed video becomes a problem in
-`note.md` and blocks approval, not the kit.
+`note.md` and blocks approval, not the kit. When (Matteo, 29 Sep): Sundays, the first featured race; and any day a
+featured race's win chance moved 10 points or more in a week, that race (`--reel auto`, the default; `always` or
+`never` override).
 
 ## Lab notes file format (read by the website session)
 
@@ -105,8 +107,10 @@ The site should read as the same brand as the posts. Shared pieces, all in `siml
   `#7E879A`, Dem `#2F6DB5`, Rep `#D1432F`, independent grey `#7E879A`, purple `#6D2E8C` (our number and toss-ups),
   toss-up fill `#EEE6F7`, highlighter `#E6DAF3`, indigo strip `#2A2152`. Dark mode: the special-edition night colours in
   `themes.MAP` (Dem `#4F8FF7`, Rep `#F0554A`, purple `#9E4FC4` on `#0F1424`), which pass the same colour-blind checks.
-- **Type:** IBM Plex Sans (text, headings, numbers) and IBM Plex Mono (labels, kickers); the wordmark alone is
-  Newsreader 560. All on Google Fonts.
+- **Type on the site differs from the posts** (Matteo, 29 Sep, website session): the site uses Libre Franklin for
+  headings, data and UI and Source Serif 4 for reading text, no mono, after he found Plex with mono labels
+  "vibe-coded" on the web. The posts keep IBM Plex Sans and Plex Mono; the wordmark is Newsreader 560 on both. Shared:
+  the logo, colours, label strip and swing band.
 - **Logo:** H1 and the wordmark as above; use the SVG masters in `brand/final/` (text outlined, no font dependency).
 - **Signature details:** the blue, purple, red swing band; the label "Social simulation, not a poll" on every view that
   shows a number; the state outline filled with simulated voters (`charts.state_voters`, outlines in `states.json`).
