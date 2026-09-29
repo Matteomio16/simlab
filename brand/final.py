@@ -78,7 +78,9 @@ class Face:
     def __init__(self, file: str, wght: int | None = None):
         f = TTFont(FONTS / file)
         if "fvar" in f:
-            f = instancer.instantiateVariableFont(f, {"wght": wght, "opsz": 72})
+            axes = {a.axisTag for a in f["fvar"].axes}
+            f = instancer.instantiateVariableFont(f, {k: v for k, v in (("wght", wght), ("opsz", 72), ("wdth", 100))
+                                                      if k in axes})
         self.f, self.gs, self.cmap = f, f.getGlyphSet(), f.getBestCmap()
         self.upm = f["head"].unitsPerEm
         self.cap = f["OS/2"].sCapHeight
@@ -198,28 +200,29 @@ def rounded(x, y, w, h, r, n=24):
 
 # ---- lockups --------------------------------------------------------------------------------------------------
 
-def wordmark(x, baseline, size, pal, track=-0.012):
+def wordmark(x, baseline, size, pal, track=-0.005, face=None):
     text = "NotAPoll.org"
-    return serif().shapes(text, size, x, baseline, [pal["ink"]] * 8 + [pal["purple"]] * 4, track)
+    return (face or serif()).shapes(text, size, x, baseline, [pal["ink"]] * 8 + [pal["purple"]] * 4, track)
 
 
-def lockup_horizontal(x, baseline, size, pal):
+def lockup_horizontal(x, baseline, size, pal, face=None, track=-0.005):
     """The hills stand on the wordmark's baseline, as tall as a capital and a bit: one ground for both."""
-    cap = serif().cap * size / serif().upm
+    face = face or serif()
+    cap = face.cap * size / face.upm
     h = cap * 1.18
     gap = cap * .42
-    return mark(x, baseline, h, pal) + wordmark(x + mark_w(h) + gap, baseline, size, pal)
+    return mark(x, baseline, h, pal) + wordmark(x + mark_w(h) + gap, baseline, size, pal, track, face)
 
 
 def lockup_horizontal_size(size):
     cap = serif().cap * size / serif().upm
     h = cap * 1.18
-    return mark_w(h) + cap * .42 + serif().width("NotAPoll.org", size, -0.012), cap, h
+    return mark_w(h) + cap * .42 + serif().width("NotAPoll.org", size, -0.005), cap, h
 
 
 def lockup_stacked(cx, top, size, pal):
     cap = serif().cap * size / serif().upm
-    ww = serif().width("NotAPoll.org", size, -0.012)
+    ww = serif().width("NotAPoll.org", size, -0.005)
     h = cap * 1.9
     base = top + h
     return mark(cx - mark_w(h) / 2, base, h, pal) + wordmark(cx - ww / 2, base + cap * .55 + cap, size, pal)
@@ -250,9 +253,14 @@ def raster(shapes, w, h, bg=None, ss=4) -> Image.Image:
     for contours, color in shapes:
         wind = np.zeros((H, W), np.int8)
         for c in contours:
-            one = Image.new("L", (W, H), 0)
-            ImageDraw.Draw(one).polygon([(px * ss, py * ss) for px, py in c], fill=1)
-            wind += np.asarray(one, np.int8) * (1 if _signed(c) > 0 else -1)
+            pts = np.asarray(c) * ss
+            x0, y0 = np.maximum(np.floor(pts.min(0)).astype(int) - 1, 0)
+            x1, y1 = np.minimum(np.ceil(pts.max(0)).astype(int) + 2, (W, H))
+            if x1 <= x0 or y1 <= y0:
+                continue
+            one = Image.new("L", (int(x1 - x0), int(y1 - y0)), 0)
+            ImageDraw.Draw(one).polygon([(px - x0, py - y0) for px, py in pts], fill=1)
+            wind[y0:y1, x0:x1] += np.asarray(one, np.int8) * (1 if _signed(c) > 0 else -1)
         mask = Image.fromarray(((wind != 0) * 255).astype(np.uint8))
         img.paste(Image.new("RGBA", (W, H), color), (0, 0), mask)
     return img.resize((int(w), int(h)), Image.LANCZOS)
@@ -280,11 +288,25 @@ def avatar(pal, size=1080, share=.78, lift=.06):
     return mark((size - mark_w(h)) / 2, base, h, pal)
 
 
-def avatar_bleed(pal, size=1080):
-    """The hills rising from the bottom of the circle, cropped like a landscape."""
-    h = size * .56
+def avatar_bleed(pal, size=1080, share=.56):
+    """The hills rising from the bottom of the circle, cropped like a landscape; share = hill height / size."""
+    h = size * share
     w = mark_w(h)
     return mark((size - w) / 2, size + h * .02, h, pal)
+
+
+def avatar_big(pal, size=1080):
+    """The whole mark, as large as the circle allows: tails run into the edge, base on the lower third."""
+    w = size * .96
+    h = w * NATIVE_H / NATIVE_W
+    return mark((size - w) / 2, size * .72, h, pal)
+
+
+AVATARS = {  # option -> (composition, note); each is drawn on indigo and on paper
+    "D": (lambda p: avatar_bleed(p, share=.72), "Landscape crop, hills 30% bigger: the purple overlap fills the lower middle"),
+    "D+": (lambda p: avatar_bleed(p, share=.86), "Landscape crop, bigger still: the peaks near the top of the circle"),
+    "E": (avatar_big, "The whole mark, as wide as the circle, standing on the lower third"),
+}
 
 
 def banner(pal, w, h, tagline="Democracy, rehearsed."):
@@ -335,6 +357,10 @@ def build() -> list[Path]:
     save("mark-mono", fit(mark(0, 0, 100, mono_pal), 400, 200, 8), 400, 200)
 
     save("avatar", avatar_bleed(DARK), 1080, 1080, DARK["bg"], png=True, jpg=True)
+    (OUT / "avatar-options").mkdir(exist_ok=True)
+    for key, (fn, _) in AVATARS.items():
+        for tag, pal in (("indigo", DARK), ("white", LIGHT)):
+            (OUT / "avatar-options" / f"{key}-{tag}.svg").write_text(svg(fn(pal), 1080, 1080, pal["bg"]), encoding="utf-8")
     save("avatar-centred", avatar(DARK), 1080, 1080, DARK["bg"])
     save("avatar-centred-paper", avatar(LIGHT), 1080, 1080, LIGHT["bg"])
     save("avatar-paper", avatar_bleed(LIGHT), 1080, 1080, LIGHT["bg"])

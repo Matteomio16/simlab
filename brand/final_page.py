@@ -6,7 +6,7 @@ import io
 
 from PIL import Image
 
-from .final import OUT, ROOT
+from .final import AVATARS, OUT, ROOT
 
 
 def uri(name: str, width: int | None = None) -> str:
@@ -37,6 +37,19 @@ def avatars() -> str:
     return "".join(out)
 
 
+def options() -> str:
+    out = []
+    for key, (_, note) in AVATARS.items():
+        cells = []
+        for tag, word in (("indigo", "indigo"), ("white", "white")):
+            src = uri(f"avatar-options/{key}-{tag}.svg")
+            smalls = "".join(f'<img src="{src}" width="{n}" height="{n}" alt="">' for n in (48, 32, 20))
+            cells.append(f'<figure class="av"><img class="round" src="{src}" alt="{key} on {word}"><figcaption>'
+                         f'<span class="pickname">{key} {word}</span><span class="smalls">{smalls}</span></figcaption></figure>')
+        out.append(f'<div class="opt"><p><b>{key}</b> &middot; {note}</p><div class="avs two">{"".join(cells)}</div></div>')
+    return "".join(out)
+
+
 def xprofile(header: str, avatar: str, name: str) -> str:
     return (f'<div class="xprof"><div class="hwrap"><img class="hdr" src="{uri(header, 1500)}" alt="X header">'
             f'<img class="xav" src="{uri(avatar)}" alt=""></div><div class="xname"><b>NotAPoll.org</b>'
@@ -52,6 +65,8 @@ def build():
         "%LOCK_L%": uri("lockup-light.svg"), "%LOCK_D%": uri("lockup-dark.svg"),
         "%STACK_L%": uri("lockup-stacked-light.svg"), "%STACK_D%": uri("lockup-stacked-dark.svg"),
         "%AVATARS%": avatars(),
+        "%OPTIONS%": options(),
+        "%FONTS%": uri("font-compare.png"),
         "%XPROF%": xprofile("header-x.jpg", "avatar.svg", "X profile · header light, avatar B")
         + xprofile("header-x.jpg", "avatar-centred.svg", "X profile · header light, avatar A")
         + xprofile("header-x-dark.png", "avatar-paper.svg", "X profile · header dark, avatar D"),
@@ -105,6 +120,9 @@ section{display:grid;gap:16px}
 .xprof .lbl{padding:0 14px;color:#536471}
 .wide img{width:100%;display:block;border:1px solid var(--rule)}
 .favs{display:flex;gap:18px;align-items:end;flex-wrap:wrap}
+.opt{display:grid;gap:10px;padding-bottom:18px;border-bottom:1px solid var(--rule)}
+.avs.two{grid-template-columns:repeat(auto-fit,minmax(220px,300px))}
+.pickname{font:600 20px/1.2 var(--serif)}
 .pick{background:var(--sheet);border:1px solid var(--rule);padding:20px;display:grid;gap:10px}
 .pick ol{margin:0;padding-left:20px;display:grid;gap:8px;max-width:84ch}
 .files{font:13px/1.6 var(--mono);color:var(--muted);columns:2 280px}
@@ -123,6 +141,12 @@ section{display:grid;gap:16px}
       <li><b>Headers on paper.</b> The paper header sets off the indigo avatar, and the hills stand on the bottom edge on the right, clear of where X puts the avatar.</li>
     </ol></div>
   </section>
+
+  <section id="avatar"><div class="head"><h2>Avatar: pick one</h2><p>Bigger hills, blue and red with the purple overlap in the middle, each on indigo and on white. B and D from the last sheet were the same crop on indigo and on white, so they are both D here. Answer in two words, for example "D white".</p></div>
+    %OPTIONS%</section>
+
+  <section id="font"><div class="head"><h2>Wordmark font: A or B?</h2><p>A is the kit's Newsreader, the serif you locked. B is IBM Plex Sans Bold, which the Lab Notebook slides set today. Same hills, same colours; the bottom two rows are a slide header at actual size. One word is enough: A or B.</p></div>
+    <div class="wide"><img src="%FONTS%" alt="Newsreader and IBM Plex Sans wordmarks side by side"></div></section>
 
   <section><div class="head"><h2>The mark</h2><p>On paper, on indigo, and in one colour for print and places that can't take the party colours.</p></div>
     <div class="duo"><div class="tile on-l"><img src="%MARK_L%" alt="Mark on paper"></div>
