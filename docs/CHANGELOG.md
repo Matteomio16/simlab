@@ -2,6 +2,29 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 night (Statistics session): news uncertainty by story; House seats take the news
+
+- **Matteo's two layers** (via the roadmap session): news uncertainty should vary by state sensitivity and by story
+  strength, not only through one overall scale.
+  - Already there: the overall scale (the national dial) and each state's sensitivity (its dial deviation, drawn per
+    state in every simulated election, beside its persuadable and mobilisable shares).
+  - **Built, switched off until Matteo decides** (`story_sd` 0 in `simlab/move_params.json`): a strength draw per
+    story per simulated election (`montecarlo.story_noise`, fed by `statsday._stories`; 3 tests). It is applied to
+    that story in every race it touches: one draw shared by the races a national story reaches, and a race story's
+    draw belongs to its race alone.
+  - Size: sd 0.42 of the story's effect, from the 45 calibration events' scatter once their measurement error is
+    taken out.
+  - On 29 Sep data it widens ranges by about 0.01 points, because stories are small beside the statistical error; it
+    shows when a story is big. The effects used leave out the offset from reading polls net of the news, so the draws
+    err on the wide side.
+- **House seats take the news** (Kev's `house.prepare`/`build`/`write`, 75baf2e):
+  - statsday prepares the House once a day and builds its headline and today view with the day's story paths, by
+    levels.build's rules. A seat without stories takes the nation's, as a Senate race does.
+  - The twin takes none.
+  - The 40 simulated seats' voter groups join `groups.json`, so `moves.json` covers them once House stories are asked.
+  - Still to build before 12 Oct: the seats' news uncertainty in the Monte Carlo (their state's dial draw, shared with
+    the state's Senate race, and the story draws).
+
 ## 2026-09-29 night (Kev session): House simulated seats (polls, voter groups, story effects)
 
 - **District polls:**
