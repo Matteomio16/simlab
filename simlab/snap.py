@@ -57,7 +57,9 @@ WIKI_PAGES = ["2026 United States Senate elections", "2026 United States House o
               *(f"2026 United States Senate election in {s}" for s in REGULAR.values()),
               *(f"2026 United States Senate special election in {s}" for s in SPECIAL.values()),
               *(f"2026 United States House of Representatives elections in {s}" for s in MULTI_DISTRICT),
-              *(f"2026 United States House of Representatives election in {s}" for s in AT_LARGE)]
+              *(f"2026 United States House of Representatives election in {s}" for s in AT_LARGE),
+              *(f"2026 United States House of Representatives elections in California (districts {r})"
+                for r in ("1–26", "27–52"))]
 KALSHI = "https://api.elections.kalshi.com/trade-api/v2/events"
 KALSHI_SERIES = ["CONTROLS", "CONTROLH", *(f"SENATE{c}" for c in REGULAR), *(f"SENATE{c}S" for c in SPECIAL)]
 GAMMA = "https://gamma-api.polymarket.com/events"
