@@ -142,6 +142,22 @@ export default function Overview() {
           <RaceCards rows={[...rows].sort((a, b) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5)).slice(0, 4)} />
         </div>
       </Reveal>
+      {forecast.house && (
+        <Reveal as="section" className="mt-14 section-rule">
+          <p className="label">House of Representatives</p>
+          <div className="mt-3 flex flex-wrap items-baseline gap-x-10 gap-y-3">
+            <p className="text-2xl font-bold tracking-[-0.01em]">
+              {`Democrats win the House in ${in100(forecast.house.p_d_majority)} of 100 simulated elections`}
+            </p>
+            {forecast.house.seats?.D && (
+              <p className="text-ink-2">
+                {`Democratic seats: ${forecast.house.seats.D.p50} in the middle simulation, ${forecast.house.seats.D.p10}–${forecast.house.seats.D.p90} in 8 of 10. 218 wins control.`}
+              </p>
+            )}
+          </div>
+        </Reveal>
+      )}
+
       <Reveal as="section" className="mt-16 section-rule">
         <p className="label">The map</p>
         <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">35 races, beside the benchmarks</h2>

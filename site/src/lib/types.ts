@@ -54,7 +54,8 @@ export type Forecast = {
     news: { if_weaker: number; if_stronger: number };
     today?: Control & { stats_only?: Control };
   };
-  house: null | { p_d_majority: number };
+  // engine-design §7: {p_d_majority, seats}; the seats shape is assumed to match the Senate's until Statistics writes it.
+  house: null | { p_d_majority: number; seats?: { D?: Seats; R?: Seats } };
 };
 
 export type Draws = { races: Record<string, number[]> };

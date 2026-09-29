@@ -69,3 +69,4 @@ PowerShell sets variables with `$env:SITE_MODE = "forecast"; npm run dev`.
 | Archive lists `public/data/YYYY-MM-DD/forecast.json` written by `publish-day.mjs` | `src/app/archive/page.tsx` | — |
 | Public changelog, first entry dated 3 Oct | `content/changelog.md` | editing the file |
 | Track record and archive appear from 12 Oct only; changelog from 3 Oct | `scripts/postbuild.mjs`, footer | moving routes in or out of the prelaunch drop list |
+| House control block on the overview, shown only once `forecast.json` has `house`; assumes `house.seats.D` has the Senate seats shape | `src/app/_home/Overview.tsx`, `src/lib/types.ts` | agreeing the shape with Statistics |
