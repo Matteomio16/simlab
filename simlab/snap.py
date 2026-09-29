@@ -14,7 +14,8 @@ HTTP status, raw size and SHA-256 of the raw content, or the error. Sources, all
 - news: GDELT headlines for each pilot race and the national midterms (news.RACES queries), the last 24 hours each run
   so a later run fills a failed query's gap. GDELT allows one request per 5 s and often rate-limits shared IPs, so each
   query retries with longer waits and the query order rotates each run. Google News is not used: its
-  feed's terms allow only personal news readers (Matteo, 28 Sep). Media Cloud joins once its key exists.
+  feed's terms allow only personal news readers (Matteo, 28 Sep). Media Cloud, for every race in newsraces.json,
+  joins once its key exists.
 - pageviews: daily Wikipedia views of the pilot candidates' articles, last 10 days.
 Sources that need keys (FEC, FRED, EIA) and early-vote aggregates join once their keys and files exist. Nothing raw
 is printed: the job runs in a public repo whose logs are public.
@@ -133,23 +134,39 @@ def _key(name: str) -> str:
     return ""
 
 
+NEWS_RACES = Path(__file__).with_name("newsraces.json")  # every race's queries (simlab/newsraces.py builds it)
+LEGACY = {"OH-S": "ohio", "NC": "north-carolina", "TX": "texas", "US": "national"}  # file names from the pilot
+MEDIACLOUD_BUDGET_S = 300
+
+
 def mediacloud(run: "Run", key: str) -> None:
-    """The last day's stories per race query in Media Cloud's US national collection. The key rides in a header, so it
-    never reaches the URL, the manifest or the logs."""
-    end = run.when.date()
-    for race, query in NEWS.items():
-        params = {"q": query, "start": f"{end - timedelta(days=1)}", "end": f"{end}",
+    """The last day's stories for every race in newsraces.json and the nation, from Media Cloud's US national
+    collection. Bounded: a 429 or 5xx is retried once after 30 s, a second 429 skips the remaining races, and so does
+    the end of the 5-minute budget; each skipped race is recorded. The key rides in a header, so it never reaches the
+    URL, the manifest or the logs."""
+    end, stop, limited = run.when.date(), time.monotonic() + MEDIACLOUD_BUDGET_S, False
+    for rid, race in json.loads(NEWS_RACES.read_text(encoding="utf-8")).items():
+        name = f"mediacloud-{LEGACY.get(rid, rid.lower())}"
+        if limited or time.monotonic() >= stop:
+            run.error("news", name, MEDIACLOUD, "skipped: Media Cloud rate-limited" if limited else
+                      f"skipped: Media Cloud's {MEDIACLOUD_BUDGET_S // 60}-minute budget is used up")
+            continue
+        params = {"q": race["mediacloud"], "start": f"{end - timedelta(days=1)}", "end": f"{end}",
                   "platform": "onlinenews-mediacloud", "cs": MC_US_NATIONAL, "page_size": 1000}
 
         def fetch(params=params):
-            for i in range(3):
+            nonlocal limited
+            for i in range(2):
                 r = requests.get(MEDIACLOUD, params=params, headers={**UA, "Authorization": f"Token {key}"},
-                                 timeout=90)
+                                 timeout=max(5.0, min(90.0, stop - time.monotonic())))
                 if r.status_code < 500 and r.status_code != 429:
                     break
-                time.sleep(10 * (i + 1))
+                if i == 0:
+                    time.sleep(30)
+            limited = r.status_code == 429
             return r.status_code, r.content
-        run.save("news", f"mediacloud-{race}", MEDIACLOUD, fetch)
+        run.save("news", name, MEDIACLOUD, fetch)
+        time.sleep(1)
 
 
 def gdelt_order(when: datetime) -> list[str]:
