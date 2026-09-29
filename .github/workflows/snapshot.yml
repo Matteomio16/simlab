@@ -1,7 +1,8 @@
 # Every 3 hours: raw snapshots of live sources (simlab/snap.py) into the private data repo.
 # GitHub drops most scheduled triggers (3 of the first 4 three-hourly slots on 28 Sep; then only 3 of ~17 hourly ones),
 # so the trigger fires every 15 minutes and a scheduled run only proceeds when the newest snapshot is at least 150
-# minutes old; manual runs always proceed.
+# minutes old. The Cloudflare Worker in ops/cron dispatches it every 3 hours with scheduled=true, which obeys the same
+# rule; manual runs always proceed.
 # The deploy key in SIMLAB_DATA_DEPLOY_KEY can write to Matteomio16/simlab-data only. Logs are public: the script
 # prints sizes and errors, never data.
 name: snapshot
@@ -10,6 +11,10 @@ on:
   schedule:
     - cron: "7,22,37,52 * * * *"
   workflow_dispatch:
+    inputs:
+      scheduled:
+        description: "obey the 150-minute rule, as a scheduled run does"
+        default: "false"
 
 concurrency:
   group: snapshot
@@ -34,7 +39,7 @@ jobs:
           sparse-checkout-cone-mode: false
       - name: Due?
         id: due
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' || inputs.scheduled == 'true'
         working-directory: data-repo
         run: |
           day=$(git ls-tree --name-only HEAD snapshots/ | grep -E '/[0-9]{4}-[0-9]{2}-[0-9]{2}$' | sort | tail -1)
