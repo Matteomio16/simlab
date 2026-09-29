@@ -15,6 +15,7 @@ from .polls import STATE_CODES, STATE_NAMES, Race, _section, slug, surname
 
 N_DRAWS, EVERY, DF, FLOOR = 40_000, 40, 8, 0.25
 NOT_UP = {"R": 31, "D": 32, "I": 2}  # seats not up in 2026 (overview page, 28 Sep); I = King and Sanders
+HOUSE_MAJORITY = 218
 SCHEMA = 1
 UNITS = "two-party margin, D (or independent challenger) minus R, points"
 
@@ -54,13 +55,23 @@ def floor(c: np.ndarray, lo: float = FLOOR, iters: int = 500) -> tuple[np.ndarra
     return x, lifted
 
 
-def draw(mu: np.ndarray, sd: np.ndarray, c: np.ndarray, n: int, seed: int, df: int = DF) -> np.ndarray:
+def draw(mu: np.ndarray, sd: np.ndarray, c: np.ndarray, n: int, seed: int, df: int = DF,
+         first: int | None = None) -> np.ndarray:
     """Multivariate Student-t: one shared scale per draw, so an extreme year is extreme everywhere. The scale is set so
-    each race keeps its SD; only the tails fatten."""
+    each race keeps its SD; only the tails fatten. With `first`, the races after the first `first` (House seats) are
+    drawn given those (the Senate's), which keep the random numbers of a draw of them alone."""
     rng = np.random.default_rng(seed)
-    z = rng.standard_normal((n, len(mu)))
+    k = len(mu) if first is None else first
+    z = rng.standard_normal((n, k))
     s = np.sqrt((df - 2) / rng.chisquare(df, n))
-    return mu + s[:, None] * (z @ np.linalg.cholesky(c).T) * sd
+    low = np.linalg.cholesky(c[:k, :k])
+    y = z @ low.T
+    if k < len(mu):
+        b = np.linalg.solve(low, c[:k, k:]).T
+        w, v = np.linalg.eigh(c[k:, k:] - b @ b.T)
+        own = np.random.default_rng([seed, 2]).standard_normal((n, len(mu) - k))
+        y = np.hstack([y, z @ b.T + own @ (v * np.sqrt(np.maximum(w, 0.0))).T])
+    return mu + s[:, None] * y * sd
 
 
 def seed_for(day: date) -> int:
@@ -85,6 +96,20 @@ def _dist(v: np.ndarray) -> dict:
     p10, p50, p90 = np.percentile(v, [10, 50, 90])
     return {"mean": round(float(v.mean()), 2), "p10": float(p10), "p50": float(p50), "p90": float(p90),
             "dist": {str(int(a)): round(b / len(v), 4) for a, b in zip(k, c)}}
+
+
+def house_seats(x: np.ndarray, left: list[str], fixed: dict) -> dict:
+    """Seats per draw: uncontested seats plus contested seats won. The left candidate is a Democrat or, where none
+    runs, another challenger (O)."""
+    won, left = x > 0, np.array(left)
+    return {"D": fixed.get("D", 0) + (won & (left == "D")).sum(axis=1), "O": (won & (left == "O")).sum(axis=1),
+            "R": fixed.get("R", 0) + (~won).sum(axis=1)}
+
+
+def house_summary(seats: dict, majority: int = HOUSE_MAJORITY) -> dict:
+    return {"p_d_majority": round(float(np.mean(seats["D"] >= majority)), 4),
+            "p_r_majority": round(float(np.mean(seats["R"] >= majority)), 4), "majority": majority,
+            "seats": {k: _dist(v) for k, v in seats.items()}}
 
 
 def senate_summary(seats: dict, not_up: dict) -> dict:
@@ -159,12 +184,16 @@ def control_market(kalshi: dict, poly: dict, chamber: str = "senate") -> tuple[f
         "polymarket": _poly(poly, f"which-party-will-win-the-{chamber}-in-2026", "republican", lambda g: False)})
 
 
-def _simulate(lv: dict, ids: list[str], params: dict, n: int, seed: int, df: int, lo: float) -> tuple[np.ndarray, int]:
-    mu = np.array([lv["races"][r]["margin"] for r in ids])
-    sd = np.array([lv["races"][r]["sd"] for r in ids])
-    c = structure(ids, sd, lv["national"]["var"], params["mc"]["regional_sd"], params["mc"]["state_sd"])
-    c, lifted = floor(c, lo)
-    return draw(mu, sd, c, n, seed, df), lifted
+def _simulate(lv: dict, ids: list[str], params: dict, n: int, seed: int, df: int, lo: float,
+              seats: list[str] = (), house: dict | None = None) -> tuple[np.ndarray, int]:
+    """The races' draws, then the House seats' given them. A seat's sd leaves out the national error (house.py), so it
+    is added here. The floor applies among the Senate races: lifting the House's many low pairs breaks the matrix."""
+    nv, seats = lv["national"]["var"], list(seats)
+    mu = np.array([lv["races"][r]["margin"] for r in ids] + [house["races"][r]["margin"] for r in seats])
+    sd = np.array([lv["races"][r]["sd"] for r in ids] + [np.hypot(house["races"][r]["sd"], np.sqrt(nv)) for r in seats])
+    c = structure(ids + seats, sd, nv, params["mc"]["regional_sd"], params["mc"]["state_sd"])
+    c[:len(ids), :len(ids)], lifted = floor(c[:len(ids), :len(ids)], lo)
+    return draw(mu, sd, c, n, seed, df, first=len(ids)), lifted
 
 
 def _dials(news: dict, units: list[str], n: int, seed: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -186,7 +215,7 @@ def _dials(news: dict, units: list[str], n: int, seed: int) -> tuple[np.ndarray,
 
 def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: str, benchmarks: dict | None = None,
           not_up: dict = NOT_UP, n: int = N_DRAWS, every: int = EVERY, df: int = DF, lo: float = FLOOR,
-          movers: dict | None = None, news: dict | None = None) -> tuple[dict, dict]:
+          movers: dict | None = None, news: dict | None = None, house: dict | None = None) -> tuple[dict, dict]:
     """forecast.json and draws.json from the headline levels and the stats-only twin's, on the same random numbers.
     The poll-average benchmark is the twin's, which has no story effects in it.
 
@@ -196,10 +225,17 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
     the weekly filter's posterior of the dials ("posterior": {labels, mean, cov}, "tau"). Every simulated election
     draws its own dials, so the forecast is not tied to the fitted sizes and races with strong simulated reactions get
     wider, story-driven tails. Each race also reports its win chance with the national dials at their 10th and 90th
-    percentiles."""
+    percentiles.
+
+    `house` ({"levels": house_levels.json, "left": {seat: "D" or "O"}}) adds the House: its contested seats are drawn
+    with the Senate's national, regional and state errors, and the seat totals give the majority (218). The seats take
+    no news yet, so the headline and the twin share their levels."""
     ids, seed, bm, movers = sorted(head["races"]), seed_for(day), benchmarks or {}, movers or {}
-    x, lifted = _simulate(head, ids, params, n, seed, df, lo)
-    xt, _ = _simulate(twin, ids, params, n, seed, df, lo)
+    hv = house["levels"]["races"] if house else {}
+    hid = sorted(r for r, v in hv.items() if not v.get("fixed"))
+    x, lifted = _simulate(head, ids, params, n, seed, df, lo, hid, house and house["levels"])
+    xt, _ = _simulate(twin, ids, params, n, seed, df, lo, hid, house and house["levels"])
+    (x, xh), (xt, xth) = np.hsplit(x, [len(ids)]), np.hsplit(xt, [len(ids)])
     parties = [left[r] for r in ids]
     if news:
         part = lambda k: np.array([news.get(k, {}).get(r, 0.0) for r in ids])
@@ -232,15 +268,35 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
                                               "benchmarks": {"market": bm.get("US-S", {}).get("market")}}
     if news:
         senate["news"] = {q: senate_summary(senate_seats(fixed[q], parties, not_up), not_up)["p_r_50plus"] for q in at}
+    house_out = hseats = hseats_t = None
+    if house:
+        fixed_seats = {}
+        for v in hv.values():
+            if v.get("fixed"):
+                fixed_seats[v["fixed"]] = fixed_seats.get(v["fixed"], 0) + 1
+        hl = [house["left"].get(r, "D") for r in hid]
+        hseats, hseats_t = house_seats(xh, hl, fixed_seats), house_seats(xth, hl, fixed_seats)
+        house_out = house_summary(hseats) | {
+            "stats_only": {k: v for k, v in house_summary(hseats_t).items() if k.startswith("p_")},
+            "benchmarks": {"market": bm.get("US-H", {}).get("market")}, "contested": len(hid), "fixed": fixed_seats,
+            "races": {r: race_summary(xh[:, i]) | {"tier": hv[r].get("tier")} for i, r in enumerate(hid)}}
     meta = {"date": str(day), "run_id": run_id, "schema": SCHEMA, "units": UNITS, "seed": seed}
     forecast = meta | {"draws": n, "df": df, "corr_floor": lo, "floor_lifted_pairs": lifted, "races": races,
-                       "senate": senate, "house": None} | (
+                       "senate": senate, "house": house_out} | (
         {"news_dials": {"national": {"mean": [round(v, 4) for v in nat], "sd": [round(v, 4) for v in nat_sd]},
                         "tau": news["tau"]}} if news else {})
     keep = slice(None, None, every)
-    sample = lambda xx, ss: {"races": {r: np.round(xx[keep, i], 1).tolist() for i, r in enumerate(ids)},
-                             "seats": {"senate": {k: v[keep].tolist() for k, v in ss.items()}}}
-    draws = meta | {"every": every} | sample(x, seats) | {"stats_only": sample(xt, seats_t)}
+    sim = [i for i, r in enumerate(hid) if hv[r].get("tier") == "simulate"]
+
+    def sample(xx, ss, xxh, hs):
+        out = {"races": {r: np.round(xx[keep, i], 1).tolist() for i, r in enumerate(ids)},
+               "seats": {"senate": {k: v[keep].tolist() for k, v in ss.items()}}}
+        if hs:
+            out["seats"]["house"] = {k: v[keep].tolist() for k, v in hs.items()}
+            out["house_races"] = {hid[i]: np.round(xxh[keep, i], 1).tolist() for i in sim}
+        return out
+
+    draws = meta | {"every": every} | sample(x, seats, xh, hseats) | {"stats_only": sample(xt, seats_t, xth, hseats_t)}
     return forecast, draws
 
 
@@ -254,4 +310,7 @@ def attach_today(forecast: dict, today: dict, movers: dict | None = None) -> dic
                       "movers": (movers or {}).get(r, [])}
     keys = ("p_r_50plus", "p_d_caucus_51", "p_independents_decide")
     forecast["senate"]["today"] = {k: today["senate"][k] for k in keys} | {"stats_only": today["senate"]["stats_only"]}
+    if forecast.get("house") and today.get("house"):
+        forecast["house"]["today"] = {k: today["house"][k] for k in ("p_d_majority", "p_r_majority")} | {
+            "stats_only": today["house"]["stats_only"]}
     return forecast

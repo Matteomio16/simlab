@@ -308,5 +308,52 @@ class BuildTest(unittest.TestCase):
         self.assertLess(nc["stats_only"]["p_dem_win"], nc["p_dem_win"])
 
 
+def house(nc1=3.0):
+    seat = lambda m, sd, tier, fixed=None: {"margin": m, "sd": sd, "fixed": fixed, "tier": tier}
+    return {"levels": {"races": {"NC-1": seat(nc1, 5.5, "simulate"), "NC-2": seat(-12.0, 9.0, "statistics"),
+                                 "OH-9": seat(1.0, 5.5, "watch"), "TX-18": seat(100.0, 9.0, "statistics", "D"),
+                                 "TX-19": seat(-100.0, 9.0, "statistics", "R")}},
+            "left": {"NC-1": "D", "NC-2": "D", "OH-9": "O", "TX-18": "D", "TX-19": "D"}}
+
+
+class HouseTest(unittest.TestCase):
+    def build(self, h=None, n=4000):
+        return mc.build(levels(), levels(), {"NC": "D", "OH-S": "D", "NE": "I"}, PARAMS, date(2026, 9, 28), "run-1",
+                        benchmarks={"US-H": {"market": 0.4}}, not_up={"R": 48, "D": 47, "I": 2}, n=n, house=h)
+
+    def test_adding_the_house_leaves_the_senate_unchanged(self):
+        (f0, d0), (f1, d1) = self.build(), self.build(house())
+        self.assertEqual((f0["races"], f0["senate"], d0["races"]), (f1["races"], f1["senate"], d1["races"]))
+
+    def test_house_seats_drawn_given_the_senate_keep_the_structures_correlations(self):
+        ids, sd = ["NC", "OH-S", "NC-1", "OH-9", "CA-22"], np.array([5.0, 5.5, 6.3, 6.3, 9.5])
+        c = mc.structure(ids, sd, 9.0, 1.0, 2.0)
+        x = mc.draw(np.zeros(5), sd, c, 200_000, 1, first=2)
+        np.testing.assert_allclose(np.corrcoef(x.T), c, atol=0.01)
+        np.testing.assert_array_equal(x[:, :2], mc.draw(np.zeros(2), sd[:2], c[:2, :2], 200_000, 1))
+
+    def test_house_seats_count_fixed_seats_and_other_winners(self):
+        seats = mc.house_seats(np.array([[1.0, -1.0, 2.0], [-1.0, -1.0, -2.0]]), ["D", "D", "O"], {"D": 1, "R": 2})
+        self.assertEqual({k: v.tolist() for k, v in seats.items()}, {"D": [2, 1], "O": [1, 0], "R": [3, 5]})
+        s = mc.house_summary({"D": np.array([218, 217]), "R": np.array([217, 218]), "O": np.array([0, 0])})
+        self.assertEqual((s["p_d_majority"], s["p_r_majority"], s["majority"]), (0.5, 0.5, 218))
+
+    def test_house_block_in_forecast_and_draws(self):
+        f, d = self.build(house())
+        h = f["house"]
+        self.assertEqual((h["majority"], h["contested"], h["fixed"]), (218, 3, {"D": 1, "R": 1}))
+        self.assertEqual((sorted(h["races"]), h["races"]["NC-1"]["tier"]), (["NC-1", "NC-2", "OH-9"], "simulate"))
+        self.assertTrue(0.6 < h["races"]["NC-1"]["p_dem_win"] < 0.75)
+        self.assertEqual((h["benchmarks"], sorted(h["stats_only"])), ({"market": 0.4}, ["p_d_majority", "p_r_majority"]))
+        self.assertEqual((len(d["seats"]["house"]["D"]), sorted(d["house_races"])), (100, ["NC-1"]))
+
+    def test_today_view_of_the_house(self):
+        out = mc.attach_today(self.build(house())[0], self.build(house(nc1=8.0))[0])
+        now = self.build(house(nc1=8.0))[0]["house"]
+        self.assertEqual(out["house"]["today"], {"p_d_majority": now["p_d_majority"], "p_r_majority": now["p_r_majority"],
+                                                 "stats_only": now["stats_only"]})
+        self.assertNotIn("today", mc.attach_today(self.build()[0], self.build()[0]).get("house") or {})
+
+
 if __name__ == "__main__":
     unittest.main()

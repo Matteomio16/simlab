@@ -112,8 +112,9 @@ def benchmarks(snap: Path, race_list: list[Race]) -> dict:
     for r in race_list:
         p, venues = montecarlo.market(kalshi, poly, r)
         out[r.race_id] = {"market": p, "market_venues": venues, "cook": ratings.get(r.race_id)}
-    p, venues = montecarlo.control_market(kalshi, poly, "senate")
-    out["US-S"] = {"market": p, "market_venues": venues}
+    for key, chamber in (("US-S", "senate"), ("US-H", "house")):
+        p, venues = montecarlo.control_market(kalshi, poly, chamber)
+        out[key] = {"market": p, "market_venues": venues}
     return out
 
 
@@ -185,6 +186,16 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     inp = levels.inputs()
     lv = levels.compute(t, day, run_id, inp=inp)
     sha = {"levels.json": _write(out / "levels.json", lv)}
+    house, house_note = None, None
+    if (data / "house" / "inputs.json").exists():
+        try:  # the House (Kev session, house.py) must not stop the Senate forecast
+            from .house import run as house_run
+            note = house_run(day, data, lv)
+            hl, hr = (json.loads((out / f"house_{k}.json").read_text(encoding="utf-8")) for k in ("levels", "races"))
+            house = {"levels": hl, "left": {r: x["left_party"] for r, x in hr.items() if isinstance(x, dict)}}
+            house_note = {k: note[k] for k in ("seats", "uncontested", "tiers")}
+        except Exception as e:
+            house_note = {"error": f"{type(e).__name__}: {e}"[:120]}
     base, pimu = (json.loads(f.read_text(encoding="utf-8")) for f in (groups.BASE, groups.PIMU))
     kev = json.loads(groups.KEV.read_text(encoding="utf-8")) if groups.KEV.exists() else None
     grp = groups.build(lv, base, pimu, day.isoformat(), run_id, kev)
@@ -204,10 +215,11 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
     bench, left = benchmarks(snap, t["race_list"]), {k: v["left_party"] for k, v in races.items()}
     forecast, draws = montecarlo.build(head, lv, left, params, day, run_id, benchmarks=bench, movers=moves.movers(mv),
-                                       news=news)
+                                       news=news, house=house)
     now_twin, now_head, now_news = _levels(t, day, run_id, mv, inp, mp, election=day)
     forecast = montecarlo.attach_today(forecast, montecarlo.build(now_head, now_twin, left, params, day, run_id,
-                                                                  news=now_news)[0], movers=moves.movers(mv, when="today"))
+                                                                  news=now_news, house=house)[0],
+                                       movers=moves.movers(mv, when="today"))
     forecast |= {"snapshot": t["snapshot"], "inputs": sha}
     history = [json.loads(f.read_text(encoding="utf-8")) for k in range(1, 7)
                if (f := data / "derived" / (day - timedelta(days=k)).isoformat() / "races.json").exists()]
@@ -222,8 +234,10 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
             "tiers": {k: sum(r["tier"] == k for r in races.values()) for k in TIER_RANK},
             "orphaned_events": len(mv["orphaned_events"]), "deselected_pairs": len(mv["deselected_pairs"]), "weekly_update": mp.get("weekly_update"),
             "stories": sum(len(x["events"]) for k, x in mv.items() if k != "shadow" and isinstance(x, dict) and "events" in x),
+            "house": house_note,
             "files": ["polls.csv", "races.json", "levels.json", "groups.json", "params.json", "moves.json",
-                      "filter_state.json", "forecast.json", "draws.json"]}
+                      "filter_state.json", "forecast.json", "draws.json"] + (["house_levels.json", "house_races.json"]
+                                                                              if house else [])}
 
 
 def main() -> int:
