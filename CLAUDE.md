@@ -197,7 +197,7 @@ Decided by Matteo, 28 Sep (engine; details in `docs/engine-design.md`, `docs/roa
 - **Daily job:** it runs on GitHub Actions at 09:47 UTC and writes its outputs to the private data repo. Its schedule is
   switched on at the pilot (repository variable `PIPELINE_ON`); manual runs work any time.
 
-Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork.md` §8, D14–D20, and `docs/CHANGELOG.md`):
+Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork.md` §8, D14–D21, and `docs/CHANGELOG.md`):
 - **News sizes are ranges, not single values.** Each simulated election draws its own switching and turnout sizes:
   they average the fitted 0.21, turnout equals switching as a starting point, and they can go well up or down. No
   single data point drives the result (the Hungary lesson).
@@ -223,6 +223,9 @@ Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork
   - A race runs on statistics alone only when the stats-only forecast, Cook and the market all call it safe: an
     unsimulated flip would count against the simulation.
 - **Montana:** no three-way model while it isn't competitive; it is on the watch list.
+- **Voter groups (Matteo, 29 Sep):** each group's starting split comes from Kev ces-v3b in every race, House and
+  Senate, with the survey numbers where Kev has no answer; each race's level stays statistical. The survey numbers are
+  kept for the check after 3 Nov.
 
 ## 6. Reference material (read, don't duplicate)
 
