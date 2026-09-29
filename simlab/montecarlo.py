@@ -167,32 +167,50 @@ def _simulate(lv: dict, ids: list[str], params: dict, n: int, seed: int, df: int
     return draw(mu, sd, c, n, seed, df), lifted
 
 
+def _dials(news: dict, units: list[str], n: int, seed: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Per race, the dials' posterior mean and a draw per simulated election: the national dials plus the unit's
+    deviation, drawn jointly from the weekly filter's posterior; a unit it hasn't seen gets its deviation from the
+    prior spread tau. Returns (mean per race, draws [n, race, part], national mean, national sd)."""
+    post, tau = news["posterior"], np.array(news["tau"], float)
+    mean, cov = np.array(post["mean"], float), np.array(post["cov"], float)
+    rng = np.random.default_rng(seed)
+    theta = rng.multivariate_normal(mean, cov, n)
+    extra = {u: rng.standard_normal((n, 2)) * tau for u in sorted(set(units) - set(post["labels"][1:]))}
+    col = {u: 2 + 2 * i for i, u in enumerate(post["labels"][1:])}
+    dev = lambda u: theta[:, col[u]:col[u] + 2] if u in col else extra[u]
+    dev_mean = lambda u: mean[col[u]:col[u] + 2] if u in col else np.zeros(2)
+    k_hat = np.array([mean[:2] + dev_mean(u) for u in units])
+    k_draw = np.stack([theta[:, :2] + dev(u) for u in units], axis=1)
+    return k_hat, k_draw, mean[:2], np.sqrt(np.diag(cov)[:2])
+
+
 def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: str, benchmarks: dict | None = None,
           not_up: dict = NOT_UP, n: int = N_DRAWS, every: int = EVERY, df: int = DF, lo: float = FLOOR,
           movers: dict | None = None, news: dict | None = None) -> tuple[dict, dict]:
     """forecast.json and draws.json from the headline levels and the stats-only twin's, on the same random numbers.
     The poll-average benchmark is the twin's, which has no story effects in it.
 
-    `news` ({"switching": {race_id: points}, "turnout": {...}, "sigma": {"s": ..., "t": ...}}) holds each race's story
-    effect in the headline, split into its switching and turnout parts. The sizes behind them (c_s, c_t) are
-    uncertain: every simulated election draws its own multiplier for each part (lognormal, averaging 1), shared by all
-    races, so the forecast is not tied to the fitted values and races with strong simulated reactions get wider,
-    story-driven tails. Each race also reports its win chance with both multipliers at their 10th and 90th
+    `news` holds each race's story effect at dial 1, split into its switching and turnout parts: from its own
+    stories ({"switching": {race_id: points}, "turnout": {...}}), whose dials are its unit's ("unit": {race_id:
+    state}), and from the nation's ("switching_us", "turnout_us"), whose dials are the nation's; and
+    the weekly filter's posterior of the dials ("posterior": {labels, mean, cov}, "tau"). Every simulated election
+    draws its own dials, so the forecast is not tied to the fitted sizes and races with strong simulated reactions get
+    wider, story-driven tails. Each race also reports its win chance with the national dials at their 10th and 90th
     percentiles."""
     ids, seed, bm, movers = sorted(head["races"]), seed_for(day), benchmarks or {}, movers or {}
     x, lifted = _simulate(head, ids, params, n, seed, df, lo)
     xt, _ = _simulate(twin, ids, params, n, seed, df, lo)
     parties = [left[r] for r in ids]
     if news:
-        sig = news["sigma"]
-        ds, dt = (np.array([news[k].get(r, 0.0) for r in ids]) for k in ("switching", "turnout"))
-        rng = np.random.default_rng(seed + 1)
-        mult = lambda k, z: np.exp(sig[k] * z - sig[k] ** 2 / 2)
-        ls, lt = mult("s", rng.standard_normal(n)), mult("t", rng.standard_normal(n))
-        at = {q: {"s": float(mult("s", z)), "t": float(mult("t", z))} for q, z in (("if_weaker", -1.2816),
-                                                                                  ("if_stronger", 1.2816))}
-        fixed = {q: x + (m["s"] - 1) * ds + (m["t"] - 1) * dt for q, m in at.items()}
-        x = x + np.outer(ls - 1, ds) + np.outer(lt - 1, dt)
+        part = lambda k: np.array([news.get(k, {}).get(r, 0.0) for r in ids])
+        ds, dt, us, ut = part("switching"), part("turnout"), part("switching_us"), part("turnout_us")
+        k_hat, k_draw, nat, nat_sd = _dials(news, [news["unit"].get(r, "US") for r in ids] + ["US"], n, seed + 1)
+        own_hat, own, us_hat, usd = k_hat[:-1], k_draw[:, :-1], k_hat[-1], k_draw[:, -1]
+        at = {q: {"s": float(nat[0] + z * nat_sd[0]), "t": float(nat[1] + z * nat_sd[1])}
+              for q, z in (("if_weaker", -1.2816), ("if_stronger", 1.2816))}
+        fixed = {q: x + (m["s"] - nat[0]) * (ds + us) + (m["t"] - nat[1]) * (dt + ut) for q, m in at.items()}
+        x = (x + (own[:, :, 0] - own_hat[:, 0]) * ds + (own[:, :, 1] - own_hat[:, 1]) * dt
+             + np.outer(usd[:, 0] - us_hat[0], us) + np.outer(usd[:, 1] - us_hat[1], ut))
     seats, seats_t = senate_seats(x, parties, not_up), senate_seats(xt, parties, not_up)
     races = {}
     for i, r in enumerate(ids):
@@ -204,8 +222,9 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
                                    "market": b.get("market"), "cook": b.get("cook")},
                     "movers": movers.get(r, [])}
         if news:
-            races[r]["news"] = {"effect": round(float(ds[i] + dt[i]), 3), "switching": round(float(ds[i]), 3),
-                                "turnout": round(float(dt[i]), 3)} | {
+            hs, ht = own_hat[i, 0] * ds[i] + us_hat[0] * us[i], own_hat[i, 1] * dt[i] + us_hat[1] * ut[i]
+            races[r]["news"] = {"effect": round(float(hs + ht), 3), "switching": round(float(hs), 3),
+                                "turnout": round(float(ht), 3)} | {
                 q: {"multipliers": {k: round(v, 3) for k, v in m.items()},
                     "p_dem_win": round(float(np.mean(fixed[q][:, i] > 0)), 4)} for q, m in at.items()}
     twin_senate = senate_summary(seats_t, not_up)
@@ -215,7 +234,9 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
         senate["news"] = {q: senate_summary(senate_seats(fixed[q], parties, not_up), not_up)["p_r_50plus"] for q in at}
     meta = {"date": str(day), "run_id": run_id, "schema": SCHEMA, "units": UNITS, "seed": seed}
     forecast = meta | {"draws": n, "df": df, "corr_floor": lo, "floor_lifted_pairs": lifted, "races": races,
-                       "senate": senate, "house": None} | ({"news_prior": {"sigma": news["sigma"]}} if news else {})
+                       "senate": senate, "house": None} | (
+        {"news_dials": {"national": {"mean": [round(v, 4) for v in nat], "sd": [round(v, 4) for v in nat_sd]},
+                        "tau": news["tau"]}} if news else {})
     keep = slice(None, None, every)
     sample = lambda xx, ss: {"races": {r: np.round(xx[keep, i], 1).tolist() for i, r in enumerate(ids)},
                              "seats": {"senate": {k: v[keep].tolist() for k, v in ss.items()}}}
@@ -223,12 +244,14 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
     return forecast, draws
 
 
-def attach_today(forecast: dict, today: dict) -> dict:
+def attach_today(forecast: dict, today: dict, movers: dict | None = None) -> dict:
     """Adds the "if the election were today" view (a build with election day set to today: no drift, stories at
-    today's strength) beside each race's and the Senate's 3 Nov numbers (Matteo, 29 Sep)."""
+    today's strength) beside each race's and the Senate's 3 Nov numbers (Matteo, 29 Sep), with the stories that moved
+    today's margin most."""
     for r, x in forecast["races"].items():
         t = today["races"][r]
-        x["today"] = {"p_dem_win": t["p_dem_win"], "margin": t["margin"], "stats_only": t["stats_only"]}
+        x["today"] = {"p_dem_win": t["p_dem_win"], "margin": t["margin"], "stats_only": t["stats_only"],
+                      "movers": (movers or {}).get(r, [])}
     keys = ("p_r_50plus", "p_d_caucus_51", "p_independents_decide")
     forecast["senate"]["today"] = {k: today["senate"][k] for k in keys} | {"stats_only": today["senate"]["stats_only"]}
     return forecast

@@ -2,26 +2,23 @@
  "c_s": 0.2055,
  "c_t": 0.2055,
  "c_t_rule": "c_t = c_s (prior: a strong reaction moves the same fraction of a group's mobilisable pool as of its persuadable pool); no data identify c_t before early votes and the weekly filter",
- "uncertainty": {
-  "form": "each simulated election multiplies the switching and turnout parts of every story effect by its own factor, lognormal with mean 1 (the fitted size on average) and the spread below; the same factors for all races in that election",
-  "c_s": {
-   "sigma_log": 0.5,
-   "range_90": [
-    0.08,
-    0.413
-   ],
-   "why": "the fit itself is tight (0.19-0.23 leaving any one event out), but it is carried from big national events measured in approval and the generic ballot to state races, today's news and the harness's attention weights; about a factor of two either way covers that transfer"
-  },
-  "c_t": {
-   "sigma_log": 0.75,
-   "range_90": [
-    0.045,
-    0.533
-   ],
-   "why": "no data measure it before early votes; a wider range, which also covers the 0.05 first suggested"
-  }
+ "dial_prior": {
+  "mean": [
+   1.0,
+   1.0
+  ],
+  "sd": [
+   0.44,
+   0.71
+  ],
+  "tau": [
+   0.3,
+   0.5
+  ],
+  "why": "dials multiply the switching and turnout parts of the story effects (1 = as simulated). The national dials' prior (mean 1, sd) plus each state's deviation (sd tau) give a state's dials the ranges Matteo approved on 28 Sep before any polls: SD 0.53 for switching (c_s about 0.08-0.41 at 90%) and 0.87 for turnout. tau, how much states differ, is an assumption. The weekly filter updates both from the polls; the Monte Carlo draws each election's dials from the result."
  },
  "dials": {},
+ "age_half_life_prior": 5.5,
  "age_half_life_days": 5.5,
  "half_life_days": {
   "default": 1

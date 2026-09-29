@@ -177,9 +177,12 @@ class TodayTest(unittest.TestCase):
         out = mc.attach_today(f, now)
         nc = out["races"]["NC"]
         self.assertEqual(nc["today"], {"p_dem_win": now["races"]["NC"]["p_dem_win"], "margin": now["races"]["NC"]["margin"],
-                                       "stats_only": now["races"]["NC"]["stats_only"]})
+                                       "stats_only": now["races"]["NC"]["stats_only"], "movers": []})
         self.assertGreater(nc["today"]["p_dem_win"], nc["p_dem_win"])
         self.assertEqual(out["senate"]["today"]["p_r_50plus"], now["senate"]["p_r_50plus"])
+        mv = {"NC": [{"event_id": "e1", "card": "A story", "delta": 0.8}]}
+        out = mc.attach_today(f, now, movers=mv)
+        self.assertEqual((out["races"]["NC"]["today"]["movers"], out["races"]["NE"]["today"]["movers"]), (mv["NC"], []))
         self.assertIn("stats_only", out["senate"]["today"])
 
 
@@ -261,8 +264,10 @@ class BuildTest(unittest.TestCase):
         f, _ = self.build(movers=mv)
         self.assertEqual((f["races"]["NC"]["movers"], f["races"]["NE"]["movers"]), (mv["NC"], []))
 
-    def test_news_size_uncertainty_and_the_sensitivity_map(self):
-        news = {"switching": {"NC": 2.0}, "turnout": {"NC": 1.0}, "sigma": {"s": 0.5, "t": 0.75}}
+    def test_news_dials_drawn_per_election_and_the_sensitivity_map(self):
+        news = {"switching": {"NC": 2.0}, "turnout": {"NC": 1.0}, "unit": {"NC": "NC"},
+                "posterior": {"labels": ["national"], "mean": [1.0, 1.0], "cov": [[0.25, 0.0], [0.0, 0.5625]]},
+                "tau": [0.3, 0.5]}
         run = lambda: mc.build(levels(nc=5.0), levels(nc=2.0), {"NC": "D", "OH-S": "D", "NE": "I"}, PARAMS,
                                date(2026, 9, 28), "run-1", not_up={"R": 48, "D": 47, "I": 2}, n=20000, news=news)
         f, d = run()
@@ -275,10 +280,27 @@ class BuildTest(unittest.TestCase):
         self.assertEqual((s["effect"], s["switching"], s["turnout"]), (3.0, 2.0, 1.0))
         self.assertLess(s["if_weaker"]["p_dem_win"], nc["p_dem_win"])
         self.assertGreater(s["if_stronger"]["p_dem_win"], nc["p_dem_win"])
-        self.assertAlmostEqual(s["if_weaker"]["multipliers"]["s"], float(np.exp(-1.2816 * 0.5 - 0.5 ** 2 / 2)), places=3)
+        self.assertAlmostEqual(s["if_weaker"]["multipliers"]["s"], 1 - 1.2816 * 0.5, places=3)
         self.assertIn("if_stronger", f["senate"]["news"])
-        self.assertEqual(f["news_prior"], {"sigma": {"s": 0.5, "t": 0.75}})
+        self.assertEqual(f["news_dials"], {"national": {"mean": [1.0, 1.0], "sd": [0.5, 0.75]}, "tau": [0.3, 0.5]})
         self.assertEqual(run(), (f, d))
+
+    def test_a_state_dial_learned_from_polls_scales_its_story_effect(self):
+        news = {"switching": {"NC": 2.0}, "turnout": {"NC": 0.0}, "unit": {"NC": "NC"},
+                "posterior": {"labels": ["national", "NC"], "mean": [1.0, 1.0, -0.5, 0.0],
+                              "cov": np.diag([0.01, 0.01, 0.01, 0.01]).tolist()}, "tau": [0.3, 0.5]}
+        f, _ = mc.build(levels(nc=3.0), levels(nc=2.0), {"NC": "D", "OH-S": "D", "NE": "I"}, PARAMS,
+                        date(2026, 9, 28), "run-1", not_up={"R": 48, "D": 47, "I": 2}, n=20000, news=news)
+        self.assertEqual((f["races"]["NC"]["news"]["switching"], f["races"]["NC"]["news"]["effect"]), (1.0, 1.0))
+
+    def test_national_stories_follow_the_national_dial(self):
+        news = {"switching": {"NC": 0.0}, "turnout": {"NC": 0.0}, "switching_us": {"NC": 2.0, "NE": 2.0},
+                "turnout_us": {}, "unit": {"NC": "NC"},
+                "posterior": {"labels": ["national", "US"], "mean": [1.0, 1.0, -0.5, 0.0],
+                              "cov": np.diag([0.01, 0.01, 0.01, 0.01]).tolist()}, "tau": [0.3, 0.5]}
+        f, _ = mc.build(levels(nc=3.0), levels(nc=2.0), {"NC": "D", "OH-S": "D", "NE": "I"}, PARAMS,
+                        date(2026, 9, 28), "run-1", not_up={"R": 48, "D": 47, "I": 2}, n=20000, news=news)
+        self.assertEqual((f["races"]["NC"]["news"]["effect"], f["races"]["NE"]["news"]["effect"]), (1.0, 1.0))
 
     def test_stats_only_twin_uses_its_own_levels(self):
         f, _ = self.build(twin=levels(nc=-2.0))

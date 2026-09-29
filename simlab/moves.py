@@ -106,7 +106,8 @@ def _history(day: date, derived: Path) -> tuple[dict, dict]:
 def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: date) -> dict:
     """One race's moves from its reactions {event_id: {group: (row, day asked)}}."""
     state = race.split("-")[0]
-    dial = params.get("dials", {}).get(state, {})
+    dials = params.get("dials", {})
+    dial = dials.get(state, dials.get("default", {}))
     hl = params["half_life_days"]
     by_event, by_effect, info, by_group = {}, {}, {}, {g: {"dd": 0.0, "dt": 0.0} for g in groups}
     delta = delta_base = delta_t = 0.0
@@ -141,8 +142,10 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
             by_group[g]["dd"] += 100 * dd[g] * share
             by_group[g]["dt"] += 100 * dt[g] * share
         fs, ft = round(100 * race_move(groups, dd, {}), 4), round(100 * race_move(groups, {}, dt), 4)
+        fs0, ft0 = round(100 * race_move(groups, full["base"][2], {}), 4), round(100 * race_move(groups, {}, full["base"][3]), 4)
         info[eid] = {"first_seen": first.isoformat(), "last_seen": last.isoformat(), "type": e.get("type"),
-                     "age_half_life": h_age, "after_news_half_life": h_after, "a": a, "full": round(fs + ft, 4), "full_s": fs, "full_t": ft,
+                     "age_half_life": h_age, "after_news_half_life": h_after, "a": a, "full": round(fs + ft, 4),
+                     "full_s": fs, "full_t": ft, "full_s_base": fs0, "full_t_base": ft0,
                      "full_base": round(full["base"][0], 4), "election_day": round((fs + ft) * eday, 4),
                      "card": e.get("card", "")}
     return {"delta_margin": round(delta, 4), "delta_margin_base": round(delta_base, 4),
@@ -192,21 +195,23 @@ def lasting_share(events: list[tuple], lags: list[tuple] = LAGS) -> tuple[dict, 
 def paths(m: dict, part: str = "all") -> dict:
     """{race_id or "US": [(first_seen, last_seen, full effect, age half-life, after-news half-life)]} from
     moves.json's main block, for
-    levels.build: the whole effect, or only its switching ("s") or turnout ("t") part."""
-    key = {"all": "full", "s": "full_s", "t": "full_t"}[part]
+    levels.build: the whole effect, or only its switching ("s") or turnout ("t") part, at the state's dials or at dial 1
+    ("s_base", "t_base"). Races without stories are left out, so levels.build gives them the nation's."""
+    key = {"all": "full", "s": "full_s", "t": "full_t", "s_base": "full_s_base", "t_base": "full_t_base"}[part]
     return {r: [(v["first_seen"], v["last_seen"], v[key], v["age_half_life"], v["after_news_half_life"])
                 for v in x["events"].values()]
-            for r, x in m.items() if r != "shadow" and isinstance(x, dict) and "events" in x}
+            for r, x in m.items() if r != "shadow" and isinstance(x, dict) and x.get("events")}
 
 
-def movers(m: dict, top: int = 5, least: float = 0.01) -> dict:
-    """forecast.json movers: each race's stories with the largest effect on its election-day margin (points), largest
-    first."""
+def movers(m: dict, top: int = 5, least: float = 0.01, when: str = "election_day") -> dict:
+    """forecast.json movers: each race's stories with the largest effect on its election-day margin (points), or with
+    `when="today"` on today's margin, largest first."""
     out = {}
     for r, x in m.items():
         if r in ("US", "shadow") or not isinstance(x, dict) or "events" not in x:
             continue
-        ranked = sorted(((e, v["election_day"]) for e, v in x["events"].items()), key=lambda kv: -abs(kv[1]))[:top]
+        size = (lambda e, v: x["by_event_effect"][e]) if when == "today" else (lambda e, v: v["election_day"])
+        ranked = sorted(((e, size(e, v)) for e, v in x["events"].items()), key=lambda kv: -abs(kv[1]))[:top]
         out[r] = [{"event_id": e, "card": x["events"][e]["card"], "delta": round(v, 2)} for e, v in ranked
                   if abs(v) >= least]
     return out

@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import groups, levels, montecarlo, moves, polls
+from . import groups, levels, montecarlo, moves, polls, weekly
 from .polls import OVERVIEW_PAGE, Race, slug
 
 RCV = {"AK", "ME"}
@@ -117,21 +117,48 @@ def benchmarks(snap: Path, race_list: list[Race]) -> dict:
     return out
 
 
-def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, sigma: dict,
+def latest_weekly(data: Path, day: date) -> dict | None:
+    """The latest weekly filter update (derived/<date>/filter_weekly.json) on or before `day`."""
+    files = sorted(f for f in (data / "derived").glob("*/filter_weekly.json") if f.parent.name <= day.isoformat())
+    return json.loads(files[-1].read_text(encoding="utf-8")) if files else None
+
+
+def apply_weekly(mp: dict, wk: dict | None) -> dict:
+    """move_params with the weekly update's dials, fade speed and dial posterior; before the first update, the dials'
+    posterior is their prior (national dials only, each state's deviation drawn from tau in the Monte Carlo)."""
+    prior = mp["dial_prior"]
+    post = wk["posterior"] if wk else {"labels": ["national"], "mean": list(prior["mean"]),
+                                       "cov": [[prior["sd"][0] ** 2, 0.0], [0.0, prior["sd"][1] ** 2]]}
+    out = mp | {"dial_posterior": post}
+    if wk:
+        out |= {"dials": wk["dials"], "age_half_life_days": wk["fade"]["half_life"], "weekly_update": wk["date"]}
+    return out
+
+
+def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict,
             election: date = levels.ELECTION) -> tuple[dict, dict, dict]:
-    """Stats-only and headline levels for one election day, and each race's story effect split into its switching and
-    turnout parts. The headline is linear in the effects, so the parts must add up."""
-    twin = levels.compute(t, day, run_id, inp=inp, election=election)
-    head = levels.compute(t, day, run_id, moves=moves.paths(mv), inp=inp, election=election)
-    part = {k: levels.compute(t, day, run_id, moves=moves.paths(mv, k), inp=inp, election=election)["races"]
-            for k in ("s", "t")}
-    news = {name: {r: part[k][r]["margin"] - twin["races"][r]["margin"] for r in twin["races"]}
-            for name, k in (("switching", "s"), ("turnout", "t"))}
-    gap = max(abs(head["races"][r]["margin"] - twin["races"][r]["margin"] - news["switching"][r] - news["turnout"][r])
+    """Stats-only and headline levels for one election day, and each race's story effect at dial 1 split four ways:
+    switching and turnout, from its own stories (its state's dials) and from the nation's (the national dials). The
+    headline is linear in the effects, so the parts times the dials must add up to it."""
+    run = lambda mv_paths: levels.compute(t, day, run_id, moves=mv_paths, inp=inp, election=election)
+    twin, head = levels.compute(t, day, run_id, inp=inp, election=election), run(moves.paths(mv))
+    base = {k: moves.paths(mv, f"{k}_base") for k in ("s", "t")}
+    own = {k: {r: x for r, x in base[k].items() if r != "US"} for k in base}
+    runs = {f"own_{k}": run(own[k] | {"US": []})["races"] for k in base} | {
+        f"us_{k}": run({"US": base[k].get("US", [])} | {r: [] for r in own[k]})["races"] for k in base}
+    part = lambda name: {r: runs[name][r]["margin"] - twin["races"][r]["margin"] for r in twin["races"]}
+    news = {"switching": part("own_s"), "turnout": part("own_t"), "switching_us": part("us_s"),
+            "turnout_us": part("us_t"), "unit": {r: r.split("-")[0] for r in own["s"]},
+            "posterior": mp["dial_posterior"], "tau": mp["dial_prior"]["tau"]}
+    dials = mp.get("dials", {})
+    k = lambda unit, x: dials.get(unit, dials.get("default", {})).get(f"k_{x}", 1.0)
+    gap = max(abs(head["races"][r]["margin"] - twin["races"][r]["margin"]
+                  - sum(k(news["unit"].get(r), x) * news[name][r] for x, name in (("s", "switching"), ("t", "turnout")))
+                  - sum(k("US", x) * news[name][r] for x, name in (("s", "switching_us"), ("t", "turnout_us"))))
               for r in twin["races"])
-    if gap > 1e-6:
+    if gap > 1e-3:  # the parts are rounded to 4 decimals, so a gap this size means a clipped or broken dial
         raise ValueError(f"story effects don't add up across their parts (gap {gap:.2e})")
-    return twin, head, news | {"sigma": sigma}
+    return twin, head, news
 
 
 def _git_sha() -> str:
@@ -145,7 +172,7 @@ def _write(path: Path, obj, compact: bool = False) -> str:
     return hashlib.sha256(text.encode()).hexdigest()
 
 
-def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = None) -> dict:
+def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = None, weekly_update: bool = False) -> dict:
     snap = snapshot_for(data, day, hhmm)
     run_id = run_id or f"{day}-{_git_sha()[:7]}"
     meta = {"date": day.isoformat(), "run_id": run_id, "schema": SCHEMA}
@@ -161,21 +188,25 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     base, pimu = (json.loads(f.read_text(encoding="utf-8")) for f in (groups.BASE, groups.PIMU))
     grp = groups.build(lv, base, pimu, day.isoformat(), run_id)
     _write(out / "groups.json", grp)
-    mp = json.loads(moves.PARAMS.read_text(encoding="utf-8"))
-    _write(out / "params.json", meta | mp | {"fitted_on": mp["fit"]["on"]})
+    mp = apply_weekly(json.loads(moves.PARAMS.read_text(encoding="utf-8")), latest_weekly(data, day))
     mv = moves.build(day, data / "derived", grp, mp, run_id)
+    if weekly_update or (day.weekday() == 0 and day >= weekly.WEEKLY_FROM):
+        wk = meta | weekly.run(day, t, mv, mp)
+        sha["filter_weekly.json"] = _write(out / "filter_weekly.json", wk)
+        mp = apply_weekly(mp, wk)
+        mv = moves.build(day, data / "derived", grp, mp, run_id)
+    _write(out / "params.json", meta | mp | {"fitted_on": mp["fit"]["on"]})
     sha["moves.json"] = _write(out / "moves.json", mv)
-    sigma = {k[-1]: mp["uncertainty"][k]["sigma_log"] for k in ("c_s", "c_t")}
-    lv, head, news = _levels(t, day, run_id, mv, inp, sigma)
+    lv, head, news = _levels(t, day, run_id, mv, inp, mp)
     sha["filter_state.json"] = _write(out / "filter_state.json", head | {"moves": "moves.json, main block (GLM)",
                                                                           "dials": mp["dials"]})
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
     bench, left = benchmarks(snap, t["race_list"]), {k: v["left_party"] for k, v in races.items()}
     forecast, draws = montecarlo.build(head, lv, left, params, day, run_id, benchmarks=bench, movers=moves.movers(mv),
                                        news=news)
-    now_twin, now_head, now_news = _levels(t, day, run_id, mv, inp, sigma, election=day)
+    now_twin, now_head, now_news = _levels(t, day, run_id, mv, inp, mp, election=day)
     forecast = montecarlo.attach_today(forecast, montecarlo.build(now_head, now_twin, left, params, day, run_id,
-                                                                  news=now_news)[0])
+                                                                  news=now_news)[0], movers=moves.movers(mv, when="today"))
     forecast |= {"snapshot": t["snapshot"], "inputs": sha}
     history = [json.loads(f.read_text(encoding="utf-8")) for k in range(1, 7)
                if (f := data / "derived" / (day - timedelta(days=k)).isoformat() / "races.json").exists()]
@@ -188,7 +219,7 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
             "with_polls": sum(r["n_polls"] > 0 for r in lv["races"].values()), "draws": forecast["draws"],
             "floor_lifted_pairs": forecast["floor_lifted_pairs"],
             "tiers": {k: sum(r["tier"] == k for r in races.values()) for k in TIER_RANK},
-            "orphaned_events": len(mv["orphaned_events"]),
+            "orphaned_events": len(mv["orphaned_events"]), "weekly_update": mp.get("weekly_update"),
             "stories": sum(len(x["events"]) for k, x in mv.items() if k != "shadow" and isinstance(x, dict) and "events" in x),
             "files": ["polls.csv", "races.json", "levels.json", "groups.json", "params.json", "moves.json",
                       "filter_state.json", "forecast.json", "draws.json"]}
@@ -200,9 +231,10 @@ def main() -> int:
     ap.add_argument("--data", type=Path, default=Path(__file__).resolve().parents[2] / "simlab-data")
     ap.add_argument("--snapshot", default=None, help="snapshot run HHMM (default: the day's latest)")
     ap.add_argument("--run-id", default="")
+    ap.add_argument("--weekly", action="store_true", help="run the weekly filter update today (Mondays from 12 Oct anyway)")
     a = ap.parse_args()
     try:
-        summary = run(a.date, a.data, a.snapshot, a.run_id or None)
+        summary = run(a.date, a.data, a.snapshot, a.run_id or None, a.weekly)
     except Exception as e:
         traceback.print_exc()
         print(json.dumps({"ok": False, "date": a.date.isoformat(), "error": f"{type(e).__name__}: {e}"}))

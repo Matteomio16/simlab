@@ -183,6 +183,32 @@ class LastingTest(unittest.TestCase):
         self.assertLess(share["+33..42"], 0.3)
 
 
+class DialTest(unittest.TestCase):
+    def test_parts_at_dial_one_kept_beside_the_dialled_ones(self):
+        groups = {"OH-S": {A: {"n": 0.5, "t": 0.5, "d": 0.8, "pi": 0.1, "mu": 0.2},
+                           B: {"n": 0.5, "t": 0.5, "d": -0.8, "pi": 0.1, "mu": 0.2}}}
+        params = {"c_s": 0.5, "c_t": 0.5, "dials": {"OH": {"k_s": 2.0, "k_t": 0.5}}, "half_life_days": {"default": 10}}
+        with tempfile.TemporaryDirectory() as d:
+            write_day(Path(d), "2026-10-01", [event("e1", "2026-10-01T08:00:00+00:00", 1.0)],
+                      [reaction("e1", A, 1.0, 1.0), reaction("e1", B, 0.0, 0.0)])
+            m = moves.build(date(2026, 10, 1), Path(d), groups, params, "run-1")
+        e = m["OH-S"]["events"]["e1"]
+        self.assertAlmostEqual(e["full_s"], 2.0 * e["full_s_base"], places=4)
+        self.assertAlmostEqual(e["full_t"], 0.5 * e["full_t_base"], places=4)
+        self.assertEqual(moves.paths(m, "s_base")["OH-S"][0][2], e["full_s_base"])
+
+    def test_a_state_without_its_own_dial_takes_the_national_one(self):
+        groups = {"OH-S": {A: {"n": 0.5, "t": 0.5, "d": 0.8, "pi": 0.1, "mu": 0.2},
+                           B: {"n": 0.5, "t": 0.5, "d": -0.8, "pi": 0.1, "mu": 0.2}}}
+        params = {"c_s": 0.5, "c_t": 0.5, "dials": {"default": {"k_s": 0.5, "k_t": 1.0}},
+                  "half_life_days": {"default": 10}}
+        with tempfile.TemporaryDirectory() as d:
+            write_day(Path(d), "2026-10-01", [event("e1", "2026-10-01T08:00:00+00:00", 1.0)],
+                      [reaction("e1", A, 1.0, 0.0), reaction("e1", B, 0.0, 0.0)])
+            e = moves.build(date(2026, 10, 1), Path(d), groups, params, "run-1")["OH-S"]["events"]["e1"]
+        self.assertAlmostEqual(e["full_s"], 0.5 * e["full_s_base"], places=4)
+
+
 class ReadTest(unittest.TestCase):
     ev = lambda first, last, full, eday, card: {"first_seen": first, "last_seen": last, "age_half_life": 5.5,
                                                 "after_news_half_life": 1, "full": full, "full_s": full, "full_t": 0.0,
@@ -197,7 +223,14 @@ class ReadTest(unittest.TestCase):
     def test_effect_paths_for_the_filter(self):
         self.assertEqual(moves.paths(self.M), {"OH-S": [("2026-10-01", "2026-10-03", 2.0, 5.5, 1),
                                                         ("2026-10-05", "2026-10-05", -0.5, 5.5, 1),
-                                                        ("2026-10-05", "2026-10-05", 0.001, 5.5, 1)], "US": []})
+                                                        ("2026-10-05", "2026-10-05", 0.001, 5.5, 1)]})
+
+    def test_movers_for_the_today_view_rank_by_todays_effect(self):
+        self.assertEqual(moves.movers(self.M, when="today"), {"OH-S": [{"event_id": "e1", "card": "c1", "delta": 1.0},
+                                                                       {"event_id": "e2", "card": "c2", "delta": -0.33}]})
+
+    def test_races_without_stories_are_left_out_so_they_take_the_nations(self):
+        self.assertNotIn("US", moves.paths(self.M))
 
     def test_movers_are_the_stories_effect_on_election_day(self):
         self.assertEqual(moves.movers(self.M), {"OH-S": [{"event_id": "e2", "card": "c2", "delta": -0.9},

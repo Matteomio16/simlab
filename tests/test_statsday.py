@@ -109,6 +109,33 @@ class TierTest(unittest.TestCase):
         self.assertEqual(out["WY"]["tier"], "statistics")
 
 
+class WeeklyTest(unittest.TestCase):
+    MP = {"dials": {}, "age_half_life_days": 5.5,
+          "dial_prior": {"mean": [1.0, 1.0], "sd": [0.44, 0.71], "tau": [0.3, 0.5]}}
+
+    def test_latest_weekly_update_on_or_before_the_day(self):
+        with tempfile.TemporaryDirectory() as d:
+            for day in ("2026-10-12", "2026-10-19"):
+                (Path(d) / "derived" / day).mkdir(parents=True)
+                (Path(d) / "derived" / day / "filter_weekly.json").write_text(json.dumps({"date": day}))
+            self.assertEqual(statsday.latest_weekly(Path(d), date(2026, 10, 15))["date"], "2026-10-12")
+            self.assertIsNone(statsday.latest_weekly(Path(d), date(2026, 10, 11)))
+
+    def test_before_the_first_update_the_dials_follow_the_prior(self):
+        mp = statsday.apply_weekly(self.MP, None)
+        self.assertEqual((mp["dial_posterior"]["labels"], mp["dial_posterior"]["mean"]), (["national"], [1.0, 1.0]))
+        self.assertAlmostEqual(mp["dial_posterior"]["cov"][0][0], 0.44 ** 2)
+        self.assertEqual(mp["dials"], {})
+
+    def test_a_weekly_update_sets_the_dials_and_the_fade_speed(self):
+        wk = {"date": "2026-10-12", "dials": {"OH": {"k_s": 0.6, "k_t": 1.1}, "default": {"k_s": 0.9, "k_t": 1.0}},
+              "fade": {"half_life": 4.2},
+              "posterior": {"labels": ["national", "OH"], "mean": [0.9, 1.0, -0.3, 0.1], "cov": [[0.1] * 4] * 4}}
+        mp = statsday.apply_weekly(self.MP, wk)
+        self.assertEqual((mp["dials"]["OH"]["k_s"], mp["age_half_life_days"], mp["dial_posterior"]["labels"]),
+                         (0.6, 4.2, ["national", "OH"]))
+
+
 class BenchmarkTest(unittest.TestCase):
     def test_markets_and_cook_from_the_snapshot(self):
         with tempfile.TemporaryDirectory() as d:

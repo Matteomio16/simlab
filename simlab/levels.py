@@ -223,6 +223,27 @@ def effect(t: np.ndarray, items: list, election: date = ELECTION, stop: float | 
     return out
 
 
+def poll_frame(senate: pd.DataFrame, gb: pd.DataFrame, params: dict, priors: dict, today: date,
+               election: date = ELECTION, entries: list[dict] | None = None,
+               lv_gap_value: float | None = None) -> tuple[pd.DataFrame, float, pd.DataFrame, dict]:
+    """The polls up to `today` as the filter reads them: `adj` corrected for the likely-voter gap, pollster house
+    effects and sponsor shift, `v` the poll's variance, `t` days relative to election day. Also returns the gap, the
+    house effects and the sponsor shift."""
+    d = (election - today).days
+    ns2 = params["poll_extra_sd"]["value"] ** 2
+    gap = lv_gap_value if lv_gap_value is not None else lv_gap(entries or [])
+    p = _poll_rows(senate, gb, election)
+    p = p[p.t <= -d].reset_index(drop=True)
+    he, sp = calib.house_effects(p, prior=map_priors(p.pollster.unique(), priors))
+    n_sp = p.partisan.value_counts()
+    sp = {k: (n_sp.get(k, 0) * sp[k] + SPONSOR_PRIOR_POLLS * priors.get("sponsor_shift", {}).get(k, 0.0))
+          / (n_sp.get(k, 0) + SPONSOR_PRIOR_POLLS) for k in ("DEM", "REP")}
+    p["adj"] = (p.y + np.where(p.population == "lv", 0.0, gap) - p.pollster.map(he["mean"]).fillna(0.0)
+                - p.partisan.map(sp).fillna(0.0))
+    p["v"] = (p.s2 + ns2) * np.where(p.partisan.isin(["DEM", "REP"]), 2.0, 1.0) * _flooding(p)
+    return p, gap, he, sp
+
+
 def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params: dict, priors: dict, rel: dict,
           E: dict, statewide: pd.DataFrame, today: date, election: date = ELECTION, entries: list[dict] | None = None,
           lv_gap_value: float | None = None, moves: dict | None = None) -> dict:
@@ -236,17 +257,7 @@ def build(race_list: list[Race], senate: pd.DataFrame, gb: pd.DataFrame, params:
     d = (election - today).days
     coef, sd_f = params["fundamentals"]["coef"], params["fundamentals"]["sd"]
     q_n, q_r = params["drift_daily_sd"]["national"] ** 2, params["drift_daily_sd"]["race"] ** 2
-    ns2 = params["poll_extra_sd"]["value"] ** 2
-    gap = lv_gap_value if lv_gap_value is not None else lv_gap(entries or [])
-    p = _poll_rows(senate, gb, election)
-    p = p[p.t <= -d].reset_index(drop=True)
-    he, sp = calib.house_effects(p, prior=map_priors(p.pollster.unique(), priors))
-    n_sp = p.partisan.value_counts()
-    sp = {k: (n_sp.get(k, 0) * sp[k] + SPONSOR_PRIOR_POLLS * priors.get("sponsor_shift", {}).get(k, 0.0))
-          / (n_sp.get(k, 0) + SPONSOR_PRIOR_POLLS) for k in ("DEM", "REP")}
-    p["adj"] = (p.y + np.where(p.population == "lv", 0.0, gap) - p.pollster.map(he["mean"]).fillna(0.0)
-                - p.partisan.map(sp).fillna(0.0))
-    p["v"] = (p.s2 + ns2) * np.where(p.partisan.isin(["DEM", "REP"]), 2.0, 1.0) * _flooding(p)
+    p, gap, he, sp = poll_frame(senate, gb, params, priors, today, election, entries, lv_gap_value)
     path = lambda r: moves.get(r, moves.get("US", []))
     for r in set(p.race):
         sel = (p.race == r).values
