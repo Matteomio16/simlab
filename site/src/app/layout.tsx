@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, Libre_Franklin, Source_Serif_4 } from "next/font/google";
+import { Libre_Franklin, Source_Serif_4 } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SampleBanner from "@/components/SampleBanner";
@@ -8,10 +8,9 @@ import { SITE } from "@/lib/site";
 import "./globals.css";
 
 // Libre Franklin (the Franklin Gothic family of US newspapers and ballots) for headings, data and interface; Source
-// Serif 4 for reading text. IBM Plex Sans only draws the locked wordmark.
+// Serif 4 for reading text. The wordmark is the brand kit's outlined lockup (Newsreader 560), so it needs no font.
 const franklin = Libre_Franklin({ variable: "--font-franklin", subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 const serif = Source_Serif_4({ variable: "--font-source-serif", subsets: ["latin"], weight: ["400", "600"], style: ["normal", "italic"] });
-const plex = IBM_Plex_Sans({ variable: "--font-plex-sans", subsets: ["latin"], weight: ["700"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${franklin.variable} ${serif.variable} ${plex.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${franklin.variable} ${serif.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
       </head>

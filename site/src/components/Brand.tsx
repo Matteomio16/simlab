@@ -1,38 +1,13 @@
 import Link from "next/link";
 
-// The earlier ballot-box mark, kept only for places too small for the hills.
-export function Logomark({ size = 28 }: { size?: number }) {
-  const step = size / 4;
-  const r = size * 0.085;
-  const sw = Math.max(1.5, size / 14);
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" className="shrink-0">
-      <rect x={sw / 2} y={sw / 2} width={size - sw} height={size - sw} fill="none" stroke="currentColor" strokeWidth={sw} />
-      {[1, 2, 3].flatMap((i) =>
-        [1, 2, 3].map((j) => (
-          <circle key={`${i}${j}`} cx={step * j} cy={step * i} r={r} fill={i === 2 && j === 2 ? "var(--sim)" : "currentColor"} />
-        )),
-      )}
-    </svg>
-  );
-}
-
-// The locked wordmark (publishing.md): "NotAPoll" in IBM Plex Sans 700, ".org" in the simulation purple.
-export function Wordmark({ className = "" }: { className?: string }) {
-  return (
-    <span className={`font-brand font-bold tracking-[-0.01em] ${className}`}>
-      NotAPoll<span className="text-sim">.org</span>
-    </span>
-  );
-}
-
 // The approved lockup from the brand kit (brand/final, `python -m brand.final`): two hills on the wordmark's baseline,
 // text outlined, so it needs no webfont. Swap the files in public/brand to change it.
-export function Lockup({ dark = false, height = 38 }: { dark?: boolean; height?: number }) {
+export function Lockup({ dark = false, stacked = false, height = 38 }: { dark?: boolean; stacked?: boolean; height?: number }) {
+  const src = `/brand/lockup-${stacked ? "stacked-" : ""}${dark ? "dark" : "light"}.svg`;
   return (
     <Link href="/" className="flex items-center" aria-label="NotAPoll.org home">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={dark ? "/brand/lockup-dark.svg" : "/brand/lockup-light.svg"} alt="NotAPoll.org" style={{ height, width: "auto" }} />
+      <img src={src} alt="NotAPoll.org" style={{ height, width: "auto" }} />
     </Link>
   );
 }
