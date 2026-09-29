@@ -104,7 +104,7 @@ def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> dict:
+def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video: bool = False) -> dict:
     d = data / "derived" / day.isoformat()
     f = load(d / "forecast.json")
     if f is None:
@@ -156,6 +156,17 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> di
                             f"{round(r['p'] * 100)} in 100 simulated 3 Nov elections.{today_txt(r)} Poll average "
                             f"{r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
     contact_sheet(paths, out / "contact.jpg", scale=0.3)
+    (out / "reel.mp4").unlink(missing_ok=True)
+    if video:  # the first featured race as a 9:16 "every future" video; a failure is a problem, not a crash
+        from .reel import reel
+        r = rs[0]
+        try:
+            reel(r, out / "reel.mp4", theme)
+            alts["reel.mp4"] = (f"Video: 100 simulated elections for the {r['state']} {r['office']} land one by one as "
+                                f"dots; the {racecards.who(r)} wins {round(r['p'] * 100)} of them. "
+                                f"{racecards.verdict(r['p'], r['left_party'])}.")
+        except Exception as e:
+            problems.append(f"reel: {type(e).__name__}: {e}")
 
     lines = [f"Where the races stand, {day:%d %B}: {len(rs)} of our {len(everyone)} races, 40,000 simulated "
              "elections each.", ""]
@@ -228,7 +239,7 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> di
     (out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
     return {"ok": True, "date": day.isoformat(), "races": len(everyone), "featured": [r["rid"] for r in rs],
             "slides": len(paths), "problems": len(problems),
-            "approvable": not problems, "out": str(out)}
+            "reel": (out / "reel.mp4").exists(), "approvable": not problems, "out": str(out)}
 
 
 def main(argv=None) -> int:
@@ -236,9 +247,10 @@ def main(argv=None) -> int:
     ap.add_argument("--date", required=True, type=date.fromisoformat)
     ap.add_argument("--data", type=Path, default=Path(__file__).resolve().parents[3] / "simlab-data")
     ap.add_argument("--races", help="comma-separated race ids to feature instead of the automatic pick")
+    ap.add_argument("--reel", action="store_true", help="also render the 9:16 video for the first featured race")
     a = ap.parse_args(argv)
     try:
-        summary = build(a.date, a.data, only=a.races.split(",") if a.races else None)
+        summary = build(a.date, a.data, only=a.races.split(",") if a.races else None, video=a.reel)
         code = 0
     except Exception as e:  # the daily job needs one summary line and a non-zero exit, whatever went wrong
         summary, code = {"ok": False, "date": a.date.isoformat(), "error": f"{type(e).__name__}: {e}"}, 1

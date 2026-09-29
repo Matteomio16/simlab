@@ -89,6 +89,18 @@ class TextCheckTest(unittest.TestCase):
         s.headline("A headline long enough to wrap onto a second line, and a third one too.", px=88)
         self.assertEqual(s.layout_problems(), [])
 
+    def test_reel_schedule_and_closing_frame(self):
+        from simlab.publish import racecards as rc, reel
+        times = reel.schedule()
+        self.assertEqual(len(times), 100)
+        self.assertTrue((times[1:] > times[:-1]).all())
+        self.assertLess(times[-1] + reel.FALL + 1, reel.SECONDS)  # the closing card stays up for a while
+        for usps, name in (("TX", "Texas"), ("NH", "New Hampshire")):
+            r = rc.RACE | {"state": name, "usps": usps, "code": f"{usps}-SEN", "today": 0.6, "office": "Senate special"}
+            s, *_ = reel.build(r)
+            reel.reveal(s, r)
+            self.assertEqual(s.layout_problems(), [], name)
+
     def test_special_editions_render(self):
         from simlab.publish import specials
         with tempfile.TemporaryDirectory() as tmp:

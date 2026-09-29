@@ -225,6 +225,39 @@ def ladder(t: Theme, r: dict = RACE) -> Slide:
     return s
 
 
+def pile(s: Slide, r: dict, d: np.ndarray, top: float, height: float, x0: float | None = None,
+         w: float | None = None) -> tuple[list[tuple[float, float, str]], float, float]:
+    """Axis, Even line and tick labels for a dot histogram of simulated margins; returns where each dot sits (x, y,
+    colour, in stacking order), the dot radius and the baseline. The axis covers the margins plus Even, so lopsided
+    races keep readable dots; one-point columns sit either side of Even, so no column mixes the two parties."""
+    t = s.t
+    lo_m = min(-7, int(np.floor(d.min())) - 1)
+    hi_m = max(7, int(np.ceil(d.max())) + 1)
+    if hi_m - lo_m < 28:
+        pad = (28 - (hi_m - lo_m)) / 2
+        lo_m, hi_m = int(np.floor(lo_m - pad)), int(np.ceil(hi_m + pad))
+    x0 = MARGIN + 30 if x0 is None else x0
+    w = s.width - 60 if w is None else w
+    X = lambda m: x0 + w * (m - lo_m) / (hi_m - lo_m)
+    bins = np.where(d > 0, np.ceil(d), np.minimum(-1, -np.ceil(-d))).astype(int)
+    rows = max(np.bincount(bins - lo_m).max(), 10)
+    size = min(28, height / rows - 2, w / (hi_m - lo_m) - 2)  # tall or wide spreads get smaller dots
+    base = top + height + 16
+    counts: dict[int, int] = {}
+    dots = []
+    for m, v in sorted(zip(bins, d), key=lambda z: (abs(z[0]), -z[1])):
+        k = counts.get(m, 0)
+        counts[m] = k + 1
+        dots.append((X(m - 0.5 if m > 0 else m + 0.5), base - size / 2 - k * (size + 2), t.dem if v > 0 else t.rep))
+    s.ax.plot([X(lo_m), X(hi_m)], [base + 4, base + 4], color=t.baseline, lw=pt(2))
+    s.ax.plot([X(0), X(0)], [base + 4, top + 4], color=t.ink, lw=pt(2), zorder=3, dashes=(3, 2))
+    step = 5 if hi_m - lo_m <= 32 else 10
+    for m in range(-(-lo_m // step) * step, hi_m, step):
+        s._put(X(m), base + 16, "Even" if m == 0 else f"{abbr(r) if m > 0 else 'R'}+{abs(m)}", "mono", 400, 22,
+               t.ink2, ha="center", va="top")
+    return dots, size / 2 - 1, base
+
+
 def futures(t: Theme, r: dict = RACE) -> Slide:
     """100 futures: a dot histogram of simulated margins, one dot per simulation, coloured by the winner."""
     s = slide(t, r)
@@ -238,31 +271,9 @@ def futures(t: Theme, r: dict = RACE) -> Slide:
     s.hero(MARGIN, s.y, f"{n_dem} of 100", 110)
     s.y += 110 * 1.05
     s.text(f"simulated elections won by the {who(r)}", px=32, color=t.ink2, after=0.6)
-    # the axis covers the simulated margins plus Even, so lopsided races keep readable dots
-    lo_m = min(-7, int(np.floor(d.min())) - 1)
-    hi_m = max(7, int(np.ceil(d.max())) + 1)
-    if hi_m - lo_m < 28:
-        pad = (28 - (hi_m - lo_m)) / 2
-        lo_m, hi_m = int(np.floor(lo_m - pad)), int(np.ceil(hi_m + pad))
-    x0, w = MARGIN + 30, s.width - 60
-    X = lambda m: x0 + w * (m - lo_m) / (hi_m - lo_m)
-    # one-point columns either side of the Even line, so no column mixes the two parties
-    bins = np.where(d > 0, np.ceil(d), np.minimum(-1, -np.ceil(-d))).astype(int)
-    rows = max(np.bincount(bins - lo_m).max(), 10)
-    size = min(28, 300 / rows - 2, w / (hi_m - lo_m) - 2)  # tall or wide spreads get smaller dots, same chart size
-    base = s.y + 300 + 16
-    counts: dict[int, int] = {}
-    for m, v in sorted(zip(bins, d), key=lambda z: (abs(z[0]), -z[1])):
-        k = counts.get(m, 0)
-        counts[m] = k + 1
-        s.ax.add_patch(plt.Circle((X(m - 0.5 if m > 0 else m + 0.5), base - size / 2 - k * (size + 2)), size / 2 - 1,
-                                  color=t.dem if v > 0 else t.rep, lw=0, zorder=2))
-    s.ax.plot([X(lo_m), X(hi_m)], [base + 4, base + 4], color=t.baseline, lw=pt(2))
-    s.ax.plot([X(0), X(0)], [base + 4, s.y + 4], color=t.ink, lw=pt(2), zorder=3, dashes=(3, 2))
-    step = 5 if hi_m - lo_m <= 32 else 10
-    for m in range(-(-lo_m // step) * step, hi_m, step):
-        s._put(X(m), base + 16, "Even" if m == 0 else f"{abbr(r) if m > 0 else 'R'}+{abs(m)}", "mono", 400, 22,
-               t.ink2, ha="center", va="top")
+    dots, radius, base = pile(s, r, d, s.y, 300)
+    for x, y, col in dots:
+        s.ax.add_patch(plt.Circle((x, y), radius, color=col, lw=0, zorder=2))
     s.y = base + 76
     benchmarks(s, r)
     source(s, r, "100 futures")
