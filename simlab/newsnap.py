@@ -19,11 +19,14 @@ from pathlib import Path
 
 from . import newsraces, snap
 
-# Only outlets whose feeds answer a declared bot and whose licences allow reuse (29 Sep). The States Newsroom
-# sites (CC BY-NC-ND) refuse bots with 403, so they aren't here.
+# Only nonpartisan outlets whose feeds answer a declared bot and whose licences allow reuse (29 Sep). The States
+# Newsroom sites (CC BY-NC-ND) refuse bots with 403, so they aren't here; no Iowa outlet qualified (GDELT carries
+# 250+ Iowa articles a week).
 RSS_FEEDS = {"signal-ohio": ("OH", "Signal Ohio", "https://signalohio.org/feed/"),
              "signal-cleveland": ("OH", "Signal Cleveland", "https://signalcleveland.org/feed/"),
-             "texas-tribune": ("TX", "The Texas Tribune", "https://www.texastribune.org/feeds/main/")}
+             "texas-tribune": ("TX", "The Texas Tribune", "https://www.texastribune.org/feeds/main/"),
+             "carolina-public-press": ("NC", "Carolina Public Press", "https://carolinapublicpress.org/feed/"),  # CC BY-ND
+             "maine-monitor": ("ME", "The Maine Monitor", "https://themainemonitor.org/feed/")}  # free to republish
 PILOT = {snap.LEGACY.get(r, r.lower()) for r in newsraces.PILOT} | {"national"}
 EVERY_H = 6
 

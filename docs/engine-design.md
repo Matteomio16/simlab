@@ -172,8 +172,8 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
     `simlab-data/news/`). GDELT refuses an address for minutes after one success, so each run asks only the most
     overdue queries (contested races and the nation first) within about 9 minutes. A query saved in the last 6 hours
     isn't asked again; one that failed is asked by the next run, and every query covers 24 hours, so gaps fill.
-  - RSS from state outlets that answer a declared bot and allow reuse: Signal Ohio, Signal Cleveland and the Texas
-    Tribune. An item counts for a race only when it names one of that state's candidates in full. The States
+  - RSS from state outlets that answer a declared bot and allow reuse: Signal Ohio, Signal Cleveland, the Texas
+    Tribune, Carolina Public Press and The Maine Monitor (no Iowa outlet qualified). An item counts for a race only when it names one of that state's candidates in full. The States
     Newsroom sites refuse bots, so they aren't used.
   - Google News is not used (its terms; Matteo, 28 Sep). Headlines are cleaned, syndicated copies are merged, and
     similar headlines are clustered into stories.
