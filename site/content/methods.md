@@ -76,7 +76,9 @@ The synthetic voters give the direction and strength of a reaction; real events 
 45 past events with measured opinion shifts: the strongest possible reaction to a story with full attention moves
 about a fifth of a group's persuadable voters, or of its mobilisable voters for turnout.
 
-This isn't one fixed number. Each of the 40,000 simulated elections draws its own sizes around the fitted value, so no
+This isn't one fixed number. Each simulated election draws its sizes in three layers: one overall scale, each state's
+sensitivity, and each story's strength (a story can turn out about 40% stronger or weaker than simulated, as past
+events did). A national story's draw is shared by every race it reaches; a state story's stays in its own race. So no
 single estimate drives the forecast, a lesson from an earlier project that got a result's direction right but badly
 understated its size (see "What this can't do"). Each race shows how its forecast changes if the news matters less or
 more.
@@ -105,8 +107,8 @@ everywhere at once:
 - each race's **own** error, which takes the rest.
 
 The draws have **fat tails**: an unusually large swing is more likely than a bell curve would allow, and it happens in
-the same simulated year for every race. No two Senate races move independently; each pair keeps at least a 0.25
-correlation.
+the same simulated year for every race. Each pair of Senate races keeps at least a 0.25 correlation in its polling and
+fundamentals error. The news never gets that floor: a story about one state moves only that state's race.
 
 ### The statistics-only twin
 
