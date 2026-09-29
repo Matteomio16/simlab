@@ -46,11 +46,14 @@ def decay(days: float, half_life: float) -> float:
     return 0.0 if days < 0 else 0.5 ** (days / half_life)
 
 
-def held(since_first: float, since_last: float, half_life: float) -> float:
-    """A story's share of its full effect: none before it was first seen, all of it until `since_last` reaches 0
-    (while a one-off story is in the news; lasting topics fade from their first day), then fading with its half-life
-    (Matteo, 28-29 Sep)."""
-    return 0.0 if since_first < 0 else 1.0 if since_last <= 0 else 0.5 ** (since_last / half_life)
+def held(since_first: float, since_last: float, h_age: float | None, h_after: float | None) -> float:
+    """A story's share of its full effect (Matteo, 28-29 Sep): none before it was first seen; then fading with age
+    (half-life `h_age`, none if None) and, once it is out of the news, fading on top (`h_after`; none for lasting
+    topics)."""
+    if since_first < 0:
+        return 0.0
+    age = 1.0 if h_age is None else 0.5 ** (since_first / h_age)
+    return age * (1.0 if h_after is None or since_last <= 0 else 0.5 ** (since_last / h_after))
 
 
 def fit_cs(rows: list[dict], pimu: dict) -> dict:
@@ -113,14 +116,15 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
             continue
         first = datetime.fromisoformat(e["first_seen"]).date()
         last = datetime.fromisoformat(e.get("last_seen") or e["first_seen"]).date()
-        hold = first if e.get("type") in params.get("fade_from_first_seen", []) else last
         asked = min(d for _, d in answers.values())
-        tau, lag = (day - first).days, (day - hold).days
-        h, a = hl.get(e.get("type"), hl["default"]), float(e.get("attention", {}).get("a", 0.0))
+        tau, lag = (day - first).days, (day - last).days
+        h_age = params.get("age_half_life_days")
+        h_after = None if e.get("type") in params.get("lasting_types", []) else hl.get(e.get("type"), hl["default"])
+        a = float(e.get("attention", {}).get("a", 0.0))
         known = 1.0 if asked < day else 0.0
-        share = held(tau, lag, h)
-        step = share - known * held(tau - 1, lag - 1, h)
-        eday = held((ELECTION - first).days, (ELECTION - min(hold, day)).days, h)
+        share = held(tau, lag, h_age, h_after)
+        step = share - known * held(tau - 1, lag - 1, h_age, h_after)
+        eday = held((ELECTION - first).days, (ELECTION - min(last, day)).days, h_age, h_after)
         full = {}
         for base, (ks, kt) in (("dials", (dial.get("k_s", 1.0), dial.get("k_t", 1.0))), ("base", (1.0, 1.0))):
             ch = {g: group_change(r["support"], r["turnout"], groups[g]["pi"], groups[g]["mu"], a, params["c_s"],
@@ -137,9 +141,8 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
             by_group[g]["dd"] += 100 * dd[g] * share
             by_group[g]["dt"] += 100 * dt[g] * share
         fs, ft = round(100 * race_move(groups, dd, {}), 4), round(100 * race_move(groups, {}, dt), 4)
-        info[eid] = {"first_seen": first.isoformat(), "last_seen": last.isoformat(), "hold_until": hold.isoformat(),
-                     "type": e.get("type"),
-                     "half_life": h, "a": a, "full": round(fs + ft, 4), "full_s": fs, "full_t": ft,
+        info[eid] = {"first_seen": first.isoformat(), "last_seen": last.isoformat(), "type": e.get("type"),
+                     "age_half_life": h_age, "after_news_half_life": h_after, "a": a, "full": round(fs + ft, 4), "full_s": fs, "full_t": ft,
                      "full_base": round(full["base"][0], 4), "election_day": round((fs + ft) * eday, 4),
                      "card": e.get("card", "")}
     return {"delta_margin": round(delta, 4), "delta_margin_base": round(delta_base, 4),
@@ -187,10 +190,12 @@ def lasting_share(events: list[tuple], lags: list[tuple] = LAGS) -> tuple[dict, 
 
 
 def paths(m: dict, part: str = "all") -> dict:
-    """{race_id or "US": [(first_seen, hold_until, full effect, half-life)]} from moves.json's main block, for
+    """{race_id or "US": [(first_seen, last_seen, full effect, age half-life, after-news half-life)]} from
+    moves.json's main block, for
     levels.build: the whole effect, or only its switching ("s") or turnout ("t") part."""
     key = {"all": "full", "s": "full_s", "t": "full_t"}[part]
-    return {r: [(v["first_seen"], v["hold_until"], v[key], v["half_life"]) for v in x["events"].values()]
+    return {r: [(v["first_seen"], v["last_seen"], v[key], v["age_half_life"], v["after_news_half_life"])
+                for v in x["events"].values()]
             for r, x in m.items() if r != "shadow" and isinstance(x, dict) and "events" in x}
 
 

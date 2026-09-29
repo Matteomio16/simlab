@@ -209,14 +209,17 @@ def _poll_rows(senate: pd.DataFrame, gb: pd.DataFrame, election: date) -> pd.Dat
 
 
 def effect(t: np.ndarray, items: list, election: date = ELECTION, stop: float | None = None) -> np.ndarray:
-    """Total story effect on days `t` (relative to election day) from (first_seen, last_seen, full effect, half-life):
-    none before a story was first seen, all of it while it is in the news, then fading from the day it was last seen.
-    With `stop` (a day relative to election day), coverage is taken to end then at the latest."""
+    """Total story effect on days `t` (relative to election day) from (first_seen, last_seen, full effect, age
+    half-life, after-news half-life): none before a story was first seen, then fading with age and, once it is out
+    of the news, fading on top (a half-life of None means no such fading). With `stop` (a day relative to election
+    day), coverage is taken to end then at the latest."""
     out = np.zeros(len(t))
-    for first, last, full, h in items:
+    for first, last, full, h_age, h_after in items:
         t0, t1 = ((date.fromisoformat(x) - election).days for x in (first, last))
         t1 = t1 if stop is None else min(t1, stop)
-        out += np.where(t < t0, 0.0, np.where(t <= t1, full, full * 0.5 ** (np.maximum(t - t1, 0) / h)))
+        age = 1.0 if h_age is None else 0.5 ** (np.maximum(t - t0, 0) / h_age)
+        after = 1.0 if h_after is None else 0.5 ** (np.maximum(t - t1, 0) / h_after)
+        out += np.where(t < t0, 0.0, full * age * after)
     return out
 
 

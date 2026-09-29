@@ -120,8 +120,8 @@ class CoverageTest(unittest.TestCase):
                        B: {"n": 0.5, "t": 0.5, "d": -0.8, "pi": 0.1, "mu": 0.2}}}
 
     def run_days(self, etype):
-        params = {"c_s": 0.5, "c_t": 0.0, "dials": {}, "half_life_days": {"default": 1, "economy": 10},
-                  "fade_from_first_seen": ["economy"]}
+        params = {"c_s": 0.5, "c_t": 0.0, "dials": {}, "half_life_days": {"default": 1}, "age_half_life_days": 5.5,
+                  "lasting_types": ["economy"]}
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             e = event("e1", "2026-10-01T08:00:00+00:00", 1.0) | {"type": etype}
@@ -130,19 +130,19 @@ class CoverageTest(unittest.TestCase):
             return {day: moves.build(date.fromisoformat(day), root, self.GROUPS, params, "run-1")["OH-S"]
                     for day in ("2026-10-05", "2026-10-06", "2026-10-08")}
 
-    def test_a_story_holds_while_in_the_news_then_fades(self):
+    def test_a_one_off_story_fades_with_age_and_drops_once_out_of_the_news(self):
         m, full = self.run_days("endorsement"), 10.0
-        self.assertAlmostEqual(m["2026-10-05"]["by_event_effect"]["e1"], full, places=4)
-        self.assertAlmostEqual(m["2026-10-06"]["by_event_effect"]["e1"], full / 2, places=4)
-        self.assertAlmostEqual(m["2026-10-08"]["by_event_effect"]["e1"], full / 8, places=4)
+        self.assertAlmostEqual(m["2026-10-05"]["by_event_effect"]["e1"], full * 0.5 ** (4 / 5.5), places=4)
+        self.assertAlmostEqual(m["2026-10-06"]["by_event_effect"]["e1"], full * 0.5 ** (5 / 5.5) / 2, places=4)
+        self.assertAlmostEqual(m["2026-10-08"]["by_event_effect"]["e1"], full * 0.5 ** (7 / 5.5) / 8, places=4)
         self.assertEqual(m["2026-10-05"]["events"]["e1"]["last_seen"], "2026-10-05")
 
-    def test_lasting_topics_fade_from_the_first_day_even_while_in_the_news(self):
+    def test_lasting_topics_keep_fading_at_the_age_rate_after_the_news_moves_on(self):
         oneoff, lasting = self.run_days("endorsement"), self.run_days("economy")
-        self.assertAlmostEqual(lasting["2026-10-05"]["by_event_effect"]["e1"], 10 * 0.5 ** (4 / 10), places=4)
-        self.assertAlmostEqual(lasting["2026-10-08"]["by_event_effect"]["e1"], 10 * 0.5 ** (7 / 10), places=4)
-        self.assertAlmostEqual(lasting["2026-10-05"]["events"]["e1"]["election_day"], 10 * 0.5 ** (33 / 10), places=4)
-        self.assertEqual(lasting["2026-10-05"]["events"]["e1"]["hold_until"], "2026-10-01")
+        self.assertAlmostEqual(lasting["2026-10-05"]["by_event_effect"]["e1"], 10 * 0.5 ** (4 / 5.5), places=4)
+        self.assertAlmostEqual(lasting["2026-10-08"]["by_event_effect"]["e1"], 10 * 0.5 ** (7 / 5.5), places=4)
+        self.assertAlmostEqual(lasting["2026-10-05"]["events"]["e1"]["election_day"], 10 * 0.5 ** (33 / 5.5), places=4)
+        self.assertIsNone(lasting["2026-10-05"]["events"]["e1"]["after_news_half_life"])
         self.assertLess(oneoff["2026-10-05"]["events"]["e1"]["election_day"], 1e-6)
 
 
@@ -159,8 +159,8 @@ class PartsTest(unittest.TestCase):
         self.assertAlmostEqual(e["full_s"], 100 * 0.5 * 2 * 0.1 * 0.25, places=4)
         self.assertAlmostEqual(e["full_t"], 100 * 0.5 * (0.2 * 0.25 / 0.5) * 0.8, places=4)
         self.assertAlmostEqual(e["full"], e["full_s"] + e["full_t"], places=4)
-        self.assertEqual(moves.paths(m, "s"), {"OH-S": [("2026-10-01", "2026-10-01", e["full_s"], 10)]})
-        self.assertEqual(moves.paths(m, "t"), {"OH-S": [("2026-10-01", "2026-10-01", e["full_t"], 10)]})
+        self.assertEqual(moves.paths(m, "s"), {"OH-S": [("2026-10-01", "2026-10-01", e["full_s"], None, 10)]})
+        self.assertEqual(moves.paths(m, "t"), {"OH-S": [("2026-10-01", "2026-10-01", e["full_t"], None, 10)]})
 
 
 class LastingTest(unittest.TestCase):
@@ -184,8 +184,8 @@ class LastingTest(unittest.TestCase):
 
 
 class ReadTest(unittest.TestCase):
-    ev = lambda first, last, full, eday, card: {"first_seen": first, "last_seen": last, "hold_until": last,
-                                                "half_life": 10, "full": full, "full_s": full, "full_t": 0.0,
+    ev = lambda first, last, full, eday, card: {"first_seen": first, "last_seen": last, "age_half_life": 5.5,
+                                                "after_news_half_life": 1, "full": full, "full_s": full, "full_t": 0.0,
                                                 "election_day": eday, "card": card}
     M = {"date": "2026-10-11", "params": {"c_s": 0.2, "c_t": 0.2}, "shadow": {"OH-S": {"events": {}}},
          "OH-S": {"events": {"e1": ev("2026-10-01", "2026-10-03", 2.0, 0.2, "c1"),
@@ -195,9 +195,9 @@ class ReadTest(unittest.TestCase):
          "US": {"events": {}, "by_event_effect": {}}}
 
     def test_effect_paths_for_the_filter(self):
-        self.assertEqual(moves.paths(self.M), {"OH-S": [("2026-10-01", "2026-10-03", 2.0, 10),
-                                                        ("2026-10-05", "2026-10-05", -0.5, 10),
-                                                        ("2026-10-05", "2026-10-05", 0.001, 10)], "US": []})
+        self.assertEqual(moves.paths(self.M), {"OH-S": [("2026-10-01", "2026-10-03", 2.0, 5.5, 1),
+                                                        ("2026-10-05", "2026-10-05", -0.5, 5.5, 1),
+                                                        ("2026-10-05", "2026-10-05", 0.001, 5.5, 1)], "US": []})
 
     def test_movers_are_the_stories_effect_on_election_day(self):
         self.assertEqual(moves.movers(self.M), {"OH-S": [{"event_id": "e2", "card": "c2", "delta": -0.9},

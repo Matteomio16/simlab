@@ -208,27 +208,27 @@ class AssemblyTest(unittest.TestCase):
         return levels.build(*args, lv_gap_value=0.0), levels.build(*args, lv_gap_value=0.0, moves=moves)
 
     def test_story_effects_the_polls_already_show_change_nothing(self):
-        twin, head = self.headline({"US": [("2026-07-01", "2026-09-28", 3.0, 1e9)],
-                                    "OH-S": [("2026-07-01", "2026-09-28", 3.0, 1e9)]})
+        twin, head = self.headline({"US": [("2026-07-01", "2026-09-28", 3.0, None, 1e9)],
+                                    "OH-S": [("2026-07-01", "2026-09-28", 3.0, None, 1e9)]})
         self.assertAlmostEqual(head["national"]["N"], twin["national"]["N"], places=3)
         self.assertAlmostEqual(head["races"]["OH-S"]["margin"], twin["races"]["OH-S"]["margin"], places=3)
 
     def test_story_after_the_last_poll_moves_the_level(self):
-        twin, head = self.headline({"US": [("2026-09-28", "2026-09-28", 2.0, 1e9)],
-                                    "OH-S": [("2026-09-28", "2026-09-28", 3.0, 1e9)]})
+        twin, head = self.headline({"US": [("2026-09-28", "2026-09-28", 2.0, None, 1e9)],
+                                    "OH-S": [("2026-09-28", "2026-09-28", 3.0, None, 1e9)]})
         self.assertAlmostEqual(head["national"]["N"] - twin["national"]["N"], 2.0, places=3)
         self.assertAlmostEqual(head["races"]["OH-S"]["margin"] - twin["races"]["OH-S"]["margin"], 3.0, places=3)
         self.assertAlmostEqual(head["races"]["NC"]["margin"] - twin["races"]["NC"]["margin"], 2.0, places=3)
 
     def test_race_story_moves_a_race_without_polls_in_full(self):
-        twin, head = self.headline({"NC": [("2026-09-28", "2026-09-28", 1.5, 1e9)]})
+        twin, head = self.headline({"NC": [("2026-09-28", "2026-09-28", 1.5, None, 1e9)]})
         self.assertEqual(twin["races"]["NC"]["n_polls"], 0)
         self.assertAlmostEqual(head["races"]["NC"]["margin"] - twin["races"]["NC"]["margin"], 1.5, places=3)
         self.assertAlmostEqual(head["races"]["OH-S"]["margin"], twin["races"]["OH-S"]["margin"], places=3)
         self.assertEqual(head["races"]["NC"]["story_effect"], 1.5)
 
     def test_one_day_story_counts_today_but_not_on_election_day(self):
-        twin, head = self.headline({"NC": [("2026-09-28", "2026-09-28", 1.5, 1.0)]})
+        twin, head = self.headline({"NC": [("2026-09-28", "2026-09-28", 1.5, None, 1.0)]})
         nc = head["races"]["NC"]
         self.assertEqual(nc["story_effect"], 1.5)
         self.assertLess(nc["story_effect_3nov"], 1e-6)
@@ -242,7 +242,7 @@ class AssemblyTest(unittest.TestCase):
         rel = {(2024, "NC"): -2.0, (2020, "NC"): -1.0}
         args = ([nc], poll_frame([], today, [], race_id="NC"), gb, PARAMS, {"pollsters": {}, "aliases": {}}, rel, E,
                 empty, today)
-        moves = {"NC": [("2026-09-28", "2026-09-28", 1.5, 1.0)]}
+        moves = {"NC": [("2026-09-28", "2026-09-28", 1.5, None, 1.0)]}
         now_twin = levels.build(*args, election=today, lv_gap_value=0.0)
         now_head = levels.build(*args, election=today, lv_gap_value=0.0, moves=moves)
         self.assertEqual(now_head["days_to_election"], 0)
@@ -250,9 +250,14 @@ class AssemblyTest(unittest.TestCase):
         later = levels.build(*args, lv_gap_value=0.0)
         self.assertLess(now_twin["races"]["NC"]["sd"], later["races"]["NC"]["sd"])
 
+    def test_every_story_fades_with_age_even_while_in_the_news(self):
+        twin, head = self.headline({"NC": [("2026-09-21", "2026-09-28", 2.0, 5.5, 1.0)]})
+        self.assertAlmostEqual(head["races"]["NC"]["story_effect"], 2.0 * 0.5 ** (7 / 5.5), places=9)
+        self.assertLess(head["races"]["NC"]["story_effect_3nov"], 1e-6)
+
     def test_polls_while_a_story_was_in_the_news_are_compared_net_of_it(self):
-        twin, head = self.headline({"US": [("2026-07-01", "2026-09-27", 3.0, 1.0)],
-                                    "OH-S": [("2026-07-01", "2026-09-27", 3.0, 1.0)]})
+        twin, head = self.headline({"US": [("2026-07-01", "2026-09-27", 3.0, None, 1.0)],
+                                    "OH-S": [("2026-07-01", "2026-09-27", 3.0, None, 1.0)]})
         self.assertAlmostEqual(head["national"]["N"] - twin["national"]["N"], -1.5, places=3)
         self.assertAlmostEqual(head["races"]["NC"]["story_effect_3nov"], 3.0 * 0.5 ** 37, places=9)
 

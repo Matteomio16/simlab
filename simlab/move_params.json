@@ -22,16 +22,15 @@
   }
  },
  "dials": {},
+ "age_half_life_days": 5.5,
  "half_life_days": {
-  "default": 1,
-  "economy": 10,
-  "national": 10
+  "default": 1
  },
- "fade_from_first_seen": [
+ "lasting_types": [
   "economy",
   "national"
  ],
- "lasting_rule": "Matteo, 28-29 Sep: one-off stories (endorsements, scandals, debates, ads, candidates' policy news, other) keep their full effect while in the news (first_seen to last_seen), then fade with a 1-day half-life. Lasting topics (economy: prices, jobs, gas; national: president, Congress, war, disasters) fade from their first day, even while in the news, with a 10-day half-life: full strength at first, about 60% after a week, a quarter after three weeks, an eighth after 30 days (Matteo: 'lasts about 30 days', importance decreasing, 'after 3 weeks already not that important'). The calibration events' shifts held longer (lasting_evidence); the weekly filter tests this against polls. The 3 Nov forecast counts what is expected to remain of each story then; forecast.json's today view counts today's effects.",
+ "lasting_rule": "Matteo, 28-29 Sep: news fades fast. Every story fades from the day it is first seen with a 5.5-day half-life, the single curve closest to Matteo's 45% after a week, 15% after two and under 10% after three (41%, 17%, 7%; 2% by day 30). A one-off story (endorsements, scandals, debates, ads, candidates' policy news, other) that drops out of the news also fades within about a day (half_life_days: 1 day from last_seen). Lasting topics (economy: prices, jobs, gas; national: president, Congress, war, disasters) don't get that drop and keep fading at the age rate. The calibration events' shifts held longer (lasting_evidence); the weekly filter tests the rate against polls. The 3 Nov forecast counts what is expected to remain of each story then; forecast.json's today view counts today's effects.",
  "fit": {
   "c_s": 0.2055,
   "events": 45,
