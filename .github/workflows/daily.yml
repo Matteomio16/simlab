@@ -5,6 +5,8 @@
 # has no run.json yet, the day is 1 Oct or later (the pilot's first runs) and the repository variable PIPELINE_ON is
 # "true"; a manual run works any time. Logs are public: the steps print statuses and counts, never data. Package versions come from uv.lock.
 # From 12 Oct the publish job copies the day's public files to the site once Matteo switches SITE_PUBLISH on.
+# full_rehearsal=true (7 Oct, Matteo's yes) runs every race on a copy of the data and saves it to rehearsal/<day>-all/,
+# so the day's own record stays as the pilot left it; a rehearsal is never published.
 name: daily
 
 on:
@@ -18,6 +20,10 @@ on:
         required: false
       scheduled:
         description: "Started by the outside timer: obey PIPELINE_ON and run once a day"
+        type: boolean
+        default: false
+      full_rehearsal:
+        description: "Every race (scope all) on a copy, saved to rehearsal/<date>-all/; the day's record is untouched"
         type: boolean
         default: false
 
@@ -36,6 +42,8 @@ jobs:
     outputs:
       day: ${{ steps.public.outputs.day }}
       publish: ${{ steps.public.outputs.publish }}
+    env:
+      REHEARSAL: ${{ inputs.full_rehearsal }}
     steps:
       - uses: actions/checkout@v4
       - name: Day
@@ -90,7 +98,13 @@ jobs:
           KEV_API_KEY: ${{ secrets.KEV_API_KEY }}
           SIMLAB_BUDGET_USD: "2"
         # Kev answers as shadow rows (never applied) when the KEV_URL repository variable is set (Matteo, 29 Sep)
-        run: uv run python -m simlab.daily --date "$DAY" --data data-repo --kev "${{ vars.KEV_URL }}"
+        run: |
+          data=data-repo scope=
+          if [ "$REHEARSAL" = true ]; then
+            cp -r data-repo/. rehearsal-data && rm -rf rehearsal-data/.git "rehearsal-data/derived/${DAY}"
+            data=rehearsal-data scope="--scope all"
+          fi
+          uv run python -m simlab.daily --date "$DAY" --data "$data" $scope --kev "${{ vars.KEV_URL }}"
       - name: Push outputs to the data repo
         id: push
         if: always() && steps.due.outputs.run != 'false'
@@ -98,8 +112,16 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add --sparse derived
-          git commit --quiet -m "Daily run ${DAY}" || exit 0
+          if [ "$REHEARSAL" = true ]; then
+            git sparse-checkout add /rehearsal/
+            rm -rf "rehearsal/${DAY}-all" && mkdir -p rehearsal && cp -r "../rehearsal-data/derived/${DAY}" "rehearsal/${DAY}-all"
+            git add --sparse rehearsal
+            msg="Full-scale rehearsal ${DAY}"
+          else
+            git add --sparse derived
+            msg="Daily run ${DAY}"
+          fi
+          git commit --quiet -m "$msg" || exit 0
           for i in 1 2 3; do
             git pull --quiet --rebase && git push --quiet && exit 0
             sleep 15
@@ -107,7 +129,7 @@ jobs:
           exit 1
       - name: Public?
         id: public
-        if: ${{ !cancelled() && vars.SITE_PUBLISH == 'on' && steps.push.outcome == 'success' }}
+        if: ${{ !cancelled() && vars.SITE_PUBLISH == 'on' && !inputs.full_rehearsal && steps.push.outcome == 'success' }}
         working-directory: data-repo
         # a failed post kit doesn't hold the site back; a failed news, reactions or statistics step leaves the site on
         # the previous day

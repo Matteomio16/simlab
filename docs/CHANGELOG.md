@@ -66,6 +66,18 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   Engine adds the simulated seats to newsraces.json (from 12 Oct).
 - 29 Sep, stats-only: 222.6 expected Democratic seats at a national House vote of D+4.5.
 
+## 2026-09-29 night (Engine session): Matteo's answers on the full run
+
+- **Full-scale rehearsal on Wed 7 Oct: yes.** Every Senate race and simulated House seat, once, after the day's pilot
+  run. `daily.yml` has a `full_rehearsal` input: the run works on a copy of the data and saves to
+  `simlab-data/rehearsal/<day>-all/`, so the pilot's record stays clean, and it is never published. Pass criteria in
+  `docs/rehearsal.md`.
+- **The three site switches go together on Sun 11 Oct**, after the go: `SITE_PUBLISH=on`, `SITE_MODE=forecast`,
+  `SITE_DATA=live`.
+- **Media Cloud:** Matteo retries the sign-up. If a key comes, it goes in as the repository secret
+  `MEDIACLOUD_API_KEY` (and the same line in `.env` for local runs); the snapshot job then asks Media Cloud for every
+  Senate race and the nation with no other change.
+
 ## 2026-09-29 night (Engine session): news for the simulated House seats
 
 Matteo approved (in the roadmap session) one news query per state for the simulated House seats (A13):
