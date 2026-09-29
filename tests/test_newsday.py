@@ -411,5 +411,45 @@ class Run(unittest.TestCase):
         self.assertTrue(all(e["first_seen"].startswith("2026-09-28") for e in day2))
 
 
+class Scale(unittest.TestCase):
+    def ev(self, eid, scope, a, races):
+        return {"event_id": eid, "scope": scope, "gate": {r: 0.9 for r in races}, "type": "other", "salience": 1.0,
+                "attention": {"a": a}, "first_seen": "2026-10-12T07:00:00+00:00"}
+
+    def test_tiers_come_from_yesterdays_races_json_and_the_pilot_always_simulates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp) / "2026-10-11"
+            d.mkdir()
+            (d / "races.json").write_text(json.dumps({"date": "2026-10-11", "GA": {"tier": "watch"},
+                                                      "OH-S": {"tier": "statistics"}}), encoding="utf-8")
+            tiers = newsday.load_tiers(Path(tmp), date(2026, 10, 12))
+        self.assertEqual((tiers["GA"], tiers["OH-S"], tiers["TX"]), ("watch", "simulate", "simulate"))
+
+    def test_active_races(self):
+        tiers = {"GA": "watch", "AL": "statistics", "OH-S": "simulate", "NC": "simulate", "TX": "simulate"}
+        self.assertEqual(newsday.active("pilot", tiers), ["OH-S", "NC", "TX"])
+        self.assertEqual(newsday.active("all", tiers), ["GA", "NC", "OH-S", "TX"])
+
+    def test_a_watch_race_takes_only_its_two_biggest_race_stories(self):
+        evs = [self.ev("GA-1", "race", 0.7, ["GA"]), self.ev("GA-2", "race", 0.6, ["GA"]),
+               self.ev("GA-3", "race", 0.3, ["GA"]), self.ev("GA-4", "race", 0.55, ["GA"]),
+               self.ev("US-1", "national", 0.9, ["GA", "US"])]
+        newsday.select(evs, ["GA"], {"GA": "watch"})
+        self.assertEqual([e["event_id"] for e in evs if e["selected"].get("GA")], ["GA-1", "GA-2"])
+        self.assertEqual(evs[4]["selected"], {"US": True})
+
+    def test_a_watch_race_merge_checks_only_what_it_could_select(self):
+        evs = [self.ev("GA-1", "race", 0.7, ["GA"]), self.ev("GA-3", "race", 0.3, ["GA"])]
+        stories = {e["event_id"]: {"titles": [f"Story {e['event_id']}"], "outlet_names": []} for e in evs}
+        chat = FakeChat(['{"same": true}'] * 5)
+        newsday.merge_same_events(evs, stories, [chat], ["GA"], {"GA": "watch"})
+        self.assertEqual(chat.calls, 0)
+
+    def test_national_stories_are_gated_for_the_simulated_races(self):
+        story = {"race_id": "US", "titles": ["Senate passes a spending bill"], "outlet_names": []}
+        labels = newsday.label(story, FakeAsker(), ["OH-S", "IA"])
+        self.assertEqual(sorted(labels["gate"]), ["IA", "OH-S", "US"])
+
+
 if __name__ == "__main__":
     unittest.main()

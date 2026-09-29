@@ -13,6 +13,7 @@ import hashlib
 import json
 import math
 import re
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -20,14 +21,35 @@ from pathlib import Path
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from .news import RACES, _clean
+from . import newsraces
+from .news import _clean
 from .probes import NEWS_QUESTIONS
 
 SCHEMA = 1
-SNAP_RACES = {"ohio": "OH-S", "north-carolina": "NC", "texas": "TX", "national": "US"}
+CONFIG = newsraces.load()
+LEGACY = {"ohio": "OH-S", "north-carolina": "NC", "texas": "TX", "national": "US"}  # snapshot names before A13
+SNAP_RACES = {**{rid.lower(): rid for rid in CONFIG}, **LEGACY}
 PILOT = ["OH-S", "NC", "TX"]
-RACE_TEXT = {"OH-S": RACES["Ohio"][1], "NC": RACES["North Carolina"][1], "TX": RACES["Texas"][1],
-             "US": RACES["national"][1]}
+RACE_TEXT = {rid: c["text"] for rid, c in CONFIG.items()}
+CAPS = {"simulate": (5, 3), "watch": (2, 0), "statistics": (0, 0)}  # (race, national) stories a race reacts to a day
+WATCH_MIN_A = 0.5  # a watch race reacts only to its biggest stories (engine-design §3)
+
+
+def load_tiers(derived_root: Path, day: date) -> dict:
+    """Each race's tier from the previous day's races.json; the pilot races always simulate."""
+    p = derived_root / f"{day - timedelta(days=1):%Y-%m-%d}" / "races.json"
+    raw = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+    return {**{r: v.get("tier", "statistics") for r, v in raw.items() if isinstance(v, dict)},
+            **{r: "simulate" for r in PILOT}}
+
+
+def active(scope: str, tiers: dict) -> list[str]:
+    """The races whose own news is read: the pilot's, or every race not on statistics alone."""
+    return list(PILOT) if scope == "pilot" else sorted(r for r, t in tiers.items() if t != "statistics" and r in CONFIG)
+
+
+def caps(race_id: str, tiers: dict | None) -> tuple[int, int]:
+    return (0, 3) if race_id == "US" else CAPS[(tiers or {}).get(race_id, "simulate")]
 
 
 def _iso(dt: datetime) -> str:
@@ -232,10 +254,11 @@ def _sides(p: dict) -> dict:
             "R": round(p.get("republicans", 0.0) + p.get("both", 0.0), 3)}
 
 
-def label(story: dict, asker) -> dict:
-    """Jev's labels, asked with outlet names removed: the gate for each race the story could matter to, then the
-    story's own labels (type, who it helps on its face, whose voters it fires up or puts off, salience)."""
-    races = [story["race_id"]] if story["race_id"] != "US" else PILOT + ["US"]
+def label(story: dict, asker, national_races: list[str] = PILOT) -> dict:
+    """Jev's labels, asked with outlet names removed: the gate for each race the story could matter to (a national
+    story: the simulated races and the nation), then the story's own labels (type, who it helps on its face, whose
+    voters it fires up or puts off, salience)."""
+    races = [story["race_id"]] if story["race_id"] != "US" else list(national_races) + ["US"]
     gate = {r: round(asker.ask_many(story_text(story, r), GATE_Q, "newsday:gate")["relevant"].get("true", 0.0), 3)
             for r in races}
     a = asker.ask_many(story_text(story, story["race_id"]), LABEL_QS, "newsday:labels")
@@ -280,14 +303,14 @@ def attention(story: dict, spike: float | None) -> dict:
             "pageviews": None if spike is None else round(spike, 2), "a": round(min(1.0, base * boost), 3)}
 
 
-def select(events: list[dict], per_race: int = 5, national: int = 3) -> None:
+def select(events: list[dict], races: list[str] | None = None, tiers: dict | None = None) -> None:
     """Mark, per race, the events that get reactions: past the gate (p >= 0.5), not about polls (polls enter through
-    the filter), then the top by attention: `per_race` race stories and `national` national ones."""
+    the filter), then the top by attention, as many as the race's tier allows (CAPS)."""
     for e in events:
         e["selected"] = {}
-    for r in PILOT + ["US"]:
-        for scope, cap in (("race", per_race), ("national", national)):
-            for e in [e for e in candidates(events, r, top=len(events)) if e["scope"] == scope][:cap]:
+    for r in list(races or PILOT) + ["US"]:
+        for scope, cap in zip(("race", "national"), caps(r, tiers)):
+            for e in eligible(events, r, scope, tiers)[:cap]:
                 e["selected"][r] = True
 
 
@@ -356,6 +379,12 @@ def candidates(events: list[dict], race_id: str, top: int = POOL) -> list[dict]:
                    and e["type"] != "poll"), key=lambda e: (-e["attention"]["a"], -e["salience"], e["event_id"]))[:top]
 
 
+def eligible(events: list[dict], race_id: str, scope: str, tiers: dict | None) -> list[dict]:
+    """select()'s candidates for a race in one scope, best first; a watch race only takes stories with a >= 0.5."""
+    out = [e for e in candidates(events, race_id, top=len(events)) if e["scope"] == scope]
+    return [e for e in out if e["attention"]["a"] >= WATCH_MIN_A] if (tiers or {}).get(race_id) == "watch" else out
+
+
 def same_event(a: tuple[str, str], b: tuple[str, str], chats: list) -> bool:
     """(headline, date) pairs; False unless a model says they are the same specific event."""
     user = f"A ({a[1][:10]}): {a[0]}\nB ({b[1][:10]}): {b[0]}"
@@ -369,26 +398,35 @@ def same_event(a: tuple[str, str], b: tuple[str, str], chats: list) -> bool:
     return False
 
 
-def merge_same_events(events: list[dict], stories: dict, chats: list, per_race: int = 5, national: int = 3) -> None:
+def merge_same_events(events: list[dict], stories: dict, chats: list, races: list[str] | None = None,
+                      tiers: dict | None = None) -> None:
     """Per race, the candidates select() would pick, best first, each checked against the stories already kept: one
     that reports the same event in other words loses its gate for that race (`same_as` names the kept story) and the
     next candidate moves up. (Until 29 Sep only the top 10 of both scopes together were checked, so national stories
-    could push a race's lower copies of one story out of the check but not out of the selection.)"""
+    could push a race's lower copies of one story out of the check but not out of the selection.) Races run in
+    parallel; each writes only its own gate."""
+    lock = threading.Lock()
+
     def head(e):
         s = stories[e["event_id"]]
         return strip_outlets(s["titles"][0], s["outlet_names"]), e["first_seen"]
-    cap = {"race": per_race, "national": national}
-    for r in PILOT + ["US"]:
+
+    def one(r):
         kept: list = []
+        cap = dict(zip(("race", "national"), caps(r, tiers)))
+        ok = {s: {e["event_id"] for e in eligible(events, r, s, tiers)} for s in cap}
         for e in candidates(events, r, top=len(events)):
-            if sum(k["scope"] == e["scope"] for k in kept) >= cap[e["scope"]]:
+            if e["event_id"] not in ok[e["scope"]] or sum(k["scope"] == e["scope"] for k in kept) >= cap[e["scope"]]:
                 continue
             dup = next((k for k in kept if same_event(head(k), head(e), chats)), None)
             if dup:
                 e["gate"][r] = 0.0
-                e.setdefault("same_as", {})[r] = dup["event_id"]
+                with lock:
+                    e.setdefault("same_as", {})[r] = dup["event_id"]
             else:
                 kept.append(e)
+    with ThreadPoolExecutor(8) as ex:
+        list(ex.map(one, list(races or PILOT) + ["US"]))
 
 
 def continue_known(new_events: list[dict], stories: dict, known: list[dict], taken: set, chats: list,
@@ -417,11 +455,11 @@ def continue_known(new_events: list[dict], stories: dict, known: list[dict], tak
     return out
 
 
-def dedupe_scopes(events: list[dict], stories: dict, sim: float = 0.55) -> None:
+def dedupe_scopes(events: list[dict], stories: dict, sim: float = 0.55, races: list[str] | None = None) -> None:
     """A national story that repeats a race's own story (similar headlines) doesn't count again for that race: its gate
     there drops to 0 and `covered_by` names the race story."""
     for nat in (e for e in events if e["scope"] == "national"):
-        for r in PILOT:
+        for r in races or PILOT:
             local = [e for e in events if e["scope"] == "race" and e["races"] == [r]]
             if not local:
                 continue
@@ -457,9 +495,13 @@ def load_known(derived_root: Path, day: date, lookback: int = 7) -> list[dict]:
     return list(out.values())
 
 
-def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chats: list) -> dict:
-    """One day: read, cluster, carry over, label new stories, score attention, select, write cards, write files."""
-    arts = read_day(snap_root, day)
+def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chats: list, scope: str = "pilot") -> dict:
+    """One day: read, cluster, carry over, label new stories, score attention, select, write cards, write files.
+    `scope`: the pilot races, or every race not on statistics alone (by the previous day's tiers)."""
+    tiers = load_tiers(derived_root, day)
+    races = active(scope, tiers)
+    national_races = [r for r in races if tiers.get(r) == "simulate"]
+    arts = [a for a in read_day(snap_root, day) if a["race_id"] in races or a["race_id"] == "US"]
     known = load_known(derived_root, day)
     stories = carry_over(make_stories(arts), known)
     views = load_pageviews(snap_root, day)
@@ -467,7 +509,7 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
 
     def safe_label(s):
         try:
-            return label(s, asker)
+            return label(s, asker, national_races)
         except Exception:  # failed after its retries: no labels today, asked again tomorrow
             return {"gate": {}, "type": "other", "helps_face": "unclear", "fires_up": {"D": 0.0, "R": 0.0},
                     "puts_off": {"D": 0.0, "R": 0.0}, "salience": 0.0, "label_error": True}
@@ -484,16 +526,16 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         events.append({"schema": SCHEMA, "date": f"{day}", "run_id": run_id, "event_id": s["event_id"],
                        "first_seen": s["first_seen"], "last_seen": s["last_seen"],
                        "scope": "national" if national else "race",
-                       "races": PILOT + ["US"] if national else [s["race_id"]], **labels,
+                       "races": national_races + ["US"] if national else [s["race_id"]], **labels,
                        "attention": attention(s, spike_ratio(views, s["race_id"])),
                        "card": valid_card((k or {}).get("card", ""), s["outlet_names"])})
         private.append({"schema": SCHEMA, "date": f"{day}", "event_id": s["event_id"], "race_id": s["race_id"],
                         "titles": s["titles"], "outlet_names": s["outlet_names"], "outlets": s["outlets"],
                         "urls": s["urls"], "days_seen": s["days_seen"]})
     by_id = {s["event_id"]: s for s in stories}
-    dedupe_scopes(events, by_id)
-    pool = {e["event_id"]: e for r in PILOT + ["US"] for scope in ("race", "national")
-            for e in [c for c in candidates(events, r, top=len(events)) if c["scope"] == scope][:POOL]}
+    dedupe_scopes(events, by_id, races=races)
+    pool = {e["event_id"]: e for r in races + ["US"] for sc in ("race", "national")
+            for e in [c for c in candidates(events, r, top=len(events)) if c["scope"] == sc][:POOL]}
     todo = [e for e in pool.values() if not e["card"]]
     with ThreadPoolExecutor(8) as ex:
         for e, card in zip(todo, ex.map(lambda e: write_card(by_id[e["event_id"]], chats), todo)):
@@ -513,8 +555,8 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     new -= len(cont)
     for e in events:
         e["usable"] = bool(e["card"])  # only stories with a card can be selected (the pool is the top 10 per race)
-    merge_same_events(events, by_id, chats)
-    select(events)
+    merge_same_events(events, by_id, chats, races, tiers)
+    select(events, races, tiers)
     written, failed = sum(bool(e["card"]) for e in todo), sum(not e["card"] for e in todo)
     out = derived_root / f"{day:%Y-%m-%d}"
     out.mkdir(parents=True, exist_ok=True)
@@ -522,7 +564,7 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         (out / name).write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in rows) + "\n", encoding="utf-8")
     return {"articles": len(arts), "stories": len(events), "new": new, "carried": len(events) - new,
             "continued": len(cont),
-            "selected": {r: sum(bool(e["selected"].get(r)) for e in events) for r in PILOT + ["US"]},
+            "selected": {r: sum(bool(e["selected"].get(r)) for e in events) for r in races + ["US"]},
             "cards_written": written, "cards_failed": failed}
 
 
@@ -536,10 +578,11 @@ def main() -> None:
     ap.add_argument("--snap", type=Path, default=data / "snapshots")
     ap.add_argument("--out", type=Path, default=data / "derived")
     ap.add_argument("--run-id", default="")
+    ap.add_argument("--scope", choices=["pilot", "all"], default="pilot")
     a = ap.parse_args()
     chats = [Chat(LLMS["deepseek"], HOSTS["deepseek"]), Chat(LLMS["glm"], HOSTS["glm"], reasoning=REASONING["glm"])]
     print(json.dumps(run(a.date, a.snap, a.out, a.run_id or f"{a.date}-manual",
-                         DecisionAsker(JEV, n_orders=2, name="jev"), chats)))
+                         DecisionAsker(JEV, n_orders=2, name="jev"), chats, a.scope)))
 
 
 if __name__ == "__main__":
