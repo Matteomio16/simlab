@@ -2,6 +2,30 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 night (Statistics session): shared surprises checked against Matteo's condition
+
+Matteo agreed (in the roadmap session; his direct yes is still to come here) that the 0.25 correlation floor applies
+among Senate races only. His condition: nothing specific to one state may become a surprise shared with another. The
+model checked against it:
+1. **A state's own story moves only its own race.** Reactions are asked per race, moves keeps each race's rows apart,
+   and races without stories take only the nation's stories. On 29 Sep, none of the 7 race stories appears in any other
+   race. National stories reach every race that hears them.
+2. **The news-size draw is shared, but as a scale, not a surprise.** Each simulated election draws a national dial
+   (sd 0.44 switching, 0.71 turnout) plus each state's own deviation (0.3, 0.5), so about two thirds of the size
+   uncertainty is shared. It is the uncertainty in how strong the simulated reactions are overall: if the reaction model
+   overstates reactions, it does so everywhere.
+   - In a simulated election with strong reactions, Maine moves further in the direction of Maine's stories and Alaska
+     further in the direction of its own. Alaska never moves because of a Maine story, and the two can move in
+     opposite directions.
+   - The added correlation is tiny, since story effects are small beside the statistical errors.
+   - Each story's own surprise is large: the size fit on 45 real events explains only part of their scatter
+     (correlation 0.42, error 0.88 points). It is already covered with the right sharing. Each race's day-to-day
+     drift, independent across races and fitted on real poll movement, carries local surprises; the national drift
+     carries national ones.
+   - No change: a separate per-story size term would count those surprises twice.
+3. **The floor touches only the statistical error.** It applies to the polling, fundamentals and drift errors. The
+   news uncertainty is added after the correlated draw, and its only link across races is the scale in point 2.
+
 ## 2026-09-29 night (Kev session): early vote for NC, ME, IA and TX on; Ohio skipped for the pilot
 
 - **Matteo, 29 Sep:**
