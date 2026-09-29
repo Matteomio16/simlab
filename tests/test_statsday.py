@@ -108,6 +108,11 @@ class TierTest(unittest.TestCase):
         self.assertEqual((out["CO"]["tier_raw"], out["CO"]["tier"]), ("statistics", "watch"))
         self.assertEqual(out["WY"]["tier"], "statistics")
 
+    def test_iowa_and_maine_are_pilot_races_too(self):
+        safe = {"cook": "Solid R", "market": 0.01}
+        out = statsday.tiers({"IA": {}, "ME": {}}, {"IA": 0.01, "ME": 0.01}, {"IA": safe, "ME": safe}, [])
+        self.assertEqual({r: out[r]["tier"] for r in out}, {"IA": "simulate", "ME": "simulate"})
+
 
 class WeeklyTest(unittest.TestCase):
     MP = {"dials": {}, "age_half_life_days": 5.5,

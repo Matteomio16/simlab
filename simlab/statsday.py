@@ -66,7 +66,7 @@ def previous_polls(data: Path, day: date) -> pd.DataFrame | None:
     return pd.read_csv(files[-1], low_memory=False) if files else None
 
 
-PILOT = {"OH-S", "NC", "TX"}
+PILOT = {"OH-S", "NC", "TX", "IA", "ME"}
 TIER_RANK = {"statistics": 0, "watch": 1, "simulate": 2}
 
 
