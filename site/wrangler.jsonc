@@ -1,0 +1,14 @@
+{
+  // Production: notapoll.org. No "main": the Worker runs no code, Cloudflare serves the static export.
+  "name": "notapoll-site",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./out",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    { "pattern": "notapoll.org", "custom_domain": true },
+    { "pattern": "www.notapoll.org", "custom_domain": true }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  // Preview: unlisted workers.dev address, sample data only, never indexed (see public/_headers, written by the build).
+  "name": "notapoll-preview",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./out",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

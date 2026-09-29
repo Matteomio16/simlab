@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site-forecast",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["site/node_modules/next/dist/bin/next", "dev", "site", "-p", "4311"],
+      "env": { "SITE_MODE": "forecast", "SITE_PREVIEW": "1" },
+      "port": 4311
+    },
+    {
+      "name": "site-prelaunch",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4310", "--directory", "site/out"],
+      "port": 4310
+    }
+  ]
+}

@@ -2,6 +2,22 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 (Website session): NotAPoll.org site, C6
+
+Decided by Matteo (design in `docs/superpowers/specs/2026-09-29-notapoll-site-design.md`):
+- **notapoll.org is the home**; labs.scaliastudio.dev/midterms redirects there. "By Scalia Studio" in every footer and
+  on About.
+- **Two launches.** Sat 3 Oct: home, methods, Lab notes, About, with no forecast numbers of any kind. Mon 12 Oct: Senate
+  overview and race pages. Week of 19 Oct: track record, changelog, archive. Election-night page by 3 Nov.
+- **Written for both audiences in layers**: a plain sentence and one number on top, the data below.
+- **Look:** 538 / Silver Bulletin clarity, an editorial touch (Newsreader headlines), the post kit's Lab Notebook tokens,
+  research-lab calm, nothing salesy.
+- **Stack as scaliastudio.dev:** Next.js 16 static export on a Cloudflare Worker; charts are React SVG (not vega-embed);
+  the home swarm is Canvas 2D (three.js/WebGL maybe later).
+- **Preview** on an unlisted workers.dev address with sample data; Cloudflare Access later. **Deploys** from GitHub
+  Actions (`.github/workflows/site.yml`) with a token Matteo creates.
+- **Lab notes** go on the site only after Matteo approves each one (`site/scripts/import-labnote.mjs`).
+
 ## 2026-09-29 (Engine session): the news day, a broken spending ledger, one story counted once
 
 - **Every model call failed from the afternoon of 28 Sep.** Two programs wrote to the spending ledger

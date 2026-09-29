@@ -1,0 +1,55 @@
+name: Site
+
+# Builds and deploys NotAPoll.org (site/). Production deploys only when the repository variable SITE_DEPLOY is "on"
+# (Matteo's switch). SITE_MODE (prelaunch | forecast) and SITE_DATA (sample | live) are repository variables too;
+# forecast mode in production needs Matteo's go (11 Oct). The preview always builds forecast mode on sample data.
+
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", ".github/workflows/site.yml"]
+  workflow_dispatch:
+
+concurrency:
+  group: site
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+
+      - name: Build preview (forecast mode, sample data)
+        env:
+          SITE_MODE: forecast
+          SITE_DATA: sample
+          SITE_PREVIEW: "1"
+        run: npm run build && node scripts/check-copy.mjs
+      - name: Deploy preview
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: npx --yes wrangler@4 deploy -c wrangler.preview.jsonc
+
+      - name: Build production
+        if: vars.SITE_DEPLOY == 'on'
+        env:
+          SITE_MODE: ${{ vars.SITE_MODE || 'prelaunch' }}
+          SITE_DATA: ${{ vars.SITE_DATA || 'sample' }}
+        run: |
+          if [ "$SITE_MODE" = forecast ] && [ "$SITE_DATA" != live ]; then echo "forecast mode in production needs SITE_DATA=live"; exit 1; fi
+          rm -rf out .next && npm run build && node scripts/check-copy.mjs
+      - name: Deploy production
+        if: vars.SITE_DEPLOY == 'on' && env.CLOUDFLARE_API_TOKEN != ''
+        run: npx --yes wrangler@4 deploy -c wrangler.jsonc

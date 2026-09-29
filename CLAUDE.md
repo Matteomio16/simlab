@@ -138,7 +138,8 @@ Decided in Claude Code, 27 Sep (reasons in `docs/CHANGELOG.md`):
   race and ideology (`simlab/archetypes.json`, built by `python -m simlab.ces`).
 
 Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructure.md`):
-- Site at `labs.scaliastudio.dev/midterms` (Cloudflare), linked from scaliastudio.dev (was research.; Matteo, 28 Sep).
+- Site at **notapoll.org** (Matteo, 29 Sep; `site/`, Next.js static export on a Cloudflare Worker, as scaliastudio.dev);
+  `labs.scaliastudio.dev/midterms` redirects there. 3 Oct: no numbers; 12 Oct: forecast pages after Matteo's go.
   Brand domain notapoll.org, shown on every image; its own site comes later. Handles: Instagram and Threads
   @notapoll.org, X @notapoll, Bluesky @notapoll.org. Scheduling on free tools only: Buffer Free for X, Threads and
   Bluesky; Instagram's own scheduler.
