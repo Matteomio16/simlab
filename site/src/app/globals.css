@@ -245,3 +245,29 @@ a:hover > .tile,
     transform: none;
   }
 }
+
+/* Arriving on a race page from the map: the state locator settles from the zoom. */
+.arrive {
+  animation: arrive 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+.rise {
+  animation: rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrive,
+  .rise {
+    animation: none;
+  }
+}

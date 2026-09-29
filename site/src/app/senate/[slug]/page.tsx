@@ -7,6 +7,10 @@ import { HAS_FORECAST, IS_SAMPLE, load, raceCode, raceTitle, senateRacesSafe } f
 import { in100, leader, longDate, margin, partyName, partyVar, surname, tierColor } from "@/lib/format";
 import { STATES } from "@/lib/states";
 import TileMap from "@/components/TileMap";
+import Reveal from "@/components/Reveal";
+import CountUp from "@/components/CountUp";
+import RaceCards from "@/components/RaceCards";
+import type { Row } from "@/components/RaceTable";
 
 export const dynamicParams = false;
 
@@ -46,6 +50,18 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
   const leftShort = surname(meta.candidates.left);
   const rightShort = surname(meta.candidates.right);
   const b = f.benchmarks;
+  const others: Row[] = senateRacesSafe()
+    .filter((x) => x.id !== id)
+    .sort((x, y) => Math.abs(x.f.p_dem_win - 0.5) - Math.abs(y.f.p_dem_win - 0.5))
+    .slice(0, 4)
+    .map((x) => {
+      const t = tierColor(x.f.p_dem_win, x.meta.left_party);
+      return {
+        id: x.id, slug: x.slug, title: raceTitle(x.meta), state: x.meta.state, left: x.meta.candidates.left,
+        right: x.meta.candidates.right, leftParty: x.meta.left_party, p: x.f.p_dem_win, today: null, pollAvg: null,
+        market: null, cook: null, rating: t.name, tierFill: t.fill, tierInk: t.ink, leader: leader(x.f.p_dem_win, x.meta).party,
+      };
+    });
   const bench: [string, string, boolean][] = [
     ["Our simulation, Nov. 3", `${leftShort} ${in100(f.p_dem_win)} in 100`, true],
     ["Statistics only, no simulation", `${leftShort} ${in100(f.stats_only.p_dem_win)} in 100`, false],
@@ -63,7 +79,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
       </nav>
 
       <header className="mt-6 grid gap-10 lg:grid-cols-[1fr_300px]">
-        <div>
+        <div className="rise">
           <p className="label">
             {STATES[meta.state]} Senate{meta.special ? " · special election" : ""}{meta.rcv ? " · ranked-choice voting" : ""}
           </p>
@@ -74,22 +90,22 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
             {`The simulation rates ${STATES[meta.state]} ${ratingWords}. The middle simulated result is ${margin(f.margin.p50, L)}, and 8 in 10 fall between ${margin(f.margin.p10, L)} and ${margin(f.margin.p90, L)}.`}
           </p>
         </div>
-        <div className="hidden lg:block">
+        <div className="arrive hidden lg:block">
           <TileMap tiles={[{ state: meta.state, fill: tier.fill, ink: tier.ink, title: STATES[meta.state] }]} />
         </div>
       </header>
 
-      <section className="mt-8 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1fr]">
+      <section className="rise mt-8 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1fr]" style={{ animationDelay: "120ms" }}>
         <div>
           <div className="flex items-end justify-between">
             <div>
               <p className="label-muted">{meta.candidates.left} ({L})</p>
-              <p className="mt-1 text-[3rem] font-extrabold leading-none tracking-[-0.02em]" style={{ color: partyVar(L) }}>{in100(f.p_dem_win)}</p>
+              <p className="mt-1 text-[3rem] font-extrabold leading-none tracking-[-0.02em]" style={{ color: partyVar(L) }}><CountUp value={in100(f.p_dem_win)} /></p>
             </div>
             <p className="label-muted pb-2">Chance in 100, Nov. 3</p>
             <div className="text-right">
               <p className="label-muted">{meta.candidates.right} (R)</p>
-              <p className="mt-1 text-[3rem] font-extrabold leading-none tracking-[-0.02em] text-rep">{100 - in100(f.p_dem_win)}</p>
+              <p className="mt-1 text-[3rem] font-extrabold leading-none tracking-[-0.02em] text-rep"><CountUp value={100 - in100(f.p_dem_win)} /></p>
             </div>
           </div>
           <div className="mt-4"><ProbBar p={f.p_dem_win} left={L} height={12} /></div>
@@ -114,16 +130,16 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
         </div>
       </section>
 
-      <section className="mt-14 section-rule">
+      <Reveal as="section" className="mt-14 section-rule">
         <p className="label">The spread</p>
         <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">{`100 of the ${forecast.draws.toLocaleString("en-US")} simulated elections`}</h2>
         <p className="mt-2 text-ink-2">Each dot is one simulated election, placed by its margin.</p>
         <div className="mt-6">
           <Responsive desktop={1100} render={(w) => <DotPlot w={w} draws={sample} left={L} leftName={leftShort} rightName={rightShort} />} />
         </div>
-      </section>
+      </Reveal>
 
-      <section className="mt-14 grid gap-12 lg:grid-cols-2">
+      <Reveal as="section" className="mt-14 grid gap-12 lg:grid-cols-2">
         <div className="section-rule">
           <p className="label">Margin</p>
           <h2 className="mt-2 text-xl font-bold">Our range beside the poll average</h2>
@@ -151,9 +167,9 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
             )}
           </div>
         </div>
-      </section>
+      </Reveal>
 
-      <section className="mt-14 section-rule">
+      <Reveal as="section" className="mt-14 section-rule">
         <p className="label">What moved it</p>
         <h2 className="mt-2 text-xl font-bold">The news, as the synthetic voters reacted to it</h2>
         {f.movers.length === 0 ? (
@@ -175,7 +191,14 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
         <p className="mt-4 max-w-3xl text-[0.95rem] text-ink-2">
           {newsLine}
         </p>
-      </section>
+      </Reveal>
+
+      <Reveal as="section" className="mt-14 section-rule">
+        <p className="label">Other close races</p>
+        <div className="mt-4">
+          <RaceCards rows={others} />
+        </div>
+      </Reveal>
 
       <p className="mt-10 max-w-3xl text-[0.9rem] text-ink-2">
         {`${meta.candidates.left} is the ${partyName(L)}${L === "I" ? ", counted apart from both parties" : ""}. ${meta.status}. `}

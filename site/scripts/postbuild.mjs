@@ -10,7 +10,7 @@ const preview = process.env.SITE_PREVIEW === "1";
 const forecast = process.env.SITE_MODE === "forecast";
 
 const drop = (p) => existsSync(path.join(OUT, p)) && rmSync(path.join(OUT, p), { recursive: true, force: true });
-if (!forecast) ["senate", "senate.html", "senate.txt", "v"].forEach(drop);
+if (!forecast) ["senate", "senate.html", "senate.txt"].forEach(drop);
 ["lab-notes/00.html", "lab-notes/00.txt", "lab-notes/00"].forEach(drop);
 
 const headers = [

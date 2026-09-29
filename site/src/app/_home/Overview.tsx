@@ -84,7 +84,7 @@ export default function Overview() {
 
   return (
     <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
-      <section className="pt-10 sm:pt-12">
+      <section className="rise pt-10 sm:pt-12">
         <p className="label">2026 Senate forecast</p>
         <p className="note mt-1">Updated {longDate(forecast.date)} · {daysTo(forecast.date)} days to Election Day</p>
         <h1 className="mt-4 max-w-4xl text-[2.1rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">

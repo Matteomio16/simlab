@@ -1,6 +1,7 @@
 import Link from "next/link";
 import DaysTo from "@/components/DaysTo";
 import Reveal from "@/components/Reveal";
+import CountUp from "@/components/CountUp";
 import TileMap, { Legend } from "@/components/TileMap";
 import { loadRaceMeta, raceTitle } from "@/lib/data";
 import { allNotes } from "@/lib/labnotes";
@@ -35,7 +36,7 @@ export default function Prelaunch({ today }: { today: string }) {
   return (
     <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
       <section className="grid gap-10 pt-10 sm:pt-14 lg:grid-cols-[1fr_1.15fr] lg:gap-14">
-        <div>
+        <div className="rise">
           <p className="label">2026 Senate forecast</p>
           <h1 className="mt-4 text-[2.3rem] font-extrabold leading-[1.05] tracking-[-0.02em] sm:text-[3.1rem]">
             The forecast begins October&nbsp;12.
@@ -47,7 +48,7 @@ export default function Prelaunch({ today }: { today: string }) {
           </p>
           <dl className="mt-8 grid grid-cols-3 border-y-[3px] border-rule-strong">
             {[
-              ["Senate races", `${races.length}`],
+              ["Senate races", <CountUp key="n" value={races.length} />],
               ["Forecast from", "Oct. 12"],
               ["Days to Nov. 3", <DaysTo key="d" target={SITE.electionDay} initial={days} />],
             ].map(([k, v], i) => (
@@ -62,7 +63,7 @@ export default function Prelaunch({ today }: { today: string }) {
           </p>
         </div>
 
-        <div>
+        <div className="rise" style={{ animationDelay: "120ms" }}>
           <p className="label">Seats up in 2026, by the party that holds them</p>
           <div className="mt-4">
             <TileMap tiles={tiles} />
@@ -108,7 +109,7 @@ export default function Prelaunch({ today }: { today: string }) {
           </thead>
           <tbody>
             {races.map(({ id, m }) => (
-              <tr key={id} className="border-b border-rule align-top">
+              <tr key={id} className="border-b border-rule align-top transition-colors hover:bg-paper-2">
                 <td className="py-2.5 pr-3 font-bold">{raceTitle(m)}</td>
                 <td className="py-2.5 pr-3">
                   <span style={{ color: PARTY[m.left_party] }}>{m.candidates.left} ({m.left_party})</span>
