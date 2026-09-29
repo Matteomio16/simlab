@@ -68,10 +68,35 @@ def parse_mediacloud(raw: bytes, race_id: str) -> list[dict]:
 PARSERS = {"gdelt": parse_gdelt, "mediacloud": parse_mediacloud}
 
 
+CUTOFF = "09:30"  # UTC. The daily job runs at 09:47: a snapshot run that starts before this is read by that day's job
+
+
+def window(day: date) -> tuple[datetime, datetime]:
+    end = datetime.combine(day, datetime.strptime(CUTOFF, "%H:%M").time(), timezone.utc)
+    return end - timedelta(days=1), end
+
+
+def runs_before(snap_root: Path, day: date, back: int = 2) -> list[tuple[datetime, Path]]:
+    """(start, manifest) of the snapshot runs that started before the day's cutoff, in its folder and the `back` folders
+    before, oldest first."""
+    out = []
+    for k in range(back, -1, -1):
+        d = day - timedelta(days=k)
+        for m in (snap_root / f"{d:%Y-%m-%d}").glob("*/manifest.json"):
+            try:
+                out.append((datetime.strptime(f"{d:%Y-%m-%d}{m.parent.name}", "%Y-%m-%d%H%M").replace(tzinfo=timezone.utc), m))
+            except ValueError:
+                continue
+    return sorted(r for r in out if r[0] < window(day)[1])
+
+
 def read_day(snap_root: Path, day: date) -> list[dict]:
-    """Every news article in the day's snapshot runs, once per race (earliest sighting kept), titles cleaned."""
-    best: dict = {}
-    for manifest in sorted((snap_root / f"{day:%Y-%m-%d}").glob("*/manifest.json")):
+    """The day's news: every article first returned by a snapshot run that started in the day's window (09:30 UTC the
+    day before to 09:30 UTC), once per race (earliest sighting kept), titles cleaned. Each run is read by one day's job
+    only, and articles a feed returns again (GDELT's 24-hour window, Media Cloud's last day) count on their first day."""
+    start = window(day)[0]
+    first, best = {}, {}
+    for when, manifest in runs_before(snap_root, day):
         for f in json.loads(manifest.read_text(encoding="utf-8"))["files"]:
             kind, _, slug = f.get("name", "").partition("-")
             if f.get("source") != "news" or "file" not in f or kind not in PARSERS or slug not in SNAP_RACES:
@@ -79,9 +104,10 @@ def read_day(snap_root: Path, day: date) -> list[dict]:
             for a in PARSERS[kind](gzip.decompress((manifest.parent / f["file"]).read_bytes()), SNAP_RACES[slug]):
                 a["title"] = _clean(a["title"])
                 key = (a["race_id"], a["url"] or f"{a['title'].lower()}|{a['domain']}")
+                first.setdefault(key, when)
                 if len(a["title"].split()) >= 4 and (key not in best or a["seen"] < best[key]["seen"]):
                     best[key] = a
-    return sorted(best.values(), key=lambda a: (a["race_id"], a["seen"]))
+    return sorted((a for k, a in best.items() if first[k] >= start), key=lambda a: (a["race_id"], a["seen"]))
 
 
 def cluster_titles(titles: list[str], firsts: list[str], sim: float = 0.55, days: float = 3.0) -> list[list[int]]:
@@ -223,8 +249,8 @@ CANDIDATE_PAGES = {"OH-S": ["Sherrod_Brown", "Jon_Husted"], "NC": ["Roy_Cooper",
 
 
 def load_pageviews(snap_root: Path, day: date) -> dict:
-    """{article: {YYYYMMDD: views}} from the day's latest pageviews snapshot ({} if there is none)."""
-    runs = sorted((snap_root / f"{day:%Y-%m-%d}").glob("*/pageviews/candidates.gz"))
+    """{article: {YYYYMMDD: views}} from the latest pageviews snapshot before the day's cutoff ({} if there is none)."""
+    runs = [p for _, m in runs_before(snap_root, day) if (p := m.parent / "pageviews" / "candidates.gz").exists()]
     if not runs:
         return {}
     raw = json.loads(gzip.decompress(runs[-1].read_bytes()))
@@ -343,15 +369,20 @@ def same_event(a: tuple[str, str], b: tuple[str, str], chats: list) -> bool:
     return False
 
 
-def merge_same_events(events: list[dict], stories: dict, chats: list, top: int = POOL) -> None:
-    """Per race, each top candidate is checked against the better-covered candidates already kept; a story that
-    reports the same event in other words loses its gate for that race and `same_as` names the kept story."""
+def merge_same_events(events: list[dict], stories: dict, chats: list, per_race: int = 5, national: int = 3) -> None:
+    """Per race, the candidates select() would pick, best first, each checked against the stories already kept: one
+    that reports the same event in other words loses its gate for that race (`same_as` names the kept story) and the
+    next candidate moves up. (Until 29 Sep only the top 10 of both scopes together were checked, so national stories
+    could push a race's lower copies of one story out of the check but not out of the selection.)"""
     def head(e):
         s = stories[e["event_id"]]
         return strip_outlets(s["titles"][0], s["outlet_names"]), e["first_seen"]
+    cap = {"race": per_race, "national": national}
     for r in PILOT + ["US"]:
         kept: list = []
-        for e in candidates(events, r, top):
+        for e in candidates(events, r, top=len(events)):
+            if sum(k["scope"] == e["scope"] for k in kept) >= cap[e["scope"]]:
+                continue
             dup = next((k for k in kept if same_event(head(k), head(e), chats)), None)
             if dup:
                 e["gate"][r] = 0.0

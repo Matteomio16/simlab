@@ -11,8 +11,9 @@ HTTP status, raw size and SHA-256 of the raw content, or the error. Sources, all
   (CC BY-SA).
 - markets, benchmark only (never assimilated): PredictIt (all markets), Kalshi and Polymarket (Senate and House
   control, every Senate race).
-- news: GDELT headlines for each pilot race and the national midterms (news.RACES queries). GDELT allows one request
-  per 5 s and often rate-limits shared IPs, so each query retries with longer waits. Google News is not used: its
+- news: GDELT headlines for each pilot race and the national midterms (news.RACES queries), the last 24 hours each run
+  so a later run fills a failed query's gap. GDELT allows one request per 5 s and often rate-limits shared IPs, so each
+  query retries with longer waits and the query order rotates each run. Google News is not used: its
   feed's terms allow only personal news readers (Matteo, 28 Sep). Media Cloud joins once its key exists.
 - pageviews: daily Wikipedia views of the pilot candidates' articles, last 10 days.
 Sources that need keys (FEC, FRED, EIA) and early-vote aggregates join once their keys and files exist. Nothing raw
@@ -151,6 +152,13 @@ def mediacloud(run: "Run", key: str) -> None:
         run.save("news", f"mediacloud-{race}", MEDIACLOUD, fetch)
 
 
+def gdelt_order(when: datetime) -> list[str]:
+    """The GDELT queries, starting one later each 3-hour slot: GDELT tends to answer a run's first query and
+    rate-limit the rest, so no race should always come last."""
+    names, k = list(NEWS), int(when.timestamp() // (3 * 3600))
+    return names[k % len(names):] + names[:k % len(names)]
+
+
 def slug(title: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
 
@@ -226,14 +234,14 @@ def snapshot(out: Path) -> dict:
     run.save("pageviews", "candidates", PAGEVIEWS, combined(
         {a: (f"{PAGEVIEWS}/{a}/daily/{end - timedelta(days=10):%Y%m%d}/{end:%Y%m%d}", {}) for a in CANDIDATES}))
     stop = time.monotonic() + GDELT_BUDGET_S   # last, and bounded: a rate-limited GDELT must not cost the whole run
-    for race, query in NEWS.items():
+    for race in gdelt_order(run.when):
         if time.monotonic() + 6 >= stop:
             run.error("news", f"gdelt-{race}", GDELT, f"skipped: GDELT's {GDELT_BUDGET_S // 60}-minute budget is used up")
             continue
         time.sleep(6)
         run.save("news", f"gdelt-{race}", GDELT, one(GDELT, {
-            "query": f"{query} sourcecountry:US sourcelang:english", "mode": "ArtList", "format": "json",
-            "maxrecords": 250, "sort": "DateDesc", "timespan": "6h"}, tries=5, wait=20.0, deadline=stop))
+            "query": f"{NEWS[race]} sourcecountry:US sourcelang:english", "mode": "ArtList", "format": "json",
+            "maxrecords": 250, "sort": "DateDesc", "timespan": "24h"}, tries=5, wait=20.0, deadline=stop))
     m = run.close()
     print(f"{sum('file' in f for f in m['files'])} of {len(m['files'])} files saved to {run.dir}")
     return m

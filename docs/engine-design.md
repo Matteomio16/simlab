@@ -31,7 +31,7 @@ If this file and CLAUDE.md disagree, CLAUDE.md wins.
 | When (UK) | Step | Owner | Reads | Writes |
 | --- | --- | --- | --- | --- |
 | every 3 h | Snapshots | Engine schedules `simlab/snap.py` (built by the Kev session) | live sources | `snapshots/…` |
-| 10:17 | 1. Polls | Statistics | snapshots | `polls.csv` |
+| 10:47 | 1. Polls | Statistics | snapshots | `polls.csv` |
 | | 2. News | Engine | snapshots | `events.jsonl` |
 | | 3. Reactions | Engine | events, personas | `reactions.jsonl` |
 | | 4. Levels and voter groups | Statistics | polls, fundamentals, surveys | `levels.json`, `groups.json` |
@@ -160,8 +160,12 @@ Kev react-v2 joins the numbers on 12 Oct only if it passes three checks on held-
 
 ## 4. The news pipeline (Engine)
 
-- **Headlines:** from the snapshots. Google News RSS per race and nationally; GDELT when it answers. They are cleaned,
-  syndicated copies are merged, and similar headlines are clustered into stories (`news.build`).
+- **Headlines:** from the snapshots: GDELT per race and nationally, the last 24 hours each run, and Media Cloud's US
+  national collection once its key is in. Google News is not used (its terms; Matteo, 28 Sep). They are cleaned,
+  syndicated copies are merged, and similar headlines are clustered into stories.
+- **The day's news** (29 Sep): every article first returned by a snapshot run that started between 09:30 UTC the day
+  before and 09:30 UTC on the day. Each run is read by one day's job, so the US daytime news that arrives after a job
+  is read by the next one, and an article a feed returns again counts only on its first day.
 - **Race tags:** a race story belongs to its race. A national story goes to every race.
 - **Jev labels** (Matteo, 28 Sep), all with outlet names removed first:
   - relevant to this race (this is the gate)
@@ -209,11 +213,12 @@ Kev react-v2 joins the numbers on 12 Oct only if it passes three checks on held-
   - Sources now: VoteHub polls; Wikipedia race pages, overview pages and the approval page, raw with revision ids;
     markets (benchmark only); news; pageviews.
   - Added later: the 2026 House page (Statistics' request), keyed sources (FEC, FRED, EIA) and early-vote files.
-- **Schedule:** GitHub Actions in the public repo runs every 3 hours at minute 17. It pushes to the private data repo
-  through a deploy key that can only write there (approved 28 Sep). Logs print nothing raw.
-- **Daily job:** 09:17 UTC (10:17 UK until 25 Oct). It runs steps 1–8, commits private outputs to
-  `simlab-data/derived/YYYY-MM-DD/`, and writes public outputs to `simlab/public/forecasts/YYYY-MM-DD/`. Public outputs
-  are only pushed from 12 Oct, after Matteo's go.
+- **Schedule:** GitHub Actions in the public repo triggers every 15 minutes and takes a snapshot when the newest one is
+  at least 150 minutes old, because GitHub drops most scheduled triggers (Kev session, 29 Sep). It pushes to the
+  private data repo through a deploy key that can only write there (approved 28 Sep). Logs print nothing raw.
+- **Daily job:** 09:47 UTC (10:47 UK until 25 Oct). It reads the snapshot runs that started before 09:30 UTC, runs
+  steps 1–8, commits private outputs to `simlab-data/derived/YYYY-MM-DD/`, and writes public outputs to
+  `simlab/public/forecasts/YYYY-MM-DD/`. Public outputs are only pushed from 12 Oct, after Matteo's go.
 - **Run record:** `derived/YYYY-MM-DD/run.json` holds the git SHA, a hash of the settings, model slugs and hosts, input
   file hashes, spend, step timings and any fallbacks used.
 - **Entry points the daily job calls, in order.** Each exits non-zero on failure, and its last stdout line is a

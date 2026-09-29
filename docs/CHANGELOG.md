@@ -2,6 +2,51 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 (Engine session): the news day, a broken spending ledger, one story counted once
+
+- **Every model call failed from the afternoon of 28 Sep.** Two programs wrote to the spending ledger
+  (`runs/spend.jsonl`) at the same moment and left a broken line. Every paid call checks the ledger first, so every
+  label failed and no story was selected. The ledger now skips a broken line. Lifetime spend is $1.67, which matches
+  the key's usage on OpenRouter.
+- **News between two daily jobs was never read.** The job read only its own day's snapshots, so news from about 09:00
+  to 18:00 UTC the day before (the US morning and early afternoon) was lost. A day's news is now every article first
+  returned by a snapshot run that started between 09:30 UTC the day before and 09:30 UTC that day, so each run is read
+  once. The statistics step uses the same cutoff for polls.
+- **GDELT rate-limits most of each run's queries.** On 28 Sep, North Carolina got nothing all day. Each query now asks
+  for the last 24 hours, so one success a day covers a race, and the query order rotates each run. Media Cloud joins
+  once its key is in.
+- **One story was selected three times** (Trump travelling to Ohio for Husted). The same-event check only looked at the
+  top 10 stories of both scopes together, and national stories pushed the copies out of it. It now checks every story
+  the selection could pick.
+- **Re-runs.** 28 Sep news was re-run on the new window (3 Texas stories). Its old reactions pointed at story ids from
+  the Google News version, so they are kept aside as `reactions_dev5_old_event_ids.jsonl`. For 29 Sep: 517 articles,
+  248 stories, 19 selected, 504 reactions from GLM, $0.05 in all.
+
+## 2026-09-29 (Kev session): react-v2 failed; Kev stays out of reactions (Matteo's rule 4 of 28 Sep)
+
+- First attempt (`react-v2`) was lost at step 420/598 when the laptop slept (container gone, no checkpoint), cost
+  $0.97. Rerun as `react-v2-2` (run names cannot be reused), same data, $2.53. Total react-v2 spend $3.50 of the $5.
+- On the 19 held-out real events, against GLM (the three checks for Kev to join the forecast):
+
+  | check | GLM | react-v1 | react-v2-2 | pass? |
+  |---|---|---|---|---|
+  | direction on 13 clear events | 13/13 | 10/13 | 11/13 | no |
+  | size-tracking (Spearman) | 0.287 | 0.00 | 0.20 | yes |
+  | error after scaling (RMSE, points) | 2.32 | 3.26 | 3.30 | |
+  | GLM + Kev averaged | | 2.61 | 2.63 | no (worse than 2.32) |
+
+  Misses: Dobbs and the 2024 assassination attempt (Kev predicts no change; also missed by react-v1), and the 2026
+  fuel spike (wrong way). Errors correlate 0.75 with GLM's, so averaging adds noise, not information.
+- Null and party-swap checks still pass: no-change 0.955/0.965 on non-events; flip correlation 0.93, all signs flip,
+  lean -0.016. Regression check on the base task: accuracy 0.865 on 417 public records.
+- Four times the events (40 clear against 11) moved size-tracking from 0.00 to 0.20 but not direction or the averaged
+  error, and a second run would not be "close" by the 28 Sep rule. Per rule 4, no further reaction runs before the
+  election; GLM stays the only reaction model. This agrees with Matteo's 29 Sep
+  call in CLAUDE.md (recorded at 10:42, after this run had finished): no Kev shadow mode and no Kev serving (B4) unless
+  he reopens it.
+- Files: `kev-finetune/runs/react-v2-2/`, `runs/{events,mirror,null}__kev-react-v2-2.jsonl`; data, reports and both
+  console logs backed up to simlab-data `kev/react-v2/`.
+
 ## 2026-09-29 (Statistics session): news fades fast (5.5-day half-life for every story)
 
 - **Matteo, 29 Sep:** news fades more than the 10-day curve. A long story goes from 100% to about 45% within a week,

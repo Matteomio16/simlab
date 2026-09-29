@@ -41,9 +41,9 @@ jobs:
             /README.md
             /derived/
           sparse-checkout-cone-mode: false
-      - name: The day's snapshots
+      - name: The day's snapshots (its news window starts the day before; repeats are looked up 2 days back)
         working-directory: data-repo
-        run: git sparse-checkout add "/snapshots/${DAY}/"
+        run: git sparse-checkout add $(for k in 2 1 0; do echo "/snapshots/$(date -u -d "$DAY -$k day" +%F)/"; done)
       - uses: astral-sh/setup-uv@v6
       - run: uv sync --frozen
       - uses: actions/cache@v4

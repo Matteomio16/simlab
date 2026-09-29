@@ -81,18 +81,25 @@ class Ledger:
     _total: float | None = None  # read from the file once per process, then kept in memory
 
     @classmethod
+    def _entries(cls) -> list[dict]:
+        """Every readable line. Processes appending at once on Windows can leave a broken one (28 Sep: a lone "}")."""
+        out = []
+        for line in cls.path.read_text().splitlines() if cls.path.exists() else []:
+            try:
+                out.append(json.loads(line))
+            except ValueError:
+                continue
+        return out
+
+    @classmethod
     def total(cls) -> float:
         if cls._total is None:
-            cls._total = sum(json.loads(l)["usd"] for l in cls.path.read_text().splitlines()
-                             if l.strip()) if cls.path.exists() else 0.0
+            cls._total = sum(e["usd"] for e in cls._entries())
         return cls._total
 
     @classmethod
     def spent(cls, tag: str, since: float = 0.0) -> float:
-        if not cls.path.exists():
-            return 0.0
-        return sum(e["usd"] for e in map(json.loads, cls.path.read_text().splitlines())
-                   if e["tag"] == tag and e["ts"] >= since)
+        return sum(e["usd"] for e in cls._entries() if e["tag"] == tag and e["ts"] >= since)
 
     @classmethod
     def check(cls):

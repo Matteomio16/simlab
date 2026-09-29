@@ -15,6 +15,8 @@ def gdelt(*arts) -> str:
 OHIO = gdelt(("Brown and Husted clash over tariffs", "20260928T080000Z", "cleveland.com"),
              ("Crypto PAC to spend $30M against Sherrod Brown", "20260928T070000Z", "politico.com"))
 TEXAS = gdelt(("Talarico , Paxton trade attacks", "20260928T090000Z", "example.com"))
+# the next day's coverage of the same stories: new articles, so new links
+OHIO_NEXT_DAY = OHIO.replace("20260928", "20260929").replace("https://", "https://m.")
 
 
 def snapshot(root: Path, day: str, hhmm: str, files: dict) -> None:
@@ -62,6 +64,28 @@ class ReadDay(unittest.TestCase):
 
     def test_bad_gdelt_json_is_skipped(self):
         self.assertEqual(newsday.parse_gdelt(b'{"articles": [ {bad', "TX"), [])
+
+    def test_a_run_from_the_cutoff_on_is_the_next_days_news(self):
+        # the daily job runs at 09:47 UTC; a snapshot run that starts at 09:30 or later is read by the next day's job
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            snapshot(root, "2026-09-28", "1423", {"gdelt-texas": TEXAS})
+            self.assertEqual(newsday.read_day(root, date(2026, 9, 28)), [])
+            self.assertEqual([a["race_id"] for a in newsday.read_day(root, date(2026, 9, 29))], ["TX"])
+
+    def test_an_article_read_on_an_earlier_day_is_not_read_again(self):
+        # GDELT's 24-hour window returns articles again: only the first run that returned one counts, up to 2 days back
+        first = gdelt(("Crypto PAC to spend $30M against Sherrod Brown", "20260927T220000Z", "politico.com"))
+        later = gdelt(("Crypto PAC to spend $30M against Sherrod Brown", "20260927T220000Z", "politico.com"),
+                      ("Husted releases new ad on crime", "20260928T150000Z", "dispatch.com"))
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            snapshot(root, "2026-09-27", "2300", {"gdelt-ohio": first})
+            snapshot(root, "2026-09-28", "2045", {"gdelt-ohio": later})
+            day28 = [a["title"] for a in newsday.read_day(root, date(2026, 9, 28))]
+            day29 = [a["title"] for a in newsday.read_day(root, date(2026, 9, 29))]
+        self.assertEqual(day28, ["Crypto PAC to spend $30M against Sherrod Brown"])
+        self.assertEqual(day29, ["Husted releases new ad on crime"])
 
     def test_headlines_under_four_words_are_dropped(self):
         stub = OHIO.replace("Brown and Husted clash over tariffs", "GOP-ABC News")
@@ -254,6 +278,29 @@ class Scopes(unittest.TestCase):
         self.assertEqual(evs[2]["gate"]["OH-S"], 0.9)
         self.assertEqual(chat.calls, 2)
 
+    def test_every_story_select_could_pick_is_checked(self):
+        # 29 Sep: national stories filled Ohio's top 10, so two lower copies of one Ohio story were never checked and
+        # all three were selected
+        class Judge(FakeChat):  # "same" when both headlines are about Trump coming to Ohio
+            def complete(self, messages, tag="", max_tokens=300, json_mode=True):
+                self.calls += 1
+                return '{"same": %s}' % str(messages[1]["content"].count("Ohio") == 2).lower()
+
+        def ev(eid, scope, a):
+            return {"event_id": eid, "scope": scope, "gate": {"OH-S": 0.9}, "type": "other", "salience": 1.0,
+                    "attention": {"a": a}, "first_seen": "2026-09-28T07:00:00+00:00"}
+        evs = [ev(f"US-{i}", "national", 0.9 - i / 100) for i in range(10)]
+        evs += [ev("OH-S-1", "race", 0.66), ev("OH-S-2", "race", 0.21), ev("OH-S-3", "race", 0.2)]
+        stories = {e["event_id"]: {"titles": [f"National story number {e['event_id']}"], "outlet_names": []} for e in evs}
+        stories["OH-S-1"]["titles"] = ["Trump to travel to Ohio to stump for Husted"]
+        stories["OH-S-2"]["titles"] = ["Why Trump plans to come to Ohio and where he will speak"]
+        stories["OH-S-3"]["titles"] = ["Brown visits Mahoning Valley farms"]
+        newsday.merge_same_events(evs, stories, [Judge([])])
+        newsday.select(evs)
+        self.assertEqual([e["event_id"] for e in evs if e["selected"].get("OH-S") and e["scope"] == "race"],
+                         ["OH-S-1", "OH-S-3"])
+        self.assertEqual(evs[11]["same_as"], {"OH-S": "OH-S-1"})
+
     def test_stories_without_a_usable_card_are_never_selected(self):
         evs = [{"event_id": "OH-S-1", "scope": "race", "gate": {"OH-S": 0.9}, "type": "other", "salience": 1.0,
                 "attention": {"a": 0.9}, "usable": False},
@@ -294,7 +341,7 @@ class Run(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
             snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
-            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO.replace("20260928", "20260929")})
+            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO_NEXT_DAY})
             chat = FakeChat(['{"card": "%s"}' % GOOD] * 10)
             newsday.run(date(2026, 9, 28), snap, derived, "d1", Flaky(), [chat])
             day1 = {e["event_id"]: e for e in newsday._jsonl(derived / "2026-09-28" / "events.jsonl")}
@@ -337,7 +384,7 @@ class Run(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
             snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
-            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO.replace("20260928", "20260929")})
+            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO_NEXT_DAY})
             newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [FakeChat(['{"card": "%s"}' % GOOD] * 5)])
             p = derived / "2026-09-28" / "events.jsonl"
             bad = "Republicans are facing negative effects in the midterm elections."
@@ -352,7 +399,7 @@ class Run(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
             snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
-            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO.replace("20260928", "20260929")})
+            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO_NEXT_DAY})
             chat = FakeChat(['{"card": "%s"}' % GOOD] * 10)
             newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [chat])
             asker2 = FakeAsker()
