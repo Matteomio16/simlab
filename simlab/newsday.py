@@ -320,10 +320,15 @@ CARD_SYSTEM = (
     "say or imply who the news helps or hurts, or its effect on voters, parties, candidates' chances or the election; "
     "readers judge that themselves. Do not name any news outlet or website. Do not use the words poll, polls, polling, "
     "pollster, survey or surveys. No opinions and no predictions. "
+    "State what happened as plain fact: never mention the headlines, the reporting or the coverage itself. "
     "If the headlines do not report a specific news event (for example a news round-up, a TV listing, a schedule, "
     "nothing beyond the race itself, or analysis and commentary about who is winning, losing, helped or hurt), reply "
     '{"card": "", "event": false}. Otherwise reply with JSON only: {"card": "...", "event": true}')
 FORBIDDEN = re.compile(r"\b(poll|polls|polling|pollsters?|surveys?)\b", re.I)
+META = re.compile(r"\b(headlines?|the reporting)\b", re.I)  # 29 Sep: "..., according to the headline."
+# A story whose main headline is about a poll is a poll story whatever Jev says (29 Sep: an approval-rating story typed
+# as national news; 2 of the 9 spot-check headlines naming a poll typed as something else).
+POLLISH = re.compile(r"\b(polls?|polling|pollsters?|surveys?|approval ratings?|forecasts?)\b", re.I)
 # A sentence that pairs an effect word with a party or election word asserts an electoral effect (28 Sep: a card said
 # Republicans "are facing negative effects in the 2026 midterm elections").
 EFFECT = re.compile(r"\b(help(s|ed|ing)?|hurt(s|ing)?|boost(s|ed|ing)?|drag(s|ged|ging)?|benefit(s|ed|ing)?|"
@@ -336,7 +341,7 @@ ELECTORAL = re.compile(r"\b(republicans?|democrats?|gop|part(y|ies)|midterms?|el
 def card_ok(card: str, outlet_names: list[str]) -> bool:
     low = card.lower()
     claims_effect = any(EFFECT.search(s) and ELECTORAL.search(s) for s in re.split(r"(?<=[.!?])\s+", card))
-    return (0 < len(card) <= 450 and not FORBIDDEN.search(card) and not claims_effect
+    return (0 < len(card) <= 450 and not FORBIDDEN.search(card) and not META.search(card) and not claims_effect
             and not any(n.lower() in low for n in outlet_names if len(n) >= 3))
 
 
@@ -522,6 +527,8 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         if k:
             carried.add(s["event_id"])
         labels = fresh_labels.get(s["event_id"]) or {f: k[f] for f in LABEL_FIELDS}
+        if POLLISH.search(s["title"]) or POLLISH.search(s["titles"][0]):
+            labels = {**labels, "type": "poll"}
         national = s["race_id"] == "US"
         events.append({"schema": SCHEMA, "date": f"{day}", "run_id": run_id, "event_id": s["event_id"],
                        "first_seen": s["first_seen"], "last_seen": s["last_seen"],

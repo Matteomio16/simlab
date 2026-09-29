@@ -231,6 +231,12 @@ class Cards(unittest.TestCase):
     def test_no_valid_card_gives_empty(self):
         self.assertEqual(newsday.write_card(self.story, [FakeChat(["not json", "{}"])]), "")
 
+    def test_a_card_never_mentions_the_headlines_or_the_reporting(self):
+        # 29 Sep: 4 of 24 cards said "according to the headline(s)" or "according to the reporting"
+        self.assertFalse(newsday.card_ok("Trump's approval fell to a record low, according to the headline.", []))
+        self.assertFalse(newsday.card_ok("The push has spared farms so far, according to the reporting.", []))
+        self.assertTrue(newsday.card_ok("The governor's office said the steel plant will open in May.", []))
+
     def test_cards_that_claim_an_electoral_effect_are_rejected(self):
         bad = ["Republicans are facing negative effects in the 2026 midterm elections due to a conflict between "
                "President Trump and Iran.",
@@ -329,6 +335,21 @@ class Run(unittest.TestCase):
             self.assertNotIn("titles", e)
         self.assertEqual({p["event_id"] for p in private}, {e["event_id"] for e in events})
         self.assertTrue(all(e["card"] for e in events if e["selected"]))
+
+    def test_a_story_whose_headline_is_about_a_poll_is_a_poll_story(self):
+        # 29 Sep: Jev typed "Trump's approval rating falls to record low" as national news, and 2 of the 9 spot-check
+        # headlines that name a poll as something else; poll stories must never get reactions
+        raw = gdelt(("Trump approval rating falls to a record low in new survey", "20260928T080000Z", "a.com"),
+                    ("Brown and Husted clash over tariffs", "20260928T080000Z", "cleveland.com"))
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": raw})
+            newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [FakeChat(['{"card": "%s"}' % GOOD] * 5)])
+            events = newsday._jsonl(derived / "2026-09-28" / "events.jsonl")
+            private = {p["event_id"]: p for p in newsday._jsonl(derived / "2026-09-28" / "news_private.jsonl")}
+        types = {private[e["event_id"]]["titles"][0][:16]: (e["type"], e["selected"]) for e in events}
+        self.assertEqual(types["Trump approval r"], ("poll", {}))
+        self.assertNotEqual(types["Brown and Husted"][0], "poll")
 
     def test_a_failing_label_call_skips_that_story_and_is_retried_next_day(self):
         class Flaky(FakeAsker):
