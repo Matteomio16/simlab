@@ -1,13 +1,14 @@
 # Every 3 hours: raw snapshots of live sources (simlab/snap.py) into the private data repo.
-# GitHub drops scheduled runs under load (3 of the first 4 slots on 28 Sep), so the trigger fires hourly and a
-# scheduled run only proceeds when the newest snapshot is at least 150 minutes old; manual runs always proceed.
+# GitHub drops most scheduled triggers (3 of the first 4 three-hourly slots on 28 Sep; then only 3 of ~17 hourly ones),
+# so the trigger fires every 15 minutes and a scheduled run only proceeds when the newest snapshot is at least 150
+# minutes old; manual runs always proceed.
 # The deploy key in SIMLAB_DATA_DEPLOY_KEY can write to Matteomio16/simlab-data only. Logs are public: the script
 # prints sizes and errors, never data.
 name: snapshot
 
 on:
   schedule:
-    - cron: "41 * * * *"
+    - cron: "7,22,37,52 * * * *"
   workflow_dispatch:
 
 concurrency:
