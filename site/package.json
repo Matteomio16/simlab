@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build && node scripts/postbuild.mjs",
+    "dev": "node scripts/stage-data.mjs && next dev",
+    "build": "node scripts/stage-data.mjs && next build && node scripts/postbuild.mjs",
     "sample": "node scripts/sample-data.mjs",
     "labnote": "node scripts/import-labnote.mjs",
     "lint:copy": "node scripts/check-copy.mjs"

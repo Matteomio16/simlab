@@ -17,9 +17,10 @@ export function Logomark({ size = 28 }: { size?: number }) {
   );
 }
 
+// The locked wordmark (publishing.md): "NotAPoll" in IBM Plex Sans 700, ".org" in the simulation purple.
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
-    <span className={`font-sans font-bold tracking-[-0.01em] ${className}`}>
+    <span className={`font-brand font-bold tracking-[-0.01em] ${className}`}>
       NotAPoll<span className="text-sim">.org</span>
     </span>
   );
@@ -29,7 +30,7 @@ export function Lockup() {
   return (
     <Link href="/" className="flex items-center gap-2.5 text-ink" aria-label="NotAPoll.org home">
       <Logomark size={26} />
-      <Wordmark className="text-[1.15rem]" />
+      <Wordmark className="text-[1.2rem]" />
     </Link>
   );
 }
@@ -44,14 +45,14 @@ export function SwingBand({ className = "h-1" }: { className?: string }) {
   );
 }
 
-// The label every view with a number carries (publishing.md): the swing band over the indigo strip.
+// The label every view with a number carries (publishing.md): the swing band over a navy strip.
 export function SimLabel({ date, sample = false }: { date?: string; sample?: boolean }) {
   return (
-    <div className="overflow-hidden rounded-sm">
+    <div>
       <SwingBand className="h-[3px]" />
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 bg-strip px-3 py-1.5 font-mono text-[0.68rem] uppercase tracking-[0.1em] text-strip-fg">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 bg-navy px-3 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.08em] text-navy-fg">
         <span>Social simulation, not a poll</span>
-        <span className="opacity-80">
+        <span className="font-semibold opacity-80">
           {sample ? "Sample data · " : ""}
           {date}
         </span>

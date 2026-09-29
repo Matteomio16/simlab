@@ -27,6 +27,14 @@ export function load() {
   return cache;
 }
 
+// Race metadata only (states, candidates, parties): public facts, safe to show before launch.
+export function loadRaceMeta(): Record<string, RaceMeta> {
+  const file = read<Record<string, unknown>>("races");
+  const out: Record<string, RaceMeta> = {};
+  for (const [k, v] of Object.entries(file)) if (v && typeof v === "object") out[k] = v as RaceMeta;
+  return out;
+}
+
 export function raceSlug(id: string, meta: RaceMeta) {
   const name = (STATES[meta.state] ?? meta.state).toLowerCase().replace(/\s+/g, "-");
   if (meta.office === "house") return `${name}-${meta.district ?? "at-large"}`;

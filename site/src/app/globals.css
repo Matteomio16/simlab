@@ -1,157 +1,210 @@
 @import "tailwindcss";
 
-/* Lab Notebook tokens from the post kit (simlab/publish/themes.py LAB); dark mode uses The Map edition (MAP). */
+/* Party colours and the simulation purple come from the post kit (simlab/publish/themes.py); the page itself follows
+   American newsroom and institutional practice: white paper, near-black ink, hairline and heavy rules, no cards. */
 :root {
-  --paper: #f7f7f2;
-  --paper-raised: #fbfbf8;
-  --ink: #1c2a4a;
-  --ink-2: #4a5670;
-  --muted: #7e879a;
-  --hairline: #e1dfec;
-  --baseline: #b9c3cf;
+  --paper: #ffffff;
+  --paper-2: #f6f6f3;
+  --ink: #121417;
+  --ink-2: #3d434c;
+  --muted: #6b7280;
+  --rule: #dcdcd7;
+  --rule-strong: #121417;
+  --axis: #9ca3af;
+  --navy: #14213d;
+  --navy-fg: #e9ecf3;
   --dem: #2f6db5;
   --rep: #d1432f;
   --ind: #7e879a;
   --sim: #6d2e8c;
-  --tossup: #eee6f7;
-  --highlight: #e6daf3;
-  --strip: #2a2152;
-  --strip-fg: #f7f7f2;
-  --dem-soft: #dde8f5;
-  --rep-soft: #f7e0dc;
-  --grid: rgba(109, 46, 140, 0.055);
+  --tossup: #efe8f6;
+  --tossup-tile: #d9c4ec;
+  --dem-1: #1f4f8f;
+  --dem-2: #2f6db5;
+  --dem-3: #7fa6d6;
+  --dem-4: #c9d9ee;
+  --rep-1: #a32d1d;
+  --rep-2: #d1432f;
+  --rep-3: #e8917f;
+  --rep-4: #f5d2ca;
+  --ind-1: #5b6475;
+  --ind-2: #8a93a5;
+  --ind-3: #c4c9d3;
+  --tile-empty: #eeeeea;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #0f1424;
-    --paper-raised: #141a2d;
-    --ink: #f2f1ec;
-    --ink-2: #b7b9c4;
-    --muted: #7d8194;
-    --hairline: #232a40;
-    --baseline: #3a4260;
+    --paper: #0e1320;
+    --paper-2: #151b2b;
+    --ink: #eef0f4;
+    --ink-2: #c1c6d0;
+    --muted: #8990a0;
+    --rule: #2a3246;
+    --rule-strong: #eef0f4;
+    --axis: #4a5470;
+    --navy: #060a14;
+    --navy-fg: #c9d0de;
     --dem: #4f8ff7;
     --rep: #f0554a;
-    --ind: #7d8194;
-    --sim: #9e4fc4;
-    --tossup: #251d3d;
-    --highlight: #33264f;
-    --strip: #1b1537;
-    --strip-fg: #f2f1ec;
-    --dem-soft: #17264a;
-    --rep-soft: #3a1c22;
-    --grid: rgba(158, 79, 196, 0.07);
+    --ind: #8a93a5;
+    --sim: #b27ad6;
+    --tossup: #2a2140;
+    --tossup-tile: #4b3470;
+    --dem-1: #3f7fe6;
+    --dem-2: #2f5fa8;
+    --dem-3: #1f3a66;
+    --dem-4: #1c3358;
+    --rep-1: #e8483c;
+    --rep-2: #b4382e;
+    --rep-3: #5c2426;
+    --rep-4: #4d2226;
+    --ind-1: #8a93a5;
+    --ind-2: #5b6475;
+    --ind-3: #353c4b;
+    --tile-empty: #1a2133;
     color-scheme: dark;
   }
 }
 
 @theme inline {
   --color-paper: var(--paper);
-  --color-raised: var(--paper-raised);
+  --color-paper-2: var(--paper-2);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-muted: var(--muted);
-  --color-hairline: var(--hairline);
-  --color-baseline: var(--baseline);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-navy: var(--navy);
+  --color-navy-fg: var(--navy-fg);
   --color-dem: var(--dem);
   --color-rep: var(--rep);
   --color-ind: var(--ind);
   --color-sim: var(--sim);
   --color-tossup: var(--tossup);
-  --color-highlight: var(--highlight);
-  --color-strip: var(--strip);
-  --color-strip-fg: var(--strip-fg);
-  --color-dem-soft: var(--dem-soft);
-  --color-rep-soft: var(--rep-soft);
-  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
-  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-sans: var(--font-franklin), "Franklin Gothic", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-brand: var(--font-plex-sans), var(--font-franklin), sans-serif;
 }
 
 html {
   background: var(--paper);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background-color: var(--paper);
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 24px 24px;
-  font-feature-settings: "tnum" 1;
+  background: var(--paper);
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 ::selection {
-  background: var(--highlight);
+  background: var(--tossup);
 }
 
-.kicker {
-  font-family: var(--font-mono);
+/* Section label: small caps in the text face, as in newsroom graphics. */
+.label {
+  font-family: var(--font-sans);
   font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.label-muted {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-.hl {
-  background: linear-gradient(transparent 55%, var(--highlight) 55%);
-  padding: 0 0.12em;
+/* A section opens on a heavy rule, a label and a headline. */
+.section-rule {
+  border-top: 3px solid var(--rule-strong);
+  padding-top: 0.75rem;
 }
 
-.prose-lab p,
-.prose-lab li {
-  color: var(--ink-2);
-  line-height: 1.7;
+.note {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted);
 }
-.prose-lab p + p {
+
+.prose-np {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.prose-np p + p {
   margin-top: 1em;
 }
-.prose-lab h2 {
-  font-family: var(--font-serif);
-  font-size: 1.6rem;
+.prose-np h2 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1.5rem;
   line-height: 1.2;
-  color: var(--ink);
-  margin: 2.5rem 0 0.75rem;
+  letter-spacing: -0.01em;
+  border-top: 3px solid var(--rule-strong);
+  padding-top: 0.75rem;
+  margin: 3rem 0 1rem;
 }
-.prose-lab h3 {
-  font-weight: 600;
-  color: var(--ink);
-  margin: 1.75rem 0 0.5rem;
+.prose-np h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin: 2rem 0 0.5rem;
 }
-.prose-lab ul {
+.prose-np ul {
   list-style: disc;
   padding-left: 1.25rem;
   margin: 0.75rem 0;
 }
-.prose-lab ol {
+.prose-np ol {
   list-style: decimal;
-  padding-left: 1.25rem;
+  padding-left: 1.4rem;
   margin: 0.75rem 0;
 }
-.prose-lab li + li {
-  margin-top: 0.35em;
+.prose-np li + li {
+  margin-top: 0.4em;
 }
-.prose-lab a {
-  color: var(--sim);
+.prose-np li::marker {
+  color: var(--muted);
+}
+.prose-np a {
+  color: var(--ink);
   text-decoration: underline;
+  text-decoration-color: var(--sim);
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
 }
-.prose-lab strong {
-  color: var(--ink);
+.prose-np strong {
   font-weight: 600;
 }
-.prose-lab code {
-  font-family: var(--font-mono);
-  font-size: 0.85em;
+.prose-np code {
+  font-family: var(--font-sans);
+  font-size: 0.9em;
+  background: var(--paper-2);
+  padding: 0 0.2em;
+}
+
+a.link {
+  text-decoration: underline;
+  text-decoration-color: var(--sim);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+a.link:hover {
+  color: var(--sim);
 }
 
 @media (prefers-reduced-motion: reduce) {
   * {
-    animation: none !important;
     transition: none !important;
   }
 }

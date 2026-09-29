@@ -1,56 +1,47 @@
 import Link from "next/link";
 import { SITE } from "@/lib/site";
-import { Logomark, SwingBand, Wordmark } from "./Brand";
+import { SwingBand, Wordmark } from "./Brand";
 
 export default function Footer() {
   const social = SITE.social.filter((s) => s.live);
   return (
-    <footer className="mt-24">
+    <footer className="mt-28">
       <SwingBand className="h-[3px]" />
-      <div className="bg-strip text-strip-fg">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="bg-navy text-navy-fg">
+        <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-12 text-sm sm:px-6 md:grid-cols-[2fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-2.5">
-              <Logomark size={24} />
-              <Wordmark className="text-lg" />
-            </div>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed opacity-80">
-              A social simulation of the 2026 US midterms. Synthetic voters, simulated elections, every number beside
-              the poll average, the market and Cook.
+            <Wordmark className="text-lg text-white" />
+            <p className="mt-3 max-w-md leading-relaxed">
+              A forecast of the 2026 US midterms built by social simulation. Synthetic voters and simulated elections;
+              every number beside the poll average, the prediction market and the Cook Political Report.
             </p>
-            <p className="mt-6 font-mono text-[0.7rem] uppercase tracking-[0.1em] opacity-70">{SITE.label}</p>
           </div>
-          <div className="text-sm">
-            <p className="font-mono text-[0.7rem] uppercase tracking-[0.1em] opacity-60">Read</p>
-            <ul className="mt-3 space-y-2 opacity-90">
-              <li><Link href="/methods" className="hover:underline">Methods</Link></li>
-              <li><Link href="/lab-notes" className="hover:underline">Lab notes</Link></li>
-              <li><Link href="/about" className="hover:underline">About</Link></li>
+          <div>
+            <p className="font-bold uppercase tracking-[0.07em] text-[0.7rem] text-white">Project</p>
+            <ul className="mt-3 space-y-2">
+              <li><Link href="/methods" className="hover:text-white">Methods</Link></li>
+              <li><Link href="/lab-notes" className="hover:text-white">Lab notes</Link></li>
+              <li><Link href="/about" className="hover:text-white">About and contact</Link></li>
             </ul>
           </div>
-          <div className="text-sm">
-            <p className="font-mono text-[0.7rem] uppercase tracking-[0.1em] opacity-60">Follow</p>
-            <ul className="mt-3 space-y-2 opacity-90">
+          <div>
+            <p className="font-bold uppercase tracking-[0.07em] text-[0.7rem] text-white">Follow</p>
+            <ul className="mt-3 space-y-2">
               {social.length === 0 && <li className="opacity-70">Accounts open soon</li>}
               {social.map((s) => (
                 <li key={s.name}>
-                  <a href={s.url} rel="noopener" target="_blank" className="hover:underline">
-                    {s.name} <span className="opacity-60">{s.handle}</span>
-                  </a>
+                  <a href={s.url} rel="noopener" target="_blank" className="hover:text-white">{s.name} <span className="opacity-60">{s.handle}</span></a>
                 </li>
               ))}
             </ul>
           </div>
         </div>
         <div className="border-t border-white/10">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-xs opacity-75 sm:px-6">
+          <div className="mx-auto flex max-w-[1200px] flex-wrap justify-between gap-3 px-4 py-5 text-xs opacity-80 sm:px-6">
             <span>
-              By{" "}
-              <a href={SITE.studio.url} className="underline underline-offset-2 hover:opacity-100">
-                {SITE.studio.name}
-              </a>
+              A project by <a href={SITE.studio.url} className="underline underline-offset-2 hover:text-white">{SITE.studio.name}</a>. Independent; not affiliated with any campaign or party.
             </span>
-            <span>Poll data from Wikipedia under CC BY-SA 4.0. Not affiliated with any campaign or party.</span>
+            <span>Poll data from Wikipedia, CC BY-SA 4.0.</span>
           </div>
         </div>
       </div>

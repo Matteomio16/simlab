@@ -4,7 +4,7 @@ import { partyVar } from "@/lib/format";
 
 // Hand-drawn SVG charts, rendered at build time. Colours are CSS tokens, so every chart follows light and dark mode.
 
-const MONO = { fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.06em" } as const;
+const MONO = { fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, letterSpacing: "0.03em" } as const;
 
 export function ProbBar({ p, left, height = 8 }: { p: number; left: Party; height?: number }) {
   const pct = Math.max(0, Math.min(100, p * 100));
@@ -39,8 +39,8 @@ export function DotPlot({ draws, left, leftName, rightName, w = 640 }: { draws: 
     <figure>
       <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img"
         aria-label={`${leftName} wins ${leftWins} and ${rightName} wins ${draws.length - leftWins} of ${draws.length} simulated elections shown.`}>
-        <line x1={x(0)} x2={x(0)} y1={pad.t} y2={H - pad.b} stroke="var(--baseline)" strokeDasharray="2 3" />
-        <line x1={pad.l} x2={W - pad.r} y1={H - pad.b} y2={H - pad.b} stroke="var(--baseline)" />
+        <line x1={x(0)} x2={x(0)} y1={pad.t} y2={H - pad.b} stroke="var(--axis)" strokeDasharray="2 3" />
+        <line x1={pad.l} x2={W - pad.r} y1={H - pad.b} y2={H - pad.b} stroke="var(--axis)" />
         {dots.map((d, i) => (
           <circle key={i} cx={d.cx} cy={d.cy} r={r} fill={d.m > 0 ? partyVar(left) : d.m < 0 ? "var(--rep)" : "var(--sim)"} />
         ))}
@@ -71,7 +71,7 @@ export function MarginRanges({ rows, left, w = 640 }: { rows: RangeRow[]; left: 
     <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="Margin ranges beside the poll average">
       {ticks.map((t) => (
         <g key={t}>
-          <line x1={x(t)} x2={x(t)} y1={pad.t} y2={H - pad.b} stroke={t === 0 ? "var(--baseline)" : "var(--hairline)"} strokeDasharray={t === 0 ? "" : "2 3"} />
+          <line x1={x(t)} x2={x(t)} y1={pad.t} y2={H - pad.b} stroke={t === 0 ? "var(--axis)" : "var(--rule)"} strokeDasharray={t === 0 ? "" : "2 3"} />
           <text x={x(t)} y={H - 8} textAnchor="middle" fill="var(--muted)" style={MONO}>
             {t === 0 ? "TIE" : `${t > 0 ? left : "R"}+${Math.abs(t)}`}
           </text>
@@ -121,7 +121,7 @@ export function SeatHistogram({ dist, w = 640 }: { dist: Record<string, number>;
       ))}
       <line x1={x(50) - 0.5} x2={x(50) - 0.5} y1={pad.t - 12} y2={H - pad.b} stroke="var(--sim)" strokeWidth={1.5} />
       <text x={x(50) + 4} y={pad.t - 4} fill="var(--sim)" style={MONO}>50 SEATS</text>
-      <line x1={pad.l} x2={W - pad.r} y1={H - pad.b} y2={H - pad.b} stroke="var(--baseline)" />
+      <line x1={pad.l} x2={W - pad.r} y1={H - pad.b} y2={H - pad.b} stroke="var(--axis)" />
       {Array.from({ length: n }, (_, i) => lo + i).filter((k) => k % (W < 480 ? 4 : 2) === 0).map((k) => (
         <text key={k} x={x(k) + bw / 2} y={H - 12} textAnchor="middle" fill="var(--muted)" style={MONO}>{k}</text>
       ))}
@@ -144,7 +144,7 @@ export function HistoryLine({ points, label, w = 640 }: { points: { date: string
       <rect x={pad.l} y={y(0.65)} width={W - pad.l - pad.r} height={y(0.35) - y(0.65)} fill="var(--tossup)" />
       {[0, 0.5, 1].map((p) => (
         <g key={p}>
-          <line x1={pad.l} x2={W - pad.r} y1={y(p)} y2={y(p)} stroke={p === 0.5 ? "var(--baseline)" : "var(--hairline)"} />
+          <line x1={pad.l} x2={W - pad.r} y1={y(p)} y2={y(p)} stroke={p === 0.5 ? "var(--axis)" : "var(--rule)"} />
           <text x={pad.l - 6} y={y(p) + 3} textAnchor="end" fill="var(--muted)" style={MONO}>{p * 100}</text>
         </g>
       ))}

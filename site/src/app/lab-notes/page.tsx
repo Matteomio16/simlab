@@ -10,33 +10,34 @@ export const metadata: Metadata = {
 export default function LabNotes() {
   const notes = allNotes();
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-12 sm:px-6 sm:pt-16">
-      <p className="kicker">Lab notes</p>
-      <h1 className="mt-3 font-serif text-4xl text-ink sm:text-5xl">The making-of, as it happens</h1>
-      <p className="mt-4 max-w-2xl text-lg text-ink-2">
-        What we tested, what failed and what we changed, published as we go. The same notes run on Instagram, Threads,
-        X and Bluesky.
+    <div className="mx-auto max-w-[1200px] px-4 pt-10 sm:px-6 sm:pt-12">
+      <p className="label">Lab notes</p>
+      <h1 className="mt-3 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
+        The making-of, published as we go
+      </h1>
+      <p className="mt-4 max-w-2xl font-serif text-[1.2rem] leading-relaxed text-ink-2">
+        What we tested, what failed and what we changed. The same notes run on Instagram, Threads, X and Bluesky.
       </p>
-      {notes.length === 0 ? (
-        <p className="mt-12 text-ink-2">The first Lab note comes out on Saturday 3 October.</p>
-      ) : (
-        <ul className="mt-12 divide-y divide-hairline border-y border-hairline">
-          {notes.map((n) => (
-            <li key={n.n}>
-              <Link href={`/lab-notes/${n.n}`} className="group flex items-center gap-6 py-6">
-                {n.slides[0] && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={`/labnotes/${n.n}/${n.slides[0].file}`} alt="" className="hidden w-24 rounded-sm border border-hairline sm:block" />
-                )}
-                <div>
-                  <p className="kicker">Lab notes {n.n}{n.date ? ` · ${n.date}` : ""}</p>
-                  <p className="mt-1 font-serif text-2xl text-ink group-hover:underline">{n.title}</p>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className="mt-8 border-t-[3px] border-rule-strong">
+        {notes.length === 0 ? (
+          <p className="pt-6 text-ink-2">The first note comes out on Saturday, October 3.</p>
+        ) : (
+          <ul>
+            {notes.map((n) => (
+              <li key={n.n} className="border-b border-rule">
+                <Link href={`/lab-notes/${n.n}`} className="group grid gap-4 py-5 sm:grid-cols-[120px_1fr_96px] sm:items-center">
+                  <span className="label-muted">Note {n.n}{n.date ? ` · ${n.date}` : ""}</span>
+                  <span className="text-xl font-bold tracking-[-0.01em] group-hover:underline">{n.title}</span>
+                  {n.slides[0] && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={`/labnotes/${n.n}/${n.slides[0].file}`} alt="" className="hidden w-24 border border-rule sm:block" />
+                  )}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

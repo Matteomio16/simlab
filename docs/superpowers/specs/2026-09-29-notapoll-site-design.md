@@ -28,6 +28,19 @@ Approved by Matteo, 29 Sep 2026 (website session).
 - **Methods text:** drafted from `docs/engine-design.md` and `docs/stats-groundwork.md`; Matteo reviews before 3 Oct,
   C7 review on 10 Oct.
 
+## Redesign (Matteo, 29 Sep afternoon)
+The first build read as generic. The site now follows American newsroom and institutional practice:
+- **Type:** Libre Franklin (Franklin Gothic family: US newspapers and ballots) for headings, data and interface; Source
+  Serif 4 for reading text. No mono labels. IBM Plex Sans 700 only for the locked wordmark.
+- **Layout:** white paper, navy masthead strip, heavy rules opening each section, hairline tables; no cards, pills,
+  glows or background textures.
+- **Home, 3 Oct:** "The forecast begins October 12", a tile map of the 35 seats by current holder, how it works, the
+  list of races and candidates, Lab notes.
+- **Home, 12 Oct:** verbal headline ("Republicans are slight favorites to keep the Senate"), the three control odds
+  with 100 squares (FiftyPlusOne), seat distribution and benchmarks, a tile map switchable between our simulation,
+  Cook and the markets, a national-swing simulator that recounts the 1,000 stored draws in the browser (Poliwave), the
+  race table, the stories that moved races.
+
 ## Rules the site keeps (from publishing.md and CLAUDE.md)
 - "Social simulation, not a poll" and the swing band on every view with a number.
 - Our number always beside the poll average, the market and Cook. 35–65% is a toss-up.

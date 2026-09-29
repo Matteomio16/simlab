@@ -5,3 +5,5 @@ out/
 .wrangler/
 next-env.d.ts
 *.tsbuildinfo
+public/data/forecast.json
+public/data/draws.json

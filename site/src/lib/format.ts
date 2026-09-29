@@ -43,3 +43,37 @@ export function longDate(iso: string) {
 export function daysTo(iso: string, target = "2026-11-03") {
   return Math.round((Date.parse(target) - Date.parse(iso)) / 86400000);
 }
+
+// Seven-tier colour for a race: safe, likely, lean for each side, and toss-up (purple, the simulation's own colour).
+export function tierColor(p: number, leftParty: Party): { fill: string; ink: string; name: string } {
+  const r = rating(p);
+  if (r === "Toss-up") return { fill: "var(--tossup-tile)", ink: "var(--ink)", name: "Toss-up" };
+  const side = p >= 0.5 ? leftParty : "R";
+  const pal = side === "D" ? "dem" : side === "R" ? "rep" : "ind";
+  const shade = r === "Safe" ? 1 : r === "Likely" ? 2 : 3;
+  return {
+    fill: `var(--${pal}-${shade})`,
+    ink: shade === 3 ? "var(--ink)" : "#ffffff",
+    name: `${r} ${side}`,
+  };
+}
+
+// Cook's words mapped onto the same seven tiers.
+export function cookColor(cook: string | null): { fill: string; ink: string; name: string } | null {
+  if (!cook) return null;
+  if (/toss/i.test(cook)) return { fill: "var(--tossup-tile)", ink: "var(--ink)", name: "Toss-up" };
+  const side = /\bD\b/.test(cook) ? "dem" : "rep";
+  const shade = /Solid|Safe/.test(cook) ? 1 : /Likely/.test(cook) ? 2 : 3;
+  return { fill: `var(--${side}-${shade})`, ink: shade === 3 ? "var(--ink)" : "#ffffff", name: cook.replace("Solid", "Safe").replace("Tossup", "Toss-up") };
+}
+
+export const TIER_LEGEND = [
+  { fill: "var(--dem-1)", label: "Safe D" },
+  { fill: "var(--dem-2)", label: "Likely D" },
+  { fill: "var(--dem-3)", label: "Lean D" },
+  { fill: "var(--tossup-tile)", label: "Toss-up" },
+  { fill: "var(--rep-3)", label: "Lean R" },
+  { fill: "var(--rep-2)", label: "Likely R" },
+  { fill: "var(--rep-1)", label: "Safe R" },
+  { fill: "var(--ind-2)", label: "Independent" },
+];
