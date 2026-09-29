@@ -83,7 +83,7 @@ more.
 
 ### The weekly filter
 
-Every Monday from 12 October, the filter compares how all the polls actually moved with what the simulated reactions
+Every Monday, the filter compares how all the polls actually moved with what the simulated reactions
 predicted.
 - **Dials:** it sets two dials per state, one for vote switching and one for turnout. A dial above 1 means the news
   moves that state more than simulated; below 1, less. It never changes a reaction's direction.
@@ -91,6 +91,8 @@ predicted.
   every simulated election.
 - **Fade speed:** it also checks how fast news fades, weighing half-lives from about 3 to 11 days.
 - **Surprises:** it flags any state whose polls surprised the forecast in the latest week.
+- **Lean correction:** the model we use for reactions sits slightly on the Republican side of real past opinion
+  shifts, by about a quarter of a point per event; a small fixed correction takes that out, re-estimated every week.
 
 ### Simulated elections and uncertainty
 
