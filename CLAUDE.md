@@ -185,9 +185,9 @@ Decided by Matteo, 28 Sep (engine; details in `docs/engine-design.md`, `docs/roa
 - **Only people who can move count.** A reaction applies only to the share of a group that can still change: the
   persuadable share for vote choice and the mobilisable share for turnout, both estimated from CES pre- and
   post-election waves.
-- **Models:** GLM gives the reactions in the pilot. Kev runs in shadow mode, where its answers are scored but never
-  applied. Kev react-v2 joins on 12 Oct only if, on held-out events, its direction is at least as good as GLM's, its
-  size-tracking is above zero, and GLM and Kev averaged beat GLM alone.
+- **Models:** GLM gives the reactions on its own. Kev react-v1 failed the held-out test on 28 Sep (size-tracking 0.00,
+  errors correlated 0.75 with GLM's, averaging worse than GLM alone), so there is no Kev shadow mode, no react-v2 and no
+  Kev serving (B4) unless Matteo reopens it (Matteo, 29 Sep).
 - **News:**
   - Jev labels the news, with outlet names removed.
   - Attention comes from coverage data; the model's guess only breaks ties.

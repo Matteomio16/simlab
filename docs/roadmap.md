@@ -101,7 +101,7 @@ Checkpoints and fallbacks:
 | C3 | Accounts: Instagram professional (Creator) with Threads, X, Bluesky; TikTok and YouTube Shorts optional | Matteo | Fri 2 Oct | notapoll.org bought 28 Sep; setup in progress (email routing, then IG, Threads, X, Bluesky on @notapoll.org, Buffer free for X, Threads and Bluesky) |
 | C4 | Making-of posts, starting with the test-bench findings | Content & site drafts, Matteo approves and posts | from Sat 3 Oct | Lab notes 1–3 drafted, shown to Matteo 28 Sep |
 | C5 | Chart factory and daily post kit: slides (1080×1350), a 9:16 video, captions, alt text, an X thread | Content & site | Sun 4 Oct (the pilot makes internal kits daily) | daily kit command built (`python -m simlab.publish.kit`), layouts picked; 5 special editions drafted; video next |
-| C6 | Site at labs.scaliastudio.dev/midterms: forecast, methods page, public scoring page | Content & site; Matteo sets up Cloudflare | Fri 9 Oct | — |
+| C6 | Site at labs.scaliastudio.dev/midterms: forecast, methods page, public scoring page | a new website session (moved from Content & site 29 Sep, Matteo); Matteo sets up Cloudflare | before Fri 9 Oct (Matteo wants it sooner) | starts by asking Matteo about his vision |
 | C7 | Publishing and ethics review (Field Guide checklist); OSF pre-registration yes or no | Matteo with a new review session (not Content & site, which made the posts) | Sat 10 Oct | open task |
 | C8 | Posting by hand: Meta Business Suite for Instagram, x.com's scheduler | Matteo | making-of from 3 Oct, forecasts from 12 Oct | — |
 | C9 | Automated posting behind an approval flag: the Instagram API, and Buffer's free plan for X, Threads and Bluesky | Content & site; Matteo creates the apps and keys | 12–18 Oct | — |
@@ -145,8 +145,9 @@ Also during the pilot week:
 | Engine | A2, A4, A5, A8, A13; leads A10; the news spot-check page |
 | Statistics | A3, A6, A7 |
 | Kev | A1, B1–B4 (done), A11, then A9 and A12 |
-| Content & site | C2, C4, C5, C6, C9 |
+| Content & site | C2, C4, C5, C9 |
 | Daily check (scheduled task) | the 11:30 UK digest; drafts posts once forecasts exist |
+| Website (new, 29 Sep) | C6 |
 | Review (new, fresh sessions) | C7 on Sat 10 Oct; A14 on 10–11 Oct |
 | Matteo | the list below |
 
