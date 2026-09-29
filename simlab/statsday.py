@@ -219,7 +219,7 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
             "with_polls": sum(r["n_polls"] > 0 for r in lv["races"].values()), "draws": forecast["draws"],
             "floor_lifted_pairs": forecast["floor_lifted_pairs"],
             "tiers": {k: sum(r["tier"] == k for r in races.values()) for k in TIER_RANK},
-            "orphaned_events": len(mv["orphaned_events"]), "weekly_update": mp.get("weekly_update"),
+            "orphaned_events": len(mv["orphaned_events"]), "deselected_pairs": len(mv["deselected_pairs"]), "weekly_update": mp.get("weekly_update"),
             "stories": sum(len(x["events"]) for k, x in mv.items() if k != "shadow" and isinstance(x, dict) and "events" in x),
             "files": ["polls.csv", "races.json", "levels.json", "groups.json", "params.json", "moves.json",
                       "filter_state.json", "forecast.json", "draws.json"]}

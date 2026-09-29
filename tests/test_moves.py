@@ -89,6 +89,15 @@ class BuildTest(unittest.TestCase):
         self.assertAlmostEqual(later["OH-S"]["by_event"]["e1"], full * (0.5 - 0.5 ** 0.9), places=4)
         self.assertEqual(later["OH-S"]["events"]["e1"]["first_seen"], "2026-10-01")
 
+    def test_rows_for_pairs_the_days_news_no_longer_selects_are_dropped(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            e1 = event("e1", "2026-10-01T08:00:00+00:00", 1.0) | {"selected": {"OH-S": True}}
+            write_day(root, "2026-10-01", [e1], [reaction("e1", A, 1.0, 0.0), reaction("e1", A, 1.0, 0.0, race="NC")])
+            m = self.build(root, "2026-10-01")
+        self.assertEqual(m["deselected_pairs"], ["NC e1"])
+        self.assertIn("e1", m["OH-S"]["events"])
+
     def test_reactions_to_stories_missing_from_the_news_file_are_flagged(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

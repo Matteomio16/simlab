@@ -87,20 +87,24 @@ def _jsonl(path: Path) -> list[dict]:
     return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()] if path.exists() else []
 
 
-def _history(day: date, derived: Path) -> tuple[dict, dict]:
+def _history(day: date, derived: Path) -> tuple[dict, dict, set]:
     """Reactions asked in the last LOOKBACK days, earliest answer per (model, race, event, group), with the day asked;
-    and the latest record of every event up to `day`."""
-    reactions, events = {}, {}
+    the latest record of every event up to `day`; and the (race, event) pairs left out because that day's news no
+    longer selects them (a news re-run after the harness). Files without selections count in full."""
+    reactions, events, dropped = {}, {}, set()
     for k in range(LOOKBACK, -1, -1):
         d = day - timedelta(days=k)
         folder = derived / d.isoformat()
+        todays = {e["event_id"]: e for e in _jsonl(folder / "events.jsonl")}
         for r in _jsonl(folder / "reactions.jsonl"):
-            if not r.get("parse_error"):
+            e = todays.get(r["event_id"])
+            if e is not None and "selected" in e and r["race_id"] not in (e["selected"] or {}):
+                dropped.add((r["race_id"], r["event_id"]))
+            elif not r.get("parse_error"):
                 reactions.setdefault((r["model"], bool(r.get("shadow")), r["race_id"], r["event_id"], r["group"]),
                                      (r, d))
-        for e in _jsonl(folder / "events.jsonl"):
-            events[e["event_id"]] = e
-    return reactions, events
+        events.update(todays)
+    return reactions, events, dropped
 
 
 def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: date) -> dict:
@@ -159,11 +163,12 @@ def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> 
     """moves.json (engine-design §7) for every race in groups.json (and US), GLM's rows in the main block and shadow
     rows (Kev) under "shadow". Reactions to stories no longer in any events.jsonl (a news re-run that changed the
     story ids) can't be placed in time; they are left out and listed under "orphaned_events"."""
-    reactions, events = _history(day, derived)
+    reactions, events, dropped = _history(day, derived)
     races = [k for k in groups if isinstance(groups[k], dict) and k not in ("units",)]
     out = {"date": day.isoformat(), "run_id": run_id, "schema": SCHEMA, "units": UNITS,
            "params": {k: params[k] for k in ("c_s", "c_t")}, "shadow": {},
-           "orphaned_events": sorted({k[3] for k in reactions if k[3] not in events})}
+           "orphaned_events": sorted({k[3] for k in reactions if k[3] not in events}),
+           "deselected_pairs": sorted(f"{race} {eid}" for race, eid in dropped)}
     for shadow in (False, True):
         by_race = {}
         for (model, sh, race, eid, g), v in reactions.items():
