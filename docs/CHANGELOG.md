@@ -2,6 +2,20 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 (Statistics session): news fades fast (5.5-day half-life for every story)
+
+- **Matteo, 29 Sep:** news fades more than the 10-day curve. A long story goes from 100% to about 45% within a week,
+  about 15% after two weeks and under 10% after three.
+- **Built:**
+  - every story now fades from its first day with a 5.5-day half-life, the closest single curve (41%, 17%, 7%; 2% by
+    day 30);
+  - a one-off story that drops out of the news also fades within about a day;
+  - the economy and national events keep fading at the age rate after the news moves on.
+- **Why the change also covers one-off stories:** under the previous rule, a one-off story kept full strength for as
+  long as it stayed in the news, so a scandal covered for three weeks would have outweighed economic news.
+- `simlab/move_params.json`: `age_half_life_days` 5.5, `half_life_days` {default: 1} (the drop once out of the news),
+  `lasting_types` [economy, national]. On record in CLAUDE.md §5, engine-design §3.2 and stats-groundwork D19.
+
 ## 2026-09-29 (Statistics session): lasting topics fade from day one; "if the election were today"
 
 Matteo, 29 Sep:

@@ -753,12 +753,14 @@ Raised by the build (28 Sep evening); Matteo's answers:
   (`p_independents_decide`). The final presentation is decided later.
 - **D17. Montana.** No three-way work while Alme leads by about 20; flagged.
 - **D18. News moves every race.** Yes, in full, polls or not (§5.6 formulation).
-- **D19. How long news lasts** (raised by D18). Decided:
-  - one-off stories keep their effect while in the news, then fade with a 1-day half-life;
-  - the economy and national events fade from their first day with a 10-day half-life. Matteo, 29 Sep: important at
-    first, "after 3 weeks already not that important", lasting about 30 days. This replaces the 60 days of 28 Sep;
-    the calibration events' shifts held longer, which the weekly filter will test;
-  - the 3 Nov forecast counts what is expected to remain then, and `forecast.json` adds an "if the election were
+- **D19. How long news lasts** (raised by D18). Decided, Matteo, 29 Sep: news fades fast, from 100% to about 45%
+  within a week, about 15% after two weeks, under 10% after three.
+  - Every story fades from its first day with a 5.5-day half-life, the closest single curve (41%, 17%, 7%).
+  - A one-off story that drops out of the news also fades within about a day.
+  - The economy and national events keep fading at the age rate after the news moves on.
+  - This replaces the 60 days (28 Sep) and the 10 days (earlier on 29 Sep). The calibration events' shifts held
+    longer, which the weekly filter will test.
+  - The 3 Nov forecast counts what is expected to remain then, and `forecast.json` adds an "if the election were
     today" view (Matteo, 29 Sep).
 - **D20. Simulate only the races where it matters** (Matteo's question). Decided: daily tiers in `races.json`
   (simulate, watch, statistics).
@@ -825,7 +827,7 @@ are listed on the methods page.
 | Mobilisable share mu | respondents on an active registration (`vv_regstatus`): turnout intention "Probably", "Undecided" or missing, or a validated vote (`vv_turnout_gvm`) against their intention; `weight` | fitted; self-report gives nearly the same | shrunk as pi |
 | Switching size c_s | 0.21 on average; each simulated election draws its own (lognormal, mean 1 × 0.21, 90% range 0.08–0.41) | fitted on 45 events (0.19–0.23 leave-one-out); the range covers the transfer to state races | decided (Matteo, 28 Sep: flexible, not tied to one value); refit weekly |
 | Turnout size c_t | = c_s on average; 90% range 0.05–0.53 | prior: no data yet | decided (Matteo, 28 Sep); early vote and weekly filter |
-| How long a story lasts | one-off types: full while in the news (`first_seen` to `last_seen`), then a 1-day half-life; economy and national: a 10-day half-life from the first day; the 3 Nov forecast counts what remains, taking coverage to end today; a today view counts today's effects | Matteo, 28 Sep (D19); the calibration events' shifts held (share left 1.01–1.11 after 3–7 weeks, 90% ranges 0.84–1.31; random dates 0.83–0.92; `python -m simlab.moves --lasting`) | decided (Matteo, 29 Sep: 10 days for lasting topics); weekly filter tunes |
+| How long a story lasts | every story: a 5.5-day half-life from its first day; one-off types also a 1-day half-life once out of the news; economy and national: no extra drop; the 3 Nov forecast counts what remains, taking coverage to end today; a today view counts today's effects | Matteo, 28 Sep (D19); the calibration events' shifts held (share left 1.01–1.11 after 3–7 weeks, 90% ranges 0.84–1.31; random dates 0.83–0.92; `python -m simlab.moves --lasting`) | decided (Matteo, 29 Sep: 45% / 15% / under 10% after one, two, three weeks); weekly filter tunes |
 | Simulation tiers | simulate: stats-only 10–90%, Cook toss-up/tilt/lean, or market 10–90%; watch: 3–97%, Likely, or 5–95%; statistics otherwise; pilot always simulate; a week of memory | Matteo, 28 Sep (D20); thresholds an assumption | decided |
 | Story effects on unpolled races | in full, like polled races | Matteo, 28 Sep (decision 5) | decided |
 | Uncertainty of moves | the size multipliers above | Matteo, 28 Sep (decision 1) | decided |

@@ -205,12 +205,13 @@ Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork
     the weekly filter, from 12 Oct.
 - **Fat tails keep the fitted spread**, and extremes also follow the simulated dynamics.
 - **News moves every race by its full effect, polls or not.** Polls correct the statistical level underneath.
-- **How long news lasts:**
-  - One-off stories (endorsements, scandals, debates, ads, candidates' policy news) keep their effect while in the
-    news, then fade within about a day.
-  - Lasting topics (the economy and prices; national events such as war) fade from their first day, even while in
-    the news, with a 10-day half-life (Matteo, 29 Sep): important at first, not that important after three weeks,
-    over by about 30 days.
+- **How long news lasts (Matteo, 29 Sep): news fades fast.**
+  - Every story fades from the day it is first seen, with a 5.5-day half-life: about 40% left after a week, 17% after
+    two, 7% after three.
+  - A one-off story (endorsements, scandals, debates, ads, candidates' policy news) that drops out of the news also
+    fades within about a day.
+  - Lasting topics (the economy and prices; national events such as war) keep fading at the same age rate after the
+    news moves on.
   - The 3 Nov forecast counts only what is expected to remain by then. The forecast also shows "if the election were
     today" (Matteo, 29 Sep).
 - **Senate:** King and Sanders count with Democrats. The new independents (Osborn, Achilles, Bengs, Bodnar) are shown

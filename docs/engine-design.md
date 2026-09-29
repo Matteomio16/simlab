@@ -92,12 +92,13 @@ The terms:
 - `a_e` is the story's attention weight, from 0 to 1 (§4).
 
 How long a story lasts (Matteo, 28–29 Sep; replaces the flat 10-day prior):
-- One-off stories (endorsements, scandals, debates, ads, candidates' policy news, other) keep their full effect while
-  in the news, from `first_seen` to `last_seen`, then fade with a 1-day half-life.
-- Lasting topics (`economy`: prices, jobs, gas; `national`: president, Congress, war, disasters) fade from their
-  first day, even while in the news, with a 10-day half-life. They are important at first, not that important after
-  three weeks, and over by about 30 days (Matteo, 29 Sep). The real calibration events' shifts held longer
-  (stats-groundwork §10); the weekly filter checks this against polls.
+- Every story fades from the day it is first seen, with a 5.5-day half-life: about 40% left after a week, 17% after
+  two, 7% after three (Matteo: 45% within a week, 15% after two weeks, under 10% after three).
+- A one-off story (endorsements, scandals, debates, ads, candidates' policy news, other) that drops out of the news
+  also fades within about a day (a 1-day half-life from `last_seen`).
+- Lasting topics (`economy`: prices, jobs, gas; `national`: president, Congress, war, disasters) don't get that drop
+  and keep fading at the age rate. The real calibration events' shifts held longer (stats-groundwork §10); the
+  weekly filter checks the rate against polls.
 - The 3 Nov forecast counts what is expected to remain of each story then, taking its coverage to end today.
 - The weekly filter tunes the half-lives. `t` stays within [0, 1] and `d` within [−1, 1].
 
