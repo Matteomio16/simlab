@@ -165,13 +165,15 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
 def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> dict:
     """moves.json (engine-design §7) for every race in groups.json (and US), GLM's rows in the main block and shadow
     rows (Kev) under "shadow". Reactions to stories no longer in any events.jsonl (a news re-run that changed the
-    story ids) can't be placed in time; they are left out and listed under "orphaned_events"."""
+    story ids) can't be placed in time; they are left out and listed under "orphaned_events". Races with reactions but
+    no voter groups (a House seat that isn't simulated that day) are listed under "ungrouped_races"."""
     reactions, events, dropped = _history(day, derived)
     races = [k for k in groups if isinstance(groups[k], dict) and k not in ("units",)]
     out = {"date": day.isoformat(), "run_id": run_id, "schema": SCHEMA, "units": UNITS,
            "params": {k: params[k] for k in ("c_s", "c_t")}, "shadow": {},
            "orphaned_events": sorted({k[3] for k in reactions if k[3] not in events}),
-           "deselected_pairs": sorted(f"{race} {eid}" for race, eid in dropped)}
+           "deselected_pairs": sorted(f"{race} {eid}" for race, eid in dropped),
+           "ungrouped_races": sorted({k[2] for k in reactions if k[2] not in races})}
     for shadow in (False, True):
         by_race = {}
         for (model, sh, race, eid, g), v in reactions.items():

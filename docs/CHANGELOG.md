@@ -2,6 +2,29 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 night (Statistics session): news uncertainty by story; House seats take the news
+
+- **Matteo's two layers** (via the roadmap session): news uncertainty should vary by state sensitivity and by story
+  strength, not only through one overall scale.
+  - Already there: the overall scale (the national dial) and each state's sensitivity (its dial deviation, drawn per
+    state in every simulated election, beside its persuadable and mobilisable shares).
+  - **Built, switched off until Matteo decides** (`story_sd` 0 in `simlab/move_params.json`): a strength draw per
+    story per simulated election (`montecarlo.story_noise`, fed by `statsday._stories`; 3 tests). It is applied to
+    that story in every race it touches: one draw shared by the races a national story reaches, and a race story's
+    draw belongs to its race alone.
+  - Size: sd 0.42 of the story's effect, from the 45 calibration events' scatter once their measurement error is
+    taken out.
+  - On 29 Sep data it widens ranges by about 0.01 points, because stories are small beside the statistical error; it
+    shows when a story is big. The effects used leave out the offset from reading polls net of the news, so the draws
+    err on the wide side.
+- **House seats take the news** (Kev's `house.prepare`/`build`/`write`, 75baf2e):
+  - statsday prepares the House once a day and builds its headline and today view with the day's story paths, by
+    levels.build's rules. A seat without stories takes the nation's, as a Senate race does.
+  - The twin takes none.
+  - The 40 simulated seats' voter groups join `groups.json`, so `moves.json` covers them once House stories are asked.
+  - Still to build before 12 Oct: the seats' news uncertainty in the Monte Carlo (their state's dial draw, shared with
+    the state's Senate race, and the story draws).
+
 ## 2026-09-29 night (Kev session): House simulated seats (polls, voter groups, story effects)
 
 - **District polls:**
@@ -28,6 +51,23 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   groups join groups.json in Statistics' moves, so one moves.json covers both chambers. House news starts once the
   Engine adds the simulated seats to newsraces.json (from 12 Oct).
 - 29 Sep, stats-only: 222.6 expected Democratic seats at a national House vote of D+4.5.
+
+## 2026-09-29 night (Engine session): news for the simulated House seats
+
+Matteo approved (in the roadmap session) one news query per state for the simulated House seats (A13):
+- The seats come from the daily `races.json`, which carries the House rows from the 30 Sep run with Kev's tiers (a
+  seat simulated on any of the last 6 days stays simulated). They are built when the news job and the news step run
+  (`newsraces.house`), so they follow the tiers; `simlab/newsraces.json` stays Senate-only.
+- GDELT gets one query per state with every seat's candidates, asked every 12 hours: a state's seats get only a few
+  articles a day (Ohio's four: 7 on 29 Sep). On 29 Sep's seats that is 18 queries beside the 36 Senate and national
+  ones.
+- A story from a state's query is gated for each of its seats, so each seat keeps only the stories about its own race.
+  One story can be selected for several seats (`races` lists them), with one card and one strength draw.
+- House seats get national stories as the Senate races do. Their prompts are the same across a state's seats, so the
+  answer cache charges once per state.
+- Estimate: about $0.17 a day (reactions and gates) and 30 more minutes on the daily job, from 12 Oct.
+- Also: until 12 Oct the news job asks the pilot races and the nation before the other contested races (GDELT
+  answered 0-3 queries a run on 29 Sep evening).
 
 ## 2026-09-29 night (Engine session): the site's daily publish step
 

@@ -87,5 +87,26 @@ class Queries(unittest.TestCase):
         self.assertEqual(qs["ohio"], '("Sherrod Brown" OR "Jon Husted")')
 
 
+class House(unittest.TestCase):
+    RACES = {"date": "2026-10-11", "GA": {"state": "GA", "tier": "watch"},
+             "OH-9": {"state": "OH", "office": "house", "district": 9, "tier": "simulate",
+                      "candidates": {"D": ["Marcy Kaptur"], "R": ["Derek Merrin"]}}}
+
+    def test_one_query_per_state_for_the_simulated_seats(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "races.json"
+            p.write_text(json.dumps(self.RACES), encoding="utf-8")
+            qs, first = newsnap.queries(p), newsnap.first_races(p)
+        self.assertEqual(qs["oh-h"], '("Marcy Kaptur" OR "Derek Merrin")')
+        self.assertNotIn("oh-9", qs)
+        self.assertIn("ohio", qs)
+        self.assertTrue({"oh-h", "ga"} <= first)
+
+    def test_a_states_house_seats_are_asked_every_12_hours(self):
+        seven_hours_ago = datetime(2026, 10, 12, 5, 0, tzinfo=timezone.utc)
+        last = {"gdelt-oh-h": seven_hours_ago, "gdelt-ga": seven_hours_ago}
+        self.assertEqual(newsnap.due(["oh-h", "ga"], last, NOW), ["ga"])
+
+
 if __name__ == "__main__":
     unittest.main()

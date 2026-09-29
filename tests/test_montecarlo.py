@@ -368,6 +368,11 @@ class HouseTest(unittest.TestCase):
         self.assertEqual((h["benchmarks"], sorted(h["stats_only"])), ({"market": 0.4}, ["p_d_majority", "p_r_majority"]))
         self.assertEqual((len(d["seats"]["house"]["D"]), sorted(d["house_races"])), (100, ["NC-1"]))
 
+    def test_house_headline_and_stats_only_twin_use_their_own_levels(self):
+        f, d = self.build(house(nc1=8.0) | {"twin": house(nc1=-8.0)["levels"]})
+        self.assertGreater(np.mean(d["seats"]["house"]["D"]), np.mean(d["stats_only"]["seats"]["house"]["D"]) + 0.5)
+        self.assertGreater(f["house"]["races"]["NC-1"]["p_dem_win"], 0.8)
+
     def test_today_view_of_the_house(self):
         out = mc.attach_today(self.build(house())[0], self.build(house(nc1=8.0))[0])
         now = self.build(house(nc1=8.0))[0]["house"]

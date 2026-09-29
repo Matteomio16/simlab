@@ -43,5 +43,46 @@ class Describe(unittest.TestCase):
             self.assertEqual(cfg[rid]["text"], RACES[name][1])
 
 
+def seat(state, district, tier="simulate", **candidates):
+    return {"state": state, "office": "house", "district": district, "special": False, "rcv": False, "tier": tier,
+            "candidates": candidates, "left_party": "O" if "O" in candidates else "D"}
+
+
+HOUSE = {"date": "2026-10-12", "OH-S": OH,
+         "OH-9": seat("OH", 9, D=["Marcy Kaptur"], R=["Derek Merrin"]),
+         "OH-1": seat("OH", 1, D=["Greg Landsman"], R=["Eric Conroy"]),
+         "OH-2": seat("OH", 2, "watch", D=["Ann Lee"], R=["Bo Ray"]),
+         "AK-AL": seat("AK", 0, O=["Bill Hill"], R=["Nick Begich III"]),
+         "CA-22": seat("CA", 22)}
+
+
+class House(unittest.TestCase):
+    # Matteo, 29 Sep: one news query per state for the simulated House seats
+    def test_simulated_seats_and_one_group_per_state(self):
+        h = newsraces.house(HOUSE)
+        self.assertEqual(sorted(h), ["AK-AL", "AK-H", "CA-22", "OH-1", "OH-9", "OH-H"])
+        self.assertEqual(h["OH-H"]["seats"], ["OH-1", "OH-9"])
+        self.assertEqual(h["OH-H"]["query"], '("Greg Landsman" OR "Eric Conroy" OR "Marcy Kaptur" OR "Derek Merrin")')
+        self.assertEqual((h["OH-9"]["group"], h["OH-9"]["text"]),
+                         ("OH-H", "Ohio's 9th congressional district: Marcy Kaptur (Democrat) vs Derek Merrin (Republican)"))
+        self.assertEqual(h["AK-AL"]["text"],
+                         "Alaska's at-large congressional district: Bill Hill (other party) vs Nick Begich III (Republican)")
+        self.assertEqual(h["AK-H"]["query"], '("Bill Hill" OR "Nick Begich")')
+
+    def test_a_seat_without_listed_candidates_gets_no_query(self):
+        h = newsraces.house(HOUSE)
+        self.assertEqual((h["CA-22"]["query"], h["CA-22"]["text"]), ("", "California's 22nd congressional district"))
+        self.assertNotIn("CA-H", h)
+
+    def test_the_committed_file_stays_senate_only(self):
+        self.assertEqual(sorted(newsraces.build(HOUSE)), ["OH-S", "US"])
+
+    def test_house_ids_and_name_suffixes(self):
+        self.assertEqual([newsraces.is_house(r) for r in ("TX-28", "AK-AL", "OH-S", "NC", "US", "OH-H")],
+                         [True, True, False, False, False, False])
+        self.assertEqual(newsraces.names("Nick Begich III"), ["Nick Begich"])
+        self.assertEqual(newsraces.names("Robert F. Kennedy Jr."), ["Robert Kennedy"])
+
+
 if __name__ == "__main__":
     unittest.main()

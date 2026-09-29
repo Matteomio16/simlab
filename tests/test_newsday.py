@@ -525,5 +525,67 @@ class Scale(unittest.TestCase):
         self.assertEqual(sorted(labels["gate"]), ["IA", "OH-S", "US"])
 
 
+def house_races(**extra):
+    return {"date": "2026-10-11", "OH-S": {"state": "OH", "office": "senate", "tier": "simulate"},
+            "OH-9": {"state": "OH", "office": "house", "district": 9, "tier": "simulate",
+                     "candidates": {"D": ["Marcy Kaptur"], "R": ["Derek Merrin"]}},
+            "OH-1": {"state": "OH", "office": "house", "district": 1, "tier": "simulate",
+                     "candidates": {"D": ["Greg Landsman"], "R": ["Eric Conroy"]}}, **extra}
+
+
+class House(unittest.TestCase):
+    # Matteo, 29 Sep: a state's simulated House seats share one news query; each story is gated for every seat
+    def tearDown(self):
+        newsday.configure()
+
+    def test_the_seats_and_their_state_group_join_the_race_tables(self):
+        newsday.configure(house_races())
+        self.assertEqual(newsday.GROUPS, {"OH-H": ["OH-1", "OH-9"]})
+        self.assertEqual(newsday.SNAP_RACES["oh-h"], "OH-H")
+        self.assertIn("Kaptur", newsday.SURNAMES["OH-9"])
+        self.assertIn("NC", newsday.CONFIG)
+
+    def test_a_group_story_is_gated_for_each_seat(self):
+        newsday.configure(house_races())
+        story = {"race_id": "OH-H", "titles": ["Kaptur and Merrin debate trade in Toledo"], "outlet_names": []}
+        fake = FakeAsker()
+        self.assertEqual(sorted(newsday.label(story, fake)["gate"]), ["OH-1", "OH-9"])
+        self.assertTrue(any("9th congressional district" in s for s in fake.states))
+
+    def test_an_rss_item_naming_a_house_candidate_counts_for_the_seat(self):
+        newsday.configure(house_races())
+        feed = """<?xml version="1.0"?><rss version="2.0"><channel><title>Signal Ohio</title>
+          <item><title>Marcy Kaptur holds a town hall in Toledo on trade</title>
+            <link>https://signalohio.org/kaptur/</link><pubDate>Sun, 11 Oct 2026 14:05:00 +0000</pubDate>
+            <description>A town hall.</description></item></channel></rss>"""
+        self.assertEqual([a["race_id"] for a in newsday.parse_rss(feed.encode(), "signal-ohio")], ["OH-9"])
+
+    def test_a_day_without_house_seats_uses_the_seats_of_the_day_before(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for day, races in (("2026-10-10", house_races()),
+                               ("2026-10-11", {"date": "2026-10-11", "OH-S": {"tier": "simulate"}})):
+                (Path(tmp) / day).mkdir()
+                (Path(tmp) / day / "races.json").write_text(json.dumps(races), encoding="utf-8")
+            raw = newsday.prev_races(Path(tmp), date(2026, 10, 12))
+        self.assertEqual(sorted(k for k in raw if k != "date"), ["OH-1", "OH-9", "OH-S"])
+        self.assertEqual(raw["date"], "2026-10-11")
+
+    def test_a_group_story_is_selected_for_its_seats(self):
+        story = gdelt(("Kaptur and Merrin debate trade policy in Toledo", "20261012T070000Z", "toledoblade.com"))
+        card = '{"card": "Marcy Kaptur and Derek Merrin debated trade policy in Toledo."}'
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            (derived / "2026-10-11").mkdir(parents=True)
+            (derived / "2026-10-11" / "races.json").write_text(json.dumps(house_races()), encoding="utf-8")
+            snapshot(snap, "2026-10-12", "0800", {"gdelt-oh-h": story})
+            summary = newsday.run(date(2026, 10, 12), snap, derived, "r", FakeAsker(), [FakeChat([card] * 5)],
+                                  scope="all")
+            events = newsday._jsonl(derived / "2026-10-12" / "events.jsonl")
+        e = next(e for e in events if e["event_id"].startswith("OH-H"))
+        self.assertEqual((e["scope"], e["races"], sorted(e["gate"])), ("race", ["OH-1", "OH-9"], ["OH-1", "OH-9"]))
+        self.assertEqual(e["selected"], {"OH-1": True, "OH-9": True})
+        self.assertEqual(summary["selected"]["OH-9"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()

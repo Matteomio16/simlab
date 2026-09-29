@@ -170,8 +170,14 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
 - **Headlines** (29 Sep: the engine works on GDELT alone; Media Cloud plugs in if its key ever comes):
   - GDELT for every race and the nation, from its own job every 15 minutes (`simlab/newsnap.py`, writing
     `simlab-data/news/`). GDELT refuses an address for minutes after one success, so each run asks only the most
-    overdue queries (contested races and the nation first) within about 9 minutes. A query saved in the last 6 hours
-    isn't asked again; one that failed is asked by the next run, and every query covers 24 hours, so gaps fill.
+    overdue queries (contested races and the nation first; until 12 Oct the pilot races before them) within about 9
+    minutes. A query saved in the last 6 hours isn't asked again; one that failed is asked by the next run, and every
+    query covers 24 hours, so gaps fill.
+  - The simulated House seats (Matteo, 29 Sep): one query per state with every seat's candidates, asked every 12
+    hours, because a state's seats get only a few articles a day (Ohio's four: 7 on 29 Sep). The seats come from the
+    latest `races.json` (`newsraces.house`), so they follow the daily tiers. On 29 Sep's seats: 18 state groups beside
+    the 36 Senate and national queries; the contested tier needs about 120 answers a day, and GDELT gave about 1.8 a
+    run (about 150-170 a day) on its first evening.
   - RSS from state outlets that answer a declared bot and allow reuse: Signal Ohio, Signal Cleveland, the Texas
     Tribune, Carolina Public Press and The Maine Monitor (no Iowa outlet qualified). An item counts for a race only when it names one of that state's candidates in full. The States
     Newsroom sites refuse bots, so they aren't used.
@@ -180,7 +186,9 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
 - **The day's news** (29 Sep): every article first returned by a snapshot run that started between 09:30 UTC the day
   before and 09:30 UTC on the day. Each run is read by one day's job, so the US daytime news that arrives after a job
   is read by the next one, and an article a feed returns again counts only on its first day.
-- **Race tags:** a race story belongs to its race. A national story goes to every race.
+- **Race tags:** a race story belongs to its race. A national story goes to every race. A story from a state's House
+  query belongs to every simulated seat in that state, and the gate is asked for each seat, so each seat keeps only
+  the stories about its own race. An RSS item that names a House candidate in full belongs to that seat.
 - **Jev labels** (Matteo, 28 Sep), all with outlet names removed first:
   - relevant to this race (this is the gate)
   - event type
@@ -196,9 +204,10 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
   - watch: its 2 biggest race stories (attention at least 0.5) and no national ones;
   - statistics: none;
   - the nation ("US"): 3 national stories, asked once with state-neutral personas for `Δ_N`.
-  National stories are gated for the simulated races and the nation. Until 11 Oct the daily job runs the pilot races
-  only (`--scope pilot`); from 12 Oct every race in `simlab/newsraces.json`, which is rebuilt from `races.json` when
-  candidates change or House seats are added (`python -m simlab.newsraces --races <races.json>`).
+  National stories are gated for the simulated races (House seats included) and the nation. Until 11 Oct the daily
+  job runs the pilot races only (`--scope pilot`); from 12 Oct every Senate race in `simlab/newsraces.json` (rebuilt
+  from `races.json` when candidates change: `python -m simlab.newsraces --races <races.json>`) and every simulated
+  House seat in the previous day's `races.json` (if that day's House step failed, the seats of the day before).
 - **Stories about polls or forecasts get no reactions.** Polls already enter through the filter, so reacting to news
   about them would count them twice. This also keeps "poll" out of the movers' cards.
 - **Each event counts once per race** (built 28 Sep):
@@ -227,7 +236,10 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
   size 0.52 against 0.30), as much on the controls as on the backlash stories, so it adds no backlash-specific signal
   (`runs/backlash__glm.jsonl`).
 - **Scopes:** race (the race's state personas) and national (state-neutral personas).
-- **House seats:** asked about "their district's U.S. House race", with personas in the seat's state.
+- **House seats:** asked about "their district's U.S. House race", with personas in the seat's state. A national
+  story reaches a state's seats as the same prompts, so the answer cache charges once per state. Estimate for the ~40
+  seats: about 1,900 new group rows a day (about $0.10), plus about $0.07 of Jev gates for national stories; about 30
+  more minutes on the daily job at 16 threads.
 - **Cost at full scale** (tiers of 28 Sep: 13 simulate, 7 watch): 13 × 8 + 7 × 2 + 3 ≈ 121 race-story pairs × 28
   groups × 2 questions × 2 orders ≈ 13,500 prompts on a day when every story is new; continuing stories aren't asked
   again. At the measured cost of 29 Sep ($0.024 for 504 group rows), that is about $0.16 a day. GLM answered about 270
@@ -290,7 +302,7 @@ Special elections and ranked-choice voting are also fields in `races.json`.
 | `polls.csv` | Statistics | Statistics, scoring | one row per poll version (stats-groundwork §5.1) |
 | `events.jsonl` | Engine | Statistics, Content | `{event_id, first_seen (UTC ISO), last_seen, scope, races, gate: {race_id: p}, type, helps_face, fires_up: {D, R}, puts_off: {D, R}, attention: {outlets, articles, days, pageviews, a}, card}`; raw headlines kept separately in `news_private.jsonl` |
 | `reactions.jsonl` | Engine | Statistics, scoring | one row per race × event × group × model: `{race_id, event_id, group, model, shadow, wording, support, turnout}` (expected values, −2..+2) |
-| `groups.json` | Statistics | Statistics, Content | `{units, d_source, race_id: {group: {n, t, d, pi, mu}}}`, all fractions (`d` from −1 to 1, the rest from 0 to 1), including a `US` entry; `d_source` (text) says where the pattern of `d` comes from |
+| `groups.json` | Statistics | Statistics, Content | `{units, d_source, race_id: {group: {n, t, d, pi, mu}}}`, all fractions (`d` from −1 to 1, the rest from 0 to 1), including a `US` entry and the simulated House seats (from `house_groups.json`, so `moves.json` covers them too); `d_source` (text) says where the pattern of `d` comes from |
 | `moves.json` | Statistics | filter, Content, scoring | `{units, race_id: {delta_margin, delta_margin_base, delta_turnout, by_group: {group: {dd, dt}}, by_event: {event_id: today's change}, by_event_effect: {event_id: total effect so far}}}` for GLM, plus the same under `shadow` for Kev. Margins in points of two-party margin; turnout in percentage points. Each race's `events` block gives every story's `first_seen`, `last_seen`, type, half-life, full effect (and its switching and turnout parts) and `election_day` effect. `movers` in `forecast.json` read `election_day`, the story's effect on the 3 Nov margin |
 | `params.json` (daily) | Statistics | Statistics, Engine | the parameters in force that day: `{c_s, c_t, dials: {state, US or default: {k_s, k_t, sd_s, sd_t}}, age_half_life_days, half_life_days, lasting_types, dial_prior, dial_posterior, fitted_on}` |
 | `filter_weekly.json` (Mondays) | Statistics | Statistics, auditor | the weekly filter's output: `{polls, prior, fade: {grid, weights, half_life}, posterior: {labels, mean, cov, log_evidence}, dials, polls_alone, surprises: {race_id: {n, chi2, p, mean_z, flag}}}` |

@@ -240,14 +240,14 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
     election (story_noise): the news uncertainty has three layers, the overall scale (national dial), each state's
     sensitivity (its deviation) and each story's strength.
 
-    `house` ({"levels": house_levels.json, "left": {seat: "D" or "O"}}) adds the House: its contested seats are drawn
-    with the Senate's national, regional and state errors, and the seat totals give the majority (218). The seats take
-    no news yet, so the headline and the twin share their levels."""
+    `house` ({"levels": the headline's house levels, "twin": the stats-only ones, "left": {seat: "D" or "O"}}) adds the
+    House: its contested seats are drawn with the Senate's national, regional and state errors, and the seat totals
+    give the majority (218). The seats' story effects are in their levels; their news uncertainty isn't drawn yet."""
     ids, seed, bm, movers = sorted(head["races"]), seed_for(day), benchmarks or {}, movers or {}
     hv = house["levels"]["races"] if house else {}
     hid = sorted(r for r, v in hv.items() if not v.get("fixed"))
     x, lifted = _simulate(head, ids, params, n, seed, df, lo, hid, house and house["levels"])
-    xt, _ = _simulate(twin, ids, params, n, seed, df, lo, hid, house and house["levels"])
+    xt, _ = _simulate(twin, ids, params, n, seed, df, lo, hid, house and house.get("twin", house["levels"]))
     (x, xh), (xt, xth) = np.hsplit(x, [len(ids)]), np.hsplit(xt, [len(ids)])
     parties = [left[r] for r in ids]
     if news:

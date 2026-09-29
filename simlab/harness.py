@@ -43,13 +43,23 @@ REACTION_TEXT = {
 }
 
 
+def state_name(race_id: str) -> str | None:
+    """The race's state; a House seat's from its id (the seats come from the daily races.json, not newsraces.json)."""
+    if race_id in STATE_NAME:
+        return STATE_NAME[race_id]
+    if newsraces.is_house(race_id):
+        from .polls import STATE_NAMES
+        return STATE_NAMES.get(race_id[:2])
+    return None
+
+
 def personas(race_id: str) -> list[dict]:
     """The 28 voter groups, living in the race's state (national scope: the state line removed)."""
-    out = []
+    out, state = [], state_name(race_id)
     for a in json.loads((HERE / "archetypes.json").read_text(encoding="utf-8")):
         lines = [l for l in a["text"].splitlines() if not l.startswith("State:")]
-        if race_id in STATE_NAME:
-            lines = [f"State: {STATE_NAME[race_id]}"] + lines
+        if state:
+            lines = [f"State: {state}"] + lines
         out.append({"group": a["id"], "text": "\n".join(lines)})
     return out
 
@@ -60,7 +70,7 @@ def questions(race_id: str, wording: str = "direct") -> dict:
     if wording == "reaction":
         support["instructions"] = REACTION_TEXT["US" if race_id == "US" else "race"]
         turnout["instructions"] = REACTION_TEXT["turnout"]
-    if CONFIG.get(race_id, {}).get("office") == "house":
+    if newsraces.is_house(race_id):
         support["instructions"] = support["instructions"].replace("their state's Senate race",
                                                                   "their district's U.S. House race")
     return {"support": support, "turnout": turnout}
