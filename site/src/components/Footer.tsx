@@ -22,7 +22,7 @@ export default function Footer({ forecast }: { forecast: boolean }) {
               <li><Link href="/methods" className="hover:text-white">Methods</Link></li>
               <li><Link href="/lab-notes" className="hover:text-white">Lab notes</Link></li>
               <li><Link href="/changelog" className="hover:text-white">Changelog</Link></li>
-              {forecast && <li><Link href="/track-record" className="hover:text-white">Track record</Link></li>}
+              <li><Link href="/track-record" className="hover:text-white">Track record</Link></li>
               {forecast && <li><Link href="/archive" className="hover:text-white">Archive</Link></li>}
               <li><Link href="/about" className="hover:text-white">About and contact</Link></li>
             </ul>

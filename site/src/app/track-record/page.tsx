@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { notFound } from "next/navigation";
 import Reveal from "@/components/Reveal";
 import { DATA, HAS_FORECAST } from "@/lib/data";
 import { ROOT } from "@/lib/root";
@@ -13,6 +12,7 @@ export const metadata: Metadata = {
 
 // data/<live|sample>/scores.json, written by the Kev session's scoring job (roadmap A9, 29 Sep): every metric key is
 // always present (null when it does not apply) and rows are append-only; a correction is a new row with a note.
+// Before launch the page shows only the schedule and the rules.
 type Score = {
   date: string;
   model: "simulation" | "stats_only" | "market" | "cook";
@@ -42,9 +42,8 @@ const num = (v: number | null, digits: number) => (v == null ? "–" : v.toFixed
 const share = (v: number | null) => (v == null ? "–" : `${Math.round(v * 100)}%`);
 
 export default function TrackRecord() {
-  if (!HAS_FORECAST) notFound();
   const f = path.join(ROOT, "data", DATA, "scores.json");
-  const scores: Score[] = existsSync(f) ? JSON.parse(readFileSync(f, "utf8")).scores ?? [] : [];
+  const scores: Score[] = HAS_FORECAST && existsSync(f) ? JSON.parse(readFileSync(f, "utf8")).scores ?? [] : [];
   const offices = [...new Set(scores.map((s) => s.office ?? "all"))];
   const hasResults = scores.some((s) => s.target === "result");
 
