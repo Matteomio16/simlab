@@ -166,6 +166,40 @@ def mediacloud(run: "Run", key: str) -> None:
         time.sleep(1)
 
 
+REGSTAT = "https://vt.ncsbe.gov/RegStat/"
+
+
+def regstat_latest(html: str) -> str | None:
+    """The newest reporting date (MM/DD/YYYY) in NCSBE's date list."""
+    dates = re.findall(r'value="(\d{2})/(\d{2})/(\d{4})"', html)
+    return "/".join(max(dates, key=lambda d: (d[2], d[0], d[1]))) if dates else None
+
+
+def regstat_rows(html: str) -> list[dict]:
+    """The county totals the results page embeds for its grid: registered voters by party, race, ethnicity and sex."""
+    i = html.find('"Data":[')
+    return json.JSONDecoder().raw_decode(html, i + len('"Data":'))[0] if i >= 0 else []
+
+
+def voter_registration(run: "Run") -> None:
+    """North Carolina's published weekly registration totals per county, from the newest reporting week: counts only,
+    never voter records (Matteo, 29 Sep). Ohio has no party registration and its site refuses bots."""
+    def fetch():
+        date = None
+        for year in (run.when.year, run.when.year - 1):  # early January has no report for the new year yet
+            r = get(REGSTAT, {"handler": "YearDropdownPartial", "year": year})
+            if r.status_code == 200 and (date := regstat_latest(r.text)):
+                break
+        if not date:
+            return 502, b""
+        r = get(REGSTAT + "Results/", {"date": date})
+        rows = regstat_rows(r.text) if r.status_code == 200 else []
+        if not rows:
+            return (r.status_code if r.status_code != 200 else 502), b""
+        return 200, json.dumps({"reporting_date": date, "counties": rows}, sort_keys=True).encode()
+    run.save("voterreg", "nc-regstat", REGSTAT, fetch)
+
+
 def slug(title: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", title.lower()).strip("-")
 
@@ -240,6 +274,7 @@ def snapshot(out: Path) -> dict:
     end = run.when.date()
     run.save("pageviews", "candidates", PAGEVIEWS, combined(
         {a: (f"{PAGEVIEWS}/{a}/daily/{end - timedelta(days=10):%Y%m%d}/{end:%Y%m%d}", {}) for a in CANDIDATES}))
+    voter_registration(run)
     m = run.close()
     print(f"{sum('file' in f for f in m['files'])} of {len(m['files'])} files saved to {run.dir}")
     return m
