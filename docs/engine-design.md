@@ -131,8 +131,17 @@ As stats-groundwork §5.6–5.8:
 
   `Δ` already includes the dials (§3.2), so they are not applied twice. `moves.json` also carries `delta_margin_base`
   (dials = 1) for the weekly re-tuning.
-- **Weekly re-tuning of the dials from 12 Oct.** Because the dials are linear, this is an exact Kalman update. Ensembles
-  are used only if a non-linear parameter is added.
+- **Weekly filter** (built 29 Sep, `simlab/weekly.py`). It runs on Mondays from 12 Oct inside the statistics step, or
+  by hand with `python -m simlab.weekly`.
+  - Each state, and the nation, has two dials: switching and turnout. 1 means the polls confirm the simulated effect;
+    0 means they show none of it. The dials are learned from every poll since the stories began.
+  - The dials only scale known effect paths, so the polls' likelihood is an exact quadratic in them. States pool with
+    a national dial, so states with few polls borrow from it.
+  - The same evidence weighs five fade speeds around 5.5 days.
+  - A monitor flags states whose polls keep surprising the forecast (last 7 days, chi-squared p < 0.01) for the
+    weekly auditor.
+  - Each simulated election draws its dials from the result. Ensembles are used only if a non-linear parameter is
+    added.
 - **Monte Carlo:** 40,000 draws with Student-t errors (8 degrees of freedom) and a correlation floor of 0.25. Each draw
   also takes its own news-size multipliers (§3.2), so races with strong simulated reactions get wider, story-driven
   tails. A fixed sample of 1,000 draws is kept for one-dot-per-election charts.
@@ -252,9 +261,10 @@ Special elections and ranked-choice voting are also fields in `races.json`.
 | `reactions.jsonl` | Engine | Statistics, scoring | one row per race × event × group × model: `{race_id, event_id, group, model, shadow, wording, support, turnout}` (expected values, −2..+2) |
 | `groups.json` | Statistics | Statistics, Content | `{units, race_id: {group: {n, t, d, pi, mu}}}`, all fractions (`d` from −1 to 1, the rest from 0 to 1), including a `US` entry |
 | `moves.json` | Statistics | filter, Content, scoring | `{units, race_id: {delta_margin, delta_margin_base, delta_turnout, by_group: {group: {dd, dt}}, by_event: {event_id: today's change}, by_event_effect: {event_id: total effect so far}}}` for GLM, plus the same under `shadow` for Kev. Margins in points of two-party margin; turnout in percentage points. Each race's `events` block gives every story's `first_seen`, `last_seen`, type, half-life, full effect (and its switching and turnout parts) and `election_day` effect. `movers` in `forecast.json` read `election_day`, the story's effect on the 3 Nov margin |
-| `params.json` (weekly) | Statistics | Statistics, Engine | `{c_s, c_t, dials: {state: {k_s, k_t}}, half_life_days: {type: days}, fitted_on}` |
+| `params.json` (daily) | Statistics | Statistics, Engine | the parameters in force that day: `{c_s, c_t, dials: {state, US or default: {k_s, k_t, sd_s, sd_t}}, age_half_life_days, half_life_days, lasting_types, dial_prior, dial_posterior, fitted_on}` |
+| `filter_weekly.json` (Mondays) | Statistics | Statistics, auditor | the weekly filter's output: `{polls, prior, fade: {grid, weights, half_life}, posterior: {labels, mean, cov, log_evidence}, dials, polls_alone, surprises: {race_id: {n, chi2, p, mean_z, flag}}}` |
 | `levels.json`, `filter_state.json` | Statistics | Statistics | stats-groundwork §9 |
-| `forecast.json` (public) | Statistics | Content | `{races: {race_id: {p_dem_win, margin: {p10, p50, p90}, stats_only: {p_dem_win, margin}, benchmarks: {poll_avg, market, cook}, movers: [{event_id, card, delta}], news: {effect, switching, turnout, if_weaker, if_stronger}}}, senate: {p_r_50plus, p_d_caucus_51, p_independents_decide, seats, news}, house: {p_d_majority, seats}}` |
+| `forecast.json` (public) | Statistics | Content | `{races: {race_id: {p_dem_win, margin: {p10, p50, p90}, stats_only: {p_dem_win, margin}, benchmarks: {poll_avg, market, cook}, movers: [{event_id, card, delta}], news: {effect, switching, turnout, if_weaker, if_stronger}, today: {p_dem_win, margin, stats_only, movers}}}, senate: {p_r_50plus, p_d_caucus_51, p_independents_decide, seats, news, today}, house: {p_d_majority, seats}, news_dials: {national: {mean, sd}, tau}}` |
 | `draws.json` (public) | Statistics | Content | the fixed 1,000-draw sample: every race's margin and the seat totals |
 | `run.json` | Engine | all | run record (§6) |
 

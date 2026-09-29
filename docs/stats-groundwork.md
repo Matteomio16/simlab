@@ -461,6 +461,27 @@ The state takes the Field Guide's factor form: `R_r = region + state + Σ_k λ_r
 Every Monday the week's polls update the state and re-tune the dials; the result is published and logged. Why a plain
 Kalman update suffices is in §9.
 
+**Built 29 Sep** (`simlab/weekly.py`, 10 tests). It runs on Mondays from 12 Oct inside the statistics step
+(`--weekly` forces it on another day) and writes `filter_weekly.json`.
+- **Dials:** two per state and for the nation, switching and turnout, learned from every poll since the stories began.
+  - The dials only scale known effect paths, so each unit's poll likelihood is an exact quadratic in them. Six Kalman
+    runs recover it; the likelihood reuses the daily filter's poll table and national path.
+  - States pool with a national dial in a hierarchical normal model solved in closed form, so a state with few polls
+    borrows from the nation.
+  - The prior is set so a state's dials have the ranges approved on 28 Sep: national sd 0.44 and 0.71, a state's
+    deviation sd (tau) 0.3 and 0.5.
+  - `params.json` then carries the dials, and moves applies them.
+  - The Monte Carlo draws each election's dials jointly from the posterior. A race's own stories follow its state's
+    dials and the nation's stories follow the national ones.
+- **Fade speed:** five age half-lives from 2.75 to 11 days, weighed by the polls' evidence (the dials integrated out)
+  against a lognormal prior around Matteo's 5.5 days. The geometric mean becomes the next week's half-life.
+- **Surprise monitor:** each race's standardised poll surprises over the last 7 days, flagged when the chi-squared test
+  gives p < 0.01. Flags go to the auditor, which explains and never changes numbers.
+- **Dry run on 29 Sep:** the dials stayed at their prior because every story so far began after the last poll
+  (26 Sep). They will start moving as polls arrive after stories.
+- **Not built:** the demographic factor state (polls in one race informing demographically similar races) and the
+  regional poll-bias terms. The Monte Carlo already shares errors by nation, census division and state.
+
 ### 5.8 Monte Carlo
 
 - 40,000 draws. The seed is set from the run date and recorded.
@@ -828,6 +849,9 @@ are listed on the methods page.
 | Switching size c_s | 0.21 on average; each simulated election draws its own (lognormal, mean 1 × 0.21, 90% range 0.08–0.41) | fitted on 45 events (0.19–0.23 leave-one-out); the range covers the transfer to state races | decided (Matteo, 28 Sep: flexible, not tied to one value); refit weekly |
 | Turnout size c_t | = c_s on average; 90% range 0.05–0.53 | prior: no data yet | decided (Matteo, 28 Sep); early vote and weekly filter |
 | How long a story lasts | every story: a 5.5-day half-life from its first day; one-off types also a 1-day half-life once out of the news; economy and national: no extra drop; the 3 Nov forecast counts what remains, taking coverage to end today; a today view counts today's effects | Matteo, 28 Sep (D19); the calibration events' shifts held (share left 1.01–1.11 after 3–7 weeks, 90% ranges 0.84–1.31; random dates 0.83–0.92; `python -m simlab.moves --lasting`) | decided (Matteo, 29 Sep: 45% / 15% / under 10% after one, two, three weeks); weekly filter tunes |
+| Dial prior | national dials N(1, 0.44²) switching and N(1, 0.71²) turnout; a state's deviation sd 0.3 and 0.5 | set so a state's dials have the 28 Sep ranges; tau an assumption | weekly filter updates |
+| Fade-speed grid | 2.75, 3.89, 5.5, 7.78, 11 days; lognormal prior around 5.5 (sd of log 0.5) | Matteo's 5.5 as the centre | weekly filter updates |
+| Surprise flag | last 7 days' standardised poll surprises, chi-squared p < 0.01 | convention | fixed |
 | Simulation tiers | simulate: stats-only 10–90%, Cook toss-up/tilt/lean, or market 10–90%; watch: 3–97%, Likely, or 5–95%; statistics otherwise; pilot always simulate; a week of memory | Matteo, 28 Sep (D20); thresholds an assumption | decided |
 | Story effects on unpolled races | in full, like polled races | Matteo, 28 Sep (decision 5) | decided |
 | Uncertainty of moves | the size multipliers above | Matteo, 28 Sep (decision 1) | decided |

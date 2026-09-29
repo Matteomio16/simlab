@@ -2,6 +2,30 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 (Statistics session): the weekly filter (roadmap A6, weekly part)
+
+Matteo: "go ahead with the weekly filter". Built to stats-groundwork §5.7 and engine-design §3.3 (`simlab/weekly.py`):
+- **News dials.** Each state, and the nation, gets two dials, switching and turnout: 1 means the polls confirm the
+  simulated effect, 0 means they show none of it. They are learned from every poll since the stories began.
+  - The likelihood is an exact quadratic in the dials; states pool with a national dial in closed form.
+  - The prior matches the approved size ranges.
+  - The Monte Carlo now draws each simulated election's dials from the result, replacing the fixed ranges, so the
+    ranges tighten or move as the polls speak.
+- **Fade speed:** the polls weigh five half-lives around Matteo's 5.5 days.
+- **Surprise monitor:** flags races whose last week of polls surprised the forecast (p < 0.01), for the auditor.
+- **Schedule:** Mondays from 12 Oct inside the statistics step; `python -m simlab.weekly` or `statsday --weekly` by
+  hand. Output in `filter_weekly.json`; the dials in force go in each day's `params.json`.
+- **Dry run on 29 Sep:** nothing learned yet, correctly: every story so far began after the last poll.
+- **Fixes found on the way:**
+  - races with no stories of their own weren't getting the national stories' effect, because empty story lists
+    blocked the fallback; all 32 now carry it;
+  - watch-tier races (from 12 Oct) keep the nation's national stories, and simulated races aren't counted twice (the
+    Engine's point).
+- **For Content:** `races[rid].today.movers` (today's stories, by today's effect), `forecast.news_dials`, and
+  `if_weaker`/`if_stronger` now use the national dial's 10th/90th percentile.
+- **Not built:** the demographic factor state and regional poll-bias terms, left for Matteo's call.
+- The daily step takes about 36 seconds (12 level runs: two views, each with the parts per dial).
+
 ## 2026-09-29 (Engine session): the news day, a broken spending ledger, one story counted once
 
 - **Every model call failed from the afternoon of 28 Sep.** Two programs wrote to the spending ledger
