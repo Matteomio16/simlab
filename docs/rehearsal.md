@@ -51,11 +51,30 @@ Then run each drill by hand (Actions → daily → Run workflow, with the day).
    Pass: it writes `filter_weekly.json`, the learned dials and the GLM support offset stay inside their priors, and
    the step takes under 5 minutes.
 
+## Wednesday 7 Oct: the full-scale rehearsal (Matteo, 29 Sep)
+
+Every Senate race and every simulated House seat, once, before the full run starts on 12 Oct. After the day's scheduled
+pilot run has finished, Engine starts Actions → daily → Run workflow with the day 2026-10-07 and `full_rehearsal`
+ticked. The run works on a copy of the data and saves to `rehearsal/2026-10-07-all/` in simlab-data: the pilot's record
+for the day stays as it was, and a rehearsal is never published.
+
+| Step | Passes when |
+| --- | --- |
+| News | ok; every simulated race and House seat has at least one selected story (national ones count); stories from a state's House query selected only for the seats they are about; no label errors |
+| Reactions | ok; `failed` 0; parse errors under 1% of rows |
+| Kev shadow | rows for Senate races and House seats; the job passes even if Kev is down |
+| Statistics | ok; `orphaned_events` 0; `deselected_pairs` 0; `ungrouped_races` 0; the simulated House seats in `moves.json` |
+| Post kit | ok; `problems` 0 |
+| Whole job | spend under the $2 per-run cap (`run.json` → `spend`); its length sets when the site updates each day from 12 Oct |
+
+If the spend comes near $2 or the job runs past about 2 hours, Engine raises the per-run cap or the thread count
+before 12 Oct and tells Matteo.
+
 ## Who checks what
 
 | Session | Checks |
 | --- | --- |
-| Engine | the Worker and the news job, the news and reactions steps, `run.json`, spend, drills 1-4 |
+| Engine | the Worker and the news job, the news and reactions steps, `run.json`, spend, drills 1-4, the 7 Oct full-scale rehearsal |
 | Statistics | the statistics step: `forecast.json`, `moves.json`, orphaned and deselected counts, whether the numbers make sense; drill 5 |
 | Content & site | the post kit: slides, captions, `problems` 0 |
 | Kev | Kev's shadow rows, the snapshot and early-vote jobs |

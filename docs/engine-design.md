@@ -266,6 +266,9 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
   - It publishes only when the statistics step passed; a failed post kit doesn't hold it back.
   - A day older than the one on the site is never published. A manual run of today's date publishes too, so switch
     `SITE_PUBLISH` off before a test run.
+- **Full-scale rehearsal:** a manual run with `full_rehearsal` ticked runs every race (`--scope all`) on a copy of the
+  data and saves it to `simlab-data/rehearsal/YYYY-MM-DD-all/`. The day's own record is untouched and nothing is
+  published (the first one: Wed 7 Oct, `docs/rehearsal.md`).
 - **Run record:** `derived/YYYY-MM-DD/run.json` holds the git SHA, a hash of the settings, model slugs and hosts, input
   file hashes, spend, step timings and any fallbacks used.
 - **Entry points the daily job calls, in order.** Each exits non-zero on failure, and its last stdout line is a
