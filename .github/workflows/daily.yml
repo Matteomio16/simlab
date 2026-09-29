@@ -2,8 +2,8 @@
 # private data repo (derived/<date>/). GitHub fires this repository's schedules only every 5-9 hours (28-29 Sep), so an
 # outside timer (ops/cron, a Cloudflare Worker) starts the run with scheduled=true at 09:47; GitHub's own triggers,
 # every 15 minutes until 14:47, stay as a fallback. A scheduled run only proceeds when it is past 09:47 UTC, the day
-# has no run.json yet and the repository variable PIPELINE_ON is "true" (from the pilot, 5 Oct); a manual run works any
-# time. Logs are public: the steps print statuses and counts, never data. Package versions come from uv.lock.
+# has no run.json yet, the day is 1 Oct or later (the pilot's first runs) and the repository variable PIPELINE_ON is
+# "true"; a manual run works any time. Logs are public: the steps print statuses and counts, never data. Package versions come from uv.lock.
 name: daily
 
 on:
@@ -54,8 +54,11 @@ jobs:
         if: github.event_name == 'schedule' || inputs.scheduled
         working-directory: data-repo
         run: |
+          # the pilot's daily runs start on Thu 1 Oct (Matteo, 29 Sep), whenever PIPELINE_ON was switched on
           # a trigger delayed past midnight must not run the new day before its news window closes (09:30 UTC)
-          if (( 10#$(date -u +%H%M) < 947 )); then
+          if [[ "$DAY" < "2026-10-01" ]]; then
+            echo "scheduled runs start on 2026-10-01"; echo "run=false" >> "$GITHUB_OUTPUT"
+          elif (( 10#$(date -u +%H%M) < 947 )); then
             echo "before 09:47 UTC"; echo "run=false" >> "$GITHUB_OUTPUT"
           elif [ -f "derived/${DAY}/run.json" ]; then
             echo "${DAY} has already run"; echo "run=false" >> "$GITHUB_OUTPUT"
