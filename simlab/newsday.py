@@ -372,14 +372,19 @@ POLLISH = re.compile(r"\b(polls?|polling|pollsters?|surveys?|approval ratings?|f
 # Republicans "are facing negative effects in the 2026 midterm elections").
 EFFECT = re.compile(r"\b(help(s|ed|ing)?|hurt(s|ing)?|boost(s|ed|ing)?|drag(s|ged|ging)?|benefit(s|ed|ing)?|"
                     r"damag(e|es|ed|ing)|harm(s|ed|ing)?|effects?|impact(s|ed|ing)?|advantages?|disadvantages?|"
-                    r"backfir(e|es|ed|ing)|at risk|in trouble)\b", re.I)
+                    r"backfir(e|es|ed|ing)|at risk|in trouble|blows?|setbacks?|edge|boon|good news|bad news|"
+                    r"(could|would|may|might) cost|strengthen(s|ed|ing)?|weaken(s|ed|ing)?|undermin(e|es|ed|ing)|"
+                    r"energiz(e|es|ed|ing)|galvaniz(e|es|ed|ing)|fire(s|d)? up)\b", re.I)
 ELECTORAL = re.compile(r"\b(republicans?|democrats?|gop|part(y|ies)|midterms?|elections?|chances|voters?|races?|"
                        r"electoral|campaigns?)\b", re.I)
+# An effect word next to a candidate's name is also a claim (29 Sep: "The ruling helps Husted").
+CANDIDATE = re.compile(r"\b(" + "|".join(sorted({n for names in SURNAMES.values() for n in names})) + r")\b")
 
 
 def card_ok(card: str, outlet_names: list[str]) -> bool:
     low = card.lower()
-    claims_effect = any(EFFECT.search(s) and ELECTORAL.search(s) for s in re.split(r"(?<=[.!?])\s+", card))
+    claims_effect = any(EFFECT.search(s) and (ELECTORAL.search(s) or CANDIDATE.search(s))
+                        for s in re.split(r"(?<=[.!?])\s+", card))
     return (0 < len(card) <= 450 and not FORBIDDEN.search(card) and not META.search(card) and not claims_effect
             and not any(n.lower() in low for n in outlet_names if len(n) >= 3))
 

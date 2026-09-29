@@ -5,13 +5,14 @@
 const REPO = "Matteomio16/simlab";
 const WORKFLOWS = {
   "*/15 * * * *": ["news.yml", {}],
-  "7 */3 * * *": ["snapshot.yml", {}],
+  "7 */3 * * *": ["snapshot.yml", { scheduled: "true" }], // obeys the 150-minute rule, like GitHub's own trigger
   "47 9 * * *": ["daily.yml", { scheduled: "true" }], // obeys PIPELINE_ON and runs once a day
+  "13 * * * *": ["earlyvote.yml", {}], // downloads only files whose Last-Modified changed
 };
 
 export default {
-  async scheduled(event, env) {
-    const job = WORKFLOWS[event.cron];
+  async scheduled(controller, env) {
+    const job = WORKFLOWS[controller.cron];
     if (!job) return;
     const [workflow, inputs] = job;
     const r = await fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${workflow}/dispatches`, {

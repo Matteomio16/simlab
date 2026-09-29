@@ -255,6 +255,21 @@ class Cards(unittest.TestCase):
     def test_no_valid_card_gives_empty(self):
         self.assertEqual(newsday.write_card(self.story, [FakeChat(["not json", "{}"])]), "")
 
+    def test_a_card_never_claims_an_effect_on_a_party_or_a_candidate(self):
+        for card in ("The endorsement is a blow to Democrats in the Senate race.",
+                     "Analysts said the ad could cost Republicans the seat.",
+                     "The decision gives Democrats an edge in North Carolina.",
+                     "The visit is expected to energize Republican voters.",
+                     "The ruling helps Husted.",
+                     "It is good news for Brown."):
+            self.assertFalse(newsday.card_ok(card, []), card)
+        for card in ("President Trump traveled to Ohio to campaign for Republican Sen. Jon Husted.",
+                     "Ken Paxton and James Talarico disagreed over suspending the gas tax amid rising prices.",
+                     "Democrats said they would investigate business deals involving the Trump family if they win the "
+                     "midterm elections.",
+                     GOOD):
+            self.assertTrue(newsday.card_ok(card, []), card)
+
     def test_a_card_never_mentions_the_headlines_or_the_reporting(self):
         # 29 Sep: 4 of 24 cards said "according to the headline(s)" or "according to the reporting"
         self.assertFalse(newsday.card_ok("Trump's approval fell to a record low, according to the headline.", []))
