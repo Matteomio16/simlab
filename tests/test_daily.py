@@ -2,6 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from simlab import daily
 
@@ -47,6 +48,15 @@ class Steps(unittest.TestCase):
 
 
 class Record(unittest.TestCase):
+    def test_many_tiny_calls_add_up(self):
+        # 29 Sep: 112 GLM rows (about $0.00001 a call) showed as harness 0.0, because each addition was rounded
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "spend.jsonl"
+            ledger.write_text("\n".join(json.dumps({"ts": 100 + i, "model": "glm", "usd": 1.4e-05, "tag": "harness:glm"})
+                                        for i in range(500)) + "\n", encoding="utf-8")
+            with mock.patch.object(daily, "RUNS", Path(tmp)):
+                self.assertEqual(daily._spend(0, 10_000), {"harness": 0.007})
+
     def test_run_record_names_inputs_models_and_steps(self):
         with tempfile.TemporaryDirectory() as tmp:
             data = Path(tmp)

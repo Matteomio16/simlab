@@ -101,8 +101,8 @@ def _spend(started: float, finished: float) -> dict:
                 continue
             if started <= e["ts"] <= finished:
                 k = e["tag"].split(":")[0]
-                out[k] = round(out.get(k, 0.0) + e["usd"], 4)
-    return out
+                out[k] = out.get(k, 0.0) + e["usd"]
+    return {k: round(v, 4) for k, v in out.items()}
 
 
 def record(day: str, data: Path, run_id: str, steps: list[dict], started: float, finished: float) -> dict:
