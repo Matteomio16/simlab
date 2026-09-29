@@ -152,10 +152,12 @@ always sets where a race begins; models only ever supply the day-to-day change o
 
 Every forecast is shown next to three independent benchmarks: the average of published polls, prediction markets
 (Kalshi and Polymarket — used only as a comparison; their prices are never fed into the simulation), and the Cook
-Political Report's ratings. Accuracy is scored on fixed weekly dates using the **Brier score** (the average squared
-error of a win probability — 0 is a perfect call, 0.25 is what a coin flip scores) and **log loss** (a similar score
-that penalises confident wrong calls more heavily), starting 19 October. When we're wrong, the misses are published,
-not quietly dropped.
+Political Report's ratings. From 19 October, every Monday, each week's forecast is checked against the polls published
+in the following week: the average error in margin points, and the share of races where the forecast moved the same
+way the polls later did. After the election, every forecast is scored against the results with the **Brier score**
+(the average squared error of a win probability: 0 is a perfect call, 0.25 is what a coin flip scores) and **log
+loss** (a similar score that penalises confident wrong calls more heavily). Published scores are never rewritten, and
+the misses are published too. See the [track record](/track-record).
 
 ## What this can't do
 
