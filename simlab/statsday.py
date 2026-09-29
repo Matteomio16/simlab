@@ -133,6 +133,8 @@ def apply_weekly(mp: dict, wk: dict | None) -> dict:
     out = mp | {"dial_posterior": post}
     if wk:
         out |= {"dials": wk["dials"], "age_half_life_days": wk["fade"]["half_life"], "weekly_update": wk["date"]}
+        if wk.get("offset"):
+            out["support_offset"] = wk["offset"]["offset"]
     return out
 
 

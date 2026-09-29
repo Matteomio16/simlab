@@ -24,7 +24,7 @@ from . import moves
 from .levels import ELECTION, effect, local_level
 
 PRIOR_VAR = 1e6  # diffuse start, as levels.local_level
-WEEKLY_FROM = date(2026, 10, 12)  # Mondays from here run the update inside the daily statistics step
+WEEKLY_FROM = date(2026, 10, 5)  # Mondays from here run the update inside the daily statistics step (Matteo, 29 Sep)
 POINTS = [(0, 0), (1, 0), (2, 0), (0, 1), (0, 2), (1, 1)]
 
 
@@ -98,19 +98,23 @@ def state_dial(post: dict, state: str, prior: dict) -> dict:
     return {"mean": nat["mean"], "cov": (np.array(nat["cov"]) + np.diag(np.array(prior["tau"], float) ** 2)).tolist()}
 
 
-def _paths(m: dict, part: str, h_age: float | None = None) -> dict:
+def _paths(m: dict, part: str, h_age: float | None = None, offset: float = 0.0) -> dict:
     """Each race's own effect paths at dial 1 for one part ("s" or "t"), and the nation's under "US", with the age
-    half-life replaced by `h_age` if given."""
-    return {r: [(f, l, x, h_age or ha, hf) for f, l, x, ha, hf in items]
+    half-life replaced by `h_age` if given, and the switching part's support offset moved by `offset` from the one
+    moves.json was built with."""
+    unit = moves.paths(m, "s_unit", with_nation=False) if part == "s" and offset else {}
+    return {r: [(f, l, x + offset * (unit[r][i][2] if unit else 0.0), h_age or ha, hf)
+                for i, (f, l, x, ha, hf) in enumerate(items)]
             for r, items in moves.paths(m, f"{part}_base", with_nation=False).items()}
 
 
-def units(p, m: dict, params: dict, d: int, election=ELECTION, dials_us=(1.0, 1.0), h_age: float | None = None) -> dict:
+def units(p, m: dict, params: dict, d: int, election=ELECTION, dials_us=(1.0, 1.0), h_age: float | None = None,
+          offset: float = 0.0) -> dict:
     """Each unit's log-likelihood quadratic in its two dials: the nation's from the generic-ballot polls, each state's
     from its simulated races' polls relative to the national level (itself net of the national stories at
-    `dials_us`). `p` is levels.poll_frame's table and `m` moves.json."""
+    `dials_us`). `p` is levels.poll_frame's table and `m` moves.json; `offset` as in _paths."""
     q_n, q_r = params["drift_daily_sd"]["national"] ** 2, params["drift_daily_sd"]["race"] ** 2
-    ps, pt = _paths(m, "s", h_age), _paths(m, "t", h_age)
+    ps, pt = _paths(m, "s", h_age, offset), _paths(m, "t", h_age)
     g = p[p.race == "US"]
     tg, yg, vg = g.t.values.astype(float), g.adj.values, g.v.values
     su, tu = effect(tg, ps.get("US", []), election), effect(tg, pt.get("US", []), election)
@@ -149,6 +153,21 @@ def fade_grid(p, m: dict, params: dict, d: int, prior: dict, grid: list[float], 
             "prior": {"center": center, "spread_log": spread}}
 
 
+def offset_grid(p, m: dict, params: dict, d: int, prior: dict, grid: list[float], used: float, election=ELECTION,
+                h_age: float | None = None, mean: float = 0.08, sd: float = 0.065) -> dict:
+    """Weighs GLM's support offsets in `grid` by the polls' evidence with each (the dials integrated over their prior;
+    moves.json was built with `used`), times a normal prior; returns the weights, their mean and a flag when the
+    polls pull the offset below zero, against the benchmark's sign (Matteo decides then)."""
+    logw = {b: pool(units(p, m, params, d, election, h_age=h_age, offset=b - used), prior)["log_evidence"]
+            - 0.5 * ((b - mean) / sd) ** 2 for b in grid}
+    top = max(logw.values())
+    w = {b: np.exp(v - top) for b, v in logw.items()}
+    tot = sum(w.values())
+    est = float(sum(w[b] / tot * b for b in grid))
+    return {"grid": [round(b, 4) for b in grid], "weights": {f"{b:g}": round(float(w[b] / tot), 4) for b in grid},
+            "offset": round(est, 4), "prior": {"mean": mean, "sd": sd}, "flag": est < 0}
+
+
 def _flag(t: np.ndarray, z: np.ndarray, d: int, days: int, alpha: float) -> dict:
     zz = z[np.unique(np.floor(t)) > -d - days]
     stat = float(np.sum(zz ** 2))
@@ -158,12 +177,12 @@ def _flag(t: np.ndarray, z: np.ndarray, d: int, days: int, alpha: float) -> dict
 
 
 def surprises(p, m: dict, params: dict, d: int, dials: dict, election=ELECTION, days: int = 7, alpha: float = 0.01,
-              h_age: float | None = None) -> dict:
+              h_age: float | None = None, offset: float = 0.0) -> dict:
     """The innovation monitor: each series' standardised surprises over the last `days` days, with the story effects
     at `dials` ({unit: (k_s, k_t)}), their chi-squared p-value, and a flag below `alpha`. A state that keeps
     getting flagged goes to the weekly auditor, which explains and never changes numbers."""
     q_n, q_r = params["drift_daily_sd"]["national"] ** 2, params["drift_daily_sd"]["race"] ** 2
-    ps, pt = _paths(m, "s", h_age), _paths(m, "t", h_age)
+    ps, pt = _paths(m, "s", h_age, offset), _paths(m, "t", h_age)
     ku = dials.get("US", (1.0, 1.0))
     g = p[p.race == "US"]
     tg = g.t.values.astype(float)
@@ -191,17 +210,21 @@ def _dial(x: dict) -> dict:
 
 def run(day: date, t: dict, m: dict, mp: dict, election=ELECTION) -> dict:
     """The week's update from every poll up to `day` (t: polls.build of the day's snapshot) and the day's moves.json
-    (m), with the priors in move_params (mp): the fade speed, then the national dials, then each state's, then the
-    surprise monitor. "polls_alone" is what each unit's polls say on their own, before pooling."""
+    (m), with the priors in move_params (mp): the fade speed, then GLM's support offset, then the national dials, then
+    each state's, then the surprise monitor. "polls_alone" is what each unit's polls say on their own, before
+    pooling."""
     from .levels import inputs, poll_frame
     params, priors, *_ = inputs()
     p = poll_frame(t["senate"], t["generic_ballot"], params, priors, day, election, t["entries"])[0]
     d, prior, center = (election - day).days, mp["dial_prior"], mp["age_half_life_prior"]
     fade = fade_grid(p, m, params, d, prior, [round(center * 2 ** e, 2) for e in (-1, -0.5, 0, 0.5, 1)], election,
                      center)
-    h = fade["half_life"]
-    us = tuple(state_dial(pool(units(p, m, params, d, election, h_age=h), prior), "US", prior)["mean"])
-    u = units(p, m, params, d, election, dials_us=us, h_age=h)
+    h, used, bp = fade["half_life"], mp.get("support_offset", 0.0), mp.get("support_offset_prior")
+    lean = offset_grid(p, m, params, d, prior, [bp["mean"] + bp["sd"] * e for e in (-2, -1, 0, 1, 2)], used, election,
+                       h, bp["mean"], bp["sd"]) if bp else None
+    off = lean["offset"] - used if lean else 0.0
+    us = tuple(state_dial(pool(units(p, m, params, d, election, h_age=h, offset=off), prior), "US", prior)["mean"])
+    u = units(p, m, params, d, election, dials_us=us, h_age=h, offset=off)
     post = pool(u, prior)
     alone = {}
     for name, (a, b, _) in u.items():
@@ -210,10 +233,10 @@ def run(day: date, t: dict, m: dict, mp: dict, election=ELECTION) -> dict:
                        "se": [round(float(np.sqrt(max(v, 0))), 3) if v > 0 else None for v in np.diag(cov)]}
     means = {name: tuple(x["mean"]) for name, x in post["units"].items()}
     return {"polls": {"n": int(len(p)), "first": str(p.mid.min()), "last": str(p.mid.max())}, "prior": prior,
-            "fade": fade, "posterior": {k: post[k] for k in ("labels", "mean", "cov", "log_evidence")},
+            "fade": fade, "offset": lean, "posterior": {k: post[k] for k in ("labels", "mean", "cov", "log_evidence")},
             "dials": {name: _dial(x) for name, x in post["units"].items()} | {"default": _dial(post["national"])},
             "polls_alone": alone,
-            "surprises": surprises(p, m, params, d, means | {"US": means.get("US", us)}, election, h_age=h)}
+            "surprises": surprises(p, m, params, d, means | {"US": means.get("US", us)}, election, h_age=h, offset=off)}
 
 
 def main() -> int:

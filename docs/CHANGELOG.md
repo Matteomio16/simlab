@@ -2,6 +2,33 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 night (Statistics session): GLM's lean corrected; weekly filter from 5 Oct; House rows in races.json
+
+- **Matteo, 29 Sep:**
+  - correct GLM's lean from the pilot, with the weekly filter re-estimating it;
+  - run the first weekly update on Mon 5 Oct, a private rehearsal.
+  Asked again: whether the 0.25 correlation floor applies to the Senate races only (explained below, recommended yes).
+- **The lean correction is on:** `support_offset` +0.08 in `simlab/move_params.json`, added to GLM's support answers
+  for every group (Kev's shadow rows stay raw). On the Actions run of 29 Sep, story directions went from 6 toward D
+  and 19 toward R to 11 and 14.
+- **The weekly filter re-estimates it** (`simlab/weekly.py`; 3 tests).
+  - moves records each story's switching effect per unit of offset (`full_s_unit`).
+  - The filter weighs 5 offsets around the prior (+0.08 ± 0.065) by the polls' evidence, as it does fade speeds.
+  - `params.json` carries the estimate into the next day's moves.
+  - A negative estimate, against the benchmark's sign, is flagged for Matteo.
+  - On 29 Sep data it keeps the prior: no polls yet were fielded during stories.
+- **Weekly filter from Mon 5 Oct** (`weekly.WEEKLY_FROM`).
+- **House seats in races.json:** from the daily run of 30 Sep, House rows from `house_races.json` (office `house`,
+  Kev's tiers, left_party D or O) join the Senate rows. Readers checked:
+  - newsday and newsnap only take races in newsraces.json or the pilot list;
+  - Content's kit looks races up by id;
+  - the website already handles office "house".
+  Content's racecards need "O" before House cards appear.
+- **Why the floor is Senate-only (Matteo asked):** lifting every pair to at least 0.25 guards against a Senate forecast
+  that's overconfident about control. In the House, close seats already correlate at about 0.35 through the national
+  error. The pairs below 0.25 are safe seats that rarely decide the count. Lifting about 80,000 of them makes the
+  correlations inconsistent, and the repair would move the Senate's numbers.
+
 ## 2026-09-29 evening (Statistics session): House seats in the Monte Carlo; pilot checks
 
 - **House block built** (`simlab/montecarlo.py`, `simlab/statsday.py`; 5 tests). statsday runs Kev's `house.py`

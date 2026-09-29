@@ -2,8 +2,12 @@
  "c_s": 0.2055,
  "c_t": 0.2055,
  "c_t_rule": "c_t = c_s (prior: a strong reaction moves the same fraction of a group's mobilisable pool as of its persuadable pool); no data identify c_t before early votes and the weekly filter",
- "support_offset": 0.0,
- "support_offset_rule": "added to GLM's support answers (-2..+2, toward D) for every group before the switching formula; Kev's shadow rows stay raw. Engine's benchmark (29 Sep): GLM sits to the R side of real measured shifts, -0.26 points per event on the 45 training events (SE 0.13) and -0.28 on the 19 held-out ones (SE 0.70), combined -0.27 +/- 0.22; at 3.4 points per unit that is +0.08 +/- 0.065 on the scale. Proposed from the pilot, with the weekly filter updating it from 12 Oct (prior +0.08, sd 0.065); 0 until Matteo decides.",
+ "support_offset": 0.08,
+ "support_offset_prior": {
+  "mean": 0.08,
+  "sd": 0.065
+ },
+ "support_offset_rule": "added to GLM's support answers (-2..+2, toward D) for every group before the switching formula; Kev's shadow rows stay raw. Engine's benchmark (29 Sep): GLM sits to the R side of real measured shifts, -0.26 points per event on the 45 training events (SE 0.13) and -0.28 on the 19 held-out ones (SE 0.70), combined -0.27 +/- 0.22; at 3.4 points per unit that is +0.08 +/- 0.065 on the scale. On from the pilot (Matteo, 29 Sep), re-estimated by the weekly filter (prior +0.08, sd 0.065); flag to Matteo if the estimate turns negative.",
  "dial_prior": {
   "mean": [
    1.0,

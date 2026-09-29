@@ -148,10 +148,12 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
             by_group[g]["dt"] += 100 * dt[g] * share
         fs, ft = round(100 * race_move(groups, dd, {}), 4), round(100 * race_move(groups, {}, dt), 4)
         fs0, ft0 = round(100 * race_move(groups, full["base"][2], {}), 4), round(100 * race_move(groups, {}, full["base"][3]), 4)
+        unit = {g: groups[g]["pi"] * params["c_s"] * a for g in full["base"][2]}
         info[eid] = {"first_seen": first.isoformat(), "last_seen": last.isoformat(), "type": e.get("type"),
                      "scope": e.get("scope"),
                      "age_half_life": h_age, "after_news_half_life": h_after, "a": a, "full": round(fs + ft, 4),
                      "full_s": fs, "full_t": ft, "full_s_base": fs0, "full_t_base": ft0,
+                     "full_s_unit": round(100 * race_move(groups, unit, {}), 4),
                      "full_base": round(full["base"][0], 4), "election_day": round((fs + ft) * eday, 4),
                      "card": e.get("card", "")}
     return {"delta_margin": round(delta, 4), "delta_margin_base": round(delta_base, 4),
@@ -203,11 +205,13 @@ def lasting_share(events: list[tuple], lags: list[tuple] = LAGS) -> tuple[dict, 
 def paths(m: dict, part: str = "all", with_nation: bool = True) -> dict:
     """{race_id or "US": [(first_seen, last_seen, full effect, age half-life, after-news half-life)]} from moves.json's
     main block, for levels.build: the whole effect, or only its switching ("s") or turnout ("t") part, at the state's
-    dials or at dial 1 ("s_base", "t_base"). A race whose own reactions include no national stories (the watch tier
+    dials or at dial 1 ("s_base", "t_base"), or the switching effect of one unit of support offset ("s_unit", for the
+    weekly filter). A race whose own reactions include no national stories (the watch tier
     from 12 Oct) also gets the nation's national stories, unless `with_nation` is False; a simulated race gets them
     through its own rows, so they aren't added twice. Races without stories are left out, so levels.build gives them
     the nation's."""
-    key = {"all": "full", "s": "full_s", "t": "full_t", "s_base": "full_s_base", "t_base": "full_t_base"}[part]
+    key = {"all": "full", "s": "full_s", "t": "full_t", "s_base": "full_s_base", "t_base": "full_t_base",
+           "s_unit": "full_s_unit"}[part]
     item = lambda v: (v["first_seen"], v["last_seen"], v[key], v["age_half_life"], v["after_news_half_life"])
     nation = [item(v) for v in m.get("US", {}).get("events", {}).values()] if with_nation else []
     extra = takes_nation(m)

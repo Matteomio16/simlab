@@ -139,6 +139,8 @@ class WeeklyTest(unittest.TestCase):
         mp = statsday.apply_weekly(self.MP, wk)
         self.assertEqual((mp["dials"]["OH"]["k_s"], mp["age_half_life_days"], mp["dial_posterior"]["labels"]),
                          (0.6, 4.2, ["national", "OH"]))
+        self.assertEqual(statsday.apply_weekly(self.MP | {"support_offset": 0.08}, wk | {"offset": {"offset": 0.05}})
+                         ["support_offset"], 0.05)
 
 
 class BenchmarkTest(unittest.TestCase):

@@ -123,6 +123,17 @@ class BuildTest(unittest.TestCase):
         self.assertLess(m["shadow"]["OH-S"]["delta_margin"], 0)
         self.assertEqual(m["US"]["delta_margin"], 0.0)
 
+    def test_each_story_records_the_effect_of_a_unit_support_offset(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            write_day(root, "2026-10-01", [event("e1", "2026-10-01T08:00:00+00:00", 0.5)],
+                      [reaction("e1", A, 1.0, 0.0), reaction("e1", B, -1.0, 0.0)])
+            base = self.build(root, "2026-10-01")["OH-S"]["events"]["e1"]
+            self.params["support_offset"] = 1.0
+            moved = self.build(root, "2026-10-01")["OH-S"]["events"]["e1"]
+        self.assertAlmostEqual(moved["full_s_base"] - base["full_s_base"], base["full_s_unit"], places=3)
+        self.assertAlmostEqual(base["full_s_unit"], 100 * 2 * 0.1 * 0.25 * 0.5, places=4)
+
     def test_the_support_offset_shifts_glms_answers_and_leaves_kevs_raw(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

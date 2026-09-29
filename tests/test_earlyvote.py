@@ -46,39 +46,27 @@ class NCCounts(unittest.TestCase):
 
 
 
-def maine_row(town, record, last, party, received, status):
-    r = [""] * len(earlyvote.MAINE_FIELDS)
-    for k, v in {"municipality": town, "voter_record": record, "last_name": last, "first_name": "ANN", "party": party,
-                 "cong_dist": "01", "ballot_type": "REG", "request_method": "OR", "requested": "09/20/2026",
-                 "issue_method": "MA", "issued": "09/22/2026", "return_method": "MA", "received": received,
-                 "return_status": status}.items():
-        r[earlyvote.MAINE_FIELDS.index(k)] = v
-    return r
+MAINE_HEADER = ("RES MUNICIPALITY|DES|Voter Record #|P|IB|W-P|CG|SS|SR|DA|CC|Ballot Type|Req Type|Req Date|"
+                "Issued Type|Issued Date|Rec Type|Rec Date|Rec Time|DUP|Status|CH|REJ")
+MAINE_ROWS = ["Portland||123456|D||1-1|1|27|118|2|3|RB|OR|09/20/2026|MA|09/22/2026|MA|09/28/2026|10:05 AM||ACT||",
+              "Portland||123457|D||1-1|1|27|118|2|3|RB|OR|09/20/2026|MA|09/22/2026|MA|09/28/2026|11:00 AM||ACT||",
+              "Bangor||223456|R||0-0|2|9|24|3|1|RB|EL|09/21/2026|||||||||"]
 
 
 class MaineCounts(unittest.TestCase):
-    def counts(self, sep, header):
-        rows = [maine_row("Portland", "123456", "SMITH", "D", "09/28/2026", "ACC"),
-                maine_row("Portland", "123457", "JONES", "D", "09/28/2026", "ACC"),
-                maine_row("Bangor", "223456", "LEE", "R", "", "")]
-        lines = ([sep.join(["Residence Municipality", "Designators", "Voter Record #"] + ["x"] * 24)] if header else [])
-        lines += [sep.join(r) for r in rows]
+    def test_counts_by_header(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "me.txt"
-            path.write_bytes("\n".join(lines).encode("latin-1"))
+            path.write_bytes("\n".join([MAINE_HEADER, *MAINE_ROWS]).encode("latin-1"))
             body, n = earlyvote.me_counts(path)
-        return pd.read_csv(io.BytesIO(body), keep_default_na=False, dtype=str), n
-
-    def test_delimiters_and_header(self):
-        for sep in ("|", "\t", ","):
-            for header in (True, False):
-                d, n = self.counts(sep, header)
-                self.assertEqual(n, 3)
-                self.assertEqual(list(d.columns), earlyvote.MAINE_BY + ["n"])
-                portland = d[d.municipality == "Portland"].iloc[0]
-                self.assertEqual((portland.n, portland.received, portland.cong_dist), ("2", "2026-09-28", "01"))
-                for personal in ("SMITH", "ANN", "123456"):
-                    self.assertNotIn(personal, d.to_csv())
+        d = pd.read_csv(io.BytesIO(body), keep_default_na=False, dtype=str)
+        self.assertEqual(n, 3)
+        self.assertEqual(list(d.columns), earlyvote.MAINE_BY + ["n"])
+        portland = d[d.municipality == "Portland"].iloc[0]
+        self.assertEqual((portland.n, portland.received, portland.cong_dist, portland.return_status),
+                         ("2", "2026-09-28", "1", "ACT"))
+        self.assertEqual(d[d.municipality == "Bangor"].iloc[0].received, "")
+        self.assertNotIn("123456", d.to_csv())
 
 
 class IowaLinks(unittest.TestCase):
