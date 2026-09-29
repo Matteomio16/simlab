@@ -2,6 +2,22 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 (Kev session): Kev's voter-group margins for all 51 states delivered (A11 request)
+
+- Kev ces-v3b answered the 28 voter groups in all 51 states (`python -m simlab.kevdata groups`, then Modal
+  `evaluate --run ces-v3b --name ces-v3b-groups`, about $0.50; `python -m simlab.kevdata answers ces-v3b-groups`). The
+  persona text is the training strata's own, the pres24 question comes in 3 option orders averaged at temperature
+  1.0, and d = (harris - trump) / (harris + trump).
+- `python -m simlab.groups --kev kev-finetune/runs/ces-v3b-groups/answers.json` wrote `simlab/kev_groups.json`: 1,428
+  pairs, none falling back to d0. statsday picks it up from the next run.
+- Checks:
+  - the 60 held-out OH/NC/TX pairs match the test's answers within 3.5 points (other option orders);
+  - Kev's margins never break the party order (strong > leaner > weak > independent, each side) by more than 5
+    points, against 23 breaks in d0;
+  - Kev puts independents at -0.14 on average (d0 +0.06), leaners and weak Republicans further right (-0.95 and
+    -0.76 against -0.80 and -0.62), and Democrats about the same.
+  The groups, moves and levels tests pass (59).
+
 ## 2026-09-29 (Statistics session): Kev's voter-group margins for the Senate too
 
 - **Matteo, 29 Sep:** every race, House and Senate, takes each voter group's starting margin from Kev ces-v3b. The

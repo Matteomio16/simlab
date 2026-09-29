@@ -16,6 +16,8 @@ at all (v3b).
     python -m simlab.kevdata            # data/kev/ces-v1/{train,calibration,development,all}.jsonl + manifest.json
     python -m simlab.kevdata v2         # data/kev/ces-v2/...
     python -m simlab.kevdata v3         # data/kev/ces-v3a/... and data/kev/ces-v3b/...
+    python -m simlab.kevdata groups     # data/kev/groups: the 28 voter groups x 51 states, for Kev to answer
+    python -m simlab.kevdata answers ces-v3b-groups   # that run's answers -> kev-finetune/runs/<run>/answers.json
 """
 from __future__ import annotations
 
@@ -89,6 +91,7 @@ def build(min_n_train: int = 20, calibration: float = 0.15, seed: int = 0) -> No
 # ------------------------------------------------------------------------------------------------------------ ces-v2
 OUT_V2 = DATA / "kev" / "ces-v2"
 OUT_V3A, OUT_V3B = DATA / "kev" / "ces-v3a", DATA / "kev" / "ces-v3b"
+OUT_GROUPS = DATA / "kev" / "groups"
 CUMULATIVE = DATA / "cumulative_2006-2025.dta"
 MIDTERMS = (2018, 2022)
 TURNOUT = {y: json.loads((Path(__file__).parent / f"turnout{y}.json").read_text())["vep_turnout"] for y in MIDTERMS}
@@ -252,5 +255,51 @@ def write(out: Path, parts: dict, manifest: dict, sizes: dict) -> None:
     print(out.name, json.dumps({k: manifest[k] for k in ("records", "questions")}, indent=1))
 
 
+def build_groups(seed: int = 0) -> None:
+    """The engine's 28 voter groups in every state of groups_base.json as persona records (the ces-v2/v3 party-ID
+    strata text) with the pres24 question in 3 option orders, for a fine-tune to answer. Targets are placeholders."""
+    from .groups import BASE
+    from .statsdata import mit
+    upper = {v.upper(): v for v in STATE_NAMES.values()}
+    p = mit("president")
+    name = {po: upper[s] for po, s in zip(p.state_po, p.state)}
+    rng, recs = random.Random(seed), []
+    for st, groups in sorted(json.loads(BASE.read_text(encoding="utf-8"))["states"].items()):
+        for g in groups:
+            pid, race, educ = g.split(" / ")
+            qs = {}
+            add_choice(qs, "pres24", probes.vote_question, VOTE_OPTIONS, dict.fromkeys(VOTE_OPTIONS, 1 / 3), rng)
+            recs.append({"state": render({"state": name[st], "race": race.capitalize(), "education": educ,
+                                          "party_id": pid}), "questions": qs, "_key": [st, g]})
+    OUT_GROUPS.mkdir(parents=True, exist_ok=True)
+    (OUT_GROUPS / "keys.json").write_text(json.dumps([r.pop("_key") for r in recs]), encoding="utf-8")
+    (OUT_GROUPS / "development.jsonl").write_text("\n".join(json.dumps(r) for r in recs) + "\n", encoding="utf-8")
+    print(f"{OUT_GROUPS}: {len(recs)} records")
+
+
+def group_answers(run: str, data: Path = None) -> dict:
+    """A run's answers on build_groups' records as {run, question, temperature, held_out, states: {state: {group: d}}},
+    d = (harris - trump) / (harris + trump) averaged over the option orders at temperature 1.0, written next to the
+    run's reports as answers.json (the input of `python -m simlab.groups --kev`)."""
+    from scipy.special import softmax
+    runs = Path(__file__).parent.parent / "kev-finetune" / "runs" / run
+    keys = json.loads(((data or OUT_GROUPS) / "keys.json").read_text(encoding="utf-8"))
+    d = defaultdict(list)
+    for r in json.loads((runs / "development" / "rows.json").read_text(encoding="utf-8")):
+        p = dict(zip(r["keys"], softmax(np.array(r["logits"]))))
+        d[tuple(keys[int(r["id"].split("/")[1])])].append((p["harris"] - p["trump"]) / (p["harris"] + p["trump"]))
+    out = {"run": run, "question": "pres24", "temperature": 1.0, "held_out": list(HELD_OUT), "states": {}}
+    for (st, g), v in sorted(d.items()):
+        assert len(v) == 3, (st, g, len(v))
+        out["states"].setdefault(st, {})[g] = round(float(np.mean(v)), 4)
+    (runs / "answers.json").write_text(json.dumps(out, indent=1), encoding="utf-8")
+    print(f"{runs / 'answers.json'}: {sum(map(len, out['states'].values()))} groups in {len(out['states'])} states")
+    return out
+
+
 if __name__ == "__main__":
-    {"v2": build_v2, "v3": lambda: build_v2(turnout="cps")}.get(sys.argv[1] if sys.argv[1:] else "", build)()
+    if sys.argv[1:2] == ["answers"]:
+        group_answers(sys.argv[2])
+    else:
+        {"v2": build_v2, "v3": lambda: build_v2(turnout="cps"), "groups": build_groups}.get(
+            sys.argv[1] if sys.argv[1:] else "", build)()
