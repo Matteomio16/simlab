@@ -77,6 +77,14 @@ def change_txt(p: float, prev: float | None) -> str:
     return f"{'Up' if d > 0 else 'Down'} {abs(d) * 100:.0f} points this week"
 
 
+def today_txt(r: dict, short: bool = False) -> str:
+    """The "if the election were today" number, beside the 3 Nov headline."""
+    if r.get("today") is None:
+        return ""
+    return f" Today: {round(r['today'] * 100)} in 100." if short else \
+        f" If the election were today: {round(r['today'] * 100)} in 100."
+
+
 def race_draws(draws: dict | None, rid: str):
     """Accepts {"races": {rid: [margins]}} or {"draws": [{rid: margin, ...}, ...]}."""
     if not draws:
@@ -121,6 +129,7 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> di
         m["left_party"] = x.get("left_party", m["left_party"])
         before = (prev["races"].get(rid) or {}).get("p_dem_win")
         rs.append(m | {"rid": rid, "run": run, "day": day, "kicker": kicker, "p": float(x["p_dem_win"]), "prev": before,
+                       "today": (x.get("today") or {}).get("p_dem_win"),
                        "lo": x["margin"]["p10"], "mid": x["margin"]["p50"], "hi": x["margin"]["p90"],
                        "poll": poll_txt(b.get("poll_avg"), m["left_party"]), "market": b.get("market"),
                        "cook": COOK.get(b.get("cook"), b.get("cook")) or "n/a",
@@ -144,8 +153,8 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> di
             paths.append(p)
             alts[p.name] = (f"{r['state']} {r['office']}: {racecards.verdict(r['p'], r['left_party'])}. The "
                             f"{racecards.who(r)} wins "
-                            f"{r['p']:.0%} of simulated elections; poll average {r['poll']}, market "
-                            f"{racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
+                            f"{round(r['p'] * 100)} in 100 simulated 3 Nov elections.{today_txt(r)} Poll average "
+                            f"{r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
     contact_sheet(paths, out / "contact.jpg", scale=0.3)
 
     lines = [f"Where the races stand, {day:%d %B}: {len(rs)} of our {len(everyone)} races, 40,000 simulated "
@@ -153,8 +162,8 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> di
     for r in rs:
         lines.append(f"{r['state']} {r['office']}: {racecards.verdict(r['p'], r['left_party'])}. "
                      f"The {racecards.who(r)} wins "
-                     f"{round(r['p'] * 10)} in 10 simulated elections. Poll average {r['poll']}, market "
-                     f"{racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
+                     f"{round(r['p'] * 100)} in 100 simulated 3 Nov elections.{today_txt(r)} Poll average "
+                     f"{r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}.")
         top = [mv for mv in sorted(r["movers"], key=lambda mv: -abs(mv.get("delta", 0)))
                if abs(mv.get("delta", 0)) >= MOVER_MIN][:1]
         if top:
@@ -164,11 +173,11 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> di
               "out once. Anything from 35% to 65% is a toss-up.", "", f"{LABEL}.", "",
               "#midterms2026 #elections #socialsimulation"]
     caption = "\n".join(lines)
-    thread = [f"Where the races stand today, in 40,000 simulated elections each. {LABEL}."]
+    thread = [f"Where the races stand, in 40,000 simulated elections each: on 3 Nov, and if the election were "
+              f"today. {LABEL}."]
     thread += [f"{r['state']} {r['office']}: {racecards.verdict(r['p'], r['left_party'])}, the {racecards.who(r)} "
-               f"wins {round(r['p'] * 10)} "
-               f"in 10. Poll average {r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. "
-               f"{r['change']}." for r in rs]
+               f"wins {round(r['p'] * 100)} in 100 on 3 Nov.{today_txt(r, short=True)} Poll average {r['poll']}, "
+               f"market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}." for r in rs]
 
     problems += [f"Instagram caption: {p}" for p in text.check(caption)]
     if len(caption) > LIMITS["instagram"]:
@@ -190,7 +199,8 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None) -> di
     for r in everyone:
         so = f["races"][r["rid"]].get("stats_only", {}).get("p_dem_win")
         gap = "" if so is None else f"; statistics alone: {so:.0%}"
-        note.append(f"- **{r['state']} {r['office']}**: {r['p']:.0%}{gap}. {r['change']}.")
+        now = "" if r.get("today") is None else f"; if held today: {r['today']:.0%}"
+        note.append(f"- **{r['state']} {r['office']}**: {r['p']:.0%} on 3 Nov{now}{gap}. {r['change']}.")
         x = f["races"][r["rid"]]
         tier = (races.get(r["rid"]) or {}).get("tier")
         nw = x.get("news") or {}

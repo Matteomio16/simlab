@@ -101,6 +101,7 @@ Tests: `python -m unittest tests.test_kit`.
 
 - **Independents:** where `left_party` is "I" (NE, ID, SD, MT in 2026) the cards say "the independent", use I+ margins
   and draw that side in the neutral independent grey instead of blue.
+- **Two views** (Matteo, 29 Sep): the headline number is 3 Nov; "if the election were today" (`races[rid].today`) sits beside it: a ledger row on The Stamp, and in the caption, thread, alt text and note. Captions count "in 100" so the two numbers can differ visibly. `senate.today` waits for The Chamber.
 - **Movers** (`movers[].delta`, 28 Sep): each story's effect on the 3 Nov margin. Captions quote a story only at 0.5 points or more (`MOVER_MIN`); `note.md` lists all of them, plus each race's news effect, its win chance if news matters less or more, and its tier.
 - **Senate control, still to wire** (The Chamber): `p_r_50plus`, `p_d_caucus_51` and `p_independents_decide` add to 1; new independents are shown as independents (Matteo); the final presentation is decided later.
 - **Layout guard:** `save()` also refuses text whose glyphs touch other text. Text over shapes is checked by eye on

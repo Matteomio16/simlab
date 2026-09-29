@@ -281,7 +281,10 @@ def stamped(t: Theme, r: dict = RACE) -> Slide:
     top = s.y
     charts.state_voters(s, r["usps"], r["code"], r["p"], MARGIN, top, 480, n=520, box_h=230)
     rx, rw = MARGIN + 540, s.width - 540
-    s._put(rx, top - 10, f"{r['p'] * 100:.0f}", "hero", t.hero_weight, 150, t.ink, va="top")
+    num = f"{r['p'] * 100:.0f}"
+    s._put(rx, top - 10, num, "hero", t.hero_weight, 150, t.ink, va="top")
+    s._put(rx + s.pil("hero", t.hero_weight, 150).getlength(num) + 18, top + 16, "ON 3 NOV", "mono", 600, 24, t.ai,
+           va="top")
     s._put(rx, top + 150, "of 100 simulations", "sans", 400, 30, t.ink2, va="top")
     s._put(rx, top + 188, f"won by the {who(r)}", "sans", 400, 30, t.ink2, va="top")
     label = verdict(r["p"], abbr(r)).upper()
@@ -294,11 +297,14 @@ def stamped(t: Theme, r: dict = RACE) -> Slide:
     rows = [("Range of margins (80%)", span(r)),
             ("Poll average", r["poll"]), (f"Market, {abbr(r)}", pct_txt(r["market"])), ("Cook", r["cook"]),
             ("This week", r["change"].replace(" this week", ""))]
+    if r.get("today") is not None:  # the election held today: no time left for opinion to drift
+        rows.insert(0, ("If the election were today", f"{r['today'] * 100:.0f} in 100"))
+    gap = 12 if len(rows) <= 5 else 4
     for name, value in rows:
         s.rule(t.hairline, after=14)
         s._put(MARGIN, s.y, name, "sans", 400, 32, t.ink2, va="top")
         s._put(s.w - MARGIN, s.y, value, "mono", 600, 32, t.ink, ha="right", va="top")
-        s.y += 32 * 1.3 + 12
+        s.y += 32 * 1.3 + gap
     s.rule(t.hairline)
     source(s, r, "The Stamp")
     return s
