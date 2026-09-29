@@ -49,6 +49,11 @@ jobs:
           SITE_DATA: ${{ vars.SITE_DATA || 'sample' }}
         run: |
           if [ "$SITE_MODE" = forecast ] && [ "$SITE_DATA" != live ]; then echo "forecast mode in production needs SITE_DATA=live"; exit 1; fi
+          # Until the daily job's first publish lands (12 Oct, about 10:05-10:45 UTC), keep serving the prelaunch site.
+          if [ "$SITE_MODE" = forecast ] && [ ! -f data/live/forecast.json ]; then
+            echo "::warning::no site/data/live/forecast.json yet; building prelaunch"
+            export SITE_MODE=prelaunch SITE_DATA=sample
+          fi
           rm -rf out .next && npm run build && node scripts/check-copy.mjs
       - name: Deploy production
         if: vars.SITE_DEPLOY == 'on' && env.CLOUDFLARE_API_TOKEN != ''

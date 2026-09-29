@@ -56,7 +56,7 @@ PowerShell sets variables with `$env:SITE_MODE = "forecast"; npm run dev`.
    (the About page shows it).
 7. **Optional analytics.** Analytics & Logs → Web Analytics → add notapoll.org (free, no cookies). Enabling it on a
    proxied site needs no code change.
-8. **12 Oct, after your go on 11 Oct:** `SITE_DATA` = `live`, `SITE_MODE` = `forecast`, and the daily job runs
+8. **11 Oct, after your go:** set the GitHub variables `SITE_PUBLISH` = `on` (the daily job's publish step, built by Engine), `SITE_MODE` = `forecast` and `SITE_DATA` = `live`. Until the first daily publish lands on 12 Oct (about 10:05-10:45 UTC), production keeps building the prelaunch site, then switches by itself. Turn `SITE_PUBLISH` off for any test run of the daily job after 12 Oct.
    `publish-day.mjs` and pushes `site/data/live/`.
 9. **Later:** Cloudflare Access (Zero Trust → Access → Applications) can put an email login in front of the preview.
 
