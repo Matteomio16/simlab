@@ -38,7 +38,7 @@ import argparse
 import gzip
 import json
 import re
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import numpy as np
@@ -58,7 +58,7 @@ LOCAL = HERE.parent / "data" / "house"
 B_LEAN, PSI, REDRAWN_PSI, UNCONTESTED_TURNOUT = 0.973, 4.45, 0.7, 0.71
 SD_CLOSE, SD_SAFE, CLOSE = 5.5, 9.0, 15.0
 NATIONAL_PRES24 = -1.68   # Harris minus Trump, two-party, summed over the 435 districts
-N_SIMULATE = 40
+N_SIMULATE, KEEP_DAYS = 40, 6
 RATING = {"safe": 3, "solid": 3, "likely": 2, "lean": 1, "tilt": 0.5, "tossup": 0, "toss-up": 0}
 
 
@@ -223,13 +223,16 @@ def anchor(s: pd.DataFrame, national: float) -> tuple[pd.Series, float]:
     return fixed.fillna(base + c), c
 
 
-def tiers(s: pd.DataFrame, p: pd.Series) -> tuple[pd.Series, pd.Series]:
+def tiers(s: pd.DataFrame, p: pd.Series, kept: set | None = None) -> tuple[pd.Series, pd.Series, pd.Series]:
     """The ~40 simulated seats: consensus Toss-up, Tilt or Lean, then the closest by win chance, up to N_SIMULATE;
-    'watch' for the next ones (win chance 3-97% or consensus Likely); the rest statistics."""
-    consensus = s.ratings.map(lambda r: float(np.median(r)) if r else None)
+    seats simulated on any of the last days (`kept`) stay in, as Senate races do, so a seat doesn't drop out after one
+    quiet day (the list can then run a little over 40). 'watch' for the next ones (win chance 3-97% or consensus
+    Likely); the rest statistics."""
+    consensus = s.ratings.map(lambda r: float(np.median(r)) if r else np.nan).astype(float)
     score = pd.Series(np.minimum(np.abs(p - 0.5) / 0.4, consensus.abs().fillna(9)), index=s.index)
     order = score[s.fixed.isna()].sort_values()
-    simulate = set(order.index[:N_SIMULATE])
+    kept = {r for r in kept or () if r in order.index}
+    simulate = kept | set(order.drop(list(kept)).index[:max(0, N_SIMULATE - len(kept))])
     tier, why = {}, {}
     for rid in s.index:
         reasons = ([f"stats-only {p[rid]:.0%}"] if 0.03 <= p[rid] <= 0.97 else []) + (
@@ -237,7 +240,8 @@ def tiers(s: pd.DataFrame, p: pd.Series) -> tuple[pd.Series, pd.Series]:
         if s.fixed[rid] is not None:
             tier[rid], why[rid] = "statistics", [f"uncontested ({s.fixed[rid]})"]
         elif rid in simulate:
-            tier[rid], why[rid] = "simulate", reasons or ["closest remaining"]
+            tier[rid], why[rid] = "simulate", (reasons or ["closest remaining"]) + (
+                ["kept from the last days"] if rid in kept and rid not in set(order.index[:N_SIMULATE]) else [])
         else:
             tier[rid], why[rid] = ("watch", reasons) if reasons else ("statistics", ["safe by fundamentals and ratings"])
     return pd.Series(tier), pd.Series(why), consensus
@@ -366,7 +370,10 @@ def run(day: date, data: Path, levels_json: dict, snap: Path | None = None, run_
     sd = pd.Series({rid: float(sd_f[rid]) if fixed(rid) else float(np.sqrt(lv[rid][1])) for rid in s.index})
     p = pd.Series(norm.cdf(margin / np.sqrt(sd ** 2 + var_n)), index=s.index).where(
         s.fixed.isna(), s.fixed.map({"D": 1.0, "R": 0.0}))
-    tier, why, consensus = tiers(s, p)
+    past = [data / "derived" / (day - timedelta(days=k)).isoformat() / "house_races.json" for k in range(1, KEEP_DAYS + 1)]
+    kept = {rid for f in past if f.exists() for rid, x in json.loads(f.read_text(encoding="utf-8")).items()
+            if isinstance(x, dict) and x.get("tier") == "simulate"}
+    tier, why, consensus = tiers(s, p, kept)
     base = {k: levels_json[k] for k in ("date", "schema", "days_to_election", "national") if k in levels_json}
     races = {rid: {"margin": round(float(margin[rid]), 3), "sd": round(float(sd[rid]), 3),
                    "w_polls": 0.0 if fixed(rid) else round(lv[rid][2], 3),

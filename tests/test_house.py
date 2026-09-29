@@ -90,5 +90,19 @@ class Groups(unittest.TestCase):
         self.assertAlmostEqual(100 * m, -3.0, places=2)
 
 
+
+class Tiers(unittest.TestCase):
+    def test_kept_seats_stay_and_the_rest_fill_up(self):
+        idx = [f"XX-{i}" for i in range(1, 61)]
+        s = pd.DataFrame({"fixed": [None] * 60, "ratings": [[]] * 60}, index=idx)
+        p = pd.Series(np.linspace(0.5, 0.99, 60), index=idx)
+        tier, why, _ = house.tiers(s, p, kept={"XX-60"})
+        sim = set(tier[tier == "simulate"].index)
+        self.assertEqual(len(sim), 40)
+        self.assertIn("XX-60", sim)
+        self.assertIn("kept from the last days", why["XX-60"])
+        self.assertNotIn("XX-40", sim)
+
+
 if __name__ == "__main__":
     unittest.main()
