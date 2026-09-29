@@ -165,7 +165,7 @@ once use up the Claude plan's limits faster. If the limits bite, pause Content &
 | Fri 2 Oct | Create the accounts; confirm Kev stays out of reactions and B4 is dropped (react-v1 failed B2) |
 | Fri 9 Oct | Cloudflare: point labs.scaliastudio.dev at the site |
 | Sat 10 Oct | Publishing and ethics review; OSF yes or no; raise the test OpenRouter key's cap (no production key: the test key stays, Matteo 29 Sep; `SIMLAB_BUDGET_USD` follows the cap) |
-| Sun 11 Oct, after the go | Set the repository variable `SITE_PUBLISH` to `on`: from the 12 Oct run, each day's forecast goes to the site. The site's own switches (`SITE_MODE`, `SITE_DATA`) follow the Website session's timing |
+| Sun 11 Oct, after the go | Set the repository variables `SITE_PUBLISH` to `on`, `SITE_MODE` to `forecast` and `SITE_DATA` to `live`, together. The site switches by itself when the 12 Oct run's forecast lands (about 10:05-10:45 UTC). After that, switch `SITE_PUBLISH` off before any test run of the daily job |
 | from 12 Oct | About 30 minutes a day approving posts |
 
 GitHub access for the scheduled jobs: Claude sets up a deploy key that can only write to the private data repo
