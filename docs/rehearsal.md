@@ -46,13 +46,17 @@ Then run each drill by hand (Actions → daily → Run workflow, with the day).
 4. **Budget cap.** One run with `SIMLAB_BUDGET_USD` at 0.01. Expected: labels and cards fail softly, nothing is
    selected, the job still ends. Check that the summary makes the missing news obvious. If it doesn't, Engine adds an
    alert before 5 Oct.
+5. **The weekly filter** (Statistics). It first runs for real on Mon 5 Oct, the pilot's first day, so force it once on
+   Sunday's outputs: `python -m simlab.statsday --date 2026-10-04 --data ../simlab-data --weekly` on a scratch copy.
+   Pass: it writes `filter_weekly.json`, the learned dials and the GLM support offset stay inside their priors, and
+   the step takes under 5 minutes.
 
 ## Who checks what
 
 | Session | Checks |
 | --- | --- |
 | Engine | the Worker and the news job, the news and reactions steps, `run.json`, spend, drills 1-4 |
-| Statistics | the statistics step: `forecast.json`, `moves.json`, orphaned and deselected counts, whether the numbers make sense |
+| Statistics | the statistics step: `forecast.json`, `moves.json`, orphaned and deselected counts, whether the numbers make sense; drill 5 |
 | Content & site | the post kit: slides, captions, `problems` 0 |
 | Kev | Kev's shadow rows, the snapshot and early-vote jobs |
 | Matteo | go or no-go for the pilot on Mon 5 Oct, after both days |
