@@ -2,6 +2,40 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 night (Kev session): early vote for NC, ME, IA and TX on; Ohio skipped for the pilot
+
+- **Matteo, 29 Sep:**
+  - Maine is switched on. As for every voter-level file, only counts are kept: the raw file is never stored, not even
+    locally (the job counts it in memory; the local test copies of the NC and ME files were deleted).
+  - Small aggregate files switch on without asking.
+  - Ohio is skipped for the pilot.
+- `simlab/earlyvote.py` has `ENABLED = ("nc", "ia", "tx", "me")`, and the Cloudflare cron starts `earlyvote.yml`
+  hourly.
+  - Maine's file doesn't match the published layout: its header has 23 pipe-separated fields, with the voter's record
+    number but no names. It is read by that header. On 29 Sep it held 64,315 requests from 483 towns, 0.1 MB kept.
+  - Iowa reports nothing until its general-election PDFs appear (about 14 Oct).
+  - Texas saves the Civix election list when it changes; the 3 Nov election is registered, with no early-voting
+    days yet.
+- **Ohio, to switch on later** (2 minutes for Matteo). The site's bot check blocks scripts, but the dashboard is a
+  public Power BI report whose link changes each election:
+  1. In Chrome or Edge, open https://www.ohiosos.gov/elections/voters/ohio-absentee-data/ and wait for the
+     dashboard.
+  2. Right-click an empty part of the page (outside the dashboard) and choose "View page source".
+  3. Press Ctrl+F and search for `powerbigov`.
+  4. Copy the whole address starting `https://app.powerbigov.us/view?r=`, up to the closing quote, and send it to
+     the Kev session.
+  5. If step 3 finds nothing: right-click inside the dashboard, choose "Inspect", then Ctrl+F in that panel for
+     `powerbigov`.
+  The Kev session then checks that the public report reads cleanly, with nothing got around, and adds Ohio with
+  county counts only.
+- **A9 scoring, agreed with the website session:** `site/data/live/scores.json` =
+  `{updated, scores: [{date, model, office, target, races, mae, direction, brier, log_loss, note}]}`.
+  - `model` is simulation, stats_only, market or cook; `office` is senate, house or all; `target` is
+    polls_next_week before 3 Nov and result from 4 Nov.
+  - Every metric key is always present (null where it doesn't apply).
+  - Rows are append-only, and corrections come as new rows.
+  - The first rows arrive on Mon 19 Oct.
+
 ## 2026-09-29 night (Statistics session): GLM's lean corrected; weekly filter from 5 Oct; House rows in races.json
 
 - **Matteo, 29 Sep:**
