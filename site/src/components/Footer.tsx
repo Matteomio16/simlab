@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SITE } from "@/lib/site";
 import { SwingBand, Wordmark } from "./Brand";
 
-export default function Footer() {
+export default function Footer({ forecast }: { forecast: boolean }) {
   const social = SITE.social.filter((s) => s.live);
   return (
     <footer className="mt-28">
@@ -21,6 +21,9 @@ export default function Footer() {
             <ul className="mt-3 space-y-2">
               <li><Link href="/methods" className="hover:text-white">Methods</Link></li>
               <li><Link href="/lab-notes" className="hover:text-white">Lab notes</Link></li>
+              <li><Link href="/changelog" className="hover:text-white">Changelog</Link></li>
+              {forecast && <li><Link href="/track-record" className="hover:text-white">Track record</Link></li>}
+              {forecast && <li><Link href="/archive" className="hover:text-white">Archive</Link></li>}
               <li><Link href="/about" className="hover:text-white">About and contact</Link></li>
             </ul>
           </div>

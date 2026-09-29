@@ -10,7 +10,8 @@ const preview = process.env.SITE_PREVIEW === "1";
 const forecast = process.env.SITE_MODE === "forecast";
 
 const drop = (p) => existsSync(path.join(OUT, p)) && rmSync(path.join(OUT, p), { recursive: true, force: true });
-if (!forecast) ["senate", "senate.html", "senate.txt"].forEach(drop);
+if (!forecast)
+  ["senate", "senate.html", "senate.txt", "track-record", "track-record.html", "track-record.txt", "archive", "archive.html", "archive.txt"].forEach(drop);
 ["lab-notes/00.html", "lab-notes/00.txt", "lab-notes/00"].forEach(drop);
 
 const headers = [
@@ -23,6 +24,10 @@ const headers = [
   "  Cache-Control: public, max-age=31536000, immutable",
   "/data/*",
   "  Access-Control-Allow-Origin: *",
+  "/opengraph-image",
+  "  Content-Type: image/png",
+  "/senate/:slug/opengraph-image",
+  "  Content-Type: image/png",
   "",
 ].join("\n");
 writeFileSync(path.join(OUT, "_headers"), headers);

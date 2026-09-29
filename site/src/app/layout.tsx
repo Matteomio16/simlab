@@ -33,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {HAS_FORECAST && IS_SAMPLE && <SampleBanner />}
         <Header forecast={HAS_FORECAST} />
         <main>{children}</main>
-        <Footer />
+        <Footer forecast={HAS_FORECAST} />
       </body>
     </html>
   );
