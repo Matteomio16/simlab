@@ -39,6 +39,15 @@ class Steps(unittest.TestCase):
         self.assertEqual(harness_args[-4:], ["--wording", "reaction", "--kev", "https://kev"])
         self.assertNotIn("simlab.publish.kit", [c[0] for c in runner.calls])
 
+    def test_every_step_that_takes_it_gets_the_days_run_id(self):
+        o = {"wording": "direct", "kev": "", "scope": "pilot", "run_id": "2026-10-05-abc1234"}
+        for name, _, args, _ in daily.STEPS:
+            a = args("2026-10-05", Path("/data"), o)
+            if name == "post kit":
+                self.assertNotIn("--run-id", a)
+            else:
+                self.assertEqual(a[a.index("--run-id") + 1], "2026-10-05-abc1234")
+
     def test_the_news_step_runs_the_pilot_until_the_full_run(self):
         self.assertEqual(daily.scope_for("2026-10-11", None), "pilot")
         self.assertEqual(daily.scope_for("2026-10-12", None), "all")

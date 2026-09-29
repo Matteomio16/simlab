@@ -22,15 +22,22 @@ from .core import HOSTS, JEV, LLMS, RUNS
 
 SCHEMA = 1
 FULL_RUN = "2026-10-12"  # every race from here on; the pilot races (OH, NC, TX) before
+
+
+def _rid(o: dict) -> list[str]:
+    """The daily run's id, for the steps that stamp it on their files."""
+    return ["--run-id", o["run_id"]] if o.get("run_id") else []
+
+
 # (name, module, arguments, steps whose outputs it reads)
 STEPS = [
     ("news", "simlab.newsday",
      lambda d, data, o: ["--date", d, "--snap", str(data / "snapshots"), "--out", str(data / "derived"),
-                         "--scope", o.get("scope", "pilot")], []),
+                         "--scope", o.get("scope", "pilot")] + _rid(o), []),
     ("reactions", "simlab.harness",
      lambda d, data, o: ["--date", d, "--out", str(data / "derived"), "--wording", o["wording"]]
-     + (["--kev", o["kev"]] if o["kev"] else []), ["news"]),
-    ("statistics", "simlab.statsday", lambda d, data, o: ["--date", d, "--data", str(data)], ["reactions"]),
+     + (["--kev", o["kev"]] if o["kev"] else []) + _rid(o), ["news"]),
+    ("statistics", "simlab.statsday", lambda d, data, o: ["--date", d, "--data", str(data)] + _rid(o), ["reactions"]),
     ("post kit", "simlab.publish.kit", lambda d, data, o: ["--date", d, "--data", str(data)], ["statistics"]),
 ]
 
@@ -131,11 +138,12 @@ def main() -> int:
     ap.add_argument("--run-id", default="")
     ap.add_argument("--scope", choices=["pilot", "all"], default=None)
     a = ap.parse_args()
-    started = time.time()
-    steps = run_steps(a.date, a.data, {"wording": a.wording, "kev": a.kev, "scope": scope_for(a.date, a.scope)})
+    started, run_id = time.time(), a.run_id or f"{a.date}-{_git_sha()[:7]}"
+    steps = run_steps(a.date, a.data, {"wording": a.wording, "kev": a.kev, "scope": scope_for(a.date, a.scope),
+                                       "run_id": run_id})
     for s in steps:
         print(f"{s['name']}: {s['status']}" + (f" in {s['seconds']}s" if "seconds" in s else ""), flush=True)
-    rec = record(a.date, a.data, a.run_id or f"{a.date}-{_git_sha()[:7]}", steps, started, time.time())
+    rec = record(a.date, a.data, run_id, steps, started, time.time())
     print(json.dumps({"steps": {s["name"]: s["status"] for s in steps}, "spend": rec["spend"]}))
     return 1 if any(s["status"] == "failed" for s in steps) else 0
 
