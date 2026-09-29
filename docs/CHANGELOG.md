@@ -2,6 +2,44 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 evening (Kev session): House fundamentals for all 435 seats; early vote for ME, IA and TX ready
+
+- **House (A11), `simlab/house.py`** (4 tests). All 435 seats in the levels.json race shape: `house_levels.json`,
+  with `fixed`, `tier`, `state` and `region` added, and `house_races.json` in the races.json shape.
+  - Margin = c + 0.973 × lean + 4.45 × incumbent (× 0.7 on a map redrawn for 2026). Lean is the 2024
+    presidential two-party margin on the 2026 lines minus the nation's (-1.68).
+  - The fit (`python -m simlab.house fit`) uses the 2022 and 2024 contested seats on unchanged lines. Predicting
+    each year from the other, given the national House vote, close seats missed by 4.7 (2022) and 4.7 (2024).
+  - c is set daily so the seats add up to `levels.json` `national.E_hat`:
+    - contested seats are weighted by 2024 presidential votes;
+    - uncontested ones are fixed at ±100 and weighted by 0.71 of those votes (2024's ratio).
+    On 2024 this anchoring leaves the contested seats unbiased (+0.03).
+  - SD is 5.5 within 15 points and 9 beyond (Matteo, 29 Sep).
+  - The Wikipedia House pages give the nominees, whether a sitting member runs (matched anywhere in the state), the
+    uncontested seats (no Republican nominee means fixed D; a Republican facing only an independent, as in Alaska,
+    stays contested with the independent on the left) and the ratings.
+  - Simulated seats: consensus Toss-up/Tilt/Lean, then the closest by win chance, up to 40. "watch" covers win chance
+    3-97% or a consensus Likely.
+  - Inputs: simlab-data `house/inputs.json` (private), built by `python -m simlab.house inputs` from the Engine's
+    `data/house/`.
+  - First run (29 Sep): 219.6 expected Democratic seats (212 favoured) at a national House vote of D+4.5. 377 of 435
+    districts are matched to nominees. The other 58 are California, whose two sub-pages the snapshot adds from its
+    next run, and Louisiana, which has no nominees yet; their CSV incumbent is assumed to run. 11 seats are
+    uncontested (all D).
+  - Still to wire: statsday must call `house.run(day, data, levels)` and the Monte Carlo must add the seats
+    (Statistics), and daily.yml must check out `/house/` (Engine). `house_groups.json` joins with the simulated
+    seats' voter groups, due Tue 6 Oct.
+- **Early vote:** Maine, Iowa and Texas are ready but off (`ENABLED` in `simlab/earlyvote.py`) until Matteo's OK:
+  - ME: voter-level file, counts only; 4.4 MB today, about 37 MB by 3 Nov; the link is read from the voter-data page.
+  - IA: daily PDFs by county and congressional district, as published, from about 14 Oct.
+  - TX: the Civix election list (small JSON), to see when early-voting days start (about 19 Oct).
+  Change detection uses Last-Modified, or the SHA-256 where there is none.
+  - Ohio can't be scripted: the SOS site and most county sites sit behind Cloudflare's bot check, which we don't get
+    around. The dashboard's Power BI layer answers plain requests, but its report link changes each cycle.
+- **Snapshots:** GitHub started them only 6-9 hours apart on 29 Sep despite the 15-minute trigger. `snapshot.yml`
+  now takes `scheduled=true` from the Engine's Cloudflare cron (ops/cron) and obeys the 150-minute rule. The cron
+  also starts `earlyvote.yml` hourly. The snapshot now fetches California's two House sub-pages.
+
 ## 2026-09-29 (Website session): NotAPoll.org site, C6
 
 Decided by Matteo (design in `docs/superpowers/specs/2026-09-29-notapoll-site-design.md`):
