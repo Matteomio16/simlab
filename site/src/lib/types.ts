@@ -54,8 +54,17 @@ export type Forecast = {
     news: { if_weaker: number; if_stronger: number };
     today?: Control & { stats_only?: Control };
   };
-  // engine-design §7: {p_d_majority, seats}; the seats shape is assumed to match the Senate's until Statistics writes it.
-  house: null | { p_d_majority: number; seats?: { D?: Seats; R?: Seats } };
+  // Statistics, 29 Sep: seats {D, R, O} as the Senate's (O = seats won by a non-Democratic challenger); null until
+  // the House runs.
+  house: null | {
+    p_d_majority: number;
+    p_r_majority: number;
+    majority: number;
+    seats: { D: Seats; R: Seats; O?: Seats };
+    stats_only?: { p_d_majority: number; p_r_majority: number };
+    benchmarks?: { market?: number | null };
+    today?: { p_d_majority: number; p_r_majority: number };
+  };
 };
 
 export type Draws = { races: Record<string, number[]> };

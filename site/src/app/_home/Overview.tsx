@@ -149,11 +149,9 @@ export default function Overview() {
             <p className="text-2xl font-bold tracking-[-0.01em]">
               {`Democrats win the House in ${in100(forecast.house.p_d_majority)} of 100 simulated elections`}
             </p>
-            {forecast.house.seats?.D && (
-              <p className="text-ink-2">
-                {`Democratic seats: ${forecast.house.seats.D.p50} in the middle simulation, ${forecast.house.seats.D.p10}–${forecast.house.seats.D.p90} in 8 of 10. 218 wins control.`}
-              </p>
-            )}
+            <p className="text-ink-2">
+              {`Democratic seats: ${forecast.house.seats.D.p50} in the middle simulation, ${forecast.house.seats.D.p10}–${forecast.house.seats.D.p90} in 8 of 10. ${forecast.house.majority ?? 218} wins control. Republicans win it in ${in100(forecast.house.p_r_majority)} of 100.`}
+            </p>
           </div>
         </Reveal>
       )}

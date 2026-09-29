@@ -65,8 +65,8 @@ PowerShell sets variables with `$env:SITE_MODE = "forecast"; npm run dev`.
 | Choice | Where | Change by |
 | --- | --- | --- |
 | Link-preview images (1200×630) for the home and every race page, with the label strip and the benchmarks | `src/app/opengraph-image.tsx`, `src/app/senate/[slug]/opengraph-image.tsx`, `src/lib/og.tsx` | editing the card layout; deleting the two files turns them off |
-| Track record page reads `data/<live>/scores.json` (`{scores: [{date, model, brier, log_loss, races}]}`); scoring dates 19 Oct, 26 Oct, 2 Nov, then certified results | `src/app/track-record/page.tsx` | agreeing the file with Statistics; editing `SCORING_DATES` |
+| Track record page (owned by Kev, roadmap A9; shape to confirm with Kev) reads `data/<live>/scores.json` (`{scores: [{date, model, brier, log_loss, races}]}`); scoring dates 19 Oct, 26 Oct, 2 Nov, then certified results | `src/app/track-record/page.tsx` | agreeing the file with Statistics; editing `SCORING_DATES` |
 | Archive lists `public/data/YYYY-MM-DD/forecast.json` written by `publish-day.mjs` | `src/app/archive/page.tsx` | — |
 | Public changelog, first entry dated 3 Oct | `content/changelog.md` | editing the file |
 | Track record and archive appear from 12 Oct only; changelog from 3 Oct | `scripts/postbuild.mjs`, footer | moving routes in or out of the prelaunch drop list |
-| House control block on the overview, shown only once `forecast.json` has `house`; assumes `house.seats.D` has the Senate seats shape | `src/app/_home/Overview.tsx`, `src/lib/types.ts` | agreeing the shape with Statistics |
+| House control block on the overview, shown once `forecast.json` has `house` (shape confirmed by Statistics, 29 Sep); House race pages come with the 12 Oct House launch | `src/app/_home/Overview.tsx`, `src/lib/types.ts` | — |
