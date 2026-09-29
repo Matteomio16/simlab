@@ -120,6 +120,12 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 - **Attention weights:** the spot-check couldn't test them. 29 of the 32 stories had one outlet in the old Google News
   store, so the coverage formula gave almost all of them the same score. To re-check in the pilot week on real
   coverage.
+- **House data for A11** (without the Redistricting Data Hub, Matteo 29 Sep), in `data/house/` (local):
+  - 2024 presidential results on the lines used in 2026, for all 435 districts, from The Downballot (9 Jul 2026). That
+    includes the 181 seats in the 10 states with new maps: TX, MO, NC, AL, FL, LA, TN, OH, CA and UT;
+  - ACS 2024 citizen adults by race and degree per district, from the Census API. These are the 2024 lines, so in
+    the redrawn states a district number there is the old district. The Kev session says that is enough for 9 Oct.
+  - The new plans' block files wait until after 9 Oct, and only for simulated seats in redrawn states.
 - **Kev shadow mode** (Matteo reopened it, 29 Sep): the harness already writes shadow rows with `--kev URL`. The daily
   job will pass it once the Kev session sends the URL, the key's secret name and the daily sample size.
 
