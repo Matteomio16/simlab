@@ -73,6 +73,22 @@ numbers only: no photos or drawings of candidates. Race numbers still sit beside
 Layouts are examples until Matteo picks; they need `races.json` candidates, the forecast history, Senate holdover
 seats and the Senate-control market price from the engine before they can run daily.
 
+## For the website session (C6 moved there, 29 Sep)
+
+The site should read as the same brand as the posts. Shared pieces, all in `simlab/publish/`:
+- **Tokens** (`themes.py`, LAB): paper `#F7F7F2`, grid lines `#E1DFEC`, ink `#1C2A4A`, secondary ink `#4A5670`, muted
+  `#7E879A`, Dem `#2F6DB5`, Rep `#D1432F`, independent grey `#7E879A`, purple `#6D2E8C` (our number and toss-ups),
+  toss-up fill `#EEE6F7`, highlighter `#E6DAF3`, indigo strip `#2A2152`. Dark mode: the special-edition night colours in
+  `themes.MAP` (Dem `#4F8FF7`, Rep `#F0554A`, purple `#9E4FC4` on `#0F1424`), which pass the same colour-blind checks.
+- **Type:** IBM Plex Sans (text, headings, numbers) and IBM Plex Mono (labels, kickers); both on Google Fonts.
+- **Logomark:** a square outline holding a 3x3 grid of dots, the centre dot purple (`frame.Slide.logomark`); wordmark
+  "NotAPoll" with ".org" in purple.
+- **Signature details:** the blue, purple, red swing band; the label "Social simulation, not a poll" on every view that
+  shows a number; the state outline filled with simulated voters (`charts.state_voters`, outlines in `states.json`).
+- **Rules that apply on the site too:** our number always beside the poll average, the market and Cook; 35–65% is a
+  toss-up; "the independent" where `left_party` is "I"; only event `card` text, never `news_private.jsonl`; no "poll",
+  "survey" or "voters say" for our outputs (`text.check` can lint page copy).
+
 ## The daily kit (due Sun 4 Oct)
 
 Command for the daily job (roadmap A8): `python -m simlab.publish.kit --date YYYY-MM-DD --data <simlab-data>`. It
