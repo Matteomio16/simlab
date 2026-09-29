@@ -2,6 +2,33 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 evening (Statistics session): House seats in the Monte Carlo; pilot checks
+
+- **House block built** (`simlab/montecarlo.py`, `simlab/statsday.py`; 5 tests). statsday runs Kev's `house.py`
+  after the levels whenever `<data>/house/inputs.json` exists. A failure there is noted in the summary and doesn't
+  stop the Senate forecast.
+  - The contested seats are drawn given the Senate's draws. They share its national, regional and state errors and
+    its one scale per simulated election, so a wave lifts both chambers, and the Senate's numbers are identical
+    with or without the House (tested).
+  - A seat's sd from `house.py` leaves out the national error, so it is added here.
+  - The 0.25 correlation floor now applies among the Senate races only. Lifting the House's roughly 80,000 low
+    pairs breaks the correlation matrix (checked on 29 Sep data), and the repair would move every race, the Senate
+    included. The House pairs keep the shared national, regional and state errors. Most lifted pairs were safe
+    seats, which rarely decide the seat count.
+  - Outputs: majority chances at 218, seat totals (D, R, and O for another challenger's wins), each contested
+    seat's summary, the House control market, a today view, and seat totals plus the 40 simulated seats' margins
+    in `draws.json`. The seats take no news yet: until `house_groups.json` and House stories arrive, the headline
+    and the stats-only twin share their levels.
+  - Actions doesn't check out `house/` from the data repo yet, so the daily job leaves the House out until the
+    Engine and Kev add it.
+- **The Actions setup rehearsed:** statsday ran from a clean clone on a data folder with no history (as on Actions):
+  35 races, Kev's group margins, the five pilot races on simulate. The Engine's full run on Actions (36629024522)
+  then passed.
+- **GLM leans toward Republicans** (for Matteo): on 28-29 Sep, 18 of 18 story effects moved toward R; on the
+  Actions run, 16 of 22 in the pilot races. The Engine found a modest lean on real events: -0.27 ± 0.22 points per
+  event. Proposed: an offset of +0.08 on GLM's support scale in moves, with the weekly filter updating it from 12 Oct
+  (prior ± 0.065).
+
 ## 2026-09-29 evening (Kev session): House fundamentals for all 435 seats; early vote for ME, IA and TX ready
 
 - **House (A11), `simlab/house.py`** (4 tests). All 435 seats in the levels.json race shape: `house_levels.json`,
