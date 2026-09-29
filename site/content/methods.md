@@ -13,9 +13,8 @@ and where we don't.
    summary of the day's stories and react on vote choice and turnout. Only the people who can still move count: the
    *persuadable share* of a group for vote choice, and the *mobilisable share* for turnout. Firm partisans and
    habitual voters barely move the numbers, however strongly they react.
-3. **A weekly filter checks the simulation against new polls and evidence.** Once a week, the run compares what the
-   simulated voters produced against that week's real poll movement, and adjusts how much each state's simulation is
-   trusted going forward.
+3. **A weekly filter checks the simulation against the evidence.** Every Monday, it compares how the polls actually
+   moved with what the simulated reactions predicted, and tunes, state by state, how much the news moves each race.
 4. **40,000 simulated elections turn it into chances.** Each race's uncertainty is drawn thousands of times, with
    realistic correlation between races and state, so a bad night for one party in similar states tends to happen
    together. The result: each race "wins X in 100 simulated elections." A result between 35 and 65 in 100 is called a
@@ -25,89 +24,105 @@ and where we don't.
 
 ### Starting levels
 
-Each race's starting margin blends two things:
-- **Fundamentals**: the state's partisan lean (0.62 × the latest presidential margin plus 0.26 × the one before it),
-  the national political mood, and 0.38 of a candidate's own past over- or under-performance in their last
-  statewide race.
-- **Polls**, corrected for each pollster's **house effect** (a pollster's steady lean compared with other
-  pollsters, measured across its history). Several versions of the same poll (with and without leaners, for example)
-  are averaged into one entry. Polls sponsored by a party, campaign or partisan group count at half weight and are
-  shifted back toward the middle by about 2.5 points, because sponsored polls have historically leaned toward
-  whoever paid for them. Where the national generic ballot feeds into the fundamentals, it is lowered by 2.8 points,
-  its average historical overstatement of Democrats.
+Each race's starting margin blends two estimates:
+- **Fundamentals:** the state's partisan lean (0.62 × the latest presidential margin plus 0.26 × the one before), the
+  national mood (the generic ballot, lowered by 2.8 points, its average overstatement of Democrats, and presidential
+  approval), incumbency (worth about 5 points, half for an appointed senator), and 0.38 of the nominee's over- or
+  under-performance in their last statewide race.
+- **Polls:** each pollster's **house effect** (its steady lean compared with other pollsters, measured over 2018–24 and
+  re-checked on this year's polls) is taken out. Polls of registered voters or all adults are adjusted to a
+  likely-voter basis. Versions of the same poll count as one. Polls paid for by a party, campaign or partisan group
+  count half and are shifted away from the sponsor by about 2.5 points. The average can drift a little every day, so
+  older polls count less as time passes.
 
-The two are combined by how reliable each is for that race: heavily polled races lean mostly on polls, thinly polled
-races lean mostly on fundamentals. A race with no recent polls starts from the fundamentals alone.
+The blend follows how much each estimate is worth in that race. A heavily polled race leans on its polls, but polls
+never count for more than about 80%, because even a large poll average can miss, as in 2016 and 2020. A race without
+polls starts from the fundamentals alone. Each race shows how much its polls count.
 
 ### Voter groups
 
-The electorate in each race is split into 28 synthetic voter groups, defined by party identification (a seven-point
-scale), race and education. Each group carries its share of the electorate, its expected turnout, its vote split, and
-— the two numbers that limit how much news can move it — its persuadable share and its mobilisable share. Both are
-estimated from real survey respondents interviewed before and after past midterm elections, so we know roughly how
-many people in a group actually changed their mind or their turnout, rather than assuming everyone is up for grabs.
+Each race splits its electorate into the same 28 synthetic voter groups: party identification (seven levels) × white
+or not × a four-year degree or not. Each group carries:
+- **its share of the electorate:** Census data on who lives in the state, with party identification from a large
+  academic study of voters (CES), matched to the state's 2024 result;
+- **its midterm turnout:** Census turnout figures, matched to the official count;
+- **its vote split:** from Kev, a model we trained on real survey answers about how each kind of voter voted in 2024.
+  All groups are then shifted together until they add up to the race's starting margin, so the split decides only
+  the pattern across groups, never the race's level;
+- **its persuadable share** (people who changed their mind or started undecided) and **its mobilisable share** (people
+  whose turnout was uncertain), from survey respondents interviewed before and after the 2018 and 2022 midterms. These
+  two numbers limit how much the news can move a group: firm partisans and habitual voters barely move it.
 
 ### News and reactions
 
-Each day's stories come from two sources: GDELT, and (once set up) Media Cloud's national news collection. Every
-story is reduced to a short, neutral event card, with outlet names removed before any model sees it, so nobody is
-reacting to who published something. Stories about polls or forecasts get no reactions at all — polls already enter
-through the weekly filter, so reacting to news about them would double-count the same information.
+Each day's stories come from GDELT and, once set up, Media Cloud. Every story is reduced to a short, neutral event
+card, with outlet names removed before any model sees it. Stories about polls or forecasts get no reactions, because
+polls already enter through the starting levels and the filter.
 
-How much attention a story gets comes mainly from coverage data — outlets, articles, days in the news, and page
-views — not from a model's guess, which only breaks ties between similarly covered stories.
+How much attention a story gets comes from coverage data (outlets, articles, days in the news and page views), not
+from a model's guess, which only breaks ties.
 
-How long a story's effect lasts:
-- Every story fades from the day it is first seen, with a **5.5-day half-life** — about 41% of its effect remains
-  after a week, 17% after two weeks, 7% after three.
-- A one-off story (an endorsement, a scandal, a debate, an ad, a candidate's policy announcement) also fades within
-  about a day once it drops out of the news, on top of the age-based fade.
-- Lasting topics — the economy and prices, and national events such as a war or a disaster — keep fading at the
-  age-based rate without that extra one-day drop, so they stay relevant for longer while still fading.
+- **News moves every race.** A race with polls and a race without them get the same effect from the same story.
+- **Polls are read net of the news.** When a poll was taken while a story was moving voters, the story's simulated
+  effect is taken out before the poll enters the average, so no story is counted twice: once in the polls and once in
+  the simulation.
+- **Stories fade.** Every story fades from the day it first appears, with a **5.5-day half-life**: about 41% is left
+  after a week, 17% after two, 7% after three. A one-off story (an endorsement, a scandal, a debate, an ad) also drops
+  within about a day once it leaves the news. Lasting topics, such as prices or a war, keep only the age fade.
 
 ### How big a reaction is
 
-A model's answer gives the direction and relative strength of a reaction, not its size. The size — how many points
-of margin or turnout a reaction is worth — comes from data: real-world events with measured opinion shifts. On
-average the switching effect is calibrated at about 0.21 of a group's stated reaction; the turnout effect starts from
-the same value. This isn't one fixed number: every one of the 40,000 simulated elections draws its own size from a
-range around that average, so no single data point can drive the whole forecast — a lesson from an earlier project
-that got a result's direction right but badly understated its size (see "What this can't do"). Each race also shows
-how its forecast would change if news mattered less, or more, than the central estimate assumes.
+The synthetic voters give the direction and strength of a reaction; real events set its size. The scale was fitted on
+45 past events with measured opinion shifts: the strongest possible reaction to a story with full attention moves
+about a fifth of a group's persuadable voters, or of its mobilisable voters for turnout.
+
+This isn't one fixed number. Each of the 40,000 simulated elections draws its own sizes around the fitted value, so no
+single estimate drives the forecast, a lesson from an earlier project that got a result's direction right but badly
+understated its size (see "What this can't do"). Each race shows how its forecast changes if the news matters less or
+more.
 
 ### The weekly filter
 
-From 12 October, a weekly update compares the week's real poll movement against what the simulation produced, and
-retunes — separately for each state — how much of the simulated reaction to trust going forward. It is a statistical
-filter, not a model: it adjusts a dial, it does not overrule the simulated voters' direction.
+Every Monday from 12 October, the filter compares how all the polls actually moved with what the simulated reactions
+predicted.
+- **Dials:** it sets two dials per state, one for vote switching and one for turnout. A dial above 1 means the news
+  moves that state more than simulated; below 1, less. It never changes a reaction's direction.
+- **Borrowing strength:** states with few polls stay close to the national dial, and the dials' uncertainty goes into
+  every simulated election.
+- **Fade speed:** it also checks how fast news fades, weighing half-lives from about 3 to 11 days.
+- **Surprises:** it flags any state whose polls surprised the forecast in the latest week.
 
 ### Simulated elections and uncertainty
 
-The final step draws 40,000 simulated elections from each race's estimated margin and uncertainty. The draws use
-**fat tails** (a statistical shape where a much bigger swing than usual is more likely than a plain bell curve would
-suggest), because elections occasionally move further than recent history implies. A national error term, with a
-standard deviation of about 3 points, covers the risk that polls miss in the same direction everywhere at once, as
-they have in several recent cycles.
+Every day, 40,000 elections are drawn from each race's margin and uncertainty. The random numbers are fixed by the
+date, so rerunning a day gives the same result. Errors are shared, so a bad night for one party tends to happen
+everywhere at once:
+- a **national** error, including polls missing in the same direction nationwide (about 3 points on its own);
+- a **regional** error, shared by states in the same census division;
+- a **state** error, shared by all races in a state;
+- each race's **own** error, which takes the rest.
+
+The draws have **fat tails**: an unusually large swing is more likely than a bell curve would allow, and it happens in
+the same simulated year for every race. No two Senate races move independently; each pair keeps at least a 0.25
+correlation.
 
 ### The statistics-only twin
 
-Every day, the same chain also runs with the news-reaction step switched off — statistics and polls only, no
-synthetic voters. This is the benchmark the simulation has to beat: if the full simulation can't forecast better than
-its own statistics-only twin, that is reported honestly, not hidden.
+Every day, the same chain also runs with the news reactions switched off: statistics and polls only, no synthetic
+voters. This is the benchmark the simulation has to beat, and if it can't, that is reported.
 
 ### Two numbers: 3 November and "if the election were today"
 
-Because news effects fade over time, a story that is fresh today will have partly or fully faded by 3 November. Each
-race therefore carries two numbers: the 3 November forecast, which counts only what a story is expected to still be
-worth by election day, and "if the election were today," which counts everything in force right now.
+Because news effects fade, a story that is fresh today will have partly faded by 3 November. Each race carries two
+numbers: the **3 November** forecast, which counts what each story should still be worth on election day, and **"if
+the election were today"**, which counts everything in force now. The second is also less uncertain, because there is
+no time left for things to change.
 
 ### The Senate headline
 
-The headline framing is "Republicans hold 50+ [of 100 seats]" (the Vice President breaks a 50-50 tie), because that
-framing is clear regardless of how independents behave. Independent Senators King and Sanders are counted with
-Democrats, as they caucus with them today. The newer independent candidates on the 2026 ballot are shown as
-independents in their own right, with a separate figure for the share of simulated elections in which they hold the
-balance of power.
+The headline is "Republicans hold 50+ seats" (the Vice President breaks a 50–50 tie). King and Sanders count with
+Democrats, as they caucus with them today. The new independent candidates are shown on their own, with the share of
+simulated elections in which they hold the balance.
 
 ## Models
 
@@ -121,6 +136,9 @@ bench, not for being the biggest or best-known AI model:
   events from 2012 to 2026 best of all tested models and got the direction right on every one that moved opinion. No
   model got the size of reactions right, which is why sizes come from data (see above).
 - **DeepSeek V4.1 Flash** writes the short, neutral event cards that voter groups read.
+- **Kev**, an open decision model we fine-tuned on real survey answers about the 2024 vote, sets how each voter group
+  splits between the parties. The split is then shifted to the race's statistical starting line, so it never sets the
+  race's level.
 - **MiMo-V2.6-Pro** runs the weekly auditor role, which explains why a state's polls have been surprising the model — it
   never changes any number itself.
 - **GPT-6 Luna** spot-checks reactions and helps set the reference labels for news; it is the only US-built model
@@ -166,4 +184,4 @@ not quietly dropped.
 - Kalshi and Polymarket — shown as benchmarks only, never as an input.
 - The Cook Political Report — shown as a benchmark rating only, never as an input.
 
-This page is a draft reviewed by Matteo Mio before launch. Last updated 29 Sep 2026.
+This page is a draft reviewed by Matteo Mio before launch. Last updated 29 Sep 2026, with the Statistics session's summary.
