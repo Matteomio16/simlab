@@ -2,6 +2,31 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 evening (Engine session): news on GDELT alone; workflows started on time; Kev shadow wired
+
+- **Matteo: Media Cloud's sign-up is stuck, so the engine must work on GDELT alone.** Built:
+  - GDELT moved from the 3-hourly snapshot to its own news job every 15 minutes (`simlab/newsnap.py`,
+    `.github/workflows/news.yml`, writing `simlab-data/news/`). GDELT refuses an address for several minutes after one
+    success (seen from GitHub and from home), so each run asks only the most overdue queries within about 9 minutes,
+    contested races and the nation first. A query saved in the last 6 hours isn't asked again; one that failed is
+    asked by the next run, and every query covers 24 hours, so a refused query is filled later.
+  - Every race gets a GDELT query, not just the pilot.
+  - RSS from the state outlets that answer a declared bot and allow reuse: Signal Ohio, Signal Cleveland and the Texas
+    Tribune. An item counts for a race only when it names one of that state's candidates in full. All 19 States
+    Newsroom sites refused with 403, so they aren't used.
+  - Media Cloud stays optional: if its key comes, it plugs in as planned.
+- **GitHub fires this repository's schedules only every 5-9 hours**, whatever the cron says (snapshot runs on 28-29
+  Sep: 09:40, 20:44, 01:13, 07:28, 16:09; none of the 28 quarter-hour triggers in between). So neither the 09:47 daily
+  job nor a 15-minute news job can rely on it. `ops/cron/` holds a Cloudflare Worker that starts the workflows on
+  time through GitHub's API (news every 15 minutes, snapshots every 3 hours, the daily job at 09:47 with
+  `scheduled=true`, so `PIPELINE_ON` and the once-a-day rule still apply). It needs Matteo: a fine-grained GitHub token
+  that can only run Actions on the repo, and `npx wrangler deploy` on his Cloudflare account (steps in its README).
+- **Kev shadow mode wired** (Matteo reopened it, 29 Sep). Kev react-v2-2 is served on Modal behind a key. The harness
+  wakes its GPU with one long request, sends the key, and skips Kev for the day if it doesn't answer. Any model is
+  dropped after 20 failed calls, so an outage can't stall GLM. Tested live: 28 groups in 13 s after a 51 s wake-up.
+  The daily job passes it once the `KEV_URL` repository variable is set. The load is about 530 requests a day in the
+  pilot and 3,400 at full scale (one request per group and story), so no sampling is needed.
+
 ## 2026-09-29 (Kev session): Kev's voter-group margins for all 51 states delivered (A11 request)
 
 - Kev ces-v3b answered the 28 voter groups in all 51 states (`python -m simlab.kevdata groups`, then Modal

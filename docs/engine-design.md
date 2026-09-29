@@ -167,9 +167,16 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
 
 ## 4. The news pipeline (Engine)
 
-- **Headlines:** from the snapshots: GDELT per race and nationally, the last 24 hours each run, and Media Cloud's US
-  national collection once its key is in. Google News is not used (its terms; Matteo, 28 Sep). They are cleaned,
-  syndicated copies are merged, and similar headlines are clustered into stories.
+- **Headlines** (29 Sep: the engine works on GDELT alone; Media Cloud plugs in if its key ever comes):
+  - GDELT for every race and the nation, from its own job every 15 minutes (`simlab/newsnap.py`, writing
+    `simlab-data/news/`). GDELT refuses an address for minutes after one success, so each run asks only the most
+    overdue queries (contested races and the nation first) within about 9 minutes. A query saved in the last 6 hours
+    isn't asked again; one that failed is asked by the next run, and every query covers 24 hours, so gaps fill.
+  - RSS from state outlets that answer a declared bot and allow reuse: Signal Ohio, Signal Cleveland and the Texas
+    Tribune. An item counts for a race only when it names one of that state's candidates in full. The States
+    Newsroom sites refuse bots, so they aren't used.
+  - Google News is not used (its terms; Matteo, 28 Sep). Headlines are cleaned, syndicated copies are merged, and
+    similar headlines are clustered into stories.
 - **The day's news** (29 Sep): every article first returned by a snapshot run that started between 09:30 UTC the day
   before and 09:30 UTC on the day. Each run is read by one day's job, so the US daytime news that arrives after a job
   is read by the next one, and an article a feed returns again counts only on its first day.
@@ -231,8 +238,9 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
 - **Snapshots:** `simlab/snap.py` (Kev session; first run 28 Sep 00:36 UTC) writes
   `simlab-data/snapshots/YYYY-MM-DD/HHMM/<source>/<name>.gz` plus `manifest.json` (URL, time, status, size, SHA-256).
   - Sources now: VoteHub polls; Wikipedia race pages, overview pages and the approval page, raw with revision ids;
-    markets (benchmark only); news (GDELT for the pilot races and the nation; Media Cloud for every race in
-    `simlab/newsraces.json` once its key is in); pageviews.
+    markets (benchmark only); Media Cloud for every race in `simlab/newsraces.json` if its key comes; pageviews.
+  - News: GDELT and RSS come from the separate 15-minute news job (`.github/workflows/news.yml`) into
+    `simlab-data/news/YYYY-MM-DD/HHMM/`, in the same format; the news step reads both folders.
   - Added later: the 2026 House page (Statistics' request), keyed sources (FEC, FRED, EIA) and early-vote files.
 - **Schedule:** GitHub Actions in the public repo triggers every 15 minutes and takes a snapshot when the newest one is
   at least 150 minutes old, because GitHub drops most scheduled triggers (Kev session, 29 Sep). It pushes to the
