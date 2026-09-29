@@ -246,8 +246,14 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
   at least 150 minutes old, because GitHub drops most scheduled triggers (Kev session, 29 Sep). It pushes to the
   private data repo through a deploy key that can only write there (approved 28 Sep). Logs print nothing raw.
 - **Daily job:** 09:47 UTC (10:47 UK until 25 Oct). It reads the snapshot runs that started before 09:30 UTC, runs
-  steps 1–8, commits private outputs to `simlab-data/derived/YYYY-MM-DD/`, and writes public outputs to
-  `simlab/public/forecasts/YYYY-MM-DD/`. Public outputs are only pushed from 12 Oct, after Matteo's go.
+  steps 1–8 and commits private outputs to `simlab-data/derived/YYYY-MM-DD/`.
+- **Publishing (from 12 Oct):** once Matteo switches the repository variable `SITE_PUBLISH` on after his 11 Oct go, a
+  second job in `daily.yml` checks out only the day's `forecast.json`, `draws.json` and `races.json`. It copies them
+  with `site/scripts/publish-day.mjs` to `site/data/live/` (`races.json` without `tier_reasons`, plus `history.json`)
+  and `site/public/data/YYYY-MM-DD/`, commits them to the public repo and starts the Site workflow.
+  - It publishes only when the statistics step passed; a failed post kit doesn't hold it back.
+  - A day older than the one on the site is never published. A manual run of today's date publishes too, so switch
+    `SITE_PUBLISH` off before a test run.
 - **Run record:** `derived/YYYY-MM-DD/run.json` holds the git SHA, a hash of the settings, model slugs and hosts, input
   file hashes, spend, step timings and any fallbacks used.
 - **Entry points the daily job calls, in order.** Each exits non-zero on failure, and its last stdout line is a

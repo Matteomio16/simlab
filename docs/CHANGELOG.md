@@ -2,6 +2,17 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 night (Engine session): the site's daily publish step
+
+Matteo approved (in the Website session) publishing each day's forecast to the site from 12 Oct. `daily.yml` now has a
+`publish` job behind the repository variable `SITE_PUBLISH`, which Matteo sets to `on` after his 11 Oct go.
+- It runs only from 12 Oct, only when the day's statistics step passed and its outputs are saved in the data repo, and
+  never for a day older than the one already on the site. A failed post kit doesn't hold it back.
+- Only `forecast.json`, `draws.json` and `races.json` are checked out of the data repo. `site/scripts/publish-day.mjs`
+  drops `tier_reasons` and writes `site/data/live/` and `site/public/data/<day>/`; nothing else leaves.
+- It is a job of its own, so only that short step holds a token that can write to the public repo. A push made with
+  that token starts no workflow, so the job starts the Site workflow itself.
+
 ## 2026-09-29 night (Statistics session): shared surprises checked against Matteo's condition
 
 Matteo agreed (in the roadmap session; his direct yes is still to come here) that the 0.25 correlation floor applies

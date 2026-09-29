@@ -4,6 +4,7 @@
 # every 15 minutes until 14:47, stay as a fallback. A scheduled run only proceeds when it is past 09:47 UTC, the day
 # has no run.json yet, the day is 1 Oct or later (the pilot's first runs) and the repository variable PIPELINE_ON is
 # "true"; a manual run works any time. Logs are public: the steps print statuses and counts, never data. Package versions come from uv.lock.
+# From 12 Oct the publish job copies the day's public files to the site once Matteo switches SITE_PUBLISH on.
 name: daily
 
 on:
@@ -32,6 +33,9 @@ jobs:
     if: (github.event_name == 'workflow_dispatch' && !inputs.scheduled) || vars.PIPELINE_ON == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 300
+    outputs:
+      day: ${{ steps.public.outputs.day }}
+      publish: ${{ steps.public.outputs.publish }}
     steps:
       - uses: actions/checkout@v4
       - name: Day
@@ -88,6 +92,7 @@ jobs:
         # Kev answers as shadow rows (never applied) when the KEV_URL repository variable is set (Matteo, 29 Sep)
         run: uv run python -m simlab.daily --date "$DAY" --data data-repo --kev "${{ vars.KEV_URL }}"
       - name: Push outputs to the data repo
+        id: push
         if: always() && steps.due.outputs.run != 'false'
         working-directory: data-repo
         run: |
@@ -97,6 +102,72 @@ jobs:
           git commit --quiet -m "Daily run ${DAY}" || exit 0
           for i in 1 2 3; do
             git pull --quiet --rebase && git push --quiet && exit 0
+            sleep 15
+          done
+          exit 1
+      - name: Public?
+        id: public
+        if: ${{ !cancelled() && vars.SITE_PUBLISH == 'on' && steps.push.outcome == 'success' }}
+        working-directory: data-repo
+        # a failed post kit doesn't hold the site back; a failed news, reactions or statistics step leaves the site on
+        # the previous day
+        run: |
+          if [[ "$DAY" < "2026-10-12" ]]; then
+            echo "the site publishes from 2026-10-12"
+          elif [[ "$DAY" > "$(date -u +%F)" ]]; then
+            echo "${DAY} has not started"
+          elif ! jq -e '.steps[] | select(.name == "statistics" and .status == "ok")' "derived/${DAY}/run.json" > /dev/null; then
+            echo "statistics did not pass"
+          else
+            echo "day=${DAY}" >> "$GITHUB_OUTPUT"; echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # The site's daily files (Website session; approved by Matteo 29 Sep, for 12 Oct after his 11 Oct go). A job of its
+  # own, so only this short step holds a token that can write to this public repository. Only forecast.json, draws.json
+  # and races.json (without tier_reasons) are checked out of the data repo; site/scripts/publish-day.mjs copies them to
+  # site/data/live/ and site/public/data/<day>/.
+  publish:
+    needs: daily
+    if: ${{ !cancelled() && vars.SITE_PUBLISH == 'on' && needs.daily.outputs.publish == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: write
+    env:
+      DAY: ${{ needs.daily.outputs.day }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/checkout@v4
+        with:
+          repository: Matteomio16/simlab-data
+          ssh-key: ${{ secrets.SIMLAB_DATA_DEPLOY_KEY }}
+          path: data-repo
+          fetch-depth: 1
+          sparse-checkout: |
+            /derived/${{ needs.daily.outputs.day }}/forecast.json
+            /derived/${{ needs.daily.outputs.day }}/draws.json
+            /derived/${{ needs.daily.outputs.day }}/races.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Publish the day
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          live=$(node -p 'require("./site/data/live/history.json").date ?? ""' 2>/dev/null || true)
+          if [[ "$DAY" < "$live" ]]; then echo "the site already shows ${live}; ${DAY} stays unpublished"; exit 0; fi
+          node site/scripts/publish-day.mjs --from "data-repo/derived/${DAY}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/data/live "site/public/data/${DAY}"
+          git commit --quiet -m "Publish ${DAY}" || exit 0
+          for i in 1 2 3; do
+            # a push made with this job's token starts no workflow, so the Site workflow is started here
+            git pull --quiet --rebase && git push --quiet && gh workflow run site.yml --ref main && exit 0
             sleep 15
           done
           exit 1
