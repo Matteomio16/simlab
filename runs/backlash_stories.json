@@ -1,0 +1,128 @@
+[
+ {
+  "id": "OH0002",
+  "race": "Ohio",
+  "title": "Crypto super PAC to spend $30M opposing Sherrod Brown in Ohio",
+  "category": "money",
+  "control": false
+ },
+ {
+  "id": "OH0183",
+  "race": "Ohio",
+  "title": "Elon Musk\u2019s super PAC enters the midterms with Senate race spending",
+  "category": "money",
+  "control": false
+ },
+ {
+  "id": "TE0022",
+  "race": "Texas",
+  "title": "Trump\u2019s MAGA Inc. super PAC funnels $10M into Texas Senate race",
+  "category": "money",
+  "control": false
+ },
+ {
+  "id": "NA0052",
+  "race": "national",
+  "title": "Trump ramps up noncitizen voting prosecutions ahead of midterms",
+  "category": "legal",
+  "control": false
+ },
+ {
+  "id": "TE0021",
+  "race": "Texas",
+  "title": "Fort Worth man charged with threatening to kill U.S. Senate candidate James Talarico",
+  "category": "legal",
+  "control": false
+ },
+ {
+  "id": "TE0092",
+  "race": "Texas",
+  "title": "Trump finds rampant noncitizen voting in \u2026 Ken Paxton\u2019s Texas",
+  "category": "legal",
+  "control": false
+ },
+ {
+  "id": "NO0000",
+  "race": "North Carolina",
+  "title": "Vice President JD Vance campaigns for Michael Whatley at Greensboro rally",
+  "category": "surrogate",
+  "control": false
+ },
+ {
+  "id": "NA0150",
+  "race": "national",
+  "title": "Vice President Vance rallies in Iowa to shore up Republican support in midterms",
+  "category": "surrogate",
+  "control": false
+ },
+ {
+  "id": "TE0058",
+  "race": "Texas",
+  "title": "John Cornyn won't help Ken Paxton win Texas Senate seat",
+  "category": "former_ally",
+  "control": false
+ },
+ {
+  "id": "TE0067",
+  "race": "Texas",
+  "title": "Tillis says Trump endorsing Paxton over Cornyn was \u2018colossal mistake\u2019",
+  "category": "former_ally",
+  "control": false
+ },
+ {
+  "id": "TE0200",
+  "race": "Texas",
+  "title": "Ken Paxton whistleblower endorses James Talarico in Texas\u2019 U.S. Senate race",
+  "category": "endorsement",
+  "control": false
+ },
+ {
+  "id": "NO0108",
+  "race": "North Carolina",
+  "title": "Human Rights Campaign PAC Endorses Former North Carolina Gov. Roy Cooper for U.S. Senate",
+  "category": "endorsement",
+  "control": false
+ },
+ {
+  "id": "OH0160",
+  "race": "Ohio",
+  "title": "National Right to Life Endorses Senator Jon Husted for Election to the U.S. Senate",
+  "category": "endorsement",
+  "control": false
+ },
+ {
+  "id": "TE0158",
+  "race": "Texas",
+  "title": "Congressional Black Caucus PAC Endorses James Talarico For Senate",
+  "category": "endorsement",
+  "control": false
+ },
+ {
+  "id": "OH0014",
+  "race": "Ohio",
+  "title": "Jon Husted picks up burger chain endorsement in 2026 Ohio Senate race",
+  "category": "endorsement",
+  "control": false
+ },
+ {
+  "id": "OH0001",
+  "race": "Ohio",
+  "title": "Ohio Democratic Senate candidate Sherrod Brown meets voters in Hamilton",
+  "category": "control",
+  "control": true
+ },
+ {
+  "id": "NO0167",
+  "race": "North Carolina",
+  "title": "Michael Whatley tours Helene-hit Yancey County with disaster-relief nonprofit",
+  "category": "control",
+  "control": true
+ },
+ {
+  "id": "TE0110",
+  "race": "Texas",
+  "title": "Ken Paxton outlines economic policies during U.S. Senate campaign stop in Longview",
+  "category": "control",
+  "control": true
+ }
+]

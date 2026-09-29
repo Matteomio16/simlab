@@ -215,7 +215,10 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
 - **Wording: direct** (backlash test, 29 Sep). The reaction-aware wording lost accuracy on the real events. On the 45
   training events it got the direction right on 85% of those that moved opinion (direct: 92%) and its size-tracking
   fell from 0.26 to −0.11. On the 19 held-out events: 80% against 100%, error 3.22 against 3.05 points. The direct
-  wording already produces backlash where it is real (Trump's money for Husted rallies Democrats).
+  wording already produces backlash where it is real (Trump's money for Husted rallies Democrats). On 15 stories
+  picked for possible backlash and 3 controls, the reaction-aware wording raised turnout moves everywhere (average
+  size 0.52 against 0.30), as much on the controls as on the backlash stories, so it adds no backlash-specific signal
+  (`runs/backlash__glm.jsonl`).
 - **Scopes:** race (the race's state personas) and national (state-neutral personas).
 - **House seats:** asked about "their district's U.S. House race", with personas in the seat's state.
 - **Cost at full scale** (tiers of 28 Sep: 13 simulate, 7 watch): 13 × 8 + 7 × 2 + 3 ≈ 121 race-story pairs × 28

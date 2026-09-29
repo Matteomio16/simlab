@@ -64,7 +64,11 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   - on the 19 held-out events, 80% against 100%, and an error of 3.22 against 3.05 points;
   - size-tracking fell from 0.26 to −0.11.
   The direct wording already shows backlash where it's real: on 28 Sep, Trump's backing of Husted moved strong
-  Democrats toward Brown and raised their turnout.
+  Democrats toward Brown and raised their turnout. On 15 stories picked for possible backlash (big money, prosecutions,
+  polarising surrogates, former allies, controversial endorsements) and 3 controls, both wordings moved Democratic
+  groups toward the Democrat and raised their turnout on Republican-helping money stories. The reaction-aware wording
+  mostly added turnout everywhere (average size 0.52 against 0.30), as much on the controls as on the backlash stories.
+  So it adds no signal specific to backlash. Results: `runs/backlash__glm.jsonl`; code: `simlab/events2.py backlash`.
 - **A national copy of a race's own story counts for that race only** when its headline names that race's
   candidates. The national feed carried "Paxton, Talarico spar over gas tax", and Jev gated it relevant to Ohio.
 - **Spot-check: all 32 of Matteo's stories count.** All 32 were saved on the page; the local copy held only the 16
