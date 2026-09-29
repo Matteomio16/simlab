@@ -62,5 +62,33 @@ class Anchor(unittest.TestCase):
         self.assertEqual(m.iloc[3], 100.0)
 
 
+
+ACS = {**{f"B29002_{i:03d}E": v for i, v in enumerate([1000, 50, 50, 300, 200, 100, 200, 100], 1)},
+       **{f"B05003H_{i:03d}E": 0 for i in range(1, 24)}, **{f"B15002_{i:03d}E": 0 for i in range(1, 36)},
+       **{f"C15002H_{i:03d}E": 0 for i in range(1, 12)}}
+ACS.update({"B05003H_009E": 300, "B05003H_011E": 10, "B05003H_020E": 300, "B05003H_022E": 10,
+            "B15002_001E": 900, "B15002_015E": 150, "B15002_032E": 150,
+            "C15002H_001E": 560, "C15002H_006E": 100, "C15002H_011E": 110})
+
+
+class Groups(unittest.TestCase):
+    def test_cells_add_up(self):
+        c = house.cells(ACS)
+        self.assertAlmostEqual(sum(c.values()), 1.0)
+        self.assertAlmostEqual(c["white / Four-year college degree or more"] + c["white / No four-year college degree"], 0.62)
+        self.assertAlmostEqual(c["white / Four-year college degree or more"] + c["non-white / Four-year college degree or more"], 0.3)
+
+    def test_district_groups_reproduce_the_seat(self):
+        from simlab.groups import BASE, PIMU
+        import json
+        base, pimu = (json.loads(f.read_text(encoding="utf-8")) for f in (BASE, PIMU))
+        g = house.district_groups({"state": "OH", "pres24": -8.0, "acs": ACS}, -3.0, base, pimu, {})
+        self.assertEqual(len(g), 28)
+        n = sum(v["n"] for v in g.values())
+        m = sum(v["n"] * v["t"] * v["d"] for v in g.values()) / sum(v["n"] * v["t"] for v in g.values())
+        self.assertAlmostEqual(n, 1.0, places=3)
+        self.assertAlmostEqual(100 * m, -3.0, places=2)
+
+
 if __name__ == "__main__":
     unittest.main()

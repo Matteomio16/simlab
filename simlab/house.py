@@ -15,12 +15,22 @@ Nominees, sitting members, uncontested seats and ratings come from the day's Wik
 has no section yet, its nominees are unknown: it counts as contested with the CSV's incumbent assumed to run
 (`checked: false`). Ratings pick the simulated seats (with the fundamentals) and never enter the numbers.
 
+Polls: each district's general-election polls (Wikipedia's district tables and VoteHub's us-representative entries,
+merged as for the Senate) are corrected with the day's likely-voter gap, pollster leans and sponsor shift and blended
+with the fundamentals exactly as a Senate race is (levels.build, stats-only). `sd` excludes the national part, which
+the Monte Carlo adds. On 29 Sep: 192 polls in 84 seats, running 5.7 points more Democratic than the fundamentals on
+average (2.8 of it is the generic ballot's bias, which the Senate carries too).
+
+Voter groups (house_groups.json, the simulated seats): the district's citizen adults by white/non-white x degree
+(ACS; the old lines in the 10 redrawn states), split by the state's party mix within each cell and tilted to the
+district's 2024 presidential margin; Kev's group margins shifted to the seat's level; turnout and pi/mu the state's.
+
 Inputs: <data>/house/inputs.json (built once by `python -m simlab.house inputs` from the Engine's data/house/, which
 is gitignored; kept private in simlab-data).
 
     python -m simlab.house inputs          # data/house/*.csv -> ../simlab-data/house/inputs.json
     python -m simlab.house fit             # refits b and psi on 2022 and 2024 (MIT House file + The Downballot)
-    python -m simlab.house run --date 2026-09-29 --data ../simlab-data
+    python -m simlab.house run --date 2026-09-29 --data ../simlab-data   # writes to <data>/derived/<date>/
 """
 from __future__ import annotations
 
@@ -36,8 +46,11 @@ import pandas as pd
 from scipy.optimize import brentq
 from scipy.stats import norm
 
+from . import levels
 from .calib import DIVISION
-from .polls import STATE_CODES
+from .groups import BASE, CELL_OF, GROUPS, KEV, PID_OF, PIMU, POS, race_groups, tilt
+from .polls import STATE_CODES, VERSION_COLUMNS, Race, merge, wiki_polls
+from .polls import _answer as answer, _vh_meta as vh_meta, build as build_polls
 from .snap import AT_LARGE, slug
 
 HERE = Path(__file__).parent
@@ -148,7 +161,7 @@ def district(sec: str) -> dict:
         if parts and parts[0] in RATING:
             side = next((p for p in parts[1:] if p in ("d", "r")), None)
             ratings.append(RATING[parts[0]] * (1 if side == "d" else -1 if side == "r" else 0))
-    return {"nominees": noms, "before": _clean(box.get("before_election", "")), "ratings": ratings}
+    return {"nominees": noms, "before": _clean(box.get("before_election", "")), "ratings": ratings, "text": sec}
 
 
 def wikipedia(snap: Path) -> dict:
@@ -160,7 +173,7 @@ def wikipedia(snap: Path) -> dict:
         if name in AT_LARGE:
             t = read(f"2026 United States House of Representatives election in {name}")
             if t:
-                out[f"{st}-AL"] = district(t)
+                out[f"{st}-AL"] = district(t) | {"level": 2}
             continue
         pages = ([f"2026 United States House of Representatives elections in California (districts {r})"
                   for r in ("1–26", "27–52")] if st == "CA" else
@@ -168,7 +181,7 @@ def wikipedia(snap: Path) -> dict:
         for t in map(read, pages):
             secs = re.split(r"\n==\s*District (\d+)\s*==", t)
             for k in range(1, len(secs), 2):
-                out[f"{st}-{int(secs[k])}"] = district(secs[k + 1])
+                out[f"{st}-{int(secs[k])}"] = district(secs[k + 1]) | {"level": 3}
     return out
 
 
@@ -230,46 +243,170 @@ def tiers(s: pd.DataFrame, p: pd.Series) -> tuple[pd.Series, pd.Series]:
     return pd.Series(tier), pd.Series(why), consensus
 
 
-def run(day: date, data: Path, levels: dict, snap: Path | None = None) -> dict:
-    """house_levels.json and house_races.json for `day` (house_groups.json joins with the simulated seats' groups)."""
+# --- district polls, the blend and the simulated seats' voter groups ------------------------------------------------
+
+def pair(s: pd.DataFrame, rid: str) -> Race | None:
+    """The seat's matchup as a polls.Race: the Republican nominee against the Democrat (or the independent)."""
+    noms = s.nominees[rid]
+    left = (noms.get("D") or noms.get("O") or [None])[0]
+    if s.fixed[rid] is not None or not noms.get("R") or not left:
+        return None
+    return Race(s.state[rid], False, noms["R"][0], left, "D" if noms.get("D") else "O", "")
+
+
+def district_polls(s: pd.DataFrame, wiki: dict, entries: list[dict]) -> pd.DataFrame:
+    """Every seat's general-election polls, Wikipedia's district tables and VoteHub's us-representative entries
+    (subject "2026 ME-02"), merged as for the Senate (polls.merge)."""
+    at_large = {STATE_CODES[n] for n in AT_LARGE}
+    frames, vh = [], []
+    for rid in s.index:
+        race, w = pair(s, rid), wiki.get(rid)
+        if race and w:
+            frames.append(wiki_polls(w["text"], race, w["level"]).assign(race_id=rid))
+    for e in entries:
+        m = re.fullmatch(r"2026 ([A-Z]{2})-(\d+)", e.get("subject") or "")
+        if e.get("poll_type") != "us-representative" or not m:
+            continue
+        rid = f"{m.group(1)}-AL" if m.group(1) in at_large else f"{m.group(1)}-{int(m.group(2))}"
+        race = pair(s, rid) if rid in s.index else None
+        left, right = (answer(e["answers"], race.left), answer(e["answers"], race.right)) if race else (None, None)
+        if left is None or right is None or (left == right == 50 and len(e["answers"]) == 2):
+            continue
+        rest = sum(a["pct"] for a in e["answers"]) - left - right
+        vh.append({"race_id": rid, **vh_meta(e), "left": left, "right": right, "other": rest if rest > 0 else np.nan,
+                   "undecided": np.nan})
+    wiki_df = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=VERSION_COLUMNS + ["race_id"])
+    return merge(wiki_df, pd.DataFrame(vh))
+
+
+def blend_polls(s: pd.DataFrame, fund: pd.Series, sd_f: pd.Series, hp: pd.DataFrame, t: dict, day: date) -> dict:
+    """Each seat's level as for a Senate race (levels.build, stats-only): the district polls, corrected with the day's
+    likely-voter gap, pollster leans and sponsor shift and taken relative to the national path, blended with the
+    fundamentals by inverse variance. Returns {race_id: (margin, var, w, poll_margin, n_polls, last_poll)}; the
+    variance excludes the national part, which the Monte Carlo adds."""
+    params, priors = levels.inputs()[:2]
+    d = (levels.ELECTION - day).days
+    q_n, q_r = params["drift_daily_sd"]["national"] ** 2, params["drift_daily_sd"]["race"] ** 2
+    pf, gap, he, sp = levels.poll_frame(t["senate"], t["generic_ballot"], params, priors, day, levels.ELECTION,
+                                        t["entries"])
+    g = pf[pf.race == "US"]
+    grid, nx, npv = levels.local_level(g.t.values.astype(float), g.adj.values, g.v.values, q_n, -d)
+    n_now = float(nx[-1])
+    rows = levels._poll_rows(hp, pd.DataFrame(), levels.ELECTION) if len(hp) else pd.DataFrame(columns=["race", "t"])
+    rows = rows[rows.t <= -d].reset_index(drop=True)
+    if len(rows):
+        rows["adj"] = (rows.y + np.where(rows.population == "lv", 0.0, gap) - rows.pollster.map(he["mean"]).fillna(0.0)
+                       - rows.partisan.map(sp).fillna(0.0))
+        rows["v"] = ((rows.s2 + params["poll_extra_sd"]["value"] ** 2)
+                     * np.where(rows.partisan.isin(["DEM", "REP"]), 2.0, 1.0) * levels._flooding(rows))
+    out = {}
+    for rid in s.index:
+        rp = rows[rows.race == rid]
+        r_poll = v_poll = poll_margin = None
+        if len(rp):
+            tt = rp.t.values.astype(float)
+            _, rx, rv = levels.local_level(tt, rp.adj.values - np.interp(tt, grid, nx),
+                                           rp.v.values + np.interp(tt, grid, npv), q_r, -d, smooth=False)
+            recent = int((tt >= -d - 30).sum())
+            sb = params["race_poll_bias_sd"]["value"] if recent >= 5 else params["race_poll_bias_sd"]["few_polls"]
+            r_poll, v_poll = float(rx[-1]), float(rv[-1] + q_r * d + sb ** 2)
+            poll_margin = n_now + r_poll
+        r_t, var_r, w = levels.blend(r_poll, v_poll, float(fund[rid]) - n_now, float(sd_f[rid]))
+        out[rid] = (n_now + r_t, var_r, w, poll_margin, int(len(rp)), str(max(rp.mid)) if len(rp) else None)
+    return out
+
+
+def cells(acs: dict) -> dict:
+    """Citizen adults by white (non-Hispanic) / non-white x four-year degree, as shares: CVAP and its degree share
+    (B29002), white citizen adults (B05003H), white degree share among 25+ (C15002H) scaled to 18+ by the district's
+    CVAP-to-25+ degree ratio (B15002)."""
+    e = lambda t, *k: sum(acs[f"{t}_{i:03d}E"] for i in k)
+    total, deg = e("B29002", 1), e("B29002", 7, 8) / e("B29002", 1)
+    white = e("B05003H", 9, 11, 20, 22)
+    deg25 = e("B15002", 15, 16, 17, 18, 32, 33, 34, 35) / e("B15002", 1)
+    wd = white * min(1.0, e("C15002H", 6, 11) / e("C15002H", 1) * deg / deg25)
+    nd = max(0.0, total * deg - wd)
+    return {"white / Four-year college degree or more": wd / total,
+            "white / No four-year college degree": (white - wd) / total,
+            "non-white / Four-year college degree or more": nd / total,
+            "non-white / No four-year college degree": max(0.0, total - white - nd) / total}
+
+
+def district_groups(r: dict, margin: float, base: dict, pimu: dict, kev: dict) -> dict:
+    """A district's 28 groups (groups.race_groups): the ACS cell shares split by the state's party mix within each
+    cell, tilted (groups.tilt) until the groups reproduce the district's 2024 presidential margin, with Kev's group
+    margins (the survey's where Kev has none); turnout and d0 are the state's."""
+    b = base["states"][r["state"]]
+    share = cells(r["acs"])
+    df = pd.DataFrame({"cell": [CELL_OF[g] for g in GROUPS], "pos": [POS[PID_OF[g]] for g in GROUPS]}, index=GROUPS)
+    tot = {c: sum(b[g]["n"] for g in GROUPS if CELL_OF[g] == c) for c in share}
+    df["n"] = [share[CELL_OF[g]] * b[g]["n"] / tot[CELL_OF[g]] for g in GROUPS]
+    df["t24"] = [b[g]["t"] for g in GROUPS]
+    df["m24"] = [kev.get(g, b[g]["d0"]) for g in GROUPS]
+    _, n = tilt(df, r["pres24"] / 100)
+    dist = {g: {"n": round(float(n[i]), 5), "t": b[g]["t"], "d0": b[g]["d0"]} for i, g in enumerate(GROUPS)}
+    return race_groups(dist, pimu["states"][r["state"]], margin, kev)
+
+
+def run(day: date, data: Path, levels_json: dict, snap: Path | None = None, run_id: str | None = None) -> dict:
+    """house_levels.json, house_races.json, house_groups.json (the simulated seats) and house_polls.csv for `day`."""
     from .statsday import snapshot_for
     inp = json.loads((data / "house" / "inputs.json").read_text(encoding="utf-8"))
     snap = snap or snapshot_for(data, day)
-    s = seats(inp, wikipedia(snap))
-    E = levels["national"]["E_hat"]
-    margin, c = anchor(s, E)
-    sd = pd.Series(np.where(margin.abs() < CLOSE, SD_CLOSE, SD_SAFE), index=s.index)
-    p = pd.Series(norm.cdf(margin / np.sqrt(sd ** 2 + levels["national"]["var"])), index=s.index).where(
+    wiki = wikipedia(snap)
+    s = seats(inp, wiki)
+    E, var_n = levels_json["national"]["E_hat"], levels_json["national"]["var"]
+    fund, c = anchor(s, E)
+    sd_f = pd.Series(np.where(fund.abs() < CLOSE, SD_CLOSE, SD_SAFE), index=s.index)
+    t = build_polls(snap)
+    hp = district_polls(s, wiki, t["entries"])
+    lv = blend_polls(s, fund, sd_f, hp, t, day)
+    fixed = lambda rid: s.fixed[rid] is not None
+    margin = pd.Series({rid: fund[rid] if fixed(rid) else lv[rid][0] for rid in s.index})
+    sd = pd.Series({rid: float(sd_f[rid]) if fixed(rid) else float(np.sqrt(lv[rid][1])) for rid in s.index})
+    p = pd.Series(norm.cdf(margin / np.sqrt(sd ** 2 + var_n)), index=s.index).where(
         s.fixed.isna(), s.fixed.map({"D": 1.0, "R": 0.0}))
     tier, why, consensus = tiers(s, p)
-    base = {k: levels[k] for k in ("date", "schema", "days_to_election", "national") if k in levels}
-    races = {rid: {"margin": round(float(margin[rid]), 3), "sd": float(sd[rid]), "w_polls": 0.0, "poll_margin": None,
-                   "story_effect": 0.0, "story_effect_3nov": 0.0, "fundamentals": round(float(margin[rid]), 3),
-                   "n_polls": 0, "last_poll": None, "fixed": s.fixed[rid], "tier": tier[rid], "state": s.state[rid],
-                   "region": DIVISION[s.state[rid]],
+    base = {k: levels_json[k] for k in ("date", "schema", "days_to_election", "national") if k in levels_json}
+    races = {rid: {"margin": round(float(margin[rid]), 3), "sd": round(float(sd[rid]), 3),
+                   "w_polls": 0.0 if fixed(rid) else round(lv[rid][2], 3),
+                   "poll_margin": None if fixed(rid) or lv[rid][3] is None else round(lv[rid][3], 3),
+                   "story_effect": 0.0, "story_effect_3nov": 0.0, "fundamentals": round(float(fund[rid]), 3),
+                   "n_polls": 0 if fixed(rid) else lv[rid][4], "last_poll": None if fixed(rid) else lv[rid][5],
+                   "fixed": s.fixed[rid], "tier": tier[rid], "state": s.state[rid], "region": DIVISION[s.state[rid]],
                    "components": {"lean": round(B_LEAN * (s.pres24[rid] - NATIONAL_PRES24), 3),
                                   "incumbency": round(PSI * s.inc[rid] * (REDRAWN_PSI if s.new_map[rid] else 1), 3),
                                   "anchor": round(c, 3), "national_house_vote": E}}
              for rid in s.index}
-    lv = base | {"office": "house", "units": levels.get("units"), "anchor_c": round(c, 3),
-                 "params": {"b_lean": B_LEAN, "psi": PSI, "redrawn_psi": REDRAWN_PSI, "sd_close": SD_CLOSE,
-                            "sd_safe": SD_SAFE, "uncontested_turnout": UNCONTESTED_TURNOUT}, "races": races}
+    out_lv = base | {"office": "house", "units": levels_json.get("units"), "anchor_c": round(c, 3),
+                     "params": {"b_lean": B_LEAN, "psi": PSI, "redrawn_psi": REDRAWN_PSI, "sd_close": SD_CLOSE,
+                                "sd_safe": SD_SAFE, "uncontested_turnout": UNCONTESTED_TURNOUT}, "races": races}
     left = lambda rid: "D" if s.nominees[rid].get("D") or not s.checked[rid] else "O"
     meta = {rid: {"state": s.state[rid], "office": "house", "district": int(s.district[rid]), "special": False,
                   "rcv": s.state[rid] in ("ME", "AK"), "candidates": s.nominees[rid], "left_party": left(rid),
                   "incumbent": s.incumbent[rid], "incumbent_party": s.incumbent_party[rid],
-                  "incumbent_running": {1: "D", -1: "R"}.get(int(s.inc[rid])), "status": "uncontested" if s.fixed[rid] is not None else "contested",
-                  "checked": bool(s.checked[rid]), "new_map": bool(s.new_map[rid]), "p_dem_stats": round(float(p[rid]), 4),
+                  "incumbent_running": {1: "D", -1: "R"}.get(int(s.inc[rid])),
+                  "status": "uncontested" if fixed(rid) else "contested", "checked": bool(s.checked[rid]),
+                  "new_map": bool(s.new_map[rid]), "p_dem_stats": round(float(p[rid]), 4),
                   "ratings_consensus": None if pd.isna(consensus[rid]) else round(float(consensus[rid]), 2),
                   "tier": tier[rid], "tier_reasons": why[rid]} for rid in s.index}
+    gbase, pimu = (json.loads(f.read_text(encoding="utf-8")) for f in (BASE, PIMU))
+    kev = json.loads(KEV.read_text(encoding="utf-8")) if KEV.exists() else {}
+    sim = [rid for rid in s.index if tier[rid] == "simulate"]
+    groups = {"date": day.isoformat(), "run_id": run_id, "schema": 1,
+              "units": "as groups.json; n from the district's ACS citizen adults (old lines in the 10 redrawn states)",
+              **{rid: district_groups(inp["races"][rid], float(margin[rid]), gbase, pimu,
+                                      kev.get("states", {}).get(s.state[rid], {})) for rid in sim}}
     out = data / "derived" / day.isoformat()
     out.mkdir(parents=True, exist_ok=True)
-    (out / "house_levels.json").write_text(json.dumps(lv, indent=1), encoding="utf-8")
+    (out / "house_levels.json").write_text(json.dumps(out_lv, indent=1), encoding="utf-8")
     (out / "house_races.json").write_text(json.dumps({"date": day.isoformat(), **meta}, indent=1), encoding="utf-8")
-    seats_d = int((p > 0.5).sum())
+    (out / "house_groups.json").write_text(json.dumps(groups, indent=1), encoding="utf-8")
+    hp.to_csv(out / "house_polls.csv", index=False)
     return {"seats": len(s), "checked": int(s.checked.sum()), "uncontested": int(s.fixed.notna().sum()),
-            "anchor_c": round(c, 2), "expected_d_seats": round(float(p.sum()), 1), "d_favoured": seats_d,
-            "tiers": tier.value_counts().to_dict()}
+            "with_polls": sum(x[4] > 0 for x in lv.values()), "polls": int(len(hp)), "anchor_c": round(c, 2),
+            "expected_d_seats": round(float(p.sum()), 1), "d_favoured": int((p > 0.5).sum()),
+            "tiers": tier.value_counts().to_dict(), "groups": len(sim)}
 
 
 def main() -> int:
@@ -283,8 +420,8 @@ def main() -> int:
     elif a.what == "fit":
         fit()
     else:
-        levels = json.loads((a.data / "derived" / a.date.isoformat() / "levels.json").read_text(encoding="utf-8"))
-        print(json.dumps(run(a.date, a.data, levels), indent=1))
+        lv = json.loads((a.data / "derived" / a.date.isoformat() / "levels.json").read_text(encoding="utf-8"))
+        print(json.dumps(run(a.date, a.data, lv), indent=1))
     return 0
 
 

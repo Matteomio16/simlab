@@ -253,10 +253,11 @@ def _tables(text: str) -> list[str]:
     return out
 
 
-def poll_tables(page: str) -> list[tuple[list[str], list[list[str]]]]:
-    """Poll tables of the "General election" > "Polling" section; aggregator tables are skipped."""
-    ge = _section(page, "General election", 2)
-    span = _section(page, "Polling", 3, *ge) if ge else None
+def poll_tables(page: str, level: int = 2) -> list[tuple[list[str], list[list[str]]]]:
+    """Poll tables of the "General election" > "Polling" section (headings at `level` and one below; 3 in a House
+    page's district sections); aggregator tables are skipped."""
+    ge = _section(page, "General election", level)
+    span = _section(page, "Polling", level + 1, *ge) if ge else None
     if not span:
         return []
     parsed = [parse_table(t) for t in _tables(page[span[0]:span[1]])]
@@ -274,9 +275,9 @@ def nominee_table(tables, right: str, left: str):
     return max(hits, key=lambda t: len(t[1])) if hits else None
 
 
-def wiki_polls(page: str, race: Race) -> pd.DataFrame:
+def wiki_polls(page: str, race: Race, level: int = 2) -> pd.DataFrame:
     """One row per poll version in the nominee table."""
-    found = nominee_table(poll_tables(page), surname(race.right), surname(race.left))
+    found = nominee_table(poll_tables(page, level), surname(race.right), surname(race.left))
     if not found:
         return pd.DataFrame(columns=VERSION_COLUMNS)
     header, rows = found
