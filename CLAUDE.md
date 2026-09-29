@@ -177,8 +177,9 @@ Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.m
 - A published poll table built on Wikipedia data is CC BY-SA.
 
 Decided by Matteo, 28 Sep (engine; details in `docs/engine-design.md`, `docs/roadmap.md` and `docs/CHANGELOG.md`):
-- **Dates:** build until 4 Oct; a private pilot for OH, NC and TX from 5–11 Oct; the public full run from 12 Oct, with all
-  35 Senate races and ~40 House seats. If the House isn't ready on 9 Oct, it starts from statistics only.
+- **Dates:** build until 4 Oct; a private pilot for OH, NC, TX, IA and ME from 5–11 Oct (Iowa and Maine added by
+  Matteo, 29 Sep); the public full run from 12 Oct, with all 35 Senate races and ~40 House seats. If the House isn't
+  ready on 9 Oct, it starts from statistics only.
 - **Design:** the forecast machine is a chain of steps that pass dated files. `docs/engine-design.md` is the contract
   between the sessions (Engine, Statistics, Kev, Content & site).
 - **News effects are voter reactions**, including backlash and mobilisation, not who a story helps on paper. Only the
@@ -198,13 +199,23 @@ Decided by Matteo, 28 Sep (engine; details in `docs/engine-design.md`, `docs/roa
 - **Daily job:** it runs on GitHub Actions at 09:47 UTC and writes its outputs to the private data repo. Its schedule is
   switched on at the pilot (repository variable `PIPELINE_ON`); manual runs work any time.
 
-Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork.md` §8, D14–D21, and `docs/CHANGELOG.md`):
+Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork.md` §8, D14–D23, and `docs/CHANGELOG.md`):
 - **News sizes are ranges, not single values.** Each simulated election draws its own switching and turnout sizes:
   they average the fitted 0.21, turnout equals switching as a starting point, and they can go well up or down. No
   single data point drives the result (the Hungary lesson).
   - Each race shows how its forecast changes if news matters less or more.
   - `simlab/move_params.json` records where the sizes come from, the files they pass through and what updates them:
-    the weekly filter, from 12 Oct.
+    the weekly filter, every Monday from 5 Oct (the first run is a private pilot rehearsal; Matteo, 29 Sep).
+  - The news uncertainty has three layers (Matteo, 29 Sep): one overall scale; each state's sensitivity (its own
+    draw); and each story's strength. A story's strength is drawn once per simulated election (sd 0.42 of its effect,
+    from 45 past events). A national story's draw is shared by every race it reaches; a state story's stays in its
+    own race.
+- **GLM's lean is corrected (Matteo, 29 Sep).** GLM's reactions sit slightly on the Republican side of real past
+  opinion shifts (−0.27 ± 0.22 points per event), so moves adds +0.08 on its support scale for every group; Kev's shadow
+  rows stay raw. The weekly filter re-estimates it, and a negative estimate goes to Matteo.
+- **Correlation floor (Matteo, 29 Sep):** no two Senate races move together less than 0.25. The floor touches only the
+  polling and fundamentals error, never the news: a story about one state stays in that state (a Maine story doesn't
+  move Alaska). House seats keep the shared national, regional and state errors without the floor.
 - **Fat tails keep the fitted spread**, and extremes also follow the simulated dynamics.
 - **News moves every race by its full effect, polls or not.** Polls correct the statistical level underneath.
 - **How long news lasts (Matteo, 29 Sep): news fades fast.**

@@ -2,6 +2,20 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 night (Statistics session): Matteo's answers on the floor, story strength and CLAUDE.md
+
+- **Correlation floor (D23):** 0.25 among Senate races only, on the polling and fundamentals error, never the news. A
+  story about one state stays in that state's race ("a Maine story doesn't matter for Alaska"). House seats keep the
+  shared national, regional and state errors without the floor. Already built that way.
+- **Story strength on** (`story_sd` 0.42 in `simlab/move_params.json`, a7ac434) from the 3 Oct dry run. The news
+  uncertainty now has three layers: the overall scale, each state's sensitivity, and each story's strength.
+- **CLAUDE.md §5** (the project file, with Matteo's OK), added:
+  - the three news-uncertainty layers;
+  - GLM's lean correction;
+  - the Senate-only floor;
+  - the weekly filter from 5 Oct;
+  - Iowa and Maine in the pilot.
+
 ## 2026-09-29 night (Statistics session): news uncertainty by story; House seats take the news
 
 - **Matteo's two layers** (via the roadmap session): news uncertainty should vary by state sensitivity and by story
