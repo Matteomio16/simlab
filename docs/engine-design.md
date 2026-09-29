@@ -280,7 +280,7 @@ Special elections and ranked-choice voting are also fields in `races.json`.
 
 | File | Writer | Readers | Content |
 | --- | --- | --- | --- |
-| `races.json` (daily) | Statistics | all | `race_id → {state, office, district, special, rcv, candidates, left_party, incumbent_party, status, tier, tier_raw, tier_reasons}` |
+| `races.json` (daily) | Statistics | all | `race_id → {state, office, district, special, rcv, candidates, left_party, incumbent_party, status, tier, tier_raw, tier_reasons}`. House seats (office `house`) come from Kev's `house_races.json` once its inputs are in, with its tiers and extra fields (`incumbent_running`, `checked`, `new_map`, `p_dem_stats`, `ratings_consensus`); their `left_party` is `D`, or `O` where no Democrat runs |
 | `polls.csv` | Statistics | Statistics, scoring | one row per poll version (stats-groundwork §5.1) |
 | `events.jsonl` | Engine | Statistics, Content | `{event_id, first_seen (UTC ISO), last_seen, scope, races, gate: {race_id: p}, type, helps_face, fires_up: {D, R}, puts_off: {D, R}, attention: {outlets, articles, days, pageviews, a}, card}`; raw headlines kept separately in `news_private.jsonl` |
 | `reactions.jsonl` | Engine | Statistics, scoring | one row per race × event × group × model: `{race_id, event_id, group, model, shadow, wording, support, turnout}` (expected values, −2..+2) |
