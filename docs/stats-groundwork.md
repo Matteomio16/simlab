@@ -809,6 +809,12 @@ Raised by the build (28 Sep evening); Matteo's answers:
   - The weekly filter re-estimates the offset (a 5-point grid, prior +0.08 +/- 0.065) and flags a negative
     estimate for Matteo.
   - The first weekly update runs on Mon 5 Oct, a private rehearsal a week before the public run.
+- **D23. The floor stays with the Senate; news never shares state stories; stories get their own strength**
+  (Matteo, 29 Sep night).
+  - The 0.25 correlation floor applies among Senate races only, and only to the polling and fundamentals error. A
+    story about one state stays in that state's race; House seats keep the shared errors without the floor.
+  - The news uncertainty has three layers: the overall scale, each state's sensitivity, and each story's strength
+    (sd 0.42, one draw per story, shared across the races a national story reaches). On from the 3 Oct dry run.
 
 ## 9. Notes for engine-design.md
 
@@ -856,7 +862,7 @@ are listed on the methods page.
 | Fundamentals SD σ_F (race part) | 7.5 | fitted 7.4–8.0 | fitted |
 | Regional / state / race-only SD | 1.1 / 2.6 / 3.7 | fitted (census divisions) | fitted |
 | Tails | Student-t, 8 df | FiftyPlusOne (8–10) | fixed |
-| Correlation floor | 0.25 | Economist model | fixed |
+| Correlation floor | 0.25 among Senate races, on the polling and fundamentals error only (never the news); House seats keep the shared errors without it | Economist model; Matteo, 29 Sep (D23) | decided |
 | Draws / published sample | 40,000 / 1,000 | brief | fixed |
 | Student-t scaling | keeps each race's SD (t scaled by √(6/8)) | assumption; the SDs were fitted as SDs | fixed |
 | Race-only variance, minimum | 1 point² | numerical (keeps the matrix invertible); binds for no 2026 race | fixed |
@@ -874,7 +880,7 @@ are listed on the methods page.
 | Dial prior | national dials N(1, 0.44²) switching and N(1, 0.71²) turnout; a state's deviation sd 0.3 and 0.5 | set so a state's dials have the 28 Sep ranges; tau an assumption | weekly filter updates |
 | Fade-speed grid | 2.75, 3.89, 5.5, 7.78, 11 days; lognormal prior around 5.5 (sd of log 0.5) | Matteo's 5.5 as the centre | weekly filter updates |
 | Surprise flag | last 7 days' standardised poll surprises, chi-squared p < 0.01 | convention | fixed |
-| Story strength | each story's strength drawn per simulated election, sd 0.42 of its effect, applied in every race it touches (a national story's draw shared, a race story's its own); beside the overall scale and each state's sensitivity | 45 calibration events' scatter beyond measurement error (method of moments); Matteo's two layers, 29 Sep | built, off until Matteo decides |
+| Story strength | each story's strength drawn per simulated election, sd 0.42 of its effect, applied in every race it touches (a national story's draw shared, a race story's its own); beside the overall scale and each state's sensitivity | 45 calibration events' scatter beyond measurement error (method of moments); Matteo's two layers, 29 Sep (D23) | decided; on from the 3 Oct dry run |
 | GLM support offset | +0.08 on GLM's -2..+2 support scale for every group (Kev's shadow rows raw); the weekly filter re-estimates it on a 5-point grid, prior +0.08 +/- 0.065, and flags a negative estimate | Engine's benchmark: -0.27 +/- 0.22 points per real event (45 + 19 events); Matteo, 29 Sep | decided; weekly filter updates |
 | Simulation tiers | simulate: stats-only 10–90%, Cook toss-up/tilt/lean, or market 10–90%; watch: 3–97%, Likely, or 5–95%; statistics otherwise; pilot always simulate; a week of memory | Matteo, 28 Sep (D20); thresholds an assumption | decided |
 | Story effects on unpolled races | in full, like polled races | Matteo, 28 Sep (decision 5) | decided |
