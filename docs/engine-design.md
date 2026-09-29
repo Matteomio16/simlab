@@ -159,9 +159,11 @@ As stats-groundwork §5.6–5.8:
 ### 3.4 Kev (Matteo, 29 Sep)
 
 GLM gives the reactions on its own. Kev react-v1 failed the held-out checks on 28 Sep and react-v2 failed them on
-29 Sep (direction 11 of 13 against GLM's 13; GLM and Kev averaged did worse than GLM alone). So there is no Kev shadow
-mode and no Kev serving unless Matteo reopens it. The harness keeps a `--kev URL` option that would add shadow rows
-(`shadow: true`, never applied); the daily job doesn't pass it.
+29 Sep (direction 11 of 13 against GLM's 13; GLM and Kev averaged did worse than GLM alone). Matteo reopened shadow
+mode the same day: Kev react-v2-2 answers the same questions every day as rows with `model: "kev"` and `shadow: true`,
+never applied, and the weekly scoring compares it with GLM. It is served on Modal (B4) behind a bearer key, possibly on
+a fixed daily sample sized to the serving budget. The harness's `--kev URL` option writes these rows; the daily job
+passes it once the Kev session sends the URL, the key's secret name and the sample size.
 
 ## 4. The news pipeline (Engine)
 
@@ -181,8 +183,15 @@ mode and no Kev serving unless Matteo reopens it. The harness keeps a `--kev URL
   salience only breaks ties, because both models overrated attention in the spot-check.
 - **Event card:** 1–3 neutral sentences written by DeepSeek V4.1 Flash, with GLM as fallback and outlet names removed.
   The voter groups read the card, never the raw headlines.
-- **Which stories get reactions:** every story that passes the gate, capped at the top 5 per race per day by attention.
-  National stories count for every race, and are also asked once with state-neutral personas for `Δ_N`.
+- **Which stories get reactions** (A13, built 29 Sep): stories past the gate, best attention first, as many as the
+  race's tier allows. The tier comes from the previous day's `races.json`; the pilot races always simulate.
+  - simulate: 5 race stories and 3 national stories a day, the national ones asked with the state's personas;
+  - watch: its 2 biggest race stories (attention at least 0.5) and no national ones;
+  - statistics: none;
+  - the nation ("US"): 3 national stories, asked once with state-neutral personas for `Δ_N`.
+  National stories are gated for the simulated races and the nation. Until 11 Oct the daily job runs the pilot races
+  only (`--scope pilot`); from 12 Oct every race in `simlab/newsraces.json`, which is rebuilt from `races.json` when
+  candidates change or House seats are added (`python -m simlab.newsraces --races <races.json>`).
 - **Stories about polls or forecasts get no reactions.** Polls already enter through the filter, so reacting to news
   about them would count them twice. This also keeps "poll" out of the movers' cards.
 - **Each event counts once per race** (built 28 Sep):
@@ -203,19 +212,24 @@ mode and no Kev serving unless Matteo reopens it. The harness keeps a `--kev URL
   - one prompt per group per order, with the event card first and the persona last (for prompt caching)
   - turnout asked on its own, never alongside support
   - the persona's state set to the race's state
-- **Wording:** the direct wording, unless the backlash test (running 28 Sep) shows the reaction-aware wording keeps
-  accuracy on the real events.
+- **Wording: direct** (backlash test, 29 Sep). The reaction-aware wording lost accuracy on the real events. On the 45
+  training events it got the direction right on 85% of those that moved opinion (direct: 92%) and its size-tracking
+  fell from 0.26 to −0.11. On the 19 held-out events: 80% against 100%, error 3.22 against 3.05 points. The direct
+  wording already produces backlash where it is real (Trump's money for Husted rallies Democrats).
 - **Scopes:** race (the race's state personas) and national (state-neutral personas).
-- **Cost at full scale:** about 35 races × (5 race + 3 national stories) × 28 groups × 2 questions × 2 orders ≈ 31,000
-  prompts a day. At the measured $0.03 per 1,000 decisions asked both ways, that is about $0.5 a day, or $15 a month;
-  House seats add about half. The ledger checks this during the pilot.
+- **House seats:** asked about "their district's U.S. House race", with personas in the seat's state.
+- **Cost at full scale** (tiers of 28 Sep: 13 simulate, 7 watch): 13 × 8 + 7 × 2 + 3 ≈ 121 race-story pairs × 28
+  groups × 2 questions × 2 orders ≈ 13,500 prompts on a day when every story is new; continuing stories aren't asked
+  again. At the measured cost of 29 Sep ($0.024 for 504 group rows), that is about $0.16 a day. GLM answered about 270
+  prompts a minute with 16 threads on 29 Sep, so about 50 minutes; `SIMLAB_THREADS` raises the thread count.
 
 ## 6. Snapshots and the daily job (Engine)
 
 - **Snapshots:** `simlab/snap.py` (Kev session; first run 28 Sep 00:36 UTC) writes
   `simlab-data/snapshots/YYYY-MM-DD/HHMM/<source>/<name>.gz` plus `manifest.json` (URL, time, status, size, SHA-256).
   - Sources now: VoteHub polls; Wikipedia race pages, overview pages and the approval page, raw with revision ids;
-    markets (benchmark only); news; pageviews.
+    markets (benchmark only); news (GDELT for the pilot races and the nation; Media Cloud for every race in
+    `simlab/newsraces.json` once its key is in); pageviews.
   - Added later: the 2026 House page (Statistics' request), keyed sources (FEC, FRED, EIA) and early-vote files.
 - **Schedule:** GitHub Actions in the public repo triggers every 15 minutes and takes a snapshot when the newest one is
   at least 150 minutes old, because GitHub drops most scheduled triggers (Kev session, 29 Sep). It pushes to the
@@ -230,7 +244,7 @@ mode and no Kev serving unless Matteo reopens it. The harness keeps a `--kev URL
 
   | Step | Command | Owner |
   | --- | --- | --- |
-  | News | `python -m simlab.newsday --date D --snap <data>/snapshots --out <data>/derived` | Engine (built) |
+  | News | `python -m simlab.newsday --date D --snap <data>/snapshots --out <data>/derived --scope pilot\|all` | Engine (built) |
   | Reactions | `python -m simlab.harness --date D --out <data>/derived [--wording ...]` | Engine (built) |
   | Statistics | `python -m simlab.statsday --date D --data <data>`: polls, levels and groups, moves, filter, Monte Carlo | Statistics |
   | Post kit | `python -m simlab.publish.kit --date D --data <data>`, writing to `derived/D/post-kit/` in the pilot | Content & site |
@@ -285,5 +299,5 @@ A writer may add fields. Renaming or removing a field needs a note to the readin
 | Item | Owner | By |
 | --- | --- | --- |
 | `pi` and `mu` estimates for OH, NC, TX (all 35 states by 12 Oct) | Statistics | Thu 1 Oct |
-| Reaction wording (backlash test) | Engine | Tue 29 Sep |
-| Weights of the attention formula, checked against Matteo's spot-check answers | Engine | Thu 1 Oct |
+| Weights of the attention formula. The spot-check couldn't test them (29 Sep): 15 of the 16 stories Matteo rated had one outlet and one day in the old Google News store, so all scored 0.2. Re-check on about 20 GDELT and Media Cloud stories in the pilot week | Engine | Fri 9 Oct |
+| Full-scale rehearsal (A13) once Media Cloud's key is in: time, spend and failures at `--scope all` | Engine | Fri 9 Oct |

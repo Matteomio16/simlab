@@ -40,6 +40,39 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   - These errors come from a model built on the previous House result. The forecast uses presidential lean on the
     current lines, so treat them as a guide until house.py is checked on 2024.
 
+## 2026-09-29 (Engine session): every race by tier from 12 Oct; the daily job can't be skipped; poll stories caught
+
+- **Scale-up built (roadmap A13).** `simlab/newsraces.json`, built from Statistics' `races.json`, gives every race its
+  description and news queries. The news step selects by the previous day's tier:
+  - simulate: 5 race stories and 3 national stories a day;
+  - watch: its 2 biggest race stories, and the nation's move for national news (Statistics built that part);
+  - statistics: none.
+  House seats get "their district's U.S. House race" wording once Statistics adds them. The daily job runs the pilot
+  races until 11 Oct and every race from 12 Oct. On a busy day that is about 13,500 GLM prompts, about 50 minutes and
+  $0.16. Media Cloud asks for every race once its key is in; GDELT stays on the pilot races and the nation, because
+  it answers only one or two queries a run from GitHub.
+- **The daily job can't silently skip a day.** GitHub fired only 3 of about 17 hourly snapshot triggers on 28 Sep, so
+  the daily job now triggers every 15 minutes from 09:47 to 14:47 UTC and runs once. A trigger delayed past midnight
+  can't run the new day before its news window closes.
+- **Poll stories caught.** Jev typed an approval-rating story as national news, and 2 of the 9 spot-check headlines
+  that name a poll as something else. A story whose main headline is about a poll, a survey, an approval rating or a
+  forecast is now a poll story, so it gets no reactions.
+- **Cards no longer say "according to the headline"** (4 of 24 did on 29 Sep).
+- **Reaction wording stays direct** (the backlash test Matteo approved on 28 Sep). Asking groups to think about how
+  they react to the news itself lost accuracy on real events:
+  - direction right on 85% of the 45 training events that moved opinion, against 92% for the direct wording;
+  - on the 19 held-out events, 80% against 100%, and an error of 3.22 against 3.05 points;
+  - size-tracking fell from 0.26 to −0.11.
+  The direct wording already shows backlash where it's real: on 28 Sep, Trump's backing of Husted moved strong
+  Democrats toward Brown and raised their turnout.
+- **A national copy of a race's own story counts for that race only** when its headline names that race's
+  candidates. The national feed carried "Paxton, Talarico spar over gas tax", and Jev gated it relevant to Ohio.
+- **Attention weights:** the spot-check couldn't test them. 15 of the 16 stories Matteo rated had one outlet and one
+  day in the old Google News store, so all scored 0.2. Matteo's ratings followed the story type (polls, big money and a
+  scandal "some"; endorsements and appearances "very little"). To re-check in the pilot week on real coverage.
+- **Kev shadow mode** (Matteo reopened it, 29 Sep): the harness already writes shadow rows with `--kev URL`. The daily
+  job will pass it once the Kev session sends the URL, the key's secret name and the daily sample size.
+
 ## 2026-09-29 (Statistics session): the weekly filter (roadmap A6, weekly part)
 
 Matteo: "go ahead with the weekly filter". Built to stats-groundwork §5.7 and engine-design §3.3 (`simlab/weekly.py`):
