@@ -255,16 +255,27 @@ class Cards(unittest.TestCase):
 
 
 class Scopes(unittest.TestCase):
-    def test_national_copy_of_a_race_story_does_not_count_twice_for_that_race(self):
+    def test_a_national_copy_that_names_the_races_candidates_is_that_races_story_only(self):
+        # 29 Sep: the national feed carried "Paxton, Talarico spar over gas tax" and Jev gated it 0.59 for Ohio
         race = {"event_id": "OH-S-1", "scope": "race", "races": ["OH-S"], "gate": {"OH-S": 0.9}}
         nat = {"event_id": "US-1", "scope": "national", "races": ["OH-S", "NC", "TX", "US"],
                "gate": {"OH-S": 0.9, "NC": 0.8, "TX": 0.2, "US": 0.9}}
         stories = {"OH-S-1": {"race_id": "OH-S", "titles": ["Trump to travel to Ohio to stump for Sen. Jon Husted"]},
                    "US-1": {"race_id": "US", "titles": ["Trump to travel to Ohio to stump for Jon Husted"]}}
         newsday.dedupe_scopes([race, nat], stories)
-        self.assertEqual(nat["gate"], {"OH-S": 0.0, "NC": 0.8, "TX": 0.2, "US": 0.9})
+        self.assertEqual(nat["gate"], {"OH-S": 0.0, "NC": 0.0, "TX": 0.0, "US": 0.0})
         self.assertEqual(nat["covered_by"], {"OH-S": "OH-S-1"})
         self.assertEqual(race["gate"], {"OH-S": 0.9})
+
+    def test_a_national_story_a_race_also_carried_still_counts_for_the_others(self):
+        race = {"event_id": "OH-S-1", "scope": "race", "races": ["OH-S"], "gate": {"OH-S": 0.9}}
+        nat = {"event_id": "US-1", "scope": "national", "races": ["OH-S", "NC", "TX", "US"],
+               "gate": {"OH-S": 0.9, "NC": 0.8, "TX": 0.7, "US": 0.9}}
+        stories = {"OH-S-1": {"race_id": "OH-S",
+                              "titles": ["Trump administration loosens and lowers federal fuel economy standards"]},
+                   "US-1": {"race_id": "US", "titles": ["Trump administration lowers federal fuel economy standards"]}}
+        newsday.dedupe_scopes([race, nat], stories)
+        self.assertEqual(nat["gate"], {"OH-S": 0.0, "NC": 0.8, "TX": 0.7, "US": 0.9})
 
     def test_same_event_in_other_words_counts_once(self):
         def ev(eid, a):

@@ -31,6 +31,7 @@ LEGACY = {"ohio": "OH-S", "north-carolina": "NC", "texas": "TX", "national": "US
 SNAP_RACES = {**{rid.lower(): rid for rid in CONFIG}, **LEGACY}
 PILOT = ["OH-S", "NC", "TX"]
 RACE_TEXT = {rid: c["text"] for rid, c in CONFIG.items()}
+SURNAMES = {rid: {n.split()[-1] for n in re.findall(r'"([^"]+)"', c["query"])} for rid, c in CONFIG.items() if rid != "US"}
 CAPS = {"simulate": (5, 3), "watch": (2, 0), "statistics": (0, 0)}  # (race, national) stories a race reacts to a day
 WATCH_MIN_A = 0.5  # a watch race reacts only to its biggest stories (engine-design §3)
 
@@ -462,7 +463,9 @@ def continue_known(new_events: list[dict], stories: dict, known: list[dict], tak
 
 def dedupe_scopes(events: list[dict], stories: dict, sim: float = 0.55, races: list[str] | None = None) -> None:
     """A national story that repeats a race's own story (similar headlines) doesn't count again for that race: its gate
-    there drops to 0 and `covered_by` names the race story."""
+    there drops to 0 and `covered_by` names the race story. If its headlines also name that race's candidates, it is
+    the race's own story carried by the national feed (29 Sep: "Paxton, Talarico spar over gas tax", gated 0.59 for
+    Ohio), so it counts for no other race either."""
     for nat in (e for e in events if e["scope"] == "national"):
         for r in races or PILOT:
             local = [e for e in events if e["scope"] == "race" and e["races"] == [r]]
@@ -479,6 +482,9 @@ def dedupe_scopes(events: list[dict], stories: dict, sim: float = 0.55, races: l
             if sims[j] >= sim:
                 nat["gate"][r] = 0.0
                 nat.setdefault("covered_by", {})[r] = local[j]["event_id"]
+                if any(re.search(rf"\b{re.escape(n)}\b", t) for t in stories[nat["event_id"]]["titles"]
+                       for n in SURNAMES.get(r, ())):
+                    nat["gate"] = {k: 0.0 for k in nat["gate"]}
 
 
 def _jsonl(path: Path) -> list[dict]:
