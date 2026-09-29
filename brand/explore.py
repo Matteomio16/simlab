@@ -1,4 +1,4 @@
-"""The comparison page for the logo round: python -m brand.explore -> brand/explore/index.html.
+"""The comparison pages for the logo rounds: python -m brand.explore [3|4] -> brand/explore/round<N>.html.
 
 Every candidate in brand.marks at 16 and 32 px, in a circle crop, on paper and on indigo, locked up with the
 wordmark, and in context (Instagram profile, X feed, a Lab notes slide). Kit images come from the main checkout's
@@ -14,16 +14,36 @@ from pathlib import Path
 from PIL import Image
 
 from . import marks as m
+from . import round4
 
 ROOT = Path(__file__).resolve().parent
 KITS = next(p / "kits" for p in [ROOT.parent, *ROOT.parents] if (p / "kits" / "labnotes").exists())
-OUT = ROOT / "explore" / "index.html"
-
-DIRECTIONS = {
+DIRECTIONS3 = {
     "A": ("The synthetic voter", "A character, like 538's fox: a person visibly made of voters, who can react in posts."),
     "B": ("The swing N", "The letter N drawn as voters, its diagonal the swing voters crossing from one side to the other."),
     "C": ("The broken pie", "A poll's pie chart coming apart into individual voters: what we do that a poll doesn't."),
     "D": ("The overlap", "Blue and red overlap in purple, the brand colour; it says why the brand is purple."),
+}
+DIRECTIONS4 = {
+    "C3": ("The voter pie, developed", "You kept C3. The pie is the thing a poll reports; ours is made of individual voters, "
+           "and one slice is pulled out."),
+    "D3": ("The dotted overlap, developed", "You kept D3. Two electorates made of voters; purple where they share ground."),
+    "E": ("Logic notation", "A new language: type, no dots. The name written the way a logician writes \"not P\". "
+          "It says rigour and lab, and it's a sign nobody in politics owns."),
+    "F": ("Forecast lines", "A new language: lines. The spaghetti plot and the cone from hurricane forecasts, which "
+          "every American has seen on TV. It says forecast, many futures, uncertainty shown honestly."),
+    "G": ("Opinion map", "A new language: cartography. The electorate drawn as a landscape with contour lines. "
+          "It says mapping the social dynamics, in your words."),
+}
+
+
+def roster4():
+    return {k: (n, d, f or m.MARKS[k][2]) for k, (n, d, f) in round4.MARKS.items()}
+
+
+ROUNDS = {
+    "3": ("NotAPoll Logo Round 3", DIRECTIONS3, lambda: m.MARKS, "intro_round3.html", "A2"),
+    "4": ("NotAPoll Logo Round 4", DIRECTIONS4, roster4, "intro_round4.html", "C3.2"),
 }
 TILES = ["brand/pinned/slide-1.jpg", "labnotes/01/slide-1.jpg", "specials/3-chamber.jpg", "labnotes/02/slide-1.jpg",
          "brand/pinned/slide-2.jpg", "specials/1-ballot.jpg", "labnotes/03/slide-1.jpg", "specials/4-seismograph.jpg",
@@ -53,8 +73,8 @@ def lockup(svg: str, dark: bool) -> str:
             f'<span class="wm">NotAPoll<span class="tld">.org</span></span></div>')
 
 
-def card(key: str) -> str:
-    name, note, fn = m.MARKS[key]
+def card(key: str, entry) -> str:
+    name, note, fn = entry
     s = fn()
     cells = [
         ("Paper", m.svg(s, m.LIGHT, .14, True), "big"),
@@ -74,36 +94,40 @@ def card(key: str) -> str:
             f'<div class="locks">{lockup(m.svg(s, m.LIGHT), False)}{lockup(m.svg(s, m.DARK), True)}</div></div></article>')
 
 
-def build() -> Path:
+def build(rnd: str = "4") -> Path:
+    title, directions, roster, intro, first = ROUNDS[rnd]
+    marks = roster()
     data = {k: {"name": v[0], "light": m.svg(v[2](), m.LIGHT, .3, True, True), "dark": m.svg(v[2](), m.DARK, .3, True, True),
-                "bare_light": m.svg(v[2](), m.LIGHT), "bare_dark": m.svg(v[2](), m.DARK)} for k, v in m.MARKS.items()}
+                "bare_light": m.svg(v[2](), m.LIGHT), "bare_dark": m.svg(v[2](), m.DARK)} for k, v in marks.items()}
     sections = []
-    for d, (title, pitch) in DIRECTIONS.items():
-        keys = [k for k in m.MARKS if k.startswith(d)]
+    for d, (head, pitch) in directions.items():
+        keys = [k for k in marks if k.startswith(d)]
         extra = ""
         if d == "A":
             extra = ('<div class="poses"><h4>How Nota (A2) reacts in posts</h4><div class="pose-row">' +
                      "".join(f'<figure>{svg}<figcaption class="lbl">{lab}</figcaption></figure>' for lab, svg in poses())
                      + '</div><p class="aside">Direction of the lean is the vote; the head rising or fading is '
                      'turnout, the two things the engine simulates.</p></div>')
-        sections.append(f'<section class="dir"><div class="dir-head"><span class="code">{d}</span><h2>{title}</h2>'
-                        f'<p>{pitch}</p></div>{"".join(card(k) for k in keys)}{extra}</section>')
+        sections.append(f'<section class="dir"><div class="dir-head"><span class="code">{d}</span><h2>{head}</h2>'
+                        f'<p>{pitch}</p></div>{"".join(card(k, marks[k]) for k in keys)}{extra}</section>')
     lineup = "".join(f'<button class="lu" data-k="{k}" aria-label="{k} {v[0]}">{data[k]["dark"]}'
-                     f'<span class="lbl">{k}</span></button>' for k, v in m.MARKS.items())
+                     f'<span class="lbl">{k}</span></button>' for k, v in marks.items())
     tiles = "".join(f'<img src="{jpeg(t, 300)}" alt="">' for t in TILES)
     slide = jpeg("labnotes/01/slide-1.jpg", 1080, 84)
     standins = "".join(f'<div class="xpost"><span class="xav" style="background:{bg};color:{fg}">{txt}</span>'
                        f'<div class="xbody"><div class="xmeta"><b>{nm}</b> <span>{h} · 3h</span></div>'
                        f'<p>{"Senate forecast update: our model now gives Democrats a 41 in 100 chance." if i == 0 else "Who wins the Senate? Trading is open on all 35 races." if i == 2 else "The midterms are 36 days away. Here is where the key races stand."}</p></div></div>'
                        for i, (txt, bg, fg, nm, h) in enumerate(STANDINS[:3]))
-    html = TEMPLATE.replace("%SECTIONS%", "".join(sections)).replace("%LINEUP%", lineup).replace("%TILES%", tiles) \
+    html = TEMPLATE.replace("%TITLE%", title).replace("%INTRO%", (ROOT / intro).read_text(encoding="utf-8"))         .replace('let first = "A2"', f'let first = "{first}"').replace("%SECTIONS%", "".join(sections)).replace("%LINEUP%", lineup).replace("%TILES%", tiles) \
         .replace("%SLIDE%", slide).replace("%STANDINS%", standins).replace("%DATA%", json.dumps(data))
-    OUT.parent.mkdir(exist_ok=True)
-    OUT.write_bytes(html.encode("ascii", "xmlcharrefreplace"))
-    return OUT
+    out = ROOT / "explore" / f"round{rnd}.html"
+    out.parent.mkdir(exist_ok=True)
+    out.write_bytes(html.encode("ascii", "xmlcharrefreplace"))
+    return out
 
 
 TEMPLATE = (ROOT / "explore_template.html").read_text(encoding="utf-8") if (ROOT / "explore_template.html").exists() else ""
 
 if __name__ == "__main__":
-    print(build())
+    import sys
+    print(build(sys.argv[1] if len(sys.argv) > 1 else "4"))

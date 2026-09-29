@@ -11,9 +11,9 @@ PAPER, INK, INDIGO, LILAC, PURPLE = "#F5F3EE", "#111110", "#2A2152", "#B98DD6", 
 BLUE, RED = "#2A78D6", "#E34948"
 
 LIGHT = {"bg": PAPER, "fg": INK, "accent": PURPLE, "faint": "#D9D5CC", "blue": BLUE, "red": RED, "mix": "#7A4FC0",
-         "blue_mix": "#4F60D0", "red_mix": "#B0439A"}
+         "blue_mix": "#4F60D0", "red_mix": "#B0439A", "band1": "#E6E0F2", "band2": "#C9BCE6"}
 DARK = {"bg": INDIGO, "fg": PAPER, "accent": LILAC, "faint": "#4A4175", "blue": "#5B9BEA", "red": "#F0605F",
-        "mix": "#B98DD6", "blue_mix": "#8A94E8", "red_mix": "#DE78B4"}
+        "mix": "#B98DD6", "blue_mix": "#8A94E8", "red_mix": "#DE78B4", "band1": "#3B3270", "band2": "#57489A"}
 
 
 def dot(x, y, r, role="fg"):
@@ -275,6 +275,9 @@ def body(shapes, pal) -> str:
             out.append(f'<path d="{s[1]}" fill="{c}"/>')
         elif kind == "r":
             out.append(f'<circle cx="{s[1]}" cy="{s[2]}" r="{s[3]}" fill="none" stroke="{c}" stroke-width="{s[4]}"/>')
+        elif kind == "s":
+            out.append(f'<path d="{s[1]}" fill="none" stroke="{c}" stroke-width="{s[2]}" stroke-linecap="round" '
+                       f'stroke-linejoin="round"/>')
         elif kind == "arc":
             out.append(f'<path d="{_arc(s[1], s[2], s[3], s[5], s[6])}" fill="none" stroke="{c}" '
                        f'stroke-width="{s[4]}"/>')
