@@ -192,7 +192,8 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
             from .house import run as house_run
             note = house_run(day, data, lv)
             hl, hr = (json.loads((out / f"house_{k}.json").read_text(encoding="utf-8")) for k in ("levels", "races"))
-            house = {"levels": hl, "left": {r: x["left_party"] for r, x in hr.items() if isinstance(x, dict)}}
+            seats = {r: x for r, x in hr.items() if isinstance(x, dict)}
+            house = {"levels": hl, "left": {r: x["left_party"] for r, x in seats.items()}, "races": seats}
             house_note = {k: note[k] for k in ("seats", "uncontested", "tiers")}
         except Exception as e:
             house_note = {"error": f"{type(e).__name__}: {e}"[:120]}
@@ -225,7 +226,7 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
                if (f := data / "derived" / (day - timedelta(days=k)).isoformat() / "races.json").exists()]
     stats = {r: x["stats_only"]["p_dem_win"] for r, x in forecast["races"].items()}
     races = tiers(races, stats, bench, history)
-    _write(out / "races.json", meta | races)
+    _write(out / "races.json", meta | races | (house["races"] if house else {}))
     _write(out / "forecast.json", forecast)
     _write(out / "draws.json", draws, compact=True)
     return {"ok": True, "date": day.isoformat(), "run_id": run_id, "snapshot": t["snapshot"], "races": len(races),
