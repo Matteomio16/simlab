@@ -67,7 +67,8 @@ POLYMARKET_SLUGS = ["which-party-will-win-the-senate-in-2026", "which-party-will
                       for s in sorted({*REGULAR.values(), *SPECIAL.values()} - {"Alabama"}))]
 GDELT = "https://api.gdeltproject.org/api/v2/doc/doc"  # asked by simlab/newsnap.py
 PAGEVIEWS = "https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user"
-CANDIDATES = ["Sherrod_Brown", "Jon_Husted", "Roy_Cooper", "Michael_Whatley", "James_Talarico", "Ken_Paxton"]
+CANDIDATES = ["Sherrod_Brown", "Jon_Husted", "Roy_Cooper", "Michael_Whatley", "James_Talarico", "Ken_Paxton",
+              "Josh_Turek", "Ashley_Hinson", "Troy_Jackson", "Susan_Collins"]
 
 
 def get(url: str, params: dict | None = None, tries: int = 3, wait: float = 5.0,

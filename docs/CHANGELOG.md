@@ -2,6 +2,39 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-29 (Kev session): early-vote snapshots (A12, NC first); Kev live in shadow mode; Iowa and Maine in the pilot
+
+- **Matteo, 29 Sep ("yes to all"):**
+  - voter-level early-vote files are kept as counts plus the raw file's hash, never raw (this also keeps them under
+    GitHub's 100 MB limit);
+  - NCSBE's two files are fetched daily;
+  - the pilot races are OH-S, NC, TX, IA and ME;
+  - early vote comes before the House work, with House fundamentals due Fri 2 Oct and the House finished by 9 Oct;
+  - House seat error: SD 5.5 for seats forecast within 15 points, 9 beyond;
+  - the 435 seats are anchored each day to the national House vote;
+  - Kev serves shadow mode at full load. The Engine's count is about 3,400 requests a day, about 7 minutes of GPU
+    time.
+- **`simlab/earlyvote.py`** and `.github/workflows/earlyvote.yml` (every 30 minutes, a HEAD request per file, a
+  download only when Last-Modified changes). The output goes to simlab-data `earlyvote/<state>/YYYY-MM-DD/HHMM/`.
+  - NC's absentee file (one row per ballot; one-stop voting joins it from 15 Oct) is counted by county,
+    congressional district, party, race, ethnicity, gender, age band, request type, delivery, return status, return
+    date and same-day registration. Today it holds 13,705 ballots, 0.8 MB.
+  - NCSBE's county request counts (22.9 MB) are kept as published: 0.9 MB gzipped.
+  - Two tests check that no name, address or voter id survives the counting.
+  - Ohio, Texas, Iowa and Maine join once their files and sizes are confirmed.
+- **Kev react-v2-2 serves shadow mode:** https://mattemio9--kev-finetune-api.modal.run (bearer key: Modal secret
+  `kev-serve`, GitHub secret `KEV_API_KEY`; L4, one container, 60 s idle).
+  - About 9 requests/s warm; about 60 s cold start.
+  - Answers match the scoring run (0.953 vs 0.954).
+  - The Engine wired it into the daily job (b07decc). It runs once the `KEV_URL` repository variable is set.
+- **Iowa and Maine pageviews:** Hinson, Turek, Collins and Troy Jackson (who replaced Platner as the Democratic
+  nominee) join the snapshot's candidate pageviews. News for every race was already covered by newsraces.json.
+- **House, first fit on the 2026 inputs.** The Engine's `data/house/` holds The Downballot's 2024 presidential results
+  on the 2026 lines and ACS citizen adults by race and degree. Fitted on 2022 and 2024:
+  - House margin minus the national House vote = 0.97 × presidential lean + 4.5 × incumbent;
+  - predicting one cycle from the other, given the national swing, the error SD is 4.9 (2022) and 4.6 (2024) for
+    seats within 15 points, and about 10 overall because safe seats vary more.
+
 ## 2026-09-29 evening (Engine session): news on GDELT alone; workflows started on time; Kev shadow wired
 
 - **Matteo: Media Cloud's sign-up is stuck, so the engine must work on GDELT alone.** Built:

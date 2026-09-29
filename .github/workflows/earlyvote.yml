@@ -1,0 +1,54 @@
+# Early-vote files (simlab/earlyvote.py) into the private data repo, each time a publisher updates them.
+# Checks every 30 minutes (GitHub drops many scheduled triggers, so checks are frequent and cheap: a HEAD request per
+# file, and a download only when Last-Modified changes). Voter-level files are counted in memory; only counts and the
+# raw file's hash are pushed. The deploy key in SIMLAB_DATA_DEPLOY_KEY can write to Matteomio16/simlab-data only.
+# Logs are public: the script prints sizes and errors, never data.
+name: earlyvote
+
+on:
+  schedule:
+    - cron: "13,43 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: earlyvote
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  earlyvote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Matteomio16/simlab-data
+          ssh-key: ${{ secrets.SIMLAB_DATA_DEPLOY_KEY }}
+          path: data-repo
+          fetch-depth: 1
+          sparse-checkout: |
+            /README.md
+            /earlyvote/*/latest.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install --quiet requests pandas
+      - name: Early vote
+        run: python -m simlab.earlyvote --out data-repo/earlyvote
+      - name: Push to the data repo
+        working-directory: data-repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --sparse earlyvote
+          if git diff --cached --quiet; then echo "nothing new"; exit 0; fi
+          git commit --quiet -m "Early vote $(date -u +%Y-%m-%dT%H:%MZ)"
+          for i in 1 2 3; do
+            git pull --quiet --rebase && git push --quiet && exit 0
+            sleep 15
+          done
+          exit 1
