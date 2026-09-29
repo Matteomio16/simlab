@@ -36,6 +36,12 @@ class Due(unittest.TestCase):
         # texas was saved 3 hours ago: not due; never-saved queries count as the most overdue
         self.assertEqual(order, ["national", "ga", "ohio", "al"])
 
+    def test_until_the_full_run_the_pilot_races_come_before_the_other_contested_races(self):
+        slugs, first = ["ak", "ar", "ohio", "texas", "national", "al"], newsnap.PILOT | {"ak", "ar"}
+        pilot_week = datetime(2026, 10, 5, 12, 0, tzinfo=timezone.utc)
+        self.assertEqual(newsnap.due(slugs, {}, pilot_week, first), ["national", "ohio", "texas", "ak", "ar", "al"])
+        self.assertEqual(newsnap.due(slugs, {}, NOW, first), ["national", "ak", "ar", "ohio", "texas", "al"])
+
 
 class Gdelt(unittest.TestCase):
     def test_a_refused_query_is_retried_until_the_budget_ends_and_the_rest_wait_for_the_next_run(self):

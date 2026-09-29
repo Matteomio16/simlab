@@ -19,9 +19,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .core import HOSTS, JEV, LLMS, RUNS
+from .newsraces import FULL_RUN
 
 SCHEMA = 1
-FULL_RUN = "2026-10-12"  # every race from here on; the pilot races (newsraces.PILOT) before
 
 
 def _rid(o: dict) -> list[str]:

@@ -56,10 +56,12 @@ def last_saved(root: Path, now: datetime, back: int = 2) -> dict[str, datetime]:
 def due(slugs: list[str], last: dict, now: datetime, first: set = frozenset(), every_h: float = EVERY_H) -> list[str]:
     """The queries not saved in the last `every_h` hours: those in `first` (the races that simulate or watch, and the
     nation) before the rest, the nation first among equals (it reaches every race), and the longest unsaved (never
-    saved counts as longest) first."""
+    saved counts as longest) first. Until the full run the pilot races and the nation come before all others: they are
+    the only races the daily job simulates, and GDELT answers only a few queries a run."""
     never = datetime.min.replace(tzinfo=timezone.utc)
     late = [s for s in slugs if now - last.get(f"gdelt-{s}", never) >= timedelta(hours=every_h)]
-    return sorted(late, key=lambda s: (s not in first, last.get(f"gdelt-{s}", never), s != "national", s))
+    top = PILOT if f"{now:%Y-%m-%d}" < newsraces.FULL_RUN else first
+    return sorted(late, key=lambda s: (s not in top, s not in first, last.get(f"gdelt-{s}", never), s != "national", s))
 
 
 def gdelt(run, qs: dict, order: list[str], budget_s: float) -> None:

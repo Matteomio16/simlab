@@ -13,6 +13,7 @@ from pathlib import Path
 
 CONFIG = Path(__file__).with_name("newsraces.json")
 PILOT = ["OH-S", "NC", "TX", "IA", "ME"]  # the private pilot, 5-11 Oct (Matteo, 29 Sep); every race from 12 Oct
+FULL_RUN = "2026-10-12"  # every race from here on; the pilot races before
 PARTY = {"D": "Democrat", "I": "independent", "R": "Republican"}
 CONTEXT = {"senate": "(Senate OR election OR campaign)", "house": "(Congress OR House OR election OR campaign)"}
 
