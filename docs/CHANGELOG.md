@@ -118,6 +118,25 @@ Decided by Matteo (design in `docs/superpowers/specs/2026-09-29-notapoll-site-de
   - predicting one cycle from the other, given the national swing, the error SD is 4.9 (2022) and 4.6 (2024) for
     seats within 15 points, and about 10 overall because safe seats vary more.
 
+## 2026-09-29 late evening (Engine session): the first full run on Actions; the timer is live; counts-only voter data
+
+- **The whole chain ran on GitHub Actions** for the five pilot races (29 Sep, run 36629024522) and passed: news 47 s,
+  reactions 10.5 min (700 rows, 0 failed), statistics 13 s, post kit 14 s; $0.07; outputs committed to simlab-data.
+  What to run on 3-4 Oct and what passes: `docs/rehearsal.md`.
+- **The Cloudflare timer is live** (Matteo deployed it). Its first dispatches were early vote at 21:13 UTC and news
+  at 21:15. Snapshots every 3 hours and the daily job at 09:47 also go through it. The daily job's scheduled runs
+  start on Thu 1 Oct by themselves once `PIPELINE_ON` is true, so the switch can be flipped any time.
+- **Voter files: counts only** (Matteo). Each snapshot saves North Carolina's newest weekly county totals by party,
+  race, ethnicity and sex from NCSBE's registration statistics (`voterreg/nc-regstat`); no voter records anywhere.
+  Ohio has no party registration and its site refuses bots.
+- **Cards:** a stricter neutrality check (effect phrases such as "a blow to", "an edge", "could cost", next to a party,
+  an election word or a candidate's name). None of 29 Sep's 23 cards is rejected.
+- **RSS for the new pilot states:** Carolina Public Press (CC BY-ND) and The Maine Monitor (free to republish). No
+  Iowa outlet qualified; GDELT carries 250+ Iowa articles a week.
+- **GLM leans toward Republicans on real news**, by about 0.27 points per story against measured shifts (45 training
+  events: -0.26, SE 0.13; 19 held-out: -0.28, SE 0.70). The mirror test shows no asymmetry between Democratic and
+  Republican personas. Statistics added a `support_offset` in moves (0 until Matteo decides; +0.08 recommended).
+
 ## 2026-09-29 evening (Engine session): news on GDELT alone; workflows started on time; Kev shadow wired
 
 - **Matteo: Media Cloud's sign-up is stuck, so the engine must work on GDELT alone.** Built:

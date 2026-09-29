@@ -7,10 +7,10 @@ the five pilot races). It passed every check below.
 
 | Item | Who | State on 29 Sep |
 | --- | --- | --- |
-| The scheduler Worker (`ops/cron`) is deployed, so the news job runs every 15 minutes | Matteo | written and tested, not deployed |
+| The scheduler Worker (`ops/cron`) is deployed, so the news job runs every 15 minutes | Matteo | live since 29 Sep 21:13 UTC (first dispatches: earlyvote 21:13, news 21:15) |
 | Secrets `OPENROUTER_API_KEY`, `KEV_API_KEY`, `SIMLAB_DATA_DEPLOY_KEY` | Matteo | all set |
-| Variables `PIPELINE_ON=true` (Thu 1 Oct) and `KEV_URL` (Kev shadow) | Matteo, or Engine with his OK | not set |
-| The OpenRouter cap raised, and `SIMLAB_BUDGET_USD` set to match in `.env` and `daily.yml` | Matteo, then Engine | waiting for the new cap |
+| Variables `PIPELINE_ON=true` (any time: scheduled runs start on 1 Oct by themselves) and `KEV_URL` (Kev shadow) | Matteo | not set |
+| The OpenRouter cap raised to $20, and `SIMLAB_BUDGET_USD=19` in `.env` (local lifetime cap); `daily.yml` keeps $2 per run | Matteo | cap raised; `.env` line to add |
 | Every session has moved its local `simlab-data/derived/` aside, then pulled: the job commits `derived/<day>/` and untracked local copies block `git pull` | all | Engine done (backup in `simlab-data/derived_local/`) |
 | The news job has run for at least a day: its page shows runs every 15 minutes, each saving the RSS feeds and 1-3 GDELT queries | Engine | one manual run on 29 Sep: 3 feeds and 2 GDELT queries saved |
 
