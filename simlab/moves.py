@@ -132,8 +132,9 @@ def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: 
         eday = held((ELECTION - first).days, (ELECTION - min(last, day)).days, h_age, h_after)
         full = {}
         for base, (ks, kt) in (("dials", (dial.get("k_s", 1.0), dial.get("k_t", 1.0))), ("base", (1.0, 1.0))):
-            ch = {g: group_change(r["support"], r["turnout"], groups[g]["pi"], groups[g]["mu"], a, params["c_s"],
-                                  params["c_t"], ks, kt) for g, (r, _) in answers.items() if g in groups}
+            ch = {g: group_change(r["support"] + params.get("support_offset", 0.0), r["turnout"], groups[g]["pi"],
+                                  groups[g]["mu"], a, params["c_s"], params["c_t"], ks, kt)
+                  for g, (r, _) in answers.items() if g in groups}
             dd, dt = {g: c[0] for g, c in ch.items()}, {g: c[1] for g, c in ch.items()}
             full[base] = (100 * race_move(groups, dd, dt), 100 * sum(groups[g]["n"] * dt[g] for g in dt), dd, dt)
         m, turnout, dd, dt = full["dials"]
@@ -178,7 +179,8 @@ def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> 
         for race in races:
             if shadow and race not in by_race:
                 continue
-            dest[race] = _race(race, by_race.get(race, {}), events, groups[race], params, day)
+            dest[race] = _race(race, by_race.get(race, {}), events, groups[race],
+                               params | {"support_offset": 0.0} if shadow else params, day)
     return out
 
 

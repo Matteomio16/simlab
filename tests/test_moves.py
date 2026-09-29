@@ -123,6 +123,17 @@ class BuildTest(unittest.TestCase):
         self.assertLess(m["shadow"]["OH-S"]["delta_margin"], 0)
         self.assertEqual(m["US"]["delta_margin"], 0.0)
 
+    def test_the_support_offset_shifts_glms_answers_and_leaves_kevs_raw(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            write_day(root, "2026-10-01", [event("e1", "2026-10-01T08:00:00+00:00", 1.0)],
+                      [reaction("e1", A, 0.0, 0.0), reaction("e1", B, 0.0, 0.0),
+                       reaction("e1", A, 0.0, 0.0, model="kev", shadow=True)])
+            self.params["support_offset"] = 0.08
+            m = self.build(root, "2026-10-01")
+        self.assertAlmostEqual(m["OH-S"]["by_event_effect"]["e1"], 100 * 2 * 0.1 * (0.5 * 0.08 / 2), places=6)
+        self.assertEqual(m["shadow"]["OH-S"]["delta_margin"], 0.0)
+
 
 class CoverageTest(unittest.TestCase):
     GROUPS = {"OH-S": {A: {"n": 0.5, "t": 0.5, "d": 0.8, "pi": 0.1, "mu": 0.2},
