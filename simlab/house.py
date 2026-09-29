@@ -28,6 +28,9 @@ district's 2024 presidential margin; Kev's group margins shifted to the seat's l
 Inputs: <data>/house/inputs.json (built once by `python -m simlab.house inputs` from the Engine's data/house/, which
 is gitignored; kept private in simlab-data).
 
+statsday relies on (keep stable): prepare / build / write / summary; base keys twin, races and groups; summary keys
+seats, uncontested and tiers; margin, sd, fixed and tier in house_levels.json races; left_party in house_races.json.
+
     python -m simlab.house inputs          # data/house/*.csv -> ../simlab-data/house/inputs.json
     python -m simlab.house fit             # refits b and psi on 2022 and 2024 (MIT House file + The Downballot)
     python -m simlab.house run --date 2026-09-29 --data ../simlab-data   # writes to <data>/derived/<date>/
