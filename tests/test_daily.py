@@ -53,7 +53,14 @@ class Steps(unittest.TestCase):
         self.assertEqual(daily.scope_for("2026-10-12", None), "all")
         self.assertEqual(daily.scope_for("2026-10-05", "all"), "all")
         args = daily.STEPS[0][2]("2026-10-12", Path("/data"), {"wording": "direct", "kev": "", "scope": "all"})
-        self.assertEqual(args[-2:], ["--scope", "all"])
+        self.assertEqual(args[args.index("--scope") + 1], "all")
+
+    def test_past_17_dollars_economy_past_19_polls_alone(self):
+        # Matteo, 30 Sep: the key's $20 cap stays; the day runs cheaper instead of failing at the cap
+        self.assertEqual([daily.budget_mode(s) for s in (None, 16.99, 17.0, 18.5, 19.0)],
+                         ["full", "full", "economy", "economy", "polls"])
+        a = daily.STEPS[0][2]("2026-10-20", Path("/data"), {"wording": "direct", "kev": "", "mode": "economy"})
+        self.assertEqual(a[a.index("--mode") + 1], "economy")
 
 
 class Record(unittest.TestCase):

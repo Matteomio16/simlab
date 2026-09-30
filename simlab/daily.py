@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 import time
@@ -33,7 +34,7 @@ def _rid(o: dict) -> list[str]:
 STEPS = [
     ("news", "simlab.newsday",
      lambda d, data, o: ["--date", d, "--snap", str(data / "snapshots"), "--out", str(data / "derived"),
-                         "--scope", o.get("scope", "pilot")] + _rid(o), []),
+                         "--scope", o.get("scope", "pilot"), "--mode", o.get("mode", "full")] + _rid(o), []),
     ("reactions", "simlab.harness",
      lambda d, data, o: ["--date", d, "--out", str(data / "derived"), "--wording", o["wording"]]
      + (["--kev", o["kev"]] if o["kev"] else []) + _rid(o), ["news"]),
@@ -45,6 +46,29 @@ STEPS = [
 def scope_for(day: str, override: str | None) -> str:
     """The pilot races until the full run starts, every race from then; --scope overrides."""
     return override or ("all" if day >= FULL_RUN else "pilot")
+
+
+# The OpenRouter key's cap stays at $20 (Matteo, 30 Sep). Past these lifetime totals the day runs cheaper instead of
+# failing at the cap: "economy" (watch races on statistics alone, 3 race and 2 national stories for a simulated race)
+# and "polls" (no model calls: the forecast runs on the polls and the earlier news, which keeps fading).
+BUDGET_ECONOMY, BUDGET_POLLS = 17.0, 19.0
+
+
+def key_spend() -> float | None:
+    """The key's lifetime spend by OpenRouter's own count (the key is read from the environment, never printed)."""
+    import requests
+    try:
+        r = requests.get("https://openrouter.ai/api/v1/key", timeout=30,
+                         headers={"Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}"})
+        return float(r.json()["data"]["usage"])
+    except Exception:
+        return None
+
+
+def budget_mode(spent: float | None) -> str:
+    if spent is None:  # OpenRouter didn't answer: the per-run cap still bounds the day
+        return "full"
+    return "polls" if spent >= BUDGET_POLLS else "economy" if spent >= BUDGET_ECONOMY else "full"
 
 
 def _exists(module: str) -> bool:
@@ -112,8 +136,10 @@ def _spend(started: float, finished: float) -> dict:
     return {k: round(v, 4) for k, v in out.items()}
 
 
-def record(day: str, data: Path, run_id: str, steps: list[dict], started: float, finished: float) -> dict:
-    """run.json: code version, models, the snapshot runs the day read (manifest hashes), steps, spend."""
+def record(day: str, data: Path, run_id: str, steps: list[dict], started: float, finished: float,
+           budget: dict | None = None) -> dict:
+    """run.json: code version, models, the snapshot runs the day read (manifest hashes), steps, spend, and the budget
+    mode the day ran in."""
     snaps = sorted((data / "snapshots" / day).glob("*/manifest.json"))
     rec = {"schema": SCHEMA, "date": day, "run_id": run_id, "git_sha": _git_sha(),
            "started": datetime.fromtimestamp(started, timezone.utc).isoformat(timespec="seconds"),
@@ -121,7 +147,7 @@ def record(day: str, data: Path, run_id: str, steps: list[dict], started: float,
            "models": {"glm": [LLMS["glm"], HOSTS["glm"]], "jev": JEV, "deepseek": [LLMS["deepseek"], HOSTS["deepseek"]]},
            "snapshots": [{"run": m.parent.name, "manifest_sha256": hashlib.sha256(m.read_bytes()).hexdigest()}
                          for m in snaps],
-           "steps": steps, "spend": _spend(started, finished)}
+           "steps": steps, "spend": _spend(started, finished), "budget": budget}
     out = data / "derived" / day
     out.mkdir(parents=True, exist_ok=True)
     (out / "run.json").write_text(json.dumps(rec, indent=1), encoding="utf-8")
@@ -139,12 +165,16 @@ def main() -> int:
     ap.add_argument("--scope", choices=["pilot", "all"], default=None)
     a = ap.parse_args()
     started, run_id = time.time(), a.run_id or f"{a.date}-{_git_sha()[:7]}"
+    spent = key_spend()
+    mode = budget_mode(spent)
+    print(f"budget: {mode}" + (f" (the key has spent ${spent:.2f})" if spent is not None else " (spend unknown)"),
+          flush=True)
     steps = run_steps(a.date, a.data, {"wording": a.wording, "kev": a.kev, "scope": scope_for(a.date, a.scope),
-                                       "run_id": run_id})
+                                       "run_id": run_id, "mode": mode})
     for s in steps:
         print(f"{s['name']}: {s['status']}" + (f" in {s['seconds']}s" if "seconds" in s else ""), flush=True)
-    rec = record(a.date, a.data, run_id, steps, started, time.time())
-    print(json.dumps({"steps": {s["name"]: s["status"] for s in steps}, "spend": rec["spend"]}))
+    rec = record(a.date, a.data, run_id, steps, started, time.time(), {"key_spent_before": spent, "mode": mode})
+    print(json.dumps({"steps": {s["name"]: s["status"] for s in steps}, "spend": rec["spend"], "mode": mode}))
     return 1 if any(s["status"] == "failed" for s in steps) else 0
 
 

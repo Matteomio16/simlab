@@ -420,6 +420,16 @@ class Run(unittest.TestCase):
         self.assertFalse(any("water rights" in s for s in fake.states))
         self.assertEqual(summary["unlabeled"], 1)
 
+    def test_in_polls_mode_the_day_makes_no_model_calls(self):
+        # past $19 of the key's spend: the forecast runs on the polls and the earlier news
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
+            fake, chat = FakeAsker(), FakeChat(['{"card": "%s"}' % GOOD] * 5)
+            summary = newsday.run(date(2026, 9, 28), snap, derived, "r", fake, [chat], mode="polls")
+        self.assertEqual((fake.states, chat.calls), ([], 0))
+        self.assertEqual((sum(summary["selected"].values()), summary["unlabeled"]), (0, summary["stories"]))
+
     def test_a_story_whose_headline_is_about_a_poll_is_a_poll_story(self):
         # 29 Sep: Jev typed "Trump's approval rating falls to record low" as national news, and 2 of the 9 spot-check
         # headlines that name a poll as something else; poll stories must never get reactions
@@ -552,6 +562,16 @@ class Scale(unittest.TestCase):
         chat = FakeChat(['{"same": true}'] * 5)
         newsday.merge_same_events(evs, stories, [chat], ["GA"], {"GA": "watch"})
         self.assertEqual(chat.calls, 0)
+
+    def test_economy_mode_selects_fewer_stories_and_none_for_watch_races(self):
+        evs = ([self.ev(f"OH-{i}", "race", 0.9 - i / 10, ["OH-S"]) for i in range(5)]
+               + [self.ev(f"US-{i}", "national", 0.9 - i / 10, ["OH-S", "GA", "US"]) for i in range(3)]
+               + [self.ev("GA-1", "race", 0.9, ["GA"])])
+        with mock.patch.object(newsday, "MODE", "economy"):
+            newsday.select(evs, ["OH-S", "GA"], {"OH-S": "simulate", "GA": "watch"})
+        ohio = [e["event_id"] for e in evs if e["selected"].get("OH-S")]
+        self.assertEqual(ohio, ["OH-0", "OH-1", "OH-2", "US-0", "US-1"])
+        self.assertFalse(any(e["selected"].get("GA") for e in evs))
 
     def test_national_stories_are_gated_for_the_simulated_races(self):
         story = {"race_id": "US", "titles": ["Senate passes a spending bill"], "outlet_names": []}
