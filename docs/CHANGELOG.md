@@ -82,6 +82,20 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   Engine adds the simulated seats to newsraces.json (from 12 Oct).
 - 29 Sep, stats-only: 222.6 expected Democratic seats at a national House vote of D+4.5.
 
+## 2026-09-30 afternoon (Engine session): fitting inside the $20 cap
+
+Matteo keeps the OpenRouter key's cap at $20, so everything must fit inside $19 by 3 Nov.
+- **Built:**
+  - The budget safeguard (`daily.py`): each run reads the key's lifetime spend from OpenRouter. From $17 it runs in
+    economy: watch races get no stories, a simulated race takes 3 race and 2 national stories, and 25 national
+    stories are labeled. From $19 it runs on the polls alone, with no model calls. Mode and spend go in `run.json`.
+  - A state's House seats are asked each story once.
+- **Projection:** $2.20 spent. On today's hosts about $19.80 by 3 Nov, with economy from about 28 Oct.
+- **Proposed (Matteo's decision):** move GLM to OpenInference first, with today's hosts as fallbacks. Same model,
+  same 4-bit precision, $0.000013 a call instead of $0.000031. Its answers to the 64 historical events match the
+  27 Sep calibration as closely as today's hosts do (correlation 0.95; held-out directions 100%). About $13 by 3 Nov.
+- **Ruled out:** a single option order. It halves GLM's cost, but held-out directions fall from 100% to 87%.
+
 ## 2026-09-30 (Engine session): Media Cloud is on
 
 Matteo's Media Cloud key works (GitHub secret `MEDIACLOUD_API_KEY`, 30 Sep). The first test run answered six
