@@ -80,8 +80,13 @@ def active(scope: str, tiers: dict) -> list[str]:
     return list(PILOT) if scope == "pilot" else sorted(r for r, t in tiers.items() if t != "statistics" and r in CONFIG)
 
 
+ECONOMY_CAPS = {"simulate": (3, 2), "watch": (0, 0), "statistics": (0, 0)}  # past $17 of spend (daily.budget_mode)
+MODE = "full"  # set by run(): full, economy or polls
+
+
 def caps(race_id: str, tiers: dict | None) -> tuple[int, int]:
-    return (0, 3) if race_id == "US" else CAPS[(tiers or {}).get(race_id, "simulate")]
+    table = ECONOMY_CAPS if MODE == "economy" else CAPS
+    return (0, 3) if race_id == "US" else table[(tiers or {}).get(race_id, "simulate")]
 
 
 def _iso(dt: datetime) -> str:
@@ -590,9 +595,14 @@ def load_known(derived_root: Path, day: date, lookback: int = 7) -> list[dict]:
     return list(out.values())
 
 
-def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chats: list, scope: str = "pilot") -> dict:
+def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chats: list, scope: str = "pilot",
+        mode: str = "full") -> dict:
     """One day: read, cluster, carry over, label new stories, score attention, select, write cards, write files.
-    `scope`: the pilot races, or every race not on statistics alone (by the previous day's tiers)."""
+    `scope`: the pilot races, or every race not on statistics alone (by the previous day's tiers). `mode` (from the
+    key's spend, daily.budget_mode): economy selects fewer stories (ECONOMY_CAPS) and labels 25 national ones; polls
+    labels nothing, so no story is selected and the day makes no model calls."""
+    global MODE
+    MODE = mode
     configure(prev_races(derived_root, day))
     tiers = load_tiers(derived_root, day)
     races = active(scope, tiers)
@@ -606,7 +616,8 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
              if s["known"] is None or s["known"].get("label_error") or s["known"].get("unlabeled")]
     nat = sorted((s for s in fresh if s["race_id"] == "US"),
                  key=lambda s: (-attention(s, spike_ratio(views, "US"))["a"], -s["articles"], s["event_id"]))
-    skipped = {s["event_id"] for s in nat[NATIONAL_LABELED:]}
+    labeled = NATIONAL_LABELED if mode == "full" else min(NATIONAL_LABELED, 25)
+    skipped = {s["event_id"] for s in (stories if mode == "polls" else nat[labeled:])}
     fresh = [s for s in fresh if s["event_id"] not in skipped]
 
     def safe_label(s):
@@ -684,10 +695,11 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=data / "derived")
     ap.add_argument("--run-id", default="")
     ap.add_argument("--scope", choices=["pilot", "all"], default="pilot")
+    ap.add_argument("--mode", choices=["full", "economy", "polls"], default="full")
     a = ap.parse_args()
     chats = [Chat(LLMS["deepseek"], HOSTS["deepseek"]), Chat(LLMS["glm"], HOSTS["glm"], reasoning=REASONING["glm"])]
     print(json.dumps(run(a.date, a.snap, a.out, a.run_id or f"{a.date}-manual",
-                         DecisionAsker(JEV, n_orders=2, name="jev"), chats, a.scope)))
+                         DecisionAsker(JEV, n_orders=2, name="jev"), chats, a.scope, a.mode)))
 
 
 if __name__ == "__main__":

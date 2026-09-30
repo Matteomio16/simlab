@@ -274,6 +274,13 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
   - It publishes only when the statistics step passed; a failed post kit doesn't hold it back.
   - A day older than the one on the site is never published. A manual run of today's date publishes too, so switch
     `SITE_PUBLISH` off before a test run.
+- **Budget safeguard** (the key's $20 cap stays; Matteo, 30 Sep): each daily run first reads the key's lifetime spend
+  from OpenRouter and records it in `run.json` → `budget`.
+  - From $17, economy: races on the watch list get no stories, a simulated race takes 3 race and 2 national stories
+    a day, and 25 national stories are labeled.
+  - From $19, polls alone: the news step labels nothing, so the day makes no model calls. The forecast runs on the
+    polls and the earlier stories, which keep fading.
+  - If OpenRouter doesn't answer, the day runs in full; the per-run cap still bounds it.
 - **Full-scale rehearsal:** a manual run with `full_rehearsal` ticked runs every race (`--scope all`) on a copy of the
   data and saves it to `simlab-data/rehearsal/YYYY-MM-DD-all/`. The day's own record is untouched and nothing is
   published (the first one: Wed 7 Oct, `docs/rehearsal.md`).

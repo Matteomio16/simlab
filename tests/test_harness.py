@@ -67,6 +67,14 @@ class React(unittest.TestCase):
         self.assertAlmostEqual(r["support"], 0.5)
         self.assertEqual((r["model"], r["shadow"], r["wording"], r["parse_error"]), ("glm", False, "direct", False))
 
+    def test_a_states_house_seats_share_one_ask_per_story(self):
+        glm = FakeLLM()
+        ev = [{"event_id": "OH-H-1", "card": "Two Ohio House candidates debated trade.",
+               "selected": {"OH-9": True, "OH-1": True, "OH-S": True}}]
+        rows, failed = harness.react(ev, [("glm", glm, False)], "direct", skip=set())
+        self.assertEqual((len(rows), failed, len(glm.calls)), (3 * 28, 0, 2 * 28))  # the Senate race asks its own
+        self.assertEqual({r["race_id"] for r in rows}, {"OH-1", "OH-9", "OH-S"})
+
     def test_skip_and_shadow(self):
         skip = {("OH-S", "OH-S-1", g["group"], "glm") for g in harness.personas("OH-S")}
         rows, _ = harness.react(EVENTS[:1], [("glm", FakeLLM(), False), ("kev", FakeDecision(), True)], "direct", skip)

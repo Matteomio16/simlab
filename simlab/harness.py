@@ -110,8 +110,17 @@ def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> t
                 "shadow": shadow, "wording": wording, "support": round(expected(a["support"]), 4),
                 "turnout": round(expected(a["turnout"]), 4),
                 "parse_error": bool(a["support"].get("_parse_error") or a["turnout"].get("_parse_error"))}
+    # A state's House seats hear a story in the same words (its card, the state's personas, the House question): each
+    # such prompt is asked once and the answer copied to the other seats, rather than left to the answer cache.
+    def same(t):
+        r, e, p, name = t[:4]
+        return newsraces.STATE_NAMES[r[:2]] if newsraces.is_house(r) else r, e["event_id"], p["group"], name
+    first: dict = {}
+    for t in tasks:
+        first.setdefault(same(t), t)
     with ThreadPoolExecutor(THREADS) as ex:
-        results = list(ex.map(one, tasks))
+        answers = dict(zip(first, ex.map(one, first.values())))
+    results = [None if answers[same(t)] is None else {**answers[same(t)], "race_id": t[0]} for t in tasks]
     rows = [r for r in results if r is not None]
     return rows, len(results) - len(rows)
 

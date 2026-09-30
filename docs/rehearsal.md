@@ -72,27 +72,37 @@ before 12 Oct and tells Matteo.
 
 ## Spend and the OpenRouter key's $20 cap (projection of 30 Sep, after the test run)
 
-Spent so far: about $2.25 of the $20 cap (OpenRouter's own count for the key was $1.91 at 09:30 UTC on 30 Sep, before
-that day's test run and GLM check). The 30 Sep pilot-scale test run cost $0.135: news $0.03, reactions $0.105.
+The cap stays at $20 and everything must fit inside $19 (Matteo, 30 Sep). Spent so far: $2.20 (OpenRouter's own
+count for the key, 30 Sep afternoon). The 30 Sep pilot-scale test run cost $0.135: news $0.03, reactions $0.105.
 
-| Period | Per day | Days | Total |
+| Period | Days | GLM on today's hosts | GLM on OpenInference first |
 | --- | --- | --- | --- |
-| Pilot and dry runs, 1-11 Oct (5 races, drills mostly cached) | about $0.10-0.14 | 11 | about $1.30 |
-| Full-scale rehearsal, 7 Oct (every story new) | about $1.10 | 1 | about $1.10 |
-| Full run, 12 Oct - 3 Nov (35 Senate races, ~40 House seats) | about $0.70-0.77 | 23 | about $16-18 |
-| Total by 3 Nov, with what is spent | | | about $21, over the $20 cap |
+| Pilot and dry runs, 1-11 Oct | 11 | about $1.30 | about $0.80 |
+| Full-scale rehearsal, 7 Oct (every story new) | 1 | about $1.10 | about $0.60 |
+| Full run, 12 Oct - 3 Nov (about $0.66 or $0.41 a day) | 23 | about $15.20 | about $9.40 |
+| Total by 3 Nov, with what is spent | | about $19.80: economy from about 28 Oct | about $13 |
 
-- **GLM now reasons.** Since about 30 Sep its hosts require reasoning ("mandatory for this endpoint"), 11-36 tokens
-  a call. A group row (4 prompts) costs $0.000134, against $0.00005 on 29 Sep. Its answers held: re-asked the 64
-  historical events of 27 Sep, they correlate 0.96 with the old ones (training) and 0.94 (held-out), with the same
-  direction on 92% and 93% of the events that moved opinion.
-- **Other unit costs** (spend ledger): Jev $0.000014 per gate and $0.00006 per set of labels; DeepSeek $0.00004 per
-  card.
-- **Biggest lever already used:** a national story is gated for every simulated race, so only the 50 best-covered new
-  national stories a day are labeled (a race takes at most 3). Without it the full run would cost about $0.28 a day
-  more.
-- **Decision for Matteo:** raise the key's cap to $30 before 12 Oct (roadmap, Sat 10 Oct); that leaves about $9 of
-  margin. The 7 Oct rehearsal's spend confirms the full run's daily figure.
+- **Why the costs rose.** Since about 30 Sep GLM's hosts require reasoning ("mandatory for this endpoint", 11-36
+  tokens a call), so a group row (4 prompts) costs $0.000134, against $0.00005 on 29 Sep. The answers held: re-asked
+  the 64 historical events of 27 Sep, they correlate 0.96 (training) and 0.94 (held-out) with the old ones.
+- **The cheaper host (Matteo's decision).** OpenInference runs the same model at the same 4-bit precision for
+  $0.000013 a call instead of $0.000031. Its answers to the same 64 events correlate 0.95 with the 27 Sep ones on both
+  sets, with the direction right on 92% (training) and 100% (held-out) of the events that moved opinion, the same as
+  on 27 Sep. It limits how fast we can ask, so today's hosts stay as fallbacks. It saves about $0.25 a day at full
+  scale.
+- **Built (30 Sep):**
+  - A state's House seats are asked each story once.
+  - Only the 50 best-covered new national stories a day are labeled.
+  - The safeguard: from $17 of lifetime spend the day runs in economy (watch races get no stories; 3 race and 2
+    national stories for a simulated race), and from $19 on the polls alone (no model calls). The day's mode and
+    the key's spend are in `run.json` → `budget`.
+- **Ruled out:**
+  - Asking each question in one option order: it halves GLM's cost, but on the 19 held-out events it got the
+    direction right on 87% instead of 100%.
+  - Kev duplicates: Kev runs on Modal, not on this key.
+- **Small levers left:** 25 national stories a day instead of 50 (about $0.02 a day), and watch races on
+  statistics alone (about $0.01). Economy mode uses both.
+- **Check:** the 7 Oct rehearsal's `run.json` → `spend` is the full run's first and busiest day.
 
 ## Who checks what
 
