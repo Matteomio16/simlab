@@ -86,7 +86,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
           <h1 className="mt-3 text-[2.1rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.8rem]">
             {`${surname(lead.name)} wins ${in100(lead.p)} of 100 simulated elections`}
           </h1>
-          <p className="mt-4 max-w-3xl font-serif text-[1.2rem] leading-relaxed text-ink-2">
+          <p className="mt-4 max-w-3xl text-[1.2rem] leading-relaxed text-ink-2">
             {`The simulation rates ${STATES[meta.state]} ${ratingWords}. The middle simulated result is ${margin(f.margin.p50, L)}, and 8 in 10 fall between ${margin(f.margin.p10, L)} and ${margin(f.margin.p90, L)}.`}
           </p>
         </div>
@@ -95,7 +95,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
         </div>
       </header>
 
-      <section className="rise mt-8 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1fr]" style={{ animationDelay: "120ms" }}>
+      <section className="rise mt-8 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1fr]">
         <div>
           <div className="flex items-end justify-between">
             <div>
@@ -183,7 +183,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
                 <span className="w-16 shrink-0 text-right font-bold" style={{ color: m.delta > 0 ? partyVar(L) : "var(--rep)" }}>
                   {`${m.delta > 0 ? L : "R"}+${Math.abs(m.delta).toFixed(1)}`}
                 </span>
-                <span className="font-serif text-[1.05rem] leading-snug text-ink-2">{m.card}</span>
+                <span className="text-[1.05rem] leading-snug text-ink-2">{m.card}</span>
               </li>
             ))}
           </ul>

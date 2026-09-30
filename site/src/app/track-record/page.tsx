@@ -53,7 +53,7 @@ export default function TrackRecord() {
       <h1 className="rise mt-3 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
         Every forecast is scored, including the misses
       </h1>
-      <p className="mt-4 max-w-3xl font-serif text-[1.2rem] leading-relaxed text-ink-2">
+      <p className="mt-4 max-w-3xl text-[1.2rem] leading-relaxed text-ink-2">
         Every week, the forecast is checked against what happened next, by the same rules as its benchmarks. After the
         election, it is scored against the results. Published scores are never rewritten; a correction is added as a new,
         dated line.
@@ -116,7 +116,7 @@ export default function TrackRecord() {
             {BASELINES.map(([k, v]) => (
               <tr key={k} className="border-b border-rule align-top">
                 <th className="w-56 py-3 pr-4 text-left font-bold">{k}</th>
-                <td className="py-3 font-serif text-ink-2">{v}</td>
+                <td className="py-3 text-ink-2">{v}</td>
               </tr>
             ))}
           </tbody>

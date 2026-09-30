@@ -41,7 +41,7 @@ export default function Prelaunch({ today }: { today: string }) {
           <h1 className="mt-4 text-[2.3rem] font-extrabold leading-[1.05] tracking-[-0.02em] sm:text-[3.1rem]">
             The forecast begins October&nbsp;12.
           </h1>
-          <p className="mt-5 font-serif text-[1.2rem] leading-relaxed text-ink-2">
+          <p className="mt-5 text-[1.2rem] leading-relaxed text-ink-2">
             NotAPoll.org forecasts the 2026 midterms with a social simulation. Synthetic voters react to each day&rsquo;s
             news, and simulated elections turn their reactions into chances for every Senate race. Each number will sit
             beside the poll average, the prediction market and the Cook Political Report.
@@ -63,7 +63,7 @@ export default function Prelaunch({ today }: { today: string }) {
           </p>
         </div>
 
-        <div className="rise" style={{ animationDelay: "120ms" }}>
+        <div className="rise">
           <p className="label">Seats up in 2026, by the party that holds them</p>
           <div className="mt-4">
             <TileMap tiles={tiles} />
@@ -87,7 +87,7 @@ export default function Prelaunch({ today }: { today: string }) {
               <p className="text-[0.95rem] font-bold">
                 <span className="text-sim">{i + 1}.</span> {title}
               </p>
-              <p className="mt-2 font-serif text-[1.02rem] leading-relaxed text-ink-2">{body}</p>
+              <p className="mt-2 text-[1.02rem] leading-relaxed text-ink-2">{body}</p>
             </li>
           ))}
         </ol>
@@ -135,7 +135,7 @@ export default function Prelaunch({ today }: { today: string }) {
         </div>
         <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">The making-of, published as we go</h2>
         {notes.length === 0 ? (
-          <p className="mt-3 max-w-2xl font-serif text-[1.1rem] leading-relaxed text-ink-2">
+          <p className="mt-3 max-w-2xl text-[1.1rem] leading-relaxed text-ink-2">
             The first note comes out on Saturday, October 3: how six models were tested as synthetic voters before any of
             them was trusted with a forecast.
           </p>

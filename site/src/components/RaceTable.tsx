@@ -68,7 +68,7 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
             return (
               <tr key={r.id} className="border-b border-rule align-top hover:bg-paper-2">
                 <td className="py-3 pr-3">
-                  <Link href={`/senate/${r.slug}`} className="font-bold hover:underline">{r.title}</Link>
+                  <Link href={`/senate/${r.slug}`} prefetch={false} className="font-bold hover:underline">{r.title}</Link>
                   <span className="mt-0.5 block text-[0.8rem] text-ink-2">
                     <span style={{ color: color(r.leftParty) }}>{r.left}</span>
                     <span className="text-muted"> vs. </span>

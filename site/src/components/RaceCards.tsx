@@ -12,7 +12,7 @@ export default function RaceCards({ rows }: { rows: Row[] }) {
         const n = Math.round((lead ? r.p : 1 - r.p) * 100);
         return (
           <li key={r.id}>
-            <Link href={`/senate/${r.slug}`} className="card group flex h-full flex-col p-4">
+            <Link href={`/senate/${r.slug}`} prefetch={false} className="card group flex h-full flex-col p-4">
               <div className="flex items-start justify-between gap-2">
                 <span className="text-[1.05rem] font-bold leading-tight">{r.title}</span>
                 <span className="whitespace-nowrap px-1.5 py-px text-[0.66rem] font-bold uppercase tracking-[0.05em]" style={{ background: r.tierFill, color: r.tierInk }}>

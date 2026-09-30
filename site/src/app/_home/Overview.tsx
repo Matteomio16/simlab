@@ -90,7 +90,7 @@ export default function Overview() {
         <h1 className="mt-4 max-w-4xl text-[2.1rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
           {headline(s.p_r_50plus, s.p_d_caucus_51)}
         </h1>
-        <p className="mt-4 max-w-3xl font-serif text-[1.2rem] leading-relaxed text-ink-2">
+        <p className="mt-4 max-w-3xl text-[1.2rem] leading-relaxed text-ink-2">
           {`In ${forecast.draws.toLocaleString("en-US")} simulated elections, Republicans keep 50 or more seats, enough with the Vice President’s tie-break, in ${nR} of every 100. The simulation moves each race from its statistical starting line as synthetic voters react to the news.`}
         </p>
 
@@ -210,8 +210,8 @@ export default function Overview() {
                   {m.delta > 0 ? m.left : "R"}+{Math.abs(m.delta).toFixed(1)}
                 </span>
                 <span>
-                  <Link href={`/senate/${m.slug}`} className="text-[0.8rem] font-bold uppercase tracking-[0.05em] hover:underline">{m.title}</Link>
-                  <span className="mt-1 block font-serif text-[1.02rem] leading-snug text-ink-2">{m.card}</span>
+                  <Link href={`/senate/${m.slug}`} prefetch={false} className="text-[0.8rem] font-bold uppercase tracking-[0.05em] hover:underline">{m.title}</Link>
+                  <span className="mt-1 block text-[1.02rem] leading-snug text-ink-2">{m.card}</span>
                 </span>
               </li>
             ))}

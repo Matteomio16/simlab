@@ -26,7 +26,7 @@ export default async function LabNote({ params }: { params: Promise<{ n: string 
       <nav className="text-[0.85rem] font-semibold text-ink-2"><Link href="/lab-notes" className="hover:underline">Lab notes</Link> <span className="text-muted">/</span> Note {note.n}</nav>
       <h1 className="mt-4 text-[2.2rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[2.7rem]">{note.title}</h1>
       {note.date && <p className="mt-3 text-sm text-muted">{note.date}</p>}
-      <div className="mt-8 space-y-4 border-t-[3px] border-rule-strong pt-6 font-serif text-[1.15rem] leading-relaxed text-ink">
+      <div className="mt-8 space-y-4 border-t-[3px] border-rule-strong pt-6 text-[1.15rem] leading-relaxed text-ink">
         {note.caption.split(/\n{2,}/).map((p, i) => (
           <p key={i} className="whitespace-pre-line">{p}</p>
         ))}
@@ -35,7 +35,7 @@ export default async function LabNote({ params }: { params: Promise<{ n: string 
         {note.slides.map((s) => (
           <figure key={s.file}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/labnotes/${note.n}/${s.file}`} alt={s.alt} loading="lazy" className="w-full border border-rule" />
+            <img loading="lazy" decoding="async" src={`/labnotes/${note.n}/${s.file}`} alt={s.alt} className="w-full border border-rule" />
           </figure>
         ))}
       </div>

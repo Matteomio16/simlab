@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/stage-data.mjs && next dev",
-    "build": "node scripts/stage-data.mjs && next build && node scripts/postbuild.mjs",
+    "build": "node scripts/stage-data.mjs && next build --webpack && node scripts/postbuild.mjs",
     "sample": "node scripts/sample-data.mjs",
     "labnote": "node scripts/import-labnote.mjs",
     "lint:copy": "node scripts/check-copy.mjs"

@@ -15,7 +15,7 @@ export default function LabNotes() {
       <h1 className="mt-3 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
         The making-of, published as we go
       </h1>
-      <p className="mt-4 max-w-2xl font-serif text-[1.2rem] leading-relaxed text-ink-2">
+      <p className="mt-4 max-w-2xl text-[1.2rem] leading-relaxed text-ink-2">
         What we tested, what failed and what we changed. The same notes run on Instagram, Threads, X and Bluesky.
       </p>
       <div className="mt-8 border-t-[3px] border-rule-strong">
@@ -30,7 +30,7 @@ export default function LabNotes() {
                   <span className="text-xl font-bold tracking-[-0.01em] group-hover:underline">{n.title}</span>
                   {n.slides[0] && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={`/labnotes/${n.n}/${n.slides[0].file}`} alt="" className="hidden w-24 border border-rule sm:block" />
+                    <img loading="lazy" decoding="async" src={`/labnotes/${n.n}/${n.slides[0].file}`} alt="" className="hidden w-24 border border-rule sm:block" />
                   )}
                 </Link>
               </li>

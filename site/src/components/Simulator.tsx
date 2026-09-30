@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Party } from "@/lib/types";
 
 type Race = { id: string; title: string; left: Party; leftName: string; rightName: string; p50: number };
@@ -13,11 +13,24 @@ export default function Simulator({ races }: { races: Race[] }) {
   const [draws, setDraws] = useState<Record<string, number[]> | null>(null);
   const [swing, setSwing] = useState(0);
 
+  const box = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    fetch("/data/draws.json")
-      .then((r) => r.json())
-      .then((d) => setDraws(d.races))
-      .catch(() => setDraws(null));
+    const el = box.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        fetch("/data/draws.json")
+          .then((r) => r.json())
+          .then((d) => setDraws(d.races))
+          .catch(() => setDraws(null));
+      },
+      { rootMargin: "100000px 0px 600px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   const result = useMemo(() => {
@@ -55,7 +68,7 @@ export default function Simulator({ races }: { races: Race[] }) {
   const label = (s: number) => (s === 0 ? "No change" : `${s > 0 ? "D" : "R"}+${Math.abs(s).toFixed(1)}`);
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1fr_1fr]">
+    <div ref={box} className="grid gap-10 lg:grid-cols-[1fr_1fr]">
       <div>
         <label htmlFor="swing" className="label">National swing</label>
         <div className="mt-2 flex items-baseline justify-between">

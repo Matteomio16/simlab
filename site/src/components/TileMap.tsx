@@ -66,7 +66,7 @@ export default function TileMap({ tiles, className = "" }: { tiles: Tile[]; clas
             </g>
           );
           return t?.href ? (
-            <Link key={st} href={t.href} onClick={(e) => open(e, st, t.href!)} aria-label={t.title}>
+            <Link key={st} href={t.href} prefetch={false} onClick={(e) => open(e, st, t.href!)} aria-label={t.title}>
               {body}
             </Link>
           ) : (

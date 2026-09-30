@@ -23,7 +23,7 @@ export default function Archive() {
       <h1 className="rise mt-3 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
         Every daily forecast, as published
       </h1>
-      <p className="mt-4 max-w-3xl font-serif text-[1.2rem] leading-relaxed text-ink-2">
+      <p className="mt-4 max-w-3xl text-[1.2rem] leading-relaxed text-ink-2">
         Each day&rsquo;s forecast file stays here unchanged, so anyone can check what the simulation said and when. The same
         files are kept in the project&rsquo;s public code repository.
       </p>

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 // Counts from 0 to the value once it is on screen; the final number is in the HTML for readers without JavaScript.
-export default function CountUp({ value, ms = 900 }: { value: number; ms?: number }) {
+export default function CountUp({ value, ms = 600 }: { value: number; ms?: number }) {
   const [n, setN] = useState(value);
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
