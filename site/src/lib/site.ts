@@ -1,3 +1,9 @@
+// Pages Matteo hasn't approved yet (30 Sep): left out of the public site, kept on the unlisted previews for review.
+// Set a page to true once he approves it.
+const APPROVED = { methods: false, labNotes: false };
+const REVIEW = process.env.SITE_PREVIEW === "1";
+export const SHOW = { methods: APPROVED.methods || REVIEW, labNotes: APPROVED.labNotes || REVIEW };
+
 export const SITE = {
   name: "NotAPoll.org",
   url: "https://notapoll.org",

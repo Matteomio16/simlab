@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SITE } from "@/lib/site";
+import { SHOW, SITE } from "@/lib/site";
 import { Lockup, SwingBand } from "./Brand";
 
 export default function Footer({ forecast }: { forecast: boolean }) {
@@ -19,8 +19,8 @@ export default function Footer({ forecast }: { forecast: boolean }) {
           <div>
             <p className="font-bold uppercase tracking-[0.07em] text-[0.7rem] text-white">Project</p>
             <ul className="mt-3 space-y-2">
-              <li><Link href="/methods" className="hover:text-white">Methods</Link></li>
-              <li><Link href="/lab-notes" className="hover:text-white">Lab notes</Link></li>
+              {SHOW.methods && <li><Link href="/methods" className="hover:text-white">Methods</Link></li>}
+              {SHOW.labNotes && <li><Link href="/lab-notes" className="hover:text-white">Lab notes</Link></li>}
               <li><Link href="/changelog" className="hover:text-white">Changelog</Link></li>
               <li><Link href="/track-record" className="hover:text-white">Track record</Link></li>
               {forecast && <li><Link href="/archive" className="hover:text-white">Archive</Link></li>}

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { Lockup } from "./Brand";
 import NextUpdate from "./NextUpdate";
+import { SHOW } from "@/lib/site";
 
 export default function Header({ forecast }: { forecast: boolean }) {
   const links = [
     { href: "/", label: forecast ? "Senate" : "Home" },
-    { href: "/methods", label: "Methods" },
-    { href: "/lab-notes", label: "Lab notes" },
+    ...(SHOW.methods ? [{ href: "/methods", label: "Methods" }] : []),
+    ...(SHOW.labNotes ? [{ href: "/lab-notes", label: "Lab notes" }] : []),
     { href: "/about", label: "About" },
   ];
   return (

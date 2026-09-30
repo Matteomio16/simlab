@@ -6,7 +6,7 @@ import VoterField from "@/components/VoterField";
 import { SwingBand } from "@/components/Brand";
 import { loadRaceMeta, raceTitle } from "@/lib/data";
 import { allNotes } from "@/lib/labnotes";
-import { SITE } from "@/lib/site";
+import { SHOW, SITE } from "@/lib/site";
 import { STATES } from "@/lib/states";
 
 // The launch page (Matteo, 30 Sep): what NotAPoll is, why it is different, when the forecasts start. No forecast
@@ -111,13 +111,11 @@ export default function Prelaunch({ today }: { today: string }) {
               <Countdown to={LAUNCH} initialDays={initialDays} />
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.95rem] font-semibold">
-              <Link href="/methods" className="bg-ink px-4 py-2.5 text-white transition-colors hover:bg-sim">
+              <Link href={SHOW.methods ? "/methods" : "#how-it-works"} className="bg-ink px-4 py-2.5 text-white transition-colors hover:bg-sim">
                 How it works
               </Link>
-              {notes[0] ? (
+              {SHOW.labNotes && notes[0] && (
                 <Link href={`/lab-notes/${notes[0].n}`} className="link">Read the first Lab note</Link>
-              ) : (
-                <Link href="/lab-notes" className="link">Lab notes from Oct 3</Link>
               )}
             </div>
           </div>
@@ -128,7 +126,7 @@ export default function Prelaunch({ today }: { today: string }) {
 
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
         <Reveal as="section" className="mt-16">
-          <p className="label">How it works</p>
+          <p id="how-it-works" className="label scroll-mt-6">How it works</p>
           <h2 className="mt-2 max-w-3xl text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">
             Polls ask people. We simulate how people react.
           </h2>
@@ -251,7 +249,7 @@ export default function Prelaunch({ today }: { today: string }) {
           </details>
         </Reveal>
 
-        {notes.length > 0 && (
+        {SHOW.labNotes && notes.length > 0 && (
           <Reveal as="section" className="mt-16 border-t-[3px] border-rule-strong pt-6">
             <div className="flex items-baseline justify-between gap-4">
               <p className="label">Lab notes</p>

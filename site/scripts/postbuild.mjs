@@ -13,6 +13,10 @@ const drop = (p) => existsSync(path.join(OUT, p)) && rmSync(path.join(OUT, p), {
 if (!forecast)
   ["senate", "senate.html", "senate.txt", "archive", "archive.html", "archive.txt"].forEach(drop);
 ["lab-notes/00.html", "lab-notes/00.txt", "lab-notes/00"].forEach(drop);
+// Unapproved pages (Matteo, 30 Sep) stay off the public site; keep this list in step with APPROVED in src/lib/site.ts.
+const unapproved = { methods: ["methods", "methods.html", "methods.txt"], labNotes: ["lab-notes", "lab-notes.html", "lab-notes.txt", "labnotes"] };
+const approved = { methods: false, labNotes: false };
+if (!preview) for (const [k, paths] of Object.entries(unapproved)) if (!approved[k]) paths.forEach(drop);
 
 const headers = [
   "/*",

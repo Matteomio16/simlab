@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SHOW } from "@/lib/site";
 import { notFound } from "next/navigation";
 import { SimLabel } from "@/components/Brand";
 import { DotPlot, HistoryLine, MarginRanges, ProbBar, Responsive } from "@/components/charts";
@@ -202,7 +203,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
 
       <p className="mt-10 max-w-3xl text-[0.9rem] text-ink-2">
         {`${meta.candidates.left} is the ${partyName(L)}${L === "I" ? ", counted apart from both parties" : ""}. ${meta.status}. `}
-        <Link href="/methods" className="link font-semibold">How the simulation works</Link>
+        {SHOW.methods && <Link href="/methods" className="link font-semibold">How the simulation works</Link>}
       </p>
       <div className="mt-6">
         <SimLabel date={longDate(forecast.date)} sample={IS_SAMPLE} />
