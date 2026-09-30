@@ -151,21 +151,24 @@ def header(t=LAB, w: int = 1500, h: int = 500, scale: int = 1, name: str = "head
 
 
 def pinned(t=LAB):
-    """The Start here carousel."""
+    """The Start here carousel: the promise first (scored in public, misses included), then how it works."""
     k = "START HERE"
     a = Slide(PINNED_DAY, k, t)
-    a.headline("The 2026 midterms, simulated every day.", px=92)
-    a.dek("Synthetic voters react to each day's news. Then we play every race out 40,000 times.", px=38)
-    electorate(a.ax, t, MARGIN, a.y + 10, a.width, 430, n=1100)
-    a.y += 470
-    a.text("Swipe for how it works.", "mono", 600, 30, t.ai)
+    a.headline("We’re forecasting the 2026 midterms with a society of synthetic voters.", px=80)
+    a.dek("Every day until 3 November. 35 Senate races, about 40 House seats, 40,000 simulated elections each. "
+          "Scored in public.", px=36)
+    electorate(a.ax, t, MARGIN, a.y + 6, a.width, 330, n=1000)
+    a.y += 350
+    a.text("Each dot: one synthetic voter.", px=30, color=t.ink2)
 
     b = Slide(PINNED_DAY, f"{k} · HOW IT WORKS", t)
-    b.headline("Three steps, every morning.", px=80)
-    steps = [("Where each race starts", "Real statistics: past results, the economy and the poll average."),
-             ("How the news moves it", "Synthetic voters, built from real data on how groups of Americans "
-                                       "vote, react to the day's events."),
-             ("Who wins, and how often", "Each race is played out 40,000 times. The share won is the chance.")]
+    b.headline("Every morning, three steps.", px=80)
+    steps = [("Start from what we know", "Past results, the economy and the poll average set where each race "
+                                         "begins."),
+             ("Let the news land", "Synthetic voters, built from how real groups of Americans vote, react to the "
+                                   "day’s events. Only people who could still change their mind, or still decide "
+                                   "whether to vote, move the numbers."),
+             ("Play it out 40,000 times", "The share of simulated elections a candidate wins is their chance.")]
     for n, (head, body) in enumerate(steps, 1):
         b.y += 10
         top = b.y
@@ -173,56 +176,62 @@ def pinned(t=LAB):
         b.text(head, "serif", 600, 46, x=MARGIN + 100, width=b.width - 100, after=0.2)
         b.text(body, px=34, color=t.ink2, x=MARGIN + 100, width=b.width - 100, after=0.9)
 
-    c = Slide(PINNED_DAY, f"{k} · WHAT IT ISN'T", t)
+    c = Slide(PINNED_DAY, f"{k} · WHAT IT ISN’T", t)
     c.headline("Not a poll. Nobody was asked anything.", px=88)
-    c.text("Our voters are synthetic. They stand in for groups of people; they are not people.", px=38,
-           color=t.ink2, after=1.0)
-    c.text("So every number we post sits beside three others:", "serif", 600, 44, after=0.5)
-    for item in ("the poll average", "the prediction markets", "the Cook Political Report"):
-        c.text(f"—  {item}", px=40, after=0.3)
-    c.y += 30
-    c.text("Anything from 35% to 65% we call a toss-up.", "serif", 600, 44)
+    c.text("Our voters are synthetic. They stand in for groups of people; they are not people. So our number never "
+           "travels alone: it always sits beside the poll average, the prediction markets and the Cook Political "
+           "Report.", px=38, color=t.ink2, after=1.0)
+    c.text("Between 35% and 65%, we call a race a toss-up. We won’t pretend to know more than that.", "serif", 600,
+           44)
 
-    d = Slide(PINNED_DAY, f"{k} · WHAT YOU'LL SEE", t)
-    d.headline("What we post.", px=88)
-    rows = [("Daily", "Where the races stand, and what moved them."),
-            ("Sundays", "Special editions: the Senate map, the chamber, a race up close."),
-            ("Weekly", "Our score against the poll average, the markets and Cook. Misses included."),
-            ("Now", "The making-of. Forecasts go public on 12 October.")]
+    d = Slide(PINNED_DAY, f"{k} · KEEPING SCORE", t)
+    d.headline("Every Monday, we publish our score.", px=84)
+    rows = [("Daily", "Where the races stand, and which events moved them."),
+            ("Sundays", "One race or the whole Senate, up close."),
+            ("Mondays", "From 19 October: our record against the poll average, the markets and Cook. Misses "
+                        "included."),
+            ("3 Nov", "The final forecast. Then the results decide.")]
     for head, body in rows:
         d.rule(t.hairline, after=22)
         top = d.y
         d._put(MARGIN, top, head.upper(), "mono", 600, 28, t.ai, va="top")
-        d.text(body, px=38, x=MARGIN + 220, width=d.width - 220, after=0.8)
+        d.text(body, px=36, x=MARGIN + 220, width=d.width - 220, after=0.8)
     d.rule(t.hairline)
-    d.at_bottom(50)
-    d.text(f"Follow along: {SITE}", "serif", 600, 40)
-    slides = [(a, "A dot map of the United States, each dot a synthetic voter in blue, red or purple. Headline: the "
-                  "2026 midterms, simulated every day."),
-              (b, "Three steps: statistics set where each race starts; synthetic voters react to the news; each race "
-                  "is played out 40,000 times."),
-              (c, "Not a poll: nobody was asked anything. Every number sits beside the poll average, the prediction "
-                  "markets and the Cook Political Report. 35% to 65% is a toss-up."),
-              (d, "What we post: daily race updates, Sunday special editions, a weekly score including misses, and "
-                  "the making-of until forecasts go public on 12 October.")]
+    d.at_bottom(2 * 42 * 1.25 + 10)
+    d.text("In April we simulated Hungary and missed by 16 points. This time we’re showing our work.", "serif", 600,
+           42)
+    slides = [(a, "A dot map of the United States, each dot a synthetic voter in blue, red or purple. Headline: we're "
+                  "forecasting the 2026 midterms with a society of synthetic voters, every day until 3 November, "
+                  "scored in public."),
+              (b, "Every morning, three steps: start from past results, the economy and the poll average; let the "
+                  "news land on synthetic voters; play each race out 40,000 times."),
+              (c, "Not a poll: nobody was asked anything. Our number always sits beside the poll average, the "
+                  "prediction markets and the Cook Political Report. 35% to 65% is a toss-up."),
+              (d, "Every Monday from 19 October we publish our score against the poll average, the markets and Cook, "
+                  "misses included. In April we simulated Hungary and missed by 16 points.")]
     for s, _ in slides:
-        s.source("NotAPoll by Scalia Studio.")
+        s.source("NotAPoll, by Scalia Studio.")
     caption = (
         "Start here.\n\n"
-        "NotAPoll simulates the 2026 US midterms every day. Synthetic voters, built from real data on how "
-        "groups of Americans vote, react to each day's news. Then we play every Senate race and about 40 House races "
-        "out 40,000 times. The share each side wins is its chance.\n\n"
-        "It is not a poll: nobody was asked anything. That's why every number we post sits beside the poll average, "
-        "the prediction markets and the Cook Political Report, and why we publish our score every week, misses "
-        "included.\n\n"
-        "Until 12 October: the making-of. Then: daily forecasts.\n\n"
+        "We're forecasting the 2026 US midterms with a society of synthetic voters, every day until 3 November, and "
+        "we'll be scored in public.\n\n"
+        "Every morning: past results, the economy and the poll average set where each race starts. Then the day's "
+        "news lands on synthetic voters built from how real groups of Americans vote, and only the people who could "
+        "still change their mind, or still decide whether to vote, move the numbers. Each race is played out 40,000 "
+        "times; the share a candidate wins is their chance.\n\n"
+        "It's not a poll. Nobody was asked anything. So our number never travels alone: it sits beside the poll "
+        "average, the prediction markets and Cook. Every Monday from 19 October we publish how we're doing against "
+        "all of them, misses included.\n\n"
+        "In April we simulated Hungary's election and missed by 16 points. This time we're showing our work, starting "
+        "with Lab notes 01.\n\n"
         f"{LABEL}.\n\n#midterms2026 #elections #socialsimulation #dataviz")
-    thread = [f"Start here: NotAPoll simulates the 2026 US midterms every day. {LABEL}.",
-              "Synthetic voters, built from real data on how groups vote, react to each day's news. Then every race is played "
-              "out 40,000 times; the share each side wins is its chance.",
-              "Nobody is asked anything. So every number sits beside the poll average, prediction markets and "
-              "Cook, and we publish our score weekly, misses included.",
-              f"Making-of posts until 12 October, daily forecasts after that. {SITE}"]
+    thread = [f"We're forecasting the 2026 US midterms with a society of synthetic voters, every day until 3 "
+              f"November, scored in public. {LABEL}.",
+              "Every morning: statistics set where each race starts, the day's news lands on synthetic voters, and "
+              "each race is played out 40,000 times. The share won is the chance.",
+              "Nobody is asked anything. So our number always sits beside the poll average, prediction markets and "
+              "Cook, and every Monday from 19 Oct we publish our record, misses included.",
+              f"In April we simulated Hungary and missed by 16 points. This time we're showing our work. {SITE}"]
     return slides, caption, thread
 
 
