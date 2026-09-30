@@ -161,7 +161,9 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
             problems += [f"{m['code']} event card: {p}" for p in text.check(mv.get("card", ""), caption=False)]
         for name in LAYOUTS:
             n = len(paths) + 1
-            p = racecards.LAYOUTS[name](theme, r).save(out / "slides" / f"{n:02d}-{m['code']}-{name[2:]}.jpg")
+            sl = racecards.LAYOUTS[name](theme, r)
+            problems += [f"{m['code']} {name[2:]} slide: {q}" for q in text.slide_problems(sl)]
+            p = sl.save(out / "slides" / f"{n:02d}-{m['code']}-{name[2:]}.jpg")
             paths.append(p)
             alts[p.name] = (f"{r['state']} {r['office']}: {racecards.verdict(r['p'], racecards.lean(r))}. "
                             f"{racecards.who(r, cap=True)} wins "

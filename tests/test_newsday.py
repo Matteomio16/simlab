@@ -303,6 +303,12 @@ class Cards(unittest.TestCase):
         self.assertEqual(newsday.write_card(self.story, [chat]), "")
         self.assertEqual(chat.calls, 1)
 
+    def test_a_non_event_verdict_goes_to_the_second_model(self):
+        # 30 Sep: DeepSeek called a crypto group's ads against Brown commentary
+        first, second = FakeChat(['{"card": "", "event": false}']), FakeChat(['{"card": "%s", "event": true}' % GOOD])
+        self.assertEqual(newsday.write_card(self.story, [first, second]), GOOD)
+        self.assertEqual((first.calls, second.calls), (1, 1))
+
 
 class Scopes(unittest.TestCase):
     def test_a_national_copy_that_names_the_races_candidates_is_that_races_story_only(self):

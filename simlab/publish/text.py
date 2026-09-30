@@ -12,6 +12,8 @@ from .frame import LABEL
 ALLOWED = ("not a poll", "poll average", "polling average", "polls close", "polls closed", "polls open")
 BANNED = {"poll": r"\bpoll(s|ed|ing|ster|sters)?\b", "survey": r"\bsurvey(s|ed)?\b", "voters say": r"\bvoters say\b",
           "% of voters": r"%\s+of\s+voters"}
+# Never, whatever the context (Matteo, 30 Sep): the markets are "prediction markets" or "markets", never betting.
+NEVER = {"betting": r"\bbet(s|ting|tor|tors)?\b|\bgambl\w*|\bwager\w*|\bbookmakers?\b|\bpunters?\b|\bbookies?\b"}
 
 
 STYLE = {"AI": r"\bAIs?\b|artificial intelligence", "bot": r"\bbots?\b", "LLM": r"\bLLMs?\b",
@@ -34,4 +36,14 @@ def check(s: str, *, caption: bool = True, allow: tuple[str, ...] = ()) -> list[
     for word, pattern in BANNED.items():
         if word not in allow and re.search(pattern, scrubbed):
             out.append(f'uses "{word}" (never for model outputs)')
+    for word, pattern in NEVER.items():
+        if re.search(pattern, low):
+            out.append(f'uses "{word}" (say "prediction markets" or "markets")')
     return out
+
+
+def slide_problems(slide, allow: tuple[str, ...] = ()) -> list[str]:
+    """The same rules for the words drawn on an image (the label strip is part of it, so no label check)."""
+    from matplotlib.text import Text
+    words = " ".join(t.get_text() for t in slide.fig.findobj(Text) if t.get_text().strip())
+    return check(words, caption=False, allow=allow)
