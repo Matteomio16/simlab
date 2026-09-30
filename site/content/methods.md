@@ -55,7 +55,7 @@ or not × a four-year degree or not. Each group carries:
 
 ### News and reactions
 
-Each day's stories come from GDELT and, once set up, Media Cloud. Every story is reduced to a short, neutral event
+Each day's stories come from GDELT and Media Cloud. Every story is reduced to a short, neutral event
 card, with outlet names removed before any model sees it. Stories about polls or forecasts get no reactions, because
 polls already enter through the starting levels and the filter.
 
@@ -93,6 +93,8 @@ predicted.
   every simulated election.
 - **Fade speed:** it also checks how fast news fades, weighing half-lives from about 3 to 11 days.
 - **Surprises:** it flags any state whose polls surprised the forecast in the latest week.
+- **Early vote:** where states publish early-vote counts (North Carolina and Maine now, Iowa and Texas later in
+  October), the real counts check the simulated turnout.
 - **Lean correction:** the model we use for reactions sits slightly on the Republican side of real past opinion
   shifts, by about a quarter of a point per event; a small fixed correction takes that out, re-estimated every week.
 
@@ -186,7 +188,8 @@ the misses are published too. See the [track record](/track-record).
 - MIT Election Lab, via the Harvard Dataverse — historical election results.
 - Wikipedia poll tables, used under CC BY-SA 4.0 with attribution.
 - GDELT — daily news discovery.
-- Media Cloud — planned as a second news source, pending API access.
+- Media Cloud — daily news discovery.
+- State election offices' early-vote files (North Carolina and Maine now; Iowa and Texas from mid-October) — counts only.
 - Kalshi and Polymarket — shown as benchmarks only, never as an input.
 - The Cook Political Report — shown as a benchmark rating only, never as an input.
 

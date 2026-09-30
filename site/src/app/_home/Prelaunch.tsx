@@ -128,7 +128,8 @@ export default function Prelaunch({ today }: { today: string }) {
             <h2 className="mt-2 text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">Every number, beside the benchmarks.</h2>
             <p className="mt-4 max-w-md text-[1.05rem] leading-relaxed text-ink-2">
               Each forecast sits next to four others, and every Monday from October 19 all of them are scored by the same
-              rules. The misses get published too.
+              rules. The misses get published too. Where states publish early-vote counts, the real counts check the
+              simulated turnout.
             </p>
             <Link href="/track-record" className="link mt-5 inline-block font-semibold">How scoring works</Link>
           </div>
