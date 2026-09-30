@@ -2,6 +2,22 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-09-30 (Statistics session): House seats' news uncertainty
+
+- **The House seats now carry news uncertainty like the Senate races** (`simlab/statsday.py`, `simlab/montecarlo.py`;
+  2 tests).
+  - `_levels` builds each seat's four story parts with `house.build`: own switching and turnout, and the nation's.
+  - The parts join the Senate's, and a check that they add up to the headline guards them (tolerance 0.005, since
+    `house.build` rounds margins to 3 decimals).
+  - In each simulated election a seat takes its state's dial draw, the same one as that state's Senate race
+    (Matteo's state layer), plus the shared overall scale and the story draws.
+  - A failure in the House part is noted in the summary and leaves the Senate alone.
+- **Draws keyed by state and by story:** a state's dial deviation and a story's strength now come from their own random
+  streams, so adding the House (or a new race or story) never changes another race's draws. This moved the Senate's
+  draws once, by Monte Carlo noise.
+- Before the first House stories (from 1 Oct), the seats take the nation's stories; on 29 Sep the headline sits about
+  0.03 seats from the twin.
+
 ## 2026-09-29 night (Statistics session): Matteo's answers on the floor, story strength and CLAUDE.md
 
 - **Correlation floor (D23):** 0.25 among Senate races only, on the polling and fundamentals error, never the news. A
