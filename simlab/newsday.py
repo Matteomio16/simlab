@@ -298,6 +298,16 @@ LABEL_QS = {
 }
 GATE_Q = {"relevant": NEWS_QUESTIONS["relevant"]}
 LABEL_FIELDS = ("gate", "type", "helps_face", "fires_up", "puts_off", "salience")
+# A national story is gated for every simulated race (about 55 from 12 Oct) and a race takes at most 3 a day, while
+# Media Cloud and GDELT bring 300-400 a day (30 Sep): only the best-covered new ones are labeled. A story left out is
+# looked at again while it stays in the news.
+NATIONAL_LABELED = 50
+
+
+def no_labels(**flag) -> dict:
+    """Labels of a story not labeled today: no gate, so never selected."""
+    return {"gate": {}, "type": "other", "helps_face": "unclear", "fires_up": {"D": 0.0, "R": 0.0},
+            "puts_off": {"D": 0.0, "R": 0.0}, "salience": 0.0, **flag}
 
 
 def strip_outlets(title: str, names: list[str]) -> str:
@@ -590,14 +600,18 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     known = load_known(derived_root, day)
     stories = carry_over(make_stories(arts), known)
     views = load_pageviews(snap_root, day)
-    fresh = [s for s in stories if s["known"] is None or s["known"].get("label_error")]
+    fresh = [s for s in stories
+             if s["known"] is None or s["known"].get("label_error") or s["known"].get("unlabeled")]
+    nat = sorted((s for s in fresh if s["race_id"] == "US"),
+                 key=lambda s: (-attention(s, spike_ratio(views, "US"))["a"], -s["articles"], s["event_id"]))
+    skipped = {s["event_id"] for s in nat[NATIONAL_LABELED:]}
+    fresh = [s for s in fresh if s["event_id"] not in skipped]
 
     def safe_label(s):
         try:
             return label(s, asker, national_races)
         except Exception:  # failed after its retries: no labels today, asked again tomorrow
-            return {"gate": {}, "type": "other", "helps_face": "unclear", "fires_up": {"D": 0.0, "R": 0.0},
-                    "puts_off": {"D": 0.0, "R": 0.0}, "salience": 0.0, "label_error": True}
+            return no_labels(label_error=True)
     with ThreadPoolExecutor(16) as ex:
         fresh_labels = dict(zip([s["event_id"] for s in fresh], ex.map(safe_label, fresh)))
     events, private, new, carried = [], [], 0, set()
@@ -606,7 +620,8 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         new += k is None
         if k:
             carried.add(s["event_id"])
-        labels = fresh_labels.get(s["event_id"]) or {f: k[f] for f in LABEL_FIELDS}
+        labels = fresh_labels.get(s["event_id"]) or (no_labels(unlabeled=True) if s["event_id"] in skipped
+                                                     else {f: k[f] for f in LABEL_FIELDS})
         if POLLISH.search(s["title"]) or POLLISH.search(s["titles"][0]):
             labels = {**labels, "type": "poll"}
         national = s["race_id"] == "US"
@@ -653,7 +668,7 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     return {"articles": len(arts), "stories": len(events), "new": new, "carried": len(events) - new,
             "continued": len(cont),
             "selected": {r: sum(bool(e["selected"].get(r)) for e in events) for r in races + ["US"]},
-            "cards_written": written, "cards_failed": failed}
+            "cards_written": written, "cards_failed": failed, "unlabeled": len(skipped)}
 
 
 def main() -> None:

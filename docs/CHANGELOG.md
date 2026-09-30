@@ -95,6 +95,14 @@ queries, with 1-11 stories each from the last day, then refused the rest: its li
   races and the nation every 6 hours and the House groups every 12. That frees about 60 GDELT answers a day.
 - Media Cloud's times now keep their hour. The API writes "2026-09-30 03:21:43"; before this fix every story was
   dated midnight of its publish day.
+- The news step labels only the 50 best-covered new national stories a day. Each national story is gated for every
+  simulated race (about 55 from 12 Oct), and a race takes at most 3. Without the limit, the full run would cost about
+  $0.28 a day more.
+- Spend projection (`docs/rehearsal.md`): $1.91 spent of the key's $20 cap, and about $12-13 by 3 Nov. If the 7 Oct
+  rehearsal costs more than $0.90, Matteo raises the cap on 10 Oct.
+- The news job was down from 29 Sep 23:45 to 30 Sep 09:00 UTC: the House groups imported polls (numpy), and the news
+  job installs requests alone. Fixed, with a test that runs its code with numpy blocked. The first scheduled day's
+  news starts at 09:30 UTC on 30 Sep, so nothing is lost.
 
 ## 2026-09-29 night (Engine session): Matteo's answers on the full run
 
