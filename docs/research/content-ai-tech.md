@@ -65,7 +65,7 @@ Read-only web research, public sources only. Dates are publication dates of the 
 - X open-sourced its recommendation algorithm on GitHub in Jan 2026 (Musk announced Jan 10; code published ~Jan 11; pledged updates every 4 weeks). [Bloomberg 1/10/26](https://www.bloomberg.com/news/articles/2026-01-10/elon-musk-says-x-to-make-its-algorithm-open-source-in-seven-days), [TechCrunch 1/20/26](https://techcrunch.com/2026/01/20/x-open-sources-its-algorithm-while-facing-a-transparency-fine-and-grok-controversies)
 - Third-party analyses of that code report posts with outbound links get substantially fewer impressions than native posts, and that X Premium reduces the penalty; exact percentages (commonly cited ~50–70%) are **[unverified]**, from independent code-reading blogs rather than X itself.
 - Video and longer watch/dwell time are reported as weighted favorably in ranking.
-- Practical takeaway: post charts/video natively; put the link (notapoll.org, or labs.scaliastudio.dev/midterms) in a reply rather than the main post.
+- Practical takeaway: post charts/video natively; put the link (notapoll.org) in a reply rather than the main post.
 
 **Bluesky**
 - Roughly 43.5–46M registered users by Apr–Aug 2026 (from ~10M in late 2024), with an estimated 1.5–3M daily actives (~8–9% of registered users). [SocialPilot 2026](https://www.socialpilot.co/blog/bluesky-statistics), [Proxidize 2026](https://proxidize.com/blog/bluesky-user-count-2026/)

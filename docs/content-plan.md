@@ -16,10 +16,9 @@ Decided by Matteo, 28 Sep:
 - Name: **NotAPoll.org**. Handles: @notapoll.org on Instagram (Creator account) and Threads, @notapoll on X,
   @notapoll.org on Bluesky (verified with a `_atproto` TXT record in Cloudflare).
 - Domain (Matteo, 28 Sep, evening; relayed by the roadmap session): Matteo bought notapoll.org on his Cloudflare
-  account. Images and videos show "notapoll.org" (the header wordmark reads NotAPoll.org). The website comes later; the
-  social accounts come first, for making-of posts from about 3 Oct. The Scalia-side address is
-  labs.scaliastudio.dev/midterms (Matteo, 28 Sep; it replaces research.scaliastudio.dev). Setup steps:
-  `docs/accounts-setup.md`.
+  account. Images and videos show "notapoll.org" (the header wordmark reads NotAPoll.org). notapoll.org is the site's
+  home: the launch page from 3 Oct, the forecast from 12 Oct; labs.scaliastudio.dev/midterms redirects there (Matteo,
+  29–30 Sep; CLAUDE.md §5). Setup steps: `docs/accounts-setup.md`.
 - Scheduling: free only. Buffer's free plan (3 channels, 10 queued posts each) for X, Threads and Bluesky; Instagram
   through its own scheduler (the app or Meta Business Suite).
 
