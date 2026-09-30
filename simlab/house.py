@@ -324,8 +324,8 @@ def build(base: dict, levels_json: dict, paths: dict | None = None, election: da
     races = {}
     for rid in s.index:
         sd_f = SD_CLOSE if abs(fund[rid]) < CLOSE else SD_SAFE
-        row = {"margin": round(float(fund[rid]), 3), "sd": sd_f, "w_polls": 0.0, "poll_margin": None,
-               "story_effect": 0.0, "story_effect_3nov": 0.0, "fundamentals": round(float(fund[rid]), 3),
+        row = {"margin": float(fund[rid]), "sd": sd_f, "w_polls": 0.0, "poll_margin": None,
+               "story_effect": 0.0, "story_effect_3nov": 0.0, "fundamentals": float(fund[rid]),
                "n_polls": 0, "last_poll": None}
         if s.fixed[rid] not in ("D", "R"):
             rp = rows[rows.race == rid]
@@ -340,18 +340,18 @@ def build(base: dict, levels_json: dict, paths: dict | None = None, election: da
                 r_poll, v_poll = float(rx[-1]), float(rv[-1] + q_r * d + sb ** 2)
                 poll_margin = n_now + r_poll + now(rid)
             r_t, var_r, w = levels.blend(r_poll, v_poll, float(fund[rid]) - n_now, sd_f)
-            row.update(margin=round(n_now + r_t + eday(rid), 3), sd=round(float(np.sqrt(var_r)), 3), w_polls=round(w, 3),
-                       poll_margin=None if poll_margin is None else round(poll_margin, 3),
-                       story_effect=round(now(rid), 3), story_effect_3nov=round(eday(rid), 3), n_polls=int(len(rp)),
+            row.update(margin=n_now + r_t + eday(rid), sd=float(np.sqrt(var_r)), w_polls=float(w),
+                       poll_margin=None if poll_margin is None else poll_margin,
+                       story_effect=now(rid), story_effect_3nov=eday(rid), n_polls=int(len(rp)),
                        last_poll=str(max(rp.mid)) if len(rp) else None)
         races[rid] = row | {"fixed": s.fixed[rid] if s.fixed[rid] in ("D", "R") else None, "tier": tier.get(rid),
                             "state": s.state[rid],
                             "region": DIVISION[s.state[rid]],
-                            "components": {"lean": round(B_LEAN * (s.pres24[rid] - NATIONAL_PRES24), 3),
-                                           "incumbency": round(PSI * s.inc[rid] * (REDRAWN_PSI if s.new_map[rid] else 1), 3),
-                                           "anchor": round(c, 3), "national_house_vote": E}}
+                            "components": {"lean": B_LEAN * (s.pres24[rid] - NATIONAL_PRES24),
+                                           "incumbency": float(PSI * s.inc[rid] * (REDRAWN_PSI if s.new_map[rid] else 1)),
+                                           "anchor": c, "national_house_vote": E}}
     national = {k: levels_json[k] for k in ("date", "schema", "days_to_election", "national") if k in levels_json}
-    return national | {"office": "house", "units": levels_json.get("units"), "anchor_c": round(c, 3),
+    return national | {"office": "house", "units": levels_json.get("units"), "anchor_c": c,
                        "params": {"b_lean": B_LEAN, "psi": PSI, "redrawn_psi": REDRAWN_PSI, "sd_close": SD_CLOSE,
                                   "sd_safe": SD_SAFE, "uncontested_turnout": UNCONTESTED_TURNOUT}, "races": races}
 
@@ -435,10 +435,19 @@ def prepare(day: date, data: Path, levels_json: dict, snap: Path | None = None, 
     return base
 
 
+def rounded(x, places: int = 3):
+    """Floats rounded for the file only; build() keeps full precision, so the parts add up to the headline exactly."""
+    if isinstance(x, dict):
+        return {k: rounded(v, places) for k, v in x.items()}
+    if isinstance(x, list):
+        return [rounded(v, places) for v in x]
+    return round(x, places) if isinstance(x, float) else x
+
+
 def write(base: dict, house_levels: dict, out: Path) -> None:
     """house_levels.json (the given build), house_races.json, house_groups.json and house_polls.csv into `out`."""
     out.mkdir(parents=True, exist_ok=True)
-    (out / "house_levels.json").write_text(json.dumps(house_levels, indent=1), encoding="utf-8")
+    (out / "house_levels.json").write_text(json.dumps(rounded(house_levels), indent=1), encoding="utf-8")
     (out / "house_races.json").write_text(json.dumps({"date": base["day"].isoformat(), **base["races"]}, indent=1),
                                           encoding="utf-8")
     (out / "house_groups.json").write_text(json.dumps(base["groups"], indent=1), encoding="utf-8")
@@ -449,7 +458,7 @@ def summary(base: dict) -> dict:
     s, r = base["seats"], base["races"]
     return {"seats": len(s), "checked": int(s.checked.sum()), "uncontested": int(s.fixed.notna().sum()),
             "with_polls": sum(x["n_polls"] > 0 for x in base["twin"]["races"].values()), "polls": int(len(base["polls"])),
-            "anchor_c": base["twin"]["anchor_c"], "expected_d_seats": round(sum(x["p_dem_stats"] for x in r.values()), 1),
+            "anchor_c": round(base["twin"]["anchor_c"], 3), "expected_d_seats": round(sum(x["p_dem_stats"] for x in r.values()), 1),
             "d_favoured": sum(x["p_dem_stats"] > 0.5 for x in r.values()),
             "tiers": pd.Series({k: x["tier"] for k, x in r.items()}).value_counts().to_dict(),
             "groups": len(base["groups"]) - 4}
