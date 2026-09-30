@@ -70,26 +70,29 @@ for the day stays as it was, and a rehearsal is never published.
 If the spend comes near $2 or the job runs past about 2 hours, Engine raises the per-run cap or the thread count
 before 12 Oct and tells Matteo.
 
-## Spend and the OpenRouter key's $20 cap (projection of 30 Sep)
+## Spend and the OpenRouter key's $20 cap (projection of 30 Sep, after the test run)
 
-Spent so far: $1.91 of the $20 cap (OpenRouter's own count for the key, 30 Sep 09:30 UTC). The 29 Sep pilot-scale run
-cost $0.07.
+Spent so far: about $2.25 of the $20 cap (OpenRouter's own count for the key was $1.91 at 09:30 UTC on 30 Sep, before
+that day's test run and GLM check). The 30 Sep pilot-scale test run cost $0.135: news $0.03, reactions $0.105.
 
 | Period | Per day | Days | Total |
 | --- | --- | --- | --- |
-| Pilot and dry runs, 1-11 Oct (5 races, drills mostly cached) | about $0.10 | 11 | about $1.10 |
-| Full-scale rehearsal, 7 Oct (every story new) | about $0.60 | 1 | about $0.60 |
-| Full run, 12 Oct - 3 Nov (35 Senate races, ~40 House seats) | about $0.35-0.40 | 23 | about $8-9 |
-| Total by 3 Nov, with what is spent | | | about $12-13 of $20 |
+| Pilot and dry runs, 1-11 Oct (5 races, drills mostly cached) | about $0.10-0.14 | 11 | about $1.30 |
+| Full-scale rehearsal, 7 Oct (every story new) | about $1.10 | 1 | about $1.10 |
+| Full run, 12 Oct - 3 Nov (35 Senate races, ~40 House seats) | about $0.70-0.77 | 23 | about $16-18 |
+| Total by 3 Nov, with what is spent | | | about $21, over the $20 cap |
 
-- **Unit costs** (spend ledger): GLM $0.00005 per group row (4 prompts); Jev $0.000014 per gate and $0.00006 per set
-  of labels; DeepSeek $0.00004 per card.
-- **Biggest lever:** a national story is gated for every simulated race. Since 30 Sep, only the 50 best-covered new
-  national stories a day are labeled; a race takes at most 3. Without that limit, Media Cloud's 300-400 national
-  stories a day would add about $0.28 a day, about $19 by 3 Nov.
-- **Checks:** each pilot day's `run.json` → `spend`, and the 7 Oct rehearsal as the full run's first and busiest day.
-  If the rehearsal costs more than $0.90, the full run would pass about $18 by 3 Nov: Matteo raises the cap on Sat
-  10 Oct (roadmap).
+- **GLM now reasons.** Since about 30 Sep its hosts require reasoning ("mandatory for this endpoint"), 11-36 tokens
+  a call. A group row (4 prompts) costs $0.000134, against $0.00005 on 29 Sep. Its answers held: re-asked the 64
+  historical events of 27 Sep, they correlate 0.96 with the old ones (training) and 0.94 (held-out), with the same
+  direction on 92% and 93% of the events that moved opinion.
+- **Other unit costs** (spend ledger): Jev $0.000014 per gate and $0.00006 per set of labels; DeepSeek $0.00004 per
+  card.
+- **Biggest lever already used:** a national story is gated for every simulated race, so only the 50 best-covered new
+  national stories a day are labeled (a race takes at most 3). Without it the full run would cost about $0.28 a day
+  more.
+- **Decision for Matteo:** raise the key's cap to $30 before 12 Oct (roadmap, Sat 10 Oct); that leaves about $9 of
+  margin. The 7 Oct rehearsal's spend confirms the full run's daily figure.
 
 ## Who checks what
 

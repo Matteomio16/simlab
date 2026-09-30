@@ -98,8 +98,14 @@ queries, with 1-11 stories each from the last day, then refused the rest: its li
 - The news step labels only the 50 best-covered new national stories a day. Each national story is gated for every
   simulated race (about 55 from 12 Oct), and a race takes at most 3. Without the limit, the full run would cost about
   $0.28 a day more.
-- Spend projection (`docs/rehearsal.md`): $1.91 spent of the key's $20 cap, and about $12-13 by 3 Nov. If the 7 Oct
-  rehearsal costs more than $0.90, Matteo raises the cap on 10 Oct.
+- Spend projection (`docs/rehearsal.md`, revised after the 30 Sep test run): about $21 by 3 Nov, over the key's $20
+  cap. GLM's hosts now require reasoning (11-36 tokens a call), so a group row costs $0.000134 instead of $0.00005.
+  Its answers held (the 27 Sep event questions re-asked: correlation 0.96 on training, 0.94 held-out). Recommended:
+  Matteo raises the cap to $30 before 12 Oct.
+- 30 Sep test run (pilot, run 36699321950): every step ok in 8 minutes; Kev's shadow rows ran on Actions (812, 0
+  failed); orphaned, deselected and ungrouped all 0; caps held. Ohio got no race story: 26 were relevant and none got
+  a card, because DeepSeek called real events commentary. A story is now dropped as a non-event only when DeepSeek and
+  GLM both say so (on 40 top pilot stories: 16 cards instead of 12).
 - The news job was down from 29 Sep 23:45 to 30 Sep 09:00 UTC: the House groups imported polls (numpy), and the news
   job installs requests alone. Fixed, with a test that runs its code with numpy blocked. The first scheduled day's
   news starts at 09:30 UTC on 30 Sep, so nothing is lost.
