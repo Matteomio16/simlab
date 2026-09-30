@@ -43,7 +43,7 @@ PowerShell sets variables with `$env:SITE_MODE = "forecast"; npm run dev`.
 3. **GitHub secrets** (github.com/Matteomio16/simlab → Settings → Secrets and variables → Actions → Secrets):
    `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The next push to `site/` deploys the preview; its address
    (`notapoll-preview.<your-subdomain>.workers.dev`) is in the workflow log.
-4. **Go live on 3 Oct.** First remove the rule that sends notapoll.org to Instagram (Rules → Redirect Rules in the notapoll.org zone). Then, in the same GitHub tab → Variables: `SITE_DEPLOY` = `on`, `SITE_MODE` = `prelaunch`. Then Actions → Site →
+4. **Go live on 3 Oct** (same GitHub tab → Variables): `SITE_DEPLOY` = `on`, `SITE_MODE` = `prelaunch`. Then Actions → Site →
    Run workflow. The first deploy attaches notapoll.org and www.notapoll.org to the Worker and creates their DNS
    records. If the dashboard already has an A, AAAA or CNAME record on `notapoll.org` or `www`, delete it first. Leave
    the MX and TXT records (email routing, Bluesky) alone.
@@ -66,7 +66,7 @@ PowerShell sets variables with `$env:SITE_MODE = "forecast"; npm run dev`.
 - [ ] Lab note 01 approved and imported (`node scripts/import-labnote.mjs 01`), or the page says the first note is coming.
 - [ ] Social links switched on in `src/lib/site.ts` for the accounts that exist.
 - [ ] `hello@notapoll.org` forwards to Matteo (Email Routing).
-- [ ] Cloudflare: token and account ID in GitHub secrets; the notapoll.org → Instagram redirect removed.
+- [x] Cloudflare: token and account ID in GitHub secrets (29 Sep).
 - [ ] GitHub variables: `SITE_DEPLOY` = `on`, `SITE_MODE` = `prelaunch`; run the Site workflow; check notapoll.org and www.
 - [ ] Redirect from labs.scaliastudio.dev/midterms to notapoll.org (rule and proxied record in the scaliastudio.dev zone).
 

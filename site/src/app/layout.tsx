@@ -13,7 +13,7 @@ const franklin = Libre_Franklin({ variable: "--font-franklin", subsets: ["latin"
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: { default: "NotAPoll.org: 2026 Senate forecast by social simulation", template: "%s · NotAPoll.org" },
+  title: { default: "NotAPoll.org: the 2026 midterms, simulated every day", template: "%s · NotAPoll.org" },
   description:
     "A forecast of the 2026 US midterms built by social simulation: synthetic voters react to each day's news, and every number sits beside the poll average, the market and Cook. Not a poll.",
   openGraph: { siteName: SITE.name, type: "website", locale: "en_US" },
