@@ -24,13 +24,14 @@ def post_folder(d: Path, slides, caption: str, thread: list[str], allow=()) -> l
     d.mkdir(parents=True, exist_ok=True)
     for old in d.glob("slide-*.jpg"):
         old.unlink()
+    drawn = [f"slide {i}: {p}" for i, (s, _) in enumerate(slides, 1) for p in text.slide_problems(s, allow)]
     paths = [s.save(d / f"slide-{i}.jpg") for i, (s, _) in enumerate(slides, 1)]
     contact_sheet(paths, d / "contact.jpg", scale=0.3)
     (d / "caption.txt").write_bytes(caption.encode("utf-8"))
     (d / "thread.txt").write_bytes("\n\n---\n\n".join(thread).encode("utf-8"))
     (d / "alt-text.txt").write_bytes("\n".join(f"slide-{i}.jpg: {alt}" for i, (_, alt) in enumerate(slides, 1))
                                      .encode("utf-8"))
-    problems = [f"caption: {p}" for p in text.check(caption, allow=allow)]
+    problems = drawn + [f"caption: {p}" for p in text.check(caption, allow=allow)]
     problems += [f"caption: {len(caption)} characters" for _ in [0] if len(caption) > 2200]
     problems += [f"thread {i}: {p}" for i, t in enumerate(thread, 1)
                  for p in text.check(t, caption=i == 1, allow=allow)]

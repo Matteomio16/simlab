@@ -178,7 +178,7 @@ def pinned(t=LAB):
     c.text("Our voters are synthetic. They stand in for groups of people; they are not people.", px=38,
            color=t.ink2, after=1.0)
     c.text("So every number we post sits beside three others:", "serif", 600, 44, after=0.5)
-    for item in ("the poll average", "the betting markets", "the Cook Political Report"):
+    for item in ("the poll average", "the prediction markets", "the Cook Political Report"):
         c.text(f"—  {item}", px=40, after=0.3)
     c.y += 30
     c.text("Anything from 35% to 65% we call a toss-up.", "serif", 600, 44)
@@ -201,7 +201,7 @@ def pinned(t=LAB):
                   "2026 midterms, simulated every day."),
               (b, "Three steps: statistics set where each race starts; synthetic voters react to the news; each race "
                   "is played out 40,000 times."),
-              (c, "Not a poll: nobody was asked anything. Every number sits beside the poll average, the betting "
+              (c, "Not a poll: nobody was asked anything. Every number sits beside the poll average, the prediction "
                   "markets and the Cook Political Report. 35% to 65% is a toss-up."),
               (d, "What we post: daily race updates, Sunday special editions, a weekly score including misses, and "
                   "the making-of until forecasts go public on 12 October.")]
@@ -213,14 +213,14 @@ def pinned(t=LAB):
         "groups of Americans vote, react to each day's news. Then we play every Senate race and about 40 House races "
         "out 40,000 times. The share each side wins is its chance.\n\n"
         "It is not a poll: nobody was asked anything. That's why every number we post sits beside the poll average, "
-        "the betting markets and the Cook Political Report, and why we publish our score every week, misses "
+        "the prediction markets and the Cook Political Report, and why we publish our score every week, misses "
         "included.\n\n"
         "Until 12 October: the making-of. Then: daily forecasts.\n\n"
         f"{LABEL}.\n\n#midterms2026 #elections #socialsimulation #dataviz")
     thread = [f"Start here: NotAPoll simulates the 2026 US midterms every day. {LABEL}.",
               "Synthetic voters, built from real data on how groups vote, react to each day's news. Then every race is played "
               "out 40,000 times; the share each side wins is its chance.",
-              "Nobody is asked anything. So every number sits beside the poll average, the betting markets and "
+              "Nobody is asked anything. So every number sits beside the poll average, prediction markets and "
               "Cook, and we publish our score weekly, misses included.",
               f"Making-of posts until 12 October, daily forecasts after that. {SITE}"]
     return slides, caption, thread

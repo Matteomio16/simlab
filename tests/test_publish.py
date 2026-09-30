@@ -101,6 +101,11 @@ class TextCheckTest(unittest.TestCase):
             reel.reveal(s, r)
             self.assertEqual(s.layout_problems(), [], name)
 
+    def test_never_betting(self):
+        for s in ("the betting markets", "bettors", "a bet", "gamblers", "wagers"):
+            self.assertTrue(text.check(s, caption=False, allow=("betting",)), s)  # allow can't lift it
+        self.assertEqual(text.check("prediction markets and markets", caption=False), [])
+
     def test_opponent_wording(self):
         from simlab.publish import racecards as rc
         from simlab.publish.themes import LAB

@@ -136,7 +136,7 @@ Total cost of these tests: $1.52. The forecast goes public on Monday 12 October.
         "2024, so statistics and the poll average set each race's starting numbers. Group splits come from a model we trained on "
         "real survey answers.",
         "Total cost of the tests: $1.52. The forecast goes public on 12 October; the making-of runs daily until then.",
-    ], allow=("survey",))  # "survey answers" are the real respondents Kev learned from, not a model output
+    ], allow=("survey", "poll"))  # real survey answers (Kev's training data) and real polls (slide 5's weekly check)
 
 
 def ep02(theme: Theme = LAB) -> Post:

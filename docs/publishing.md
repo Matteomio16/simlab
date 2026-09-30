@@ -44,7 +44,7 @@ page and for Lab notes that are about a specific model; `text.style()` flags the
 
 | Say | Avoid | Never (rules) |
 | --- | --- | --- |
-| social simulation, synthetic voters, simulated voters, the simulated electorate, simulated elections, the simulation | AI voters, bots, LLM, agents, AI-simulated | poll, survey, voters say, % of voters, respondents, anything implying real people answered |
+| social simulation, synthetic voters, simulated voters, the simulated electorate, simulated elections, the simulation; prediction markets, markets | AI voters, bots, LLM, agents, AI-simulated | poll, survey, voters say, % of voters, respondents, anything implying real people answered; betting, bets, bettors, gambling, wagers, bookies (Matteo, 30 Sep) |
 
 "Virtual interactions" only once voters actually interact: today each group reacts on its own (no social-network layer
 in `docs/engine-design.md`). "Synthetic" or "simulated" must stay in every post, so no reader mistakes the voters for
@@ -56,7 +56,7 @@ real people.
 | --- | --- |
 | `frame.py` | The canvas (1080×1350), fonts, typesetting (curly apostrophes, minus signs), line breaks. `save()` refuses a missing glyph, text outside the margins, content running into the footer, or the wrong size |
 | `charts.py` | Stat tiles, question rows, horizontal bars, dumbbells |
-| `text.py` | Rule check for captions and posts: the label, and no "poll", "survey", "voters say" or "% of voters" for model outputs |
+| `text.py` | Rule check for captions, threads, alt text and the words drawn on slides: the label, no "poll", "survey", "voters say" or "% of voters" for model outputs, and never "betting" or its kin |
 | `specials.py` | The five special editions: `python -m simlab.publish.specials` → `kits/specials/` |
 | `labnotes.py` | The making-of series: `python -m simlab.publish.labnotes 1 2 3` → `kits/labnotes/NN/` (slides, contact sheet, `post.md`) |
 | `kit.py` | The daily kit from the forecast file (below) |
