@@ -47,10 +47,7 @@ def state_name(race_id: str) -> str | None:
     """The race's state; a House seat's from its id (the seats come from the daily races.json, not newsraces.json)."""
     if race_id in STATE_NAME:
         return STATE_NAME[race_id]
-    if newsraces.is_house(race_id):
-        from .polls import STATE_NAMES
-        return STATE_NAMES.get(race_id[:2])
-    return None
+    return newsraces.STATE_NAMES.get(race_id[:2]) if newsraces.is_house(race_id) else None
 
 
 def personas(race_id: str) -> list[dict]:

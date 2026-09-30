@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 import tempfile
 import unittest
 from datetime import datetime, timezone
@@ -106,6 +108,21 @@ class House(unittest.TestCase):
         seven_hours_ago = datetime(2026, 10, 12, 5, 0, tzinfo=timezone.utc)
         last = {"gdelt-oh-h": seven_hours_ago, "gdelt-ga": seven_hours_ago}
         self.assertEqual(newsnap.due(["oh-h", "ga"], last, NOW), ["ga"])
+
+
+class Environment(unittest.TestCase):
+    def test_the_news_job_runs_with_requests_alone(self):
+        # news.yml installs requests only; on 29-30 Sep the House groups pulled in polls -> numpy and every run failed
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "races.json"
+            p.write_text(json.dumps(House.RACES), encoding="utf-8")
+            code = ("import sys; sys.modules['numpy'] = sys.modules['pandas'] = sys.modules['scipy'] = None\n"
+                    "from pathlib import Path\nfrom simlab import newsnap\n"
+                    f"p = Path({str(p)!r})\n"
+                    "print(len(newsnap.queries(p)), len(newsnap.queries(p, 'mediacloud')), len(newsnap.first_races(p)))")
+            out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True,
+                                 cwd=Path(newsnap.__file__).parents[1])
+        self.assertEqual(out.returncode, 0, out.stderr[-600:])
 
 
 class MediaCloud(unittest.TestCase):

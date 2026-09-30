@@ -22,6 +22,17 @@ PARTY = {"D": "Democrat", "I": "independent", "O": "other party", "R": "Republic
 CONTEXT = {"senate": "(Senate OR election OR campaign)", "house": "(Congress OR House OR election OR campaign)"}
 SUFFIXES = {"Jr.", "Jr", "Sr.", "Sr", "II", "III", "IV"}
 HOUSE_ID = re.compile(r"[A-Z]{2}-(\d+|AL)")  # TX-28, AK-AL (OH-S is a Senate special)
+# polls.STATE_NAMES without polls' numpy and pandas: the news job installs requests alone (30 Sep)
+STATE_NAMES = {
+    "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas", "CA": "California", "CO": "Colorado",
+    "CT": "Connecticut", "DE": "Delaware", "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho",
+    "IL": "Illinois", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas", "KY": "Kentucky", "LA": "Louisiana",
+    "ME": "Maine", "MD": "Maryland", "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota",
+    "MS": "Mississippi", "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada", "NH": "New Hampshire",
+    "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York", "NC": "North Carolina", "ND": "North Dakota",
+    "OH": "Ohio", "OK": "Oklahoma", "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island",
+    "SC": "South Carolina", "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah", "VT": "Vermont",
+    "VA": "Virginia", "WA": "Washington", "WV": "West Virginia", "WI": "Wisconsin", "WY": "Wyoming"}
 
 
 def is_house(race_id: str) -> bool:
@@ -57,7 +68,6 @@ def seat(race: dict) -> str:
 
 
 def describe(race: dict) -> dict:
-    from .polls import STATE_NAMES
     state, pairs = STATE_NAMES[race["state"]], sides(race)
     who = " vs ".join(f"{n} ({PARTY[p]})" for n, p in pairs)
     if race["office"] == "house":
@@ -73,7 +83,6 @@ def house(races: dict) -> dict:
     """The simulated House seats in races.json ({seat: its description and `group`}) and one group per state
     ("OH-H": the seats, their text, one query with every seat's candidates). A seat without listed candidates is kept
     for national stories but adds nothing to the query; a state whose seats list none gets no group."""
-    from .polls import STATE_NAMES
     out, by_state = {}, {}
     rows = [(rid, r) for rid, r in races.items()
             if isinstance(r, dict) and r.get("office") == "house" and r.get("tier") == "simulate"]
