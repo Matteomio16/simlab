@@ -18,7 +18,7 @@
 | Kev fine-tune and serving | Kev repo's `kev_modal.py` (train on H100, serve on L40S, scale to zero) | Modal GPU | $5–25, inside free credit |
 | Raw snapshots, cache exports | a private GitHub data repo (small files; aggregates, not raw voter files) | GitHub | $0 |
 | Public data and post images | served by the site itself (no R2 for now) | Cloudflare | $0 |
-| Website | Cloudflare Worker with static assets at `labs.scaliastudio.dev/midterms` (was research.; Matteo, 28 Sep), linked from Scalia | Cloudflare | $0 |
+| Website | Cloudflare Worker with static assets at `notapoll.org`, with `labs.scaliastudio.dev/midterms` redirecting there (Matteo, 29 Sep), linked from Scalia | Cloudflare | $0 |
 | Scheduling | GitHub Actions in a public repo for the daily CPU jobs (unlimited minutes); Modal for GPU jobs | GitHub, Modal | $0 |
 | Instagram | Meta Business Suite by hand, then the Instagram API with Instagram Login (own account, no app review) | — | $0 |
 | X | x.com's free scheduler by hand, then Buffer's free plan; never paid X API credits | — | $0 |
@@ -467,7 +467,7 @@ publishes no exact numbers (see claude.ai/settings/usage).
 ## 13. Decisions
 
 Decided by Matteo on 27 Sep (also in CLAUDE.md section 5):
-- Site at `labs.scaliastudio.dev/midterms` (was research.; Matteo, 28 Sep). notapoll.org's own site comes later.
+- Site at `notapoll.org` (launch page from 3 Oct, forecast from 12 Oct); `labs.scaliastudio.dev/midterms` redirects there (Matteo, 29 Sep).
 - Publishing is free only: Instagram by hand then its official API; X by hand then Buffer's free plan; Threads and
   Bluesky optional; accounts created later.
 - No R2 for now. One public repo holds the engine code, workflows and published forecasts (unlimited free minutes,

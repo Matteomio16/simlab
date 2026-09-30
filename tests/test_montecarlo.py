@@ -373,6 +373,26 @@ class HouseTest(unittest.TestCase):
         self.assertGreater(np.mean(d["seats"]["house"]["D"]), np.mean(d["stats_only"]["seats"]["house"]["D"]) + 0.5)
         self.assertGreater(f["house"]["races"]["NC-1"]["p_dem_win"], 0.8)
 
+    def test_a_seat_shares_its_states_news_draw_with_the_senate_race(self):
+        news = {"switching": {"NC": 2.0, "NC-1": 2.0}, "turnout": {}, "unit": {"NC": "NC", "NC-1": "NC"},
+                "posterior": {"labels": ["national"], "mean": [1.0, 1.0], "cov": [[1e-10, 0.0], [0.0, 1e-10]]},
+                "tau": [0.5, 0.5]}
+        run = lambda nw: mc.build(levels(), levels(), {"NC": "D", "OH-S": "D", "NE": "I"}, PARAMS, date(2026, 9, 28),
+                                  "run-1", not_up={"R": 48, "D": 47, "I": 2}, n=20000, news=nw, house=house())[1]
+        on, off = run(news), run({k: v for k, v in news.items() if k not in ("switching",)} | {"switching": {}})
+        dev = lambda d, key, r: np.array(d[key][r]) - np.array(off[key][r])
+        self.assertGreater(np.corrcoef(dev(on, "races", "NC"), dev(on, "house_races", "NC-1"))[0, 1], 0.99)
+        self.assertEqual(on["races"]["OH-S"], off["races"]["OH-S"])
+
+    def test_adding_units_and_stories_leaves_the_others_draws_alone(self):
+        news = {"posterior": {"labels": ["national"], "mean": [1.0, 1.0], "cov": [[0.1, 0.0], [0.0, 0.1]]},
+                "tau": [0.3, 0.5]}
+        a, b = mc._dials(news, ["NC", "OH", "US"], 100, 7)[1], mc._dials(news, ["CA", "NC", "OH", "US"], 100, 7)[1]
+        np.testing.assert_array_equal(a[:, :2], b[:, 1:3])
+        s1 = mc.story_noise({"NC": {"e1": 1.0}}, ["NC"], 0.4, 100, 7)
+        s2 = mc.story_noise({"NC": {"e1": 1.0}, "CA-22": {"a0": 1.0}}, ["NC", "CA-22"], 0.4, 100, 7)
+        np.testing.assert_array_equal(s1[:, 0], s2[:, 0])
+
     def test_today_view_of_the_house(self):
         out = mc.attach_today(self.build(house())[0], self.build(house(nc1=8.0))[0])
         now = self.build(house(nc1=8.0))[0]["house"]

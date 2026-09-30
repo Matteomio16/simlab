@@ -4,6 +4,7 @@ import tempfile
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest import mock
 
 from simlab import newsday
 
@@ -395,6 +396,23 @@ class Run(unittest.TestCase):
             self.assertNotIn("titles", e)
         self.assertEqual({p["event_id"] for p in private}, {e["event_id"] for e in events})
         self.assertTrue(all(e["card"] for e in events if e["selected"]))
+
+    def test_only_the_best_covered_new_national_stories_are_labeled(self):
+        # each is gated for every simulated race, and a race takes at most 3 a day (30 Sep: 300-400 a day came in)
+        big = [("Senate passes the defense bill after a long night", f"20260928T0{h}0000Z", f"o{h}.com")
+               for h in range(1, 4)]
+        small = [("Governors meet in Denver to discuss water rights", "20260928T050000Z", "p.com")]
+        card = '{"card": "The Senate passed the annual defense bill."}'
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(newsday, "NATIONAL_LABELED", 1):
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-national": gdelt(*big, *small)})
+            fake = FakeAsker()
+            summary = newsday.run(date(2026, 9, 28), snap, derived, "r", fake, [FakeChat([card] * 9)])
+            events = newsday._jsonl(derived / "2026-09-28" / "events.jsonl")
+        left = [e for e in events if e.get("unlabeled")]
+        self.assertEqual([(e["gate"], e["selected"]) for e in left], [({}, {})])
+        self.assertFalse(any("water rights" in s for s in fake.states))
+        self.assertEqual(summary["unlabeled"], 1)
 
     def test_a_story_whose_headline_is_about_a_poll_is_a_poll_story(self):
         # 29 Sep: Jev typed "Trump's approval rating falls to record low" as national news, and 2 of the 9 spot-check

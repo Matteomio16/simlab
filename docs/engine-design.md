@@ -201,6 +201,9 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
   - whose voters it fires up or puts off (new; this catches backlash)
 - **Attention `a_e`:** from coverage: distinct outlets, articles, days in the news, and candidate pageviews. Jev's
   salience only breaks ties, because both models overrated attention in the spot-check.
+- **Only the 50 best-covered new national stories a day are labeled** (30 Sep). Each is gated for every simulated
+  race, and a race takes at most 3 a day, while Media Cloud and GDELT bring 300-400 a day. A story left out has no
+  gate (`unlabeled`) and is looked at again while it stays in the news. This saves about $0.28 a day at full scale.
 - **Event card:** 1–3 neutral sentences written by DeepSeek V4.1 Flash, with GLM as fallback and outlet names removed.
   The voter groups read the card, never the raw headlines.
 - **Which stories get reactions** (A13, built 29 Sep): stories past the gate, best attention first, as many as the
