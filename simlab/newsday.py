@@ -434,8 +434,10 @@ def valid_card(card: str, outlet_names: list[str]) -> str:
 
 
 def write_card(story: dict, chats: list) -> str:
-    """1-3 neutral sentences from the first model that follows the rules (two tries each); '' if none does, or at once
-    if the model says the headlines aren't a specific event (round-ups, listings)."""
+    """1-3 neutral sentences from the first model that follows the rules (two tries each); '' if none does. A model
+    that says the headlines aren't a specific event (round-ups, listings, commentary) hands the story to the next, so
+    a story is dropped as a non-event only when every model says so (30 Sep: DeepSeek called a crypto group's ads
+    against Brown commentary; GLM wrote the card)."""
     user = story_text(story, story["race_id"])
     for chat in chats:
         for note in ("", "\nYour previous answer broke a rule. Follow every rule exactly."):
@@ -444,7 +446,7 @@ def write_card(story: dict, chats: list) -> str:
                                       {"role": "user", "content": user + note}], tag="newsday:card", max_tokens=200)
                 reply = json.loads(text[text.index("{"): text.rindex("}") + 1])
                 if reply.get("event") is False:
-                    return ""
+                    break
                 card = str(reply.get("card", "")).strip()
             except (ValueError, RuntimeError, AttributeError):
                 card = ""
