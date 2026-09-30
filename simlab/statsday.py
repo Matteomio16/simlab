@@ -196,7 +196,7 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict, ele
             hp, htw = {name: margins(house_build(hb, full[name], p, election)) for name, p in specs.items()}, margins(h["twin"])
             for key, name in (("switching", "own_s"), ("turnout", "own_t"), ("switching_us", "us_s"), ("turnout_us", "us_t")):
                 news[key] |= {r: hp[name][r] - htw[r] for r in htw}
-            if (gap := miss(margins(h["levels"]), htw)) > 5e-3:  # house.build rounds margins to 3 decimals
+            if (gap := miss(margins(h["levels"]), htw)) > 1e-3:
                 raise ValueError(f"House story effects don't add up across their parts (gap {gap:.2e})")
             house = h
         except Exception as e:
