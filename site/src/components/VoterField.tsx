@@ -142,8 +142,8 @@ export default function VoterField({ className = "" }: { className?: string }) {
   }, []);
 
   return (
-    <figure className={className}>
-      <div className="relative h-full min-h-[280px] w-full">
+    <figure className={`flex flex-col ${className}`}>
+      <div className="relative min-h-[280px] w-full flex-1">
         <canvas ref={ref} className="absolute inset-0 h-full w-full" aria-hidden="true" />
         <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 bg-paper/90 px-2 py-1 text-[0.72rem] font-semibold">
           <span className="live-dot" aria-hidden="true" />
