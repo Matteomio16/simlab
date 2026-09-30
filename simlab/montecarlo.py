@@ -204,18 +204,20 @@ def story_noise(stories: dict, ids: list[str], sd: float, n: int, seed: int) -> 
     if not ev or not sd:
         return np.zeros((n, len(ids)))
     effects = np.array([[stories.get(r, {}).get(e, 0.0) for r in ids] for e in ev])
-    return (np.random.default_rng([seed, 3]).standard_normal((n, len(ev))) * sd) @ effects
+    strength = np.stack([np.random.default_rng([seed, 3, *e.encode()]).standard_normal(n) for e in ev], axis=1)
+    return (strength * sd) @ effects
 
 
 def _dials(news: dict, units: list[str], n: int, seed: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Per race, the dials' posterior mean and a draw per simulated election: the national dials plus the unit's
     deviation, drawn jointly from the weekly filter's posterior; a unit it hasn't seen gets its deviation from the
-    prior spread tau. Returns (mean per race, draws [n, race, part], national mean, national sd)."""
+    prior spread tau, from its own random stream, so adding a unit never changes another's draws. Returns (mean per
+    race, draws [n, race, part], national mean, national sd)."""
     post, tau = news["posterior"], np.array(news["tau"], float)
     mean, cov = np.array(post["mean"], float), np.array(post["cov"], float)
-    rng = np.random.default_rng(seed)
-    theta = rng.multivariate_normal(mean, cov, n)
-    extra = {u: rng.standard_normal((n, 2)) * tau for u in sorted(set(units) - set(post["labels"][1:]))}
+    theta = np.random.default_rng(seed).multivariate_normal(mean, cov, n)
+    extra = {u: np.random.default_rng([seed, 4, *u.encode()]).standard_normal((n, 2)) * tau
+             for u in set(units) - set(post["labels"][1:])}
     col = {u: 2 + 2 * i for i, u in enumerate(post["labels"][1:])}
     dev = lambda u: theta[:, col[u]:col[u] + 2] if u in col else extra[u]
     dev_mean = lambda u: mean[col[u]:col[u] + 2] if u in col else np.zeros(2)
@@ -242,7 +244,8 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
 
     `house` ({"levels": the headline's house levels, "twin": the stats-only ones, "left": {seat: "D" or "O"}}) adds the
     House: its contested seats are drawn with the Senate's national, regional and state errors, and the seat totals
-    give the majority (218). The seats' story effects are in their levels; their news uncertainty isn't drawn yet."""
+    give the majority (218). A seat's story effects are in its levels; its parts in `news` get the same draws as the
+    Senate's, its unit (state) dial shared with that state's Senate race."""
     ids, seed, bm, movers = sorted(head["races"]), seed_for(day), benchmarks or {}, movers or {}
     hv = house["levels"]["races"] if house else {}
     hid = sorted(r for r, v in hv.items() if not v.get("fixed"))
@@ -251,16 +254,19 @@ def build(head: dict, twin: dict, left: dict, params: dict, day: date, run_id: s
     (x, xh), (xt, xth) = np.hsplit(x, [len(ids)]), np.hsplit(xt, [len(ids)])
     parties = [left[r] for r in ids]
     if news:
-        x = x + story_noise(news.get("stories", {}), ids, news.get("story_sd", 0.0), n, seed)
-        part = lambda k: np.array([news.get(k, {}).get(r, 0.0) for r in ids])
+        allids, k = ids + hid, len(ids)
+        xa = np.hstack([x, xh]) + story_noise(news.get("stories", {}), allids, news.get("story_sd", 0.0), n, seed)
+        part = lambda key: np.array([news.get(key, {}).get(r, 0.0) for r in allids])
         ds, dt, us, ut = part("switching"), part("turnout"), part("switching_us"), part("turnout_us")
-        k_hat, k_draw, nat, nat_sd = _dials(news, [news["unit"].get(r, "US") for r in ids] + ["US"], n, seed + 1)
+        k_hat, k_draw, nat, nat_sd = _dials(news, [news["unit"].get(r, "US") for r in allids] + ["US"], n, seed + 1)
         own_hat, own, us_hat, usd = k_hat[:-1], k_draw[:, :-1], k_hat[-1], k_draw[:, -1]
         at = {q: {"s": float(nat[0] + z * nat_sd[0]), "t": float(nat[1] + z * nat_sd[1])}
               for q, z in (("if_weaker", -1.2816), ("if_stronger", 1.2816))}
-        fixed = {q: x + (m["s"] - nat[0]) * (ds + us) + (m["t"] - nat[1]) * (dt + ut) for q, m in at.items()}
-        x = (x + (own[:, :, 0] - own_hat[:, 0]) * ds + (own[:, :, 1] - own_hat[:, 1]) * dt
-             + np.outer(usd[:, 0] - us_hat[0], us) + np.outer(usd[:, 1] - us_hat[1], ut))
+        fixed = {q: xa[:, :k] + (m["s"] - nat[0]) * (ds + us)[:k] + (m["t"] - nat[1]) * (dt + ut)[:k]
+                 for q, m in at.items()}
+        xa = (xa + (own[:, :, 0] - own_hat[:, 0]) * ds + (own[:, :, 1] - own_hat[:, 1]) * dt
+              + np.outer(usd[:, 0] - us_hat[0], us) + np.outer(usd[:, 1] - us_hat[1], ut))
+        x, xh = xa[:, :k], xa[:, k:]
     seats, seats_t = senate_seats(x, parties, not_up), senate_seats(xt, parties, not_up)
     races = {}
     for i, r in enumerate(ids):

@@ -157,17 +157,21 @@ def _stories(mv: dict, when: str) -> dict:
     return out
 
 
-def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict,
-            election: date = levels.ELECTION) -> tuple[dict, dict, dict]:
+def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict, election: date = levels.ELECTION,
+            hb: dict | None = None) -> tuple[dict, dict, dict, dict | None]:
     """Stats-only and headline levels for one election day, and each race's story effect at dial 1 split four ways:
     switching and turnout, from its own stories (its state's dials) and from the nation's (the national dials). The
-    headline is linear in the effects, so the parts times the dials must add up to it."""
+    headline is linear in the effects, so the parts times the dials must add up to it. With the House base `hb`
+    (house.prepare), the seats get the same by house.build: {"twin", "levels"}, their parts joining `news`; a failure
+    there returns {"error"} and leaves the Senate alone."""
     run = lambda mv_paths: levels.compute(t, day, run_id, moves=mv_paths, inp=inp, election=election)
     twin, head = levels.compute(t, day, run_id, inp=inp, election=election), run(moves.paths(mv))
     own = {k: {r: x for r, x in moves.paths(mv, f"{k}_base", with_nation=False).items() if r != "US"} for k in "st"}
     nation, takes = {k: moves.paths(mv, f"{k}_base").get("US", []) for k in "st"}, moves.takes_nation(mv)
-    runs = {f"own_{k}": run(own[k] | {"US": []})["races"] for k in "st"} | {
-        f"us_{k}": run({"US": nation[k]} | {r: nation[k] if r in takes else [] for r in own[k]})["races"] for k in "st"}
+    specs = {f"own_{k}": own[k] | {"US": []} for k in "st"} | {
+        f"us_{k}": {"US": nation[k]} | {r: nation[k] if r in takes else [] for r in own[k]} for k in "st"}
+    full = {name: run(p) for name, p in specs.items()}
+    runs = {name: f["races"] for name, f in full.items()}
     part = lambda name: {r: runs[name][r]["margin"] - twin["races"][r]["margin"] for r in twin["races"]}
     news = {"switching": part("own_s"), "turnout": part("own_t"), "switching_us": part("us_s"),
             "turnout_us": part("us_t"), "unit": {r: r.split("-")[0] for r in own["s"]},
@@ -175,13 +179,29 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict,
             "stories": _stories(mv, "today" if election == day else "election_day"), "story_sd": mp.get("story_sd", 0.0)}
     dials = mp.get("dials", {})
     k = lambda unit, x: dials.get(unit, dials.get("default", {})).get(f"k_{x}", 1.0)
-    gap = max(abs(head["races"][r]["margin"] - twin["races"][r]["margin"]
-                  - sum(k(news["unit"].get(r), x) * news[name][r] for x, name in (("s", "switching"), ("t", "turnout")))
-                  - sum(k("US", x) * news[name][r] for x, name in (("s", "switching_us"), ("t", "turnout_us"))))
-              for r in twin["races"])
-    if gap > 1e-3:  # the parts are rounded to 4 decimals, so a gap this size means a clipped or broken dial
+    margins = lambda lv: {r: x["margin"] for r, x in lv["races"].items() if not x.get("fixed")}
+    miss = lambda hd, tw: max((abs(hd[r] - tw[r]
+                                   - sum(k(news["unit"].get(r), x) * news[name][r]
+                                         for x, name in (("s", "switching"), ("t", "turnout")))
+                                   - sum(k("US", x) * news[name][r]
+                                         for x, name in (("s", "switching_us"), ("t", "turnout_us")))) for r in tw),
+                              default=0.0)
+    if (gap := miss(margins(head), margins(twin))) > 1e-3:  # parts are rounded to 4 decimals: a clipped or broken dial
         raise ValueError(f"story effects don't add up across their parts (gap {gap:.2e})")
-    return twin, head, news
+    house = None
+    if hb:
+        try:  # the House (Kev session, house.build) must not stop the Senate forecast
+            from .house import build as house_build
+            h = {"twin": house_build(hb, twin, election=election), "levels": house_build(hb, head, moves.paths(mv), election)}
+            hp, htw = {name: margins(house_build(hb, full[name], p, election)) for name, p in specs.items()}, margins(h["twin"])
+            for key, name in (("switching", "own_s"), ("turnout", "own_t"), ("switching_us", "us_s"), ("turnout_us", "us_t")):
+                news[key] |= {r: hp[name][r] - htw[r] for r in htw}
+            if (gap := miss(margins(h["levels"]), htw)) > 5e-3:  # house.build rounds margins to 3 decimals
+                raise ValueError(f"House story effects don't add up across their parts (gap {gap:.2e})")
+            house = h
+        except Exception as e:
+            house = {"error": f"{type(e).__name__}: {e}"[:120]}
+    return twin, head, news, house
 
 
 def _git_sha() -> str:
@@ -231,21 +251,17 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
         mv = moves.build(day, data / "derived", grp, mp, run_id)
     _write(out / "params.json", meta | mp | {"fitted_on": mp["fit"]["on"]})
     sha["moves.json"] = _write(out / "moves.json", mv)
-    lv, head, news = _levels(t, day, run_id, mv, inp, mp)
+    lv, head, news, house = _levels(t, day, run_id, mv, inp, mp, hb=hb)
     sha["filter_state.json"] = _write(out / "filter_state.json", head | {"moves": "moves.json, main block (GLM)",
                                                                           "dials": mp["dials"]})
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
     bench, left = benchmarks(snap, t["race_list"]), {k: v["left_party"] for k, v in races.items()}
-    now_twin, now_head, now_news = _levels(t, day, run_id, mv, inp, mp, election=day)
-    house = now_house = None
-    if hb:
-        try:  # the seats take the day's stories by levels.build's rules (house.build), the twin none
-            paths, left_h = moves.paths(mv), {r: x["left_party"] for r, x in hb["races"].items()}
-            house = {"levels": hs.build(hb, head, paths), "twin": hb["twin"], "left": left_h}
-            now_house = {"levels": hs.build(hb, now_head, paths, election=day),
-                         "twin": hs.build(hb, now_twin, election=day), "left": left_h}
-        except Exception as e:
-            house_note = {"error": f"{type(e).__name__}: {e}"[:120]}
+    now_twin, now_head, now_news, now_house = _levels(t, day, run_id, mv, inp, mp, election=day, hb=hb)
+    left_h = {r: x["left_party"] for r, x in hb["races"].items()} if hb else {}
+    for h in (house, now_house):
+        if h and "error" in h:
+            house_note = h
+    house, now_house = ((h | {"left": left_h}) if h and "error" not in h else None for h in (house, now_house))
     forecast, draws = montecarlo.build(head, lv, left, params, day, run_id, benchmarks=bench, movers=moves.movers(mv),
                                        news=news, house=house)
     forecast = montecarlo.attach_today(forecast, montecarlo.build(now_head, now_twin, left, params, day, run_id,
