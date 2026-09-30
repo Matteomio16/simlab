@@ -34,12 +34,6 @@ class Post:
     allow: tuple[str, ...] = ()
 
 
-def closing(s: Slide):
-    s.at_bottom(36 * 1.25 + 40)
-    s.rule(s.t.ink, after=40)
-    s.text("The forecast goes public on Monday 12 October.", px=36)
-
-
 def ep01(theme: Theme = LAB) -> Post:
     s, day = latest(), date(2026, 10, 3)
     null_jev = min(s[("null", "jev")]["support_p_no_change"], s[("null", "jev")]["turnout_p_no_change"])
@@ -47,96 +41,93 @@ def ep01(theme: Theme = LAB) -> Post:
     glm_dir = s[("events", "glm")]["sign_accuracy_nonnull"]
     k = "LAB NOTES 01"
 
-    a = Slide(day, k, theme).headline("Before forecasting the midterms, we tested six models as synthetic voters.")
-    a.dek("Can a synthetic voter react to the news the way real groups of people do? Four checks, the same questions for every "
-          "model.")
-    a.at_bottom(charts.stats_height(rule=True))
-    charts.stats(a, [("6", "models"), ("4", "checks"), ("$1.52", "total cost")], rule=True)
-    a.source("Test bench, 27–28 Sep 2026. Jev 1.13, Kev 4B, GLM-5.3 Flash, MiMo-V2.6 Flash, DeepSeek V4.1 Flash, "
-             "GPT-6 Luna, through OpenRouter.")
+    a = Slide(day, k, theme).headline("In April we simulated Hungary’s election. We called the winner and missed "
+                                      "by 16 points.", px=80)
+    a.dek("TISZA’s share of the vote")
+    charts.hbars(a, [("Our simulation", 36.7, theme.ai), ("The result", 53.2, theme.data)], 60,
+                 lambda v: f"{v:.1f}%")
+    a.y += 30
+    a.text("So this time nothing goes into the forecast until it has been tested against what really happened.",
+           "serif", 600, 44)
+    a.source("Hungary, April 2026. Simulation: 45 simulated voters, run before the vote. Result: the official "
+             "count.")
 
-    b = Slide(day, f"{k} · WHY TEST FIRST", theme).headline("In April, our first simulation called Hungary's winner, "
-                                                     "and missed the size.")
-    b.dek("TISZA's share of the vote")
-    charts.hbars(b, [("Simulated", 36.7, theme.ai), ("Actual", 53.2, theme.data)], 60, lambda v: f"{v:.1f}%")
-    b.y += 20
-    b.text("Right direction, 16 points short. So this time every part is tested against real data before it goes "
-           "into the forecast.", px=38, color=theme.ink2)
-    b.source("Hungary, April 2026. Simulated: 45 simulated voters, run before the election. Actual: the official result.")
-
-    c = Slide(day, f"{k} · THE CHECKS", theme).headline("Four checks, identical for every model.")
-    c.y += 10
+    b = Slide(day, f"{k} · THE TESTS", theme).headline("Six models, four questions.", px=84)
+    b.y += 10
     for n, (t1, t2) in enumerate([
-            ("Ignore noise.", "A football score or a new pumpkin spice croissant should change nobody's vote."),
-            ("No built-in lean.", "Swap the parties in a story and the reaction should flip."),
-            ("React to real events.", "19 events since 2012 with measured shifts in opinion."),
-            ("Match real groups.", "How groups actually voted and turned out in 2024.")], 1):
-        c.text(f"{n}  {t1}", "serif", 600, 50, after=0.2)
-        c.text(t2, px=36, color=theme.ink2, after=0.9, x=132, width=c.width - 60)
-    c.source("Checks: null test, mirror test, events test, fidelity test. Scored the same way for every model.")
+            ("Does a football score move a Senate race?", "It shouldn’t. 20 stories that matter to nobody’s vote."),
+            ("If the parties swap, does the reaction swap?", "16 stories, each told twice with the parties reversed."),
+            ("Does it move the way people really moved?", "19 events since 2012 whose effect on opinion was measured."),
+            ("Does it know how groups voted in 2024?", "Checked against the real vote, group by group.")], 1):
+        b.text(f"{n}  {t1}", "serif", 600, 44, after=0.2, width=b.width)
+        b.text(t2, px=34, color=theme.ink2, after=0.8, x=132, width=b.width - 60)
+    b.source("Jev 1.13, Kev 4B, GLM-5.3 Flash, MiMo-V2.6 Flash, DeepSeek V4.1 Flash, GPT-6 Luna. 27–28 Sep 2026. "
+             "Total cost: $1.52.")
 
-    d = Slide(day, f"{k} · RESULTS", theme).headline("One job each, or none.")
-    charts.rows(d, [
-        ("Is this story relevant to the race?", "Jev", f"Said “no change” to {null_jev:.0%} of irrelevant news"),
-        ("Which way does each group react?", "GLM-5.3 Flash",
-         f"Right direction on {glm_dir * 13:.0f} of 13 real events that moved opinion"),
-        ("Where does each race start?", "Plain statistics",
-         "Smaller errors than every off-the-shelf model at matching 2024 groups nationwide"),
-        ("How big is a reaction?", "No model", "Sizes come from real past shifts, not from the models"),
+    c = Slide(day, f"{k} · WHAT WE FOUND", theme).headline("Each model was good at one thing. None at everything.",
+                                                           px=76)
+    charts.rows(c, [
+        ("Ignore news that doesn’t matter", "Jev", f"“No change” to {null_jev:.0%} of it"),
+        ("Which way a group moves", "GLM-5.3 Flash", f"Right direction on {glm_dir * 13:.0f} of 13 events"),
+        ("How far it moves", "None", "GLM’s sizes barely track reality (correlation 0.26)"),
+        ("How groups voted", "Plain statistics", "Beat every off-the-shelf model"),
     ])
-    d.text("Kev, untuned, got no job. We trained our own (Lab notes 08).", px=30, color=theme.ink2)
-    d.source("Scores: null, mirror, events and fidelity tests, 27–28 Sep 2026.")
+    c.source("Scores: null, mirror, events and fidelity tests, 27–28 Sep 2026.")
 
-    e = Slide(day, f"{k} · WHAT WE CHANGED", theme).headline("Statistics set where each race starts. The simulation "
-                                                             "moves it.", px=80)
-    e.text("Statistics and the poll average set each race's starting numbers. Each voter group's starting split comes from "
-           "Kev, a model we trained on real survey answers. The synthetic voters then simulate how the day's news "
-           "shifts support and turnout, and a weekly check against new polls decides how much of that to keep.",
-           px=38, color=theme.ink2, after=1.0)
-    e.text("Next: how an outlet's name flipped a model's answer on 41% of stories.", "serif", 600, 48, after=1.2)
-    closing(e)
+    d = Slide(day, f"{k} · THE BLIND SPOT", theme).headline("They all got the same things wrong.", px=84)
+    d.text("Every model under-reacted to real shocks: COVID, January 6, the fall of Kabul. And every one over-reacted "
+           "to media spectacles: the Access Hollywood tape, the debates.", px=40, color=theme.ink2, after=1.0)
+    d.text("Averaging them doesn’t cancel the error. So reaction sizes come from shifts that were actually measured, "
+           "never from a model.", "serif", 600, 44)
+    d.source("19 real events, 2012–2026. Errors correlate +0.88 to +0.97 between models.")
 
-    return Post(day, "Lab notes 01: we tested six models as synthetic voters", [
-        (a, "Title slide: Before forecasting the midterms, we tested six models as synthetic voters. Six models, four checks, "
-            "$1.52 total cost."),
-        (b, "Bar chart of TISZA's vote share in Hungary, April 2026: simulated 36.7 percent, actual 53.2 percent. "
-            "Right direction, 16 points short."),
-        (c, "The four checks: ignore irrelevant news; no built-in party lean; react correctly to 19 real events; "
-            "match how groups voted and turned out in 2024."),
-        (d, "Results table. Relevance: Jev. Direction of reactions: GLM-5.3 Flash. Starting numbers: plain "
-            "statistics. Size of reactions: no model."),
-        (e, "Statistics set where each race starts; the simulation moves it. Statistics and the poll average set each race's "
-            "starting numbers, each voter group's starting split comes from a model trained on real survey answers, "
-            "and synthetic voters simulate how news shifts support and turnout."),
-    ], f"""Before we forecast a single race, we tested six models as synthetic voters.
+    e = Slide(day, f"{k} · WHAT IT MEANS", theme).headline("Statistics decide where each race starts. The simulation "
+                                                           "only moves it.", px=76)
+    e.text("The starting point of every race comes from past results, the economy and the poll average. Each voter "
+           "group’s starting split comes from Kev, a model we trained on real survey answers. Synthetic voters then "
+           "react to each day’s news, and every week the latest poll average decides how much of that to keep.",
+           px=36, color=theme.ink2, after=1.0)
+    e.text("Tomorrow: one model changed its answer on 41% of headlines when we swapped “Fox News” for “MSNBC”.",
+           "serif", 600, 42)
+    e.source("Forecasts go public on Monday 12 October.")
 
-The question: can a synthetic voter react to news the way real groups of people do? Four checks, identical for every model:
-1. Ignore irrelevant news
-2. No built-in party lean
-3. React correctly to 19 real events since 2012
-4. Match how groups actually voted and turned out in 2024
+    return Post(day, "Lab notes 01: we missed Hungary by 16 points, so we tested everything", [
+        (a, "In April we simulated Hungary's election: we called the winner and missed by 16 points. Bar chart of "
+            "TISZA's share: our simulation 36.7 percent, the result 53.2 percent."),
+        (b, "Six models, four questions: does irrelevant news move a race; does the reaction swap when the parties "
+            "swap; does it move the way people really moved on 19 measured events; does it know how groups voted in "
+            "2024."),
+        (c, f"What we found. Ignoring irrelevant news: Jev, no change to {null_jev:.0%}. Direction of a reaction: "
+            f"GLM, right on {glm_dir * 13:.0f} of 13 events. Size of a reaction: no model. How groups voted: plain "
+            "statistics."),
+        (d, "Every model under-reacted to real shocks like COVID and January 6 and over-reacted to media spectacles "
+            "like the debates, so reaction sizes come from measured shifts, never from a model."),
+        (e, "Statistics decide where each race starts; the simulation only moves it, and the weekly poll average "
+            "decides how much movement to keep."),
+    ], f"""In April we simulated Hungary's election. We called the winner and missed the size by 16 points.
 
-No model was good at everything, so each got one job, or none. Jev is best at spotting news that doesn't matter. GLM gets the direction of reactions right. And plain statistics had smaller errors than every off-the-shelf model at matching how groups voted nationwide, so statistics and the poll average set each race's starting numbers. Each voter group's starting split comes from Kev, a model we trained on real survey answers (more in a later Lab note). The simulation then plays out how the news moves them.
+So before the midterms we put six models through four questions. Does a football score move a Senate race? (It shouldn't.) If you swap the parties in a story, does the reaction swap? Does the model move the way people actually moved on 19 events since 2012? Does it know how groups voted in 2024?
 
-Why test first? In April, our first simulation called Hungary's winner but came up 16 points short on the size.
+Each model was good at one thing and none at everything. Jev ignores news that doesn't matter ({null_jev:.0%} of the time). GLM gets the direction of a reaction right ({glm_dir * 13:.0f} of 13 real events). Nobody gets the size right.
 
-Total cost of these tests: $1.52. The forecast goes public on Monday 12 October.
+And they all fail the same way: too calm about real shocks like COVID and January 6, too excited about media spectacles like debates. Averaging them doesn't fix that. So in our forecast, statistics decide where each race starts, reaction sizes come from shifts that were actually measured, and the synthetic voters only decide which way the news pushes each group.
+
+The whole test bench cost $1.52. We'll keep publishing what fails as well as what works.
 
 {LABEL}.
 
 #midterms2026 #elections #socialsimulation #dataviz""", [
-        f"Before forecasting the 2026 midterms, we tested six models as synthetic voters: can they react to news like real "
-        f"groups of people? Four checks, identical questions for every model. Here's what each one is good for. "
-        f"{LABEL}.",
-        f"Irrelevant news should change nothing. Jev said “no change” to {null_jev:.0%} of it. An untuned Kev reacted "
-        f"to about 1 story in {1 / null_kev:.0f}.",
-        f"Which way does a group react to real news? GLM-5.3 Flash got the direction right on {glm_dir * 13:.0f} of 13 "
-        f"events that moved opinion.",
-        "Where does each race start? Plain statistics beat every off-the-shelf model at matching how groups voted in "
-        "2024, so statistics and the poll average set each race's starting numbers. Group splits come from a model we trained on "
-        "real survey answers.",
-        "Total cost of the tests: $1.52. The forecast goes public on 12 October; the making-of runs daily until then.",
-    ], allow=("survey", "poll"))  # real survey answers (Kev's training data) and real polls (slide 5's weekly check)
+        f"In April we simulated Hungary's election. We called the winner and missed the size by 16 points. So before "
+        f"the midterms we tested six models on four questions. What we found, in five posts. {LABEL}.",
+        f"Ignoring news that doesn't matter: Jev said “no change” {null_jev:.0%} of the time. An untuned Kev reacted to "
+        f"about 1 story in {1 / null_kev:.0f}.",
+        f"Which way a group moves: GLM-5.3 Flash was right on {glm_dir * 13:.0f} of 13 real events. How far: no model. "
+        "GLM's sizes barely track reality (0.26).",
+        "Every model under-reacted to real shocks (COVID, January 6) and over-reacted to spectacles (debates). "
+        "Averaging them doesn't cancel it, so reaction sizes come from measured shifts.",
+        "So statistics set where each race starts and the simulation only moves it. The test bench cost $1.52. "
+        "Forecasts go public on 12 October.",
+    ], allow=("survey", "poll"))  # real survey answers (Kev's training data) and real polls (the weekly check)
 
 
 def ep02(theme: Theme = LAB) -> Post:
@@ -170,11 +161,11 @@ def ep02(theme: Theme = LAB) -> Post:
     c.source("Shift: change in P(helps Democrats) minus P(helps Republicans), scale −100 to +100. 80 headlines.")
 
     d = Slide(day, f"{k} · WHAT WE CHANGED", theme).headline("So no model ever sees an outlet's name.")
-    d.text("Before any model reads the news, we remove the outlet and rewrite each story as a short, neutral event "
-           "card. Real readers do weigh the source; the simulation has to judge the event itself.",
+    d.text("Before any model reads the news, we strip the outlet and rewrite each story as a short, neutral event "
+           "card. People read the source as a clue too; a forecast can't afford to.",
            px=40, color=theme.ink2, after=1.2)
-    d.text("Next: ask it backwards and most of the lean disappears.", "serif", 600, 48, after=1.2)
-    closing(d)
+    d.text("Tomorrow: a model looked Republican because of the order we listed the answers in.", "serif", 600, 44)
+    d.source("Forecasts go public on Monday 12 October.")
 
     return Post(day, "Lab notes 02: the outlet name changed the answer", [
         (a, "41 percent of headlines got a different answer when we swapped Fox News for MSNBC. Same story; only the "
@@ -189,9 +180,9 @@ We took 80 real headlines about 2026 Senate races and asked two models which par
 
 Credited to MSNBC instead of Fox, GLM's lean toward "helps Democrats" rose by 30 points, and its top answer flipped on 41% of headlines. Jev moved half as much.
 
-The models read the outlet as a clue about the story. Real readers do that too, but a simulation has to judge the event itself. So no model in our forecast ever sees an outlet's name: every story becomes a short, neutral event card first.
+The models read the outlet as a clue about the story. People take the same shortcut; a forecast can't. So no model in our forecast ever sees an outlet's name: every story becomes a short, neutral event card first.
 
-Lab notes 02 of the making-of. The forecast goes public on Monday 12 October.
+Forecasts go public on Monday 12 October.
 
 {LABEL}.
 
@@ -239,8 +230,8 @@ def ep03(theme: Theme = LAB) -> Post:
     d.text("It doubles the cost of each answer, still a few cents per thousand. A fixed correction instead of "
            "asking twice removed only about two-thirds of GLM's lean, because the lean grows with the size of "
            "the reaction.", px=40, color=theme.ink2, after=1.2)
-    d.text("Next: the models know which way voters move, not how far.", "serif", 600, 48, after=1.2)
-    closing(d)
+    d.text("Next in Lab notes: the models know which way voters move, not how far.", "serif", 600, 44)
+    d.source("Forecasts go public on Monday 12 October.")
 
     names = ", ".join(f"{n} {pct(b1)} → {pct(b2)}" for n, b1, b2 in items[:3])
     return Post(day, "Lab notes 03: ask it backwards", [
@@ -259,9 +250,9 @@ The mirror test: 16 news stories, each shown twice with the parties swapped. A f
 
 Asked one way, GLM's leftover lean was {pct(glm[1])} of its typical reaction. Asked both ways and averaged: {pct(glm[2])}. DeepSeek went from {pct(items[1][1])} to {pct(items[1][2])}, MiMo from {pct(items[2][1])} to {pct(items[2][2])}.
 
-So every question in our forecast is asked both ways. It doubles the cost of each answer, still a few cents per thousand.
+So every question in our forecast is asked both ways. It doubles the cost of each answer, still a few cents per thousand. A fixed correction would have been cheaper, and it removed only two-thirds of the lean.
 
-Lab notes 03 of the making-of. The forecast goes public on Monday 12 October.
+Forecasts go public on Monday 12 October.
 
 {LABEL}.
 
