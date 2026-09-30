@@ -162,7 +162,7 @@ once use up the Claude plan's limits faster. If the limits bite, pause Content &
 | Mon 28 Sep | News spot-check: about 100 labels, about 30 minutes |
 | Wed 30 Sep | Pick the content formats and the project name |
 | Thu 1 Oct | Done 29 Sep: Census key, Kev serving key, OpenRouter GitHub secret, Cloudflare timer (ops/cron). Dropped: FEC, FRED, EIA (not used yet) and Redistricting Data Hub (not needed). Media Cloud stuck at email verification; news runs on GDELT and RSS without it |
-| Fri 2 Oct | Create the accounts (kits/launch/ has everything to paste); deploy the notapoll.org launch page with the website session's steps (a hype page until after the pilot, not a redirect; Matteo, 30 Sep) |
+| Fri 2 Oct | Create the accounts (kits/launch/ has everything to paste); launch page live on notapoll.org and Email Routing on (done 30 Sep) |
 | Fri 9 Oct | Cloudflare: redirect labs.scaliastudio.dev/midterms to notapoll.org, the site's home (steps in `site/README.md`) |
 | Sat 10 Oct | Publishing and ethics review; OSF yes or no; raise the OpenRouter cap to $30 (projection revised after the 30 Sep test run, `docs/rehearsal.md`: about $21 by 3 Nov, because GLM's hosts now make it reason; the test key stays; `SIMLAB_BUDGET_USD` follows the cap) |
 | Sun 11 Oct, after the go | Set the repository variables `SITE_PUBLISH` to `on`, `SITE_MODE` to `forecast` and `SITE_DATA` to `live`, together. The site switches by itself when the 12 Oct run's forecast lands (about 10:05-10:45 UTC). After that, switch `SITE_PUBLISH` off before any test run of the daily job |
