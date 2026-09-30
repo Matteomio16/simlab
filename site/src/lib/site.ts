@@ -14,7 +14,7 @@ export const SITE = {
   studio: { name: "Scalia Studio", url: "https://scaliastudio.dev" },
   // Shown only once each account exists (Matteo's step, roadmap C3). Flip `live` to true per account.
   social: [
-    { name: "Instagram", handle: "@notapoll.org", url: "https://www.instagram.com/notapoll.org", live: false },
+    { name: "Instagram", handle: "@notapoll.org", url: "https://www.instagram.com/notapoll.org/", live: true },
     { name: "X", handle: "@notapoll", url: "https://x.com/notapoll", live: false },
     { name: "Threads", handle: "@notapoll.org", url: "https://www.threads.net/@notapoll.org", live: false },
     { name: "Bluesky", handle: "@notapoll.org", url: "https://bsky.app/profile/notapoll.org", live: false },
