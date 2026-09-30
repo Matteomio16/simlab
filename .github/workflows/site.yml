@@ -42,6 +42,15 @@ jobs:
         if: env.CLOUDFLARE_API_TOKEN != ''
         run: npx --yes wrangler@4 deploy -c wrangler.preview.jsonc
 
+      - name: Build launch-page preview (prelaunch mode)
+        env:
+          SITE_MODE: prelaunch
+          SITE_PREVIEW: "1"
+        run: rm -rf out .next && npm run build && node scripts/check-copy.mjs
+      - name: Deploy launch-page preview
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: npx --yes wrangler@4 deploy -c wrangler.launch.jsonc
+
       - name: Build production
         if: vars.SITE_DEPLOY == 'on'
         env:

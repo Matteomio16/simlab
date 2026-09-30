@@ -1,0 +1,11 @@
+{
+  // Launch-page preview: the prelaunch build on its own unlisted workers.dev address, never indexed.
+  "name": "notapoll-launch-preview",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./out",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}
