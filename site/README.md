@@ -41,13 +41,13 @@ Zone Read on notapoll.org) and the GitHub secrets `CLOUDFLARE_API_TOKEN` and `CL
 `site/` now updates two unlisted previews: https://notapoll-launch-preview.mattemio9.workers.dev (the launch page)
 and https://notapoll-preview.mattemio9.workers.dev (the 12 Oct forecast pages, sample data).
 
-1. **Put the launch page on notapoll.org (before the first post on Sat 3 Oct).**
+1. **Done 30 Sep.** Put the launch page on notapoll.org (before the first post on Sat 3 Oct).
    - Cloudflare → notapoll.org → DNS: if there is an A, AAAA or CNAME record on `notapoll.org` or `www`, delete it.
      Leave MX and TXT records (email routing, Bluesky) alone.
    - GitHub → Matteomio16/simlab → Settings → Secrets and variables → Actions → Variables: `SITE_DEPLOY` = `on`,
      `SITE_MODE` = `prelaunch`.
    - Actions → Site → Run workflow. The deploy attaches notapoll.org and www.notapoll.org and creates their records.
-2. **Contact address.** Cloudflare → notapoll.org → Email → Email Routing → Routing rules: `hello@notapoll.org`
+2. **Done 30 Sep.** Contact address. Cloudflare → notapoll.org → Email → Email Routing → Routing rules: `hello@notapoll.org`
    forwarding to your inbox.
 3. **Redirect from Scalia.** Cloudflare → scaliastudio.dev: DNS → add AAAA `labs` → `100::`, proxied; Rules →
    Redirect Rules → when Hostname equals `labs.scaliastudio.dev`, static redirect to `https://notapoll.org`, 301.
@@ -62,9 +62,9 @@ and https://notapoll-preview.mattemio9.workers.dev (the 12 Oct forecast pages, s
 - [ ] **Matteo has read the methods page** (`content/methods.md`, http://localhost:4310/methods.html) and approved it.
 - [ ] Lab note 01 approved and imported (`node scripts/import-labnote.mjs 01`), or the page says the first note is coming.
 - [ ] Social links switched on in `src/lib/site.ts` for the accounts that exist.
-- [ ] `hello@notapoll.org` forwards to Matteo (Email Routing).
+- [x] `hello@notapoll.org` forwards to Matteo (Email Routing, 30 Sep).
 - [x] Cloudflare: token and account ID in GitHub secrets (29 Sep).
-- [ ] Step 1 above done; notapoll.org and www show the launch page.
+- [x] Step 1 above done; notapoll.org and www show the launch page (30 Sep, Site run 36728357936).
 - [ ] Redirect from labs.scaliastudio.dev/midterms to notapoll.org (rule and proxied record in the scaliastudio.dev zone).
 
 ## Defaults chosen while Matteo was away (29 Sep evening), easy to change
