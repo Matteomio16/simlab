@@ -36,29 +36,26 @@ PowerShell sets variables with `$env:SITE_MODE = "forecast"; npm run dev`.
 
 ## Matteo's steps (Cloudflare and GitHub)
 
-1. **API token.** Cloudflare dashboard → My Profile → API Tokens → Create Token → template **Edit Cloudflare
-   Workers**. Account resources: your account. Zone resources: **notapoll.org** only. Add one permission row:
-   Zone · DNS · Edit (for the custom domain). Create, copy the token once.
-2. **Account ID.** Dashboard → Workers & Pages → the Account ID on the right. Copy it.
-3. **GitHub secrets** (github.com/Matteomio16/simlab → Settings → Secrets and variables → Actions → Secrets):
-   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The next push to `site/` deploys the preview; its address
-   (`notapoll-preview.<your-subdomain>.workers.dev`) is in the workflow log.
-4. **Go live on 3 Oct** (same GitHub tab → Variables): `SITE_DEPLOY` = `on`, `SITE_MODE` = `prelaunch`. Then Actions → Site →
-   Run workflow. The first deploy attaches notapoll.org and www.notapoll.org to the Worker and creates their DNS
-   records. If the dashboard already has an A, AAAA or CNAME record on `notapoll.org` or `www`, delete it first. Leave
-   the MX and TXT records (email routing, Bluesky) alone.
-5. **Redirect from Scalia.** In the scaliastudio.dev zone:
-   - DNS → Add record: type AAAA, name `labs`, address `100::`, proxied (orange cloud). It only exists so the rule
-     below can fire.
-   - Rules → Redirect Rules → Create rule "labs to notapoll": when *Hostname* equals `labs.scaliastudio.dev`, then
-     Static redirect to `https://notapoll.org`, status 301, preserve query string.
-6. **Contact address.** Email → Email Routing → Routing rules: add `hello@notapoll.org` forwarding to your inbox
-   (the About page shows it).
-7. **Optional analytics.** Analytics & Logs → Web Analytics → add notapoll.org (free, no cookies). Enabling it on a
-   proxied site needs no code change.
-8. **11 Oct, after your go:** set the GitHub variables `SITE_PUBLISH` = `on` (the daily job's publish step, built by Engine), `SITE_MODE` = `forecast` and `SITE_DATA` = `live`. Until the first daily publish lands on 12 Oct (about 10:05-10:45 UTC), production keeps building the prelaunch site, then switches by itself. Turn `SITE_PUBLISH` off for any test run of the daily job after 12 Oct.
-   `publish-day.mjs` and pushes `site/data/live/`.
-9. **Later:** Cloudflare Access (Zero Trust → Access → Applications) can put an email login in front of the preview.
+Done 29 Sep: the Cloudflare API token (Workers Scripts and Account Settings on the account; Workers Routes, DNS and
+Zone Read on notapoll.org) and the GitHub secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Every push to
+`site/` now updates two unlisted previews: https://notapoll-launch-preview.mattemio9.workers.dev (the launch page)
+and https://notapoll-preview.mattemio9.workers.dev (the 12 Oct forecast pages, sample data).
+
+1. **Put the launch page on notapoll.org (before the first post on Sat 3 Oct).**
+   - Cloudflare → notapoll.org → DNS: if there is an A, AAAA or CNAME record on `notapoll.org` or `www`, delete it.
+     Leave MX and TXT records (email routing, Bluesky) alone.
+   - GitHub → Matteomio16/simlab → Settings → Secrets and variables → Actions → Variables: `SITE_DEPLOY` = `on`,
+     `SITE_MODE` = `prelaunch`.
+   - Actions → Site → Run workflow. The deploy attaches notapoll.org and www.notapoll.org and creates their records.
+2. **Contact address.** Cloudflare → notapoll.org → Email → Email Routing → Routing rules: `hello@notapoll.org`
+   forwarding to your inbox.
+3. **Redirect from Scalia.** Cloudflare → scaliastudio.dev: DNS → add AAAA `labs` → `100::`, proxied; Rules →
+   Redirect Rules → when Hostname equals `labs.scaliastudio.dev`, static redirect to `https://notapoll.org`, 301.
+4. **11 Oct, after your go:** Variables `SITE_PUBLISH` = `on`, `SITE_MODE` = `forecast`, `SITE_DATA` = `live`. The site
+   switches to the forecast by itself when the first daily publish lands on 12 Oct (about 10:05–10:45 UTC). Turn
+   `SITE_PUBLISH` off before any test run of the daily job after 12 Oct.
+5. **Optional:** Cloudflare Web Analytics for notapoll.org (free, no cookies); Cloudflare Access to put a login in
+   front of the previews.
 
 ## Go-live checklist (3 Oct)
 
@@ -67,7 +64,7 @@ PowerShell sets variables with `$env:SITE_MODE = "forecast"; npm run dev`.
 - [ ] Social links switched on in `src/lib/site.ts` for the accounts that exist.
 - [ ] `hello@notapoll.org` forwards to Matteo (Email Routing).
 - [x] Cloudflare: token and account ID in GitHub secrets (29 Sep).
-- [ ] GitHub variables: `SITE_DEPLOY` = `on`, `SITE_MODE` = `prelaunch`; run the Site workflow; check notapoll.org and www.
+- [ ] Step 1 above done; notapoll.org and www show the launch page.
 - [ ] Redirect from labs.scaliastudio.dev/midterms to notapoll.org (rule and proxied record in the scaliastudio.dev zone).
 
 ## Defaults chosen while Matteo was away (29 Sep evening), easy to change
