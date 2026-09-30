@@ -15,15 +15,15 @@ Authenticator). Save every platform's backup codes offline, not in the same emai
    `bsky@notapoll.org` (and `buffer@notapoll.org` if you want Buffer separate).
 4. Send a test email to each alias and check it arrives.
 
-Before the first post (Matteo, 29 Sep): redirect notapoll.org to the Instagram profile until the site is live, so the
-address on every image leads somewhere. Exact steps: `kits/launch/00-profiles/REDIRECT.md`.
+Before the first post (Matteo, 30 Sep): notapoll.org serves a launch page, built by the website session, so the address
+on every image leads somewhere. No redirect. Deploy steps: `site/README.md`, "Matteo's steps".
 
 ## 2. Instagram, then Threads
 
 1. Sign up with `ig@notapoll.org`. Username `notapoll.org`, name `NotAPoll`.
 2. Settings → Account type and tools → Switch to professional account → **Creator**. Category: Education (or Science &
    Technology). Hide the category label on the profile if you prefer.
-3. Profile: avatar `kits/brand/avatar.jpg`, bio from `post.md`, link: leave empty until the redirect or site works.
+3. Profile: avatar `kits/brand/avatar.jpg`, bio from `post.md`, link: notapoll.org.
 4. Accounts Center → Password and security → Two-factor authentication → Authentication app.
 5. Threads: open the Threads app, log in with Instagram, import the profile. Same handle, same avatar and bio.
 6. Do not boost posts or turn on ads: organic only.
