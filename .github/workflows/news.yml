@@ -1,6 +1,7 @@
 # Every 15 minutes: news snapshots (simlab/newsnap.py) into the private data repo's news/ folder. GDELT for every race
 # and the nation: only the most overdue queries, within about 9 minutes, because GDELT refuses an address for minutes
-# after one success and each run gets a fresh one. Plus the state outlets' RSS feeds. GitHub drops many scheduled
+# after one success and each run gets a fresh one. Media Cloud alongside, paced to its limit (2 requests a minute,
+# 4,000 a week; the key rides in a header). Plus the state outlets' RSS feeds. GitHub drops many scheduled
 # triggers; a missed run is made up by the next, because a query saved in the last 6 hours isn't asked again and every
 # query covers 24 hours. The deploy key can write to Matteomio16/simlab-data only. Logs print counts, never data.
 name: news
@@ -44,6 +45,8 @@ jobs:
           python-version: "3.13"
       - run: pip install --quiet requests
       - name: News
+        env:
+          MEDIACLOUD_API_KEY: ${{ secrets.MEDIACLOUD_API_KEY }}
         run: python -m simlab.newsnap --out data-repo/news --budget 540 ${RACES:+--races "$RACES"}
       - name: Push to the data repo
         working-directory: data-repo

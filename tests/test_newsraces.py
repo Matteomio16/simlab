@@ -77,6 +77,10 @@ class House(unittest.TestCase):
     def test_the_committed_file_stays_senate_only(self):
         self.assertEqual(sorted(newsraces.build(HOUSE)), ["OH-S", "US"])
 
+    def test_the_state_names_match_the_statistics_ones(self):
+        from simlab.polls import STATE_NAMES
+        self.assertEqual({c: STATE_NAMES[c] for c in newsraces.STATE_NAMES if c in STATE_NAMES}, newsraces.STATE_NAMES)
+
     def test_house_ids_and_name_suffixes(self):
         self.assertEqual([newsraces.is_house(r) for r in ("TX-28", "AK-AL", "OH-S", "NC", "US", "OH-H")],
                          [True, True, False, False, False, False])

@@ -167,12 +167,17 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
 
 ## 4. The news pipeline (Engine)
 
-- **Headlines** (29 Sep: the engine works on GDELT alone; Media Cloud plugs in if its key ever comes):
-  - GDELT for every race and the nation, from its own job every 15 minutes (`simlab/newsnap.py`, writing
+- **Headlines** (GDELT and RSS from 29 Sep, Media Cloud from 30 Sep):
+  - Media Cloud (Matteo's key, 30 Sep), in the same 15-minute job and at its limits: 2 requests a minute and 4,000 a
+    week. One request every 31 s; the contested races, the House groups and the nation every 3 hours, the rest every
+    12: about 340 a day, 60% of the weekly quota. It searches the US national collection for the last day, and it
+    barely overlaps GDELT (1 shared article of 36 on 30 Sep): the two add up.
+  - GDELT for every contested race and the nation, from its own job every 15 minutes (`simlab/newsnap.py`, writing
     `simlab-data/news/`). GDELT refuses an address for minutes after one success, so each run asks only the most
     overdue queries (contested races and the nation first; until 12 Oct the pilot races before them) within about 9
     minutes. A query saved in the last 6 hours isn't asked again; one that failed is asked by the next run, and every
-    query covers 24 hours, so gaps fill.
+    query covers 24 hours, so gaps fill. While Media Cloud runs, the races on statistics alone (no reactions) are left
+    to it, which frees about 60 GDELT answers a day for the contested ones.
   - The simulated House seats (Matteo, 29 Sep): one query per state with every seat's candidates, asked every 12
     hours, because a state's seats get only a few articles a day (Ohio's four: 7 on 29 Sep). The seats come from the
     latest `races.json` (`newsraces.house`), so they follow the daily tiers. On 29 Sep's seats: 18 state groups beside
@@ -250,8 +255,8 @@ passes it once the Kev session sends the URL, the key's secret name and the samp
 - **Snapshots:** `simlab/snap.py` (Kev session; first run 28 Sep 00:36 UTC) writes
   `simlab-data/snapshots/YYYY-MM-DD/HHMM/<source>/<name>.gz` plus `manifest.json` (URL, time, status, size, SHA-256).
   - Sources now: VoteHub polls; Wikipedia race pages, overview pages and the approval page, raw with revision ids;
-    markets (benchmark only); Media Cloud for every race in `simlab/newsraces.json` if its key comes; pageviews.
-  - News: GDELT and RSS come from the separate 15-minute news job (`.github/workflows/news.yml`) into
+    markets (benchmark only); pageviews.
+  - News: GDELT, Media Cloud and RSS come from the separate 15-minute news job (`.github/workflows/news.yml`) into
     `simlab-data/news/YYYY-MM-DD/HHMM/`, in the same format; the news step reads both folders.
   - Added later: the 2026 House page (Statistics' request), keyed sources (FEC, FRED, EIA) and early-vote files.
 - **Schedule:** GitHub Actions in the public repo triggers every 15 minutes and takes a snapshot when the newest one is
@@ -332,4 +337,4 @@ A writer may add fields. Renaming or removing a field needs a note to the readin
 | --- | --- | --- |
 | `pi` and `mu` estimates for OH, NC, TX (all 35 states by 12 Oct) | Statistics | Thu 1 Oct |
 | Weights of the attention formula. The spot-check couldn't test them (29 Sep): 29 of the 32 stories Matteo rated had one outlet in the old Google News store, so the formula scored almost all of them the same. Re-check on about 20 GDELT and Media Cloud stories in the pilot week | Engine | Fri 9 Oct |
-| Full-scale rehearsal (A13) once Media Cloud's key is in: time, spend and failures at `--scope all` | Engine | Fri 9 Oct |
+| Full-scale rehearsal (A13): time, spend and failures at `--scope all` (Wed 7 Oct, `docs/rehearsal.md`) | Engine | Wed 7 Oct |

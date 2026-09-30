@@ -66,6 +66,20 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   Engine adds the simulated seats to newsraces.json (from 12 Oct).
 - 29 Sep, stats-only: 222.6 expected Democratic seats at a national House vote of D+4.5.
 
+## 2026-09-30 (Engine session): Media Cloud is on
+
+Matteo's Media Cloud key works (GitHub secret `MEDIACLOUD_API_KEY`, 30 Sep). The first test run answered six
+queries, with 1-11 stories each from the last day, then refused the rest: its limits are 2 requests a minute and
+4,000 a week.
+- Media Cloud moved from the 3-hourly snapshot job to the 15-minute news job, paced to those limits. It sends one
+  request every 31 s, pilot races first until 12 Oct. The contested races, the House groups and the nation are asked
+  every 3 hours and the rest every 12: about 340 requests a day, 60% of the weekly quota.
+- It adds to GDELT rather than repeating it: of 36 Media Cloud articles for six races, 1 was also in GDELT's.
+- With Media Cloud on, GDELT drops the races on statistics alone, which get no reactions, and keeps the contested
+  races and the nation every 6 hours and the House groups every 12. That frees about 60 GDELT answers a day.
+- Media Cloud's times now keep their hour. The API writes "2026-09-30 03:21:43"; before this fix every story was
+  dated midnight of its publish day.
+
 ## 2026-09-29 night (Engine session): Matteo's answers on the full run
 
 - **Full-scale rehearsal on Wed 7 Oct: yes.** Every Senate race and simulated House seat, once, after the day's pilot
