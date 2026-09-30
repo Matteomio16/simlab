@@ -12,7 +12,8 @@ Authenticator). Save every platform's backup codes offline, not in the same emai
 1. Cloudflare dashboard → notapoll.org → Email → Email Routing → Enable. Accept the MX and SPF records it adds.
 2. Destination addresses → add your own inbox and click the verification link Cloudflare sends.
 3. Routing rules → custom addresses, each forwarding to that inbox: `ig@notapoll.org`, `x@notapoll.org`,
-   `bsky@notapoll.org` (and `buffer@notapoll.org` if you want Buffer separate).
+   `bsky@notapoll.org`, and `hello@notapoll.org` (the contact address on the launch page), plus `buffer@notapoll.org`
+   if you want Buffer separate.
 4. Send a test email to each alias and check it arrives.
 
 Before the first post (Matteo, 30 Sep): notapoll.org serves a launch page, built by the website session, so the address
