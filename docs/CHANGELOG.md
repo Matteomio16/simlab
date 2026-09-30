@@ -818,6 +818,12 @@ Matteo's answers, 28 Sep evening (stats-groundwork §8, D14–D20):
 - Gap before the GitHub Actions rehearsals (3 Oct): the levels read the MIT files, which are gitignored. Their fixed
   inputs (lean, candidate records, the national House vote by year) need to be frozen into a committed file.
 
+## 2026-09-30 (Content & site): Instagram handle @notapollorg
+
+- Matteo, 30 Sep: Instagram and Threads are @notapollorg (notapoll.org was taken); X stays @notapoll, Bluesky
+  @notapoll.org. Images keep the domain notapoll.org. Updated content-plan.md §1 and accounts-setup.md; no caption,
+  thread, slide or bio names the Instagram handle.
+
 ## 2026-09-29 (Content & site): H1 logo on every image; launch pack; pilot dry run
 
 - **Logo** (Matteo, 29 Sep, relayed by the logo and roadmap sessions): H1 "two hills" with the wordmark in Newsreader

@@ -21,12 +21,13 @@ on every image leads somewhere. No redirect. Deploy steps: `site/README.md`, "Ma
 
 ## 2. Instagram, then Threads
 
-1. Sign up with `ig@notapoll.org`. Username `notapoll.org`, name `NotAPoll`.
+1. Sign up with `ig@notapoll.org`. Username `notapollorg` (done 30 Sep; `notapoll.org` was taken), name `NotAPoll`.
 2. Settings → Account type and tools → Switch to professional account → **Creator**. Category: Education (or Science &
    Technology). Hide the category label on the profile if you prefer.
 3. Profile: avatar `kits/brand/avatar.jpg`, bio from `post.md`, link: notapoll.org.
 4. Accounts Center → Password and security → Two-factor authentication → Authentication app.
-5. Threads: open the Threads app, log in with Instagram, import the profile. Same handle, same avatar and bio.
+5. Threads: open the Threads app, log in with Instagram, import the profile. Same handle (@notapollorg), same avatar
+   and bio.
 6. Do not boost posts or turn on ads: organic only.
 
 ## 3. X
