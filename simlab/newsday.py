@@ -110,7 +110,7 @@ def parse_mediacloud(raw: bytes, race_id: str) -> list[dict]:
         when = s.get("indexed_date") or s.get("publish_date")
         if not when:
             continue
-        seen = datetime.fromisoformat(when if "T" in when else f"{when[:10]}T00:00:00")
+        seen = datetime.fromisoformat(when if len(when) > 10 else f"{when}T00:00:00")  # "2026-09-30 03:21:43.26+00:00"
         out.append({"race_id": race_id, "title": s.get("title") or "", "url": s.get("url") or "",
                     "outlet": s.get("media_name") or "", "domain": (s.get("media_url") or "").removeprefix("www."),
                     "seen": _iso(seen if seen.tzinfo else seen.replace(tzinfo=timezone.utc)), "source": "mediacloud"})

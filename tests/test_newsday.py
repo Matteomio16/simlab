@@ -62,6 +62,16 @@ class ReadDay(unittest.TestCase):
         self.assertEqual((arts[0]["source"], arts[0]["domain"], arts[0]["seen"]),
                          ("mediacloud", "cleveland.com", "2026-09-28T08:15:00+00:00"))
 
+    def test_mediacloud_index_times_keep_their_hour(self):
+        # the live API (30 Sep) writes "2026-09-30 03:21:43.264134+00:00"; publish dates alone mean midnight
+        raw = json.dumps({"stories": [
+            {"title": "Sullivan and Peltola debate in Anchorage", "url": "https://a.com/1", "media_name": "a.com",
+             "media_url": "a.com", "publish_date": "2026-09-29", "indexed_date": "2026-09-30 03:21:43.264134+00:00"},
+            {"title": "Sullivan campaign releases its second ad", "url": "https://b.com/2", "media_name": "b.com",
+             "media_url": "b.com", "publish_date": "2026-09-29"}]})
+        self.assertEqual([a["seen"] for a in newsday.parse_mediacloud(raw.encode(), "AK")],
+                         ["2026-09-30T03:21:43+00:00", "2026-09-29T00:00:00+00:00"])
+
     def test_bad_gdelt_json_is_skipped(self):
         self.assertEqual(newsday.parse_gdelt(b'{"articles": [ {bad', "TX"), [])
 

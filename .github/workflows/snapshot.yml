@@ -56,8 +56,6 @@ jobs:
         if: steps.due.outputs.run != 'false'
       - name: Snapshot
         if: steps.due.outputs.run != 'false'
-        env:
-          MEDIACLOUD_API_KEY: ${{ secrets.MEDIACLOUD_API_KEY }}
         run: python -m simlab.snap --out data-repo/snapshots
       - name: Push to the data repo
         if: steps.due.outputs.run != 'false'

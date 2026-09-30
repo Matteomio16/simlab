@@ -11,9 +11,9 @@ HTTP status, raw size and SHA-256 of the raw content, or the error. Sources, all
   (CC BY-SA).
 - markets, benchmark only (never assimilated): PredictIt (all markets), Kalshi and Polymarket (Senate and House
   control, every Senate race).
-- news: Media Cloud, for every race in newsraces.json, once its key exists. GDELT and the state outlets' RSS feeds
-  moved to their own 15-minute job (simlab/newsnap.py, 29 Sep), because GDELT refuses an address for minutes after
-  one success. Google News is not used: its feed's terms allow only personal news readers (Matteo, 28 Sep).
+- news: none here. GDELT, the state outlets' RSS feeds (29 Sep) and Media Cloud (30 Sep) run in their own 15-minute
+  job (simlab/newsnap.py), paced to each source's limits; mediacloud() below is its Media Cloud caller. Google News is
+  not used: its feed's terms allow only personal news readers (Matteo, 28 Sep).
 - pageviews: daily Wikipedia views of the pilot candidates' articles, last 10 days.
 Sources that need keys (FEC, FRED, EIA) and early-vote aggregates join once their keys and files exist. Nothing raw
 is printed: the job runs in a public repo whose logs are public.
@@ -133,37 +133,37 @@ def _key(name: str) -> str:
 
 NEWS_RACES = Path(__file__).with_name("newsraces.json")  # every race's queries (simlab/newsraces.py builds it)
 LEGACY = {"OH-S": "ohio", "NC": "north-carolina", "TX": "texas", "US": "national"}  # file names from the pilot
-MEDIACLOUD_BUDGET_S = 300
+MC_GAP_S = 31  # Media Cloud allows 2 requests a minute and 4,000 a week (its FAQ; 30 Sep: 6 quick ones, then 429)
 
 
-def mediacloud(run: "Run", key: str) -> None:
-    """The last day's stories for every race in newsraces.json and the nation, from Media Cloud's US national
-    collection. Bounded: a 429 or 5xx is retried once after 30 s, a second 429 skips the remaining races, and so does
-    the end of the 5-minute budget; each skipped race is recorded. The key rides in a header, so it never reaches the
-    URL, the manifest or the logs."""
-    end, stop, limited = run.when.date(), time.monotonic() + MEDIACLOUD_BUDGET_S, False
-    for rid, race in json.loads(NEWS_RACES.read_text(encoding="utf-8")).items():
-        name = f"mediacloud-{LEGACY.get(rid, rid.lower())}"
-        if limited or time.monotonic() >= stop:
+def mediacloud(run: "Run", key: str, queries: dict[str, str], budget_s: float) -> None:
+    """The last day's stories for each {file name: query}, in order, from Media Cloud's US national collection: one
+    request every 31 s, within the budget. A 429 or 5xx is retried once after 60 s; a second 429 skips the remaining
+    queries, and so does the end of the budget; each skipped one is recorded, for the next run. The key rides in a
+    header, so it never reaches the URL, the manifest or the logs."""
+    end, stop, limited = run.when.date(), time.monotonic() + budget_s, False
+    for i, (name, q) in enumerate(queries.items()):
+        if limited or time.monotonic() + (MC_GAP_S if i else 0) >= stop:
             run.error("news", name, MEDIACLOUD, "skipped: Media Cloud rate-limited" if limited else
-                      f"skipped: Media Cloud's {MEDIACLOUD_BUDGET_S // 60}-minute budget is used up")
+                      "skipped: this run's Media Cloud budget is used up")
             continue
-        params = {"q": race["mediacloud"], "start": f"{end - timedelta(days=1)}", "end": f"{end}",
+        if i:
+            time.sleep(MC_GAP_S)
+        params = {"q": q, "start": f"{end - timedelta(days=1)}", "end": f"{end}",
                   "platform": "onlinenews-mediacloud", "cs": MC_US_NATIONAL, "page_size": 1000}
 
         def fetch(params=params):
             nonlocal limited
-            for i in range(2):
+            for k in range(2):
                 r = requests.get(MEDIACLOUD, params=params, headers={**UA, "Authorization": f"Token {key}"},
                                  timeout=max(5.0, min(90.0, stop - time.monotonic())))
                 if r.status_code < 500 and r.status_code != 429:
                     break
-                if i == 0:
-                    time.sleep(30)
+                if k == 0:
+                    time.sleep(60)
             limited = r.status_code == 429
             return r.status_code, r.content
         run.save("news", name, MEDIACLOUD, fetch)
-        time.sleep(1)
 
 
 REGSTAT = "https://vt.ncsbe.gov/RegStat/"
@@ -269,8 +269,6 @@ def snapshot(out: Path) -> dict:
     run.save("markets", "kalshi", KALSHI, combined(
         {t: (KALSHI, {"series_ticker": t, "status": "open", "with_nested_markets": "true"}) for t in KALSHI_SERIES}))
     run.save("markets", "polymarket", GAMMA, combined({s: (GAMMA, {"slug": s}) for s in POLYMARKET_SLUGS}))
-    if key := _key("MEDIACLOUD_API_KEY"):
-        mediacloud(run, key)
     end = run.when.date()
     run.save("pageviews", "candidates", PAGEVIEWS, combined(
         {a: (f"{PAGEVIEWS}/{a}/daily/{end - timedelta(days=10):%Y%m%d}/{end:%Y%m%d}", {}) for a in CANDIDATES}))

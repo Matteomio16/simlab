@@ -29,37 +29,39 @@ def reply(status):
     return Resp()
 
 
+QUERIES = {"mediacloud-ohio": CFG["OH-S"]["mediacloud"], "mediacloud-ga": CFG["GA"]["mediacloud"],
+           "mediacloud-national": CFG["US"]["mediacloud"]}
+
+
 class MediaCloud(unittest.TestCase):
-    def test_every_race_in_the_race_file_is_asked_once(self):
-        queries, run = [], FakeRun()
+    # its limits (FAQ, 30 Sep): 2 requests a minute, 4,000 a week
+    def test_each_query_is_asked_once_in_order_31_seconds_apart(self):
+        asked, run, sleeps = [], FakeRun(), []
 
         def get(url, params=None, headers=None, timeout=None):
-            queries.append(params["q"])
+            asked.append(params["q"])
+            self.assertNotIn("sekrit", url + json.dumps(params))  # the key rides in a header only
             return reply(200)
-        with mock.patch.object(snap.requests, "get", get), mock.patch.object(snap.time, "sleep", lambda s: None):
-            snap.mediacloud(run, "key")
-        names = [n for n, _ in run.saved]
-        self.assertEqual(len(names), len(CFG))
-        self.assertIn("mediacloud-ohio", names)
-        self.assertIn("mediacloud-national", names)
-        self.assertIn("mediacloud-ga", names)
-        self.assertIn(CFG["GA"]["mediacloud"], queries)
+        with mock.patch.object(snap.requests, "get", get), mock.patch.object(snap.time, "sleep", sleeps.append):
+            snap.mediacloud(run, "sekrit", QUERIES, budget_s=600)
+        self.assertEqual([n for n, _ in run.saved], list(QUERIES))
+        self.assertEqual(asked, list(QUERIES.values()))
+        self.assertEqual(sleeps, [31, 31])
 
-    def test_a_rate_limit_backs_off_once_then_skips_the_rest(self):
+    def test_a_rate_limit_waits_a_minute_then_skips_the_rest(self):
         run, sleeps = FakeRun(), []
         with mock.patch.object(snap.requests, "get", lambda *a, **k: reply(429)), \
                 mock.patch.object(snap.time, "sleep", sleeps.append):
-            snap.mediacloud(run, "key")
-        self.assertEqual(run.saved, [(run.saved[0][0], 429)])
-        self.assertEqual(len(run.errors), len(CFG) - 1)
-        self.assertEqual(sleeps.count(30), 1)
+            snap.mediacloud(run, "key", QUERIES, budget_s=600)
+        self.assertEqual(run.saved, [("mediacloud-ohio", 429)])
+        self.assertEqual(run.errors, ["mediacloud-ga", "mediacloud-national"])
+        self.assertEqual(sleeps, [60])
 
-    def test_past_its_budget_every_race_is_recorded_as_skipped(self):
+    def test_past_its_budget_every_query_is_recorded_as_skipped(self):
         run = FakeRun()
-        with mock.patch.object(snap, "MEDIACLOUD_BUDGET_S", 0), \
-                mock.patch.object(snap.requests, "get", lambda *a, **k: reply(200)):
-            snap.mediacloud(run, "key")
-        self.assertEqual((len(run.saved), len(run.errors)), (0, len(CFG)))
+        with mock.patch.object(snap.requests, "get", lambda *a, **k: reply(200)):
+            snap.mediacloud(run, "key", QUERIES, budget_s=0)
+        self.assertEqual((len(run.saved), len(run.errors)), (0, 3))
 
 
 DATES = ('<select name="RegistrationStatisticsSearchFilter.SelectedDate"><option value="09/19/2026">09/19/2026</option>'

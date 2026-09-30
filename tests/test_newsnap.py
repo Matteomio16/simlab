@@ -108,5 +108,48 @@ class House(unittest.TestCase):
         self.assertEqual(newsnap.due(["oh-h", "ga"], last, NOW), ["ga"])
 
 
+class MediaCloud(unittest.TestCase):
+    # its limits (FAQ, 30 Sep): 2 requests a minute and 4,000 a week
+    def test_the_contested_races_every_3_hours_and_the_rest_every_12(self):
+        first = {"ohio", "ga", "national"}
+        last = {f"mediacloud-{s}": datetime(2026, 10, 12, 12 - h, 0, tzinfo=timezone.utc)
+                for s, h in (("ohio", 4), ("ga", 2), ("al", 5))}
+        every = lambda s: newsnap.MC_EVERY_H if s in first else newsnap.MC_EVERY_H_REST
+        self.assertEqual(newsnap.due(["ohio", "ga", "al", "national"], last, NOW, first, "mediacloud", every),
+                         ["national", "ohio"])
+
+    def test_media_cloud_queries_add_the_topic_words(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "races.json"
+            p.write_text(json.dumps(House.RACES), encoding="utf-8")
+            qs = newsnap.queries(p, "mediacloud")
+        self.assertEqual(qs["ohio"], '("Sherrod Brown" OR "Jon Husted") AND (Senate OR election OR campaign)')
+        self.assertEqual(qs["oh-h"],
+                         '("Marcy Kaptur" OR "Derek Merrin") AND (Congress OR House OR election OR campaign)')
+
+    def test_with_a_key_media_cloud_runs_beside_gdelt_the_pilot_first(self):
+        class PilotWeek(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return datetime(2026, 10, 6, 12, 0, tzinfo=timezone.utc)
+        calls = {}
+
+        def mc(run, key, queries, budget_s):
+            calls["mc"] = (key, list(queries)[:6], budget_s)
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(newsnap, "datetime", PilotWeek), \
+                mock.patch.object(newsnap.snap, "_key", lambda name: "k"), \
+                mock.patch.object(newsnap.snap, "mediacloud", mc), \
+                mock.patch.object(newsnap, "gdelt", lambda run, qs, order, budget: calls.setdefault("gdelt", order)), \
+                mock.patch.object(newsnap, "rss", lambda run: None), \
+                mock.patch("sys.argv", ["newsnap", "--out", tmp]):
+            newsnap.main()
+        self.assertEqual(set(calls["gdelt"]), newsnap.PILOT)  # no races.json: only the pilot is contested
+        self.assertEqual(calls["mc"][0], "k")
+        self.assertEqual(calls["mc"][1][0], "mediacloud-national")
+        self.assertEqual(set(calls["mc"][1]), {f"mediacloud-{s}" for s in newsnap.PILOT})
+        self.assertEqual(calls["mc"][2], 540.0)
+
+
 if __name__ == "__main__":
     unittest.main()
