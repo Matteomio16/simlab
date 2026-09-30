@@ -21,10 +21,11 @@ export default function Footer({ forecast }: { forecast: boolean }) {
             <ul className="mt-3 space-y-2">
               {SHOW.methods && <li><Link href="/methods" className="hover:text-white">Methods</Link></li>}
               {SHOW.labNotes && <li><Link href="/lab-notes" className="hover:text-white">Lab notes</Link></li>}
-              <li><Link href="/changelog" className="hover:text-white">Changelog</Link></li>
-              <li><Link href="/track-record" className="hover:text-white">Track record</Link></li>
+              {SHOW.changelog && <li><Link href="/changelog" className="hover:text-white">Changelog</Link></li>}
+              {SHOW.trackRecord && <li><Link href="/track-record" className="hover:text-white">Track record</Link></li>}
               {forecast && <li><Link href="/archive" className="hover:text-white">Archive</Link></li>}
-              <li><Link href="/about" className="hover:text-white">About and contact</Link></li>
+              {SHOW.about && <li><Link href="/about" className="hover:text-white">About</Link></li>}
+              <li><a href="mailto:hello@notapoll.org" className="hover:text-white">hello@notapoll.org</a></li>
             </ul>
           </div>
           <div>

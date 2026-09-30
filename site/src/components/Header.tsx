@@ -4,12 +4,12 @@ import NextUpdate from "./NextUpdate";
 import { SHOW } from "@/lib/site";
 
 export default function Header({ forecast }: { forecast: boolean }) {
-  const links = [
-    { href: "/", label: forecast ? "Senate" : "Home" },
+  const pages = [
     ...(SHOW.methods ? [{ href: "/methods", label: "Methods" }] : []),
     ...(SHOW.labNotes ? [{ href: "/lab-notes", label: "Lab notes" }] : []),
-    { href: "/about", label: "About" },
+    ...(SHOW.about ? [{ href: "/about", label: "About" }] : []),
   ];
+  const links = pages.length ? [{ href: "/", label: forecast ? "Senate" : "Home" }, ...pages] : [];
   return (
     <header>
       <div className="bg-navy text-navy-fg">

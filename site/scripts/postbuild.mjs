@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Runs after `next build`: writes out/_headers, and removes the placeholder pages that the static export needs while
 // there are no race pages or Lab notes yet, so nothing half-built is ever served.
-import { rmSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -13,9 +13,16 @@ const drop = (p) => existsSync(path.join(OUT, p)) && rmSync(path.join(OUT, p), {
 if (!forecast)
   ["senate", "senate.html", "senate.txt", "archive", "archive.html", "archive.txt"].forEach(drop);
 ["lab-notes/00.html", "lab-notes/00.txt", "lab-notes/00"].forEach(drop);
-// Unapproved pages (Matteo, 30 Sep) stay off the public site; keep this list in step with APPROVED in src/lib/site.ts.
-const unapproved = { methods: ["methods", "methods.html", "methods.txt"], labNotes: ["lab-notes", "lab-notes.html", "lab-notes.txt", "labnotes"] };
-const approved = { methods: false, labNotes: false };
+// Pages Matteo hasn't approved (src/lib/approved.json) stay off the public site.
+const route = (r) => [r, `${r}.html`, `${r}.txt`];
+const unapproved = {
+  methods: route("methods"),
+  labNotes: [...route("lab-notes"), "labnotes"],
+  about: route("about"),
+  trackRecord: route("track-record"),
+  changelog: route("changelog"),
+};
+const approved = JSON.parse(readFileSync(path.join(OUT, "..", "src", "lib", "approved.json"), "utf8"));
 if (!preview) for (const [k, paths] of Object.entries(unapproved)) if (!approved[k]) paths.forEach(drop);
 
 const headers = [

@@ -151,7 +151,7 @@ export default function Prelaunch({ today }: { today: string }) {
               rules. The misses get published too. Where states publish early-vote counts, the real counts check the
               simulated turnout.
             </p>
-            <Link href="/track-record" className="link mt-5 inline-block font-semibold">How scoring works →</Link>
+            {SHOW.trackRecord && <Link href="/track-record" className="link mt-5 inline-block font-semibold">How scoring works →</Link>}
           </div>
           <table className="w-full self-start border-collapse text-[0.95rem]">
             <thead>

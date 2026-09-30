@@ -1,8 +1,9 @@
-// Pages Matteo hasn't approved yet (30 Sep): left out of the public site, kept on the unlisted previews for review.
-// Set a page to true once he approves it.
-const APPROVED = { methods: false, labNotes: false };
+import APPROVED from "./approved.json";
+
+// Only the launch page is public until Matteo approves each page's content and layout (30 Sep). Unapproved pages stay
+// on the unlisted previews for review; set a page to true in approved.json after his yes (postbuild reads it too).
 const REVIEW = process.env.SITE_PREVIEW === "1";
-export const SHOW = { methods: APPROVED.methods || REVIEW, labNotes: APPROVED.labNotes || REVIEW };
+export const SHOW = Object.fromEntries(Object.entries(APPROVED).map(([k, v]) => [k, v || REVIEW])) as Record<keyof typeof APPROVED, boolean>;
 
 export const SITE = {
   name: "NotAPoll.org",
