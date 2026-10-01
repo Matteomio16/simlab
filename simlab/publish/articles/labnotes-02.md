@@ -29,7 +29,7 @@ So no model in our forecast ever sees an outlet's name.
 
 Before any model reads the news, we strip the outlet and rewrite each story as a short, neutral event card: what happened, who was involved, in which race. Then the voter personas react to the event, not to the brand on top of it.
 
-That matters for fairness as much as for accuracy. A forecast that quietly gives more weight to one side's media would tilt every number it publishes, and nobody reading it would know.
+That matters for fairness as much as for accuracy. A forecast that quietly gives more weight to one side's media would tilt every number it publishes, and readers would never know.
 
 It also changes what the voter personas react to. A story about a candidate's plan on prices should move the voters who care about prices, whether it was first reported on a conservative channel, a liberal one or a local paper. Stripping the outlet keeps the personas' attention on what happened. How much attention a story gets still comes from how widely it was covered, across outlets of every kind.
 

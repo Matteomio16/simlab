@@ -5,7 +5,7 @@ The test bench ran on 27 and 28 September. It cost $1.52 in total. What it taugh
 {{slide:2}}
 We asked every model the same four questions, in the same words, with the same voter personas.
 
-Does a football score move a Senate race? It shouldn't. We showed each model 20 stories that matter to nobody's vote, from sports results to a new seasonal croissant, and checked whether it stayed still.
+Does a football score move a Senate race? It shouldn't. We showed each model 20 stories that shouldn't change anyone's vote, from sports results to a new seasonal croissant, and checked whether it stayed still.
 
 If you swap the parties in a story, does the reaction swap with them? We told 16 stories twice, once with a Democrat at the centre and once with a Republican, and looked for any lean left over.
 
@@ -41,8 +41,9 @@ Across the 19 events, the models' errors correlate between +0.88 and +0.97 with 
 {{slide:5}}
 So this is how the forecast is put together.
 
-Statistics set each race's starting line: past results, the economy and the poll average. Each voter group's starting split comes from Kev, a model we trained on real survey answers, which came out slightly closer to the real 2024 vote than the plain statistics on three states it had never seen.
+Statistics set each race's starting line: past results, the economy and the poll average. How each group of voters usually splits between the parties comes from Kev, a model we trained on real survey
+answers, which came out slightly closer to the real 2024 vote than the plain statistics on three states it had never seen.
 
-Then, every day, the voter personas take in the day's news, and the model's job is narrow: which way does this story push each group? How far it pushes comes from measured history. Every week, the latest poll average decides how much of that shift to keep.
+Then, every day, the voter personas react to each day's news, and the model's job is narrow: which way does this story push each group? How far it pushes comes from measured history. Every week, the latest poll average decides how much of that shift to keep.
 
 Tomorrow in Lab notes: what happened when we told the same story with a different newspaper's name on it.

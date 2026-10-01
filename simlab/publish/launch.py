@@ -38,25 +38,25 @@ def singles() -> dict[str, dict[str, str]]:
     one, both = f"{abs(lean('glm1')):.0f}%", f"{abs(lean('glm')):.0f}%"
     out = {
         "01-intro": (
-            "Democracy, rehearsed. From 12 October we forecast the 2026 midterms every day, by modelling human "
-            "reactions to the news. Right or wrong, you'll see it.",
+            "Democracy, rehearsed. Polls ask people; we simulate how people react. An independent forecast of the "
+            "2026 midterms, every day from 12 October, scored in public.",
             " Our number always sits beside the poll average, the prediction markets and Cook, and every Monday from "
             "19 October we publish our record against them."),
         "02-lab-notes-01": (
-            "Before forecasting a single race, we asked six models to behave like voters. Each was good at one thing, "
-            "none at everything, and all were too calm about real shocks.",
-            " They over-reacted to debates and spectacles too. So statistics set where each race starts, and reaction "
-            "sizes come from shifts that were actually measured. Lab notes 01."),
+            "We asked six models to behave like voters. They stayed calm where people were shaken, and got excited "
+            "where people shrugged. So every reaction's size comes from how people really moved.",
+            " Each model was good at one thing and none at everything; statistics set where each race starts. The "
+            "whole test cost $1.52. Lab notes 01."),
         "03-lab-notes-02": (
             "We credited 80 real headlines to Fox News, then to MSNBC. Same words. One model changed its answer on which "
             "party the news helps 41% of the time.",
-            " People read the source as a clue too; a forecast can't. So no model in our forecast ever sees an outlet's "
-            "name: every story becomes a short, neutral event card first. Lab notes 02."),
+            " So no model in our forecast ever sees an outlet's name: every story becomes a short, neutral event card "
+            "first. A forecast shouldn't care where you read the news. Lab notes 02."),
         "04-lab-notes-03": (
-            f"Our answer scale listed the Republican side first, and one model leaned Republican by {one}. Asked both "
-            f"ways: {both}. So we ask every question both ways.",
-            " Some models favour whichever answer comes first. Asking twice doubles the cost, still a few cents per "
-            "thousand answers. Lab notes 03."),
+            f"We test every model for a built-in party lean. One model's lean was {one} of a typical reaction; asked "
+            f"both ways, {both}. So we ask every question both ways.",
+            " Our answer scale listed the Republican side first, and some models favour whichever answer comes first. "
+            "Asking twice costs a few cents per thousand answers. Lab notes 03."),
     }
     def end(t: str, limit: int) -> str:  # the fixed disclaimer when it fits, else the label alone
         return f"{t} {DISCLAIMER}" if len(t) + 1 + len(DISCLAIMER) <= limit else f"{t} {LABEL}."

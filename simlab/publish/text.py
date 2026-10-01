@@ -10,7 +10,8 @@ import re
 from .frame import DISCLAIMER, LABEL
 
 ALLOWED = ("not a poll", "poll average", "polling average", "polls close", "polls closed", "polls open",
-           "built from real survey answers")  # the last: the personas' real source, in the fixed disclaimer
+           "built from real survey answers",  # the personas' real source, in the fixed disclaimer
+           "polls ask people")  # the approved line on the launch page and the intro post (Matteo, 1 Oct)
 BANNED = {"poll": r"\bpoll(s|ed|ing|ster|sters)?\b", "survey": r"\bsurvey(s|ed)?\b", "voters say": r"\bvoters say\b",
           "% of voters": r"%\s+of\s+voters"}
 # Never, whatever the context (Matteo, 30 Sep): the markets are "prediction markets" or "markets", never betting.
