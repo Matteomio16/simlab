@@ -15,8 +15,8 @@ export const SITE = {
   // Shown only once each account exists (Matteo's step, roadmap C3). Flip `live` to true per account.
   social: [
     { name: "Instagram", handle: "@notapollorg", url: "https://www.instagram.com/notapollorg/", live: true },
-    { name: "X", handle: "@notapoll", url: "https://x.com/notapoll", live: false },
-    { name: "Threads", handle: "@notapollorg", url: "https://www.threads.net/@notapollorg", live: false },
+    { name: "X", handle: "@notapoll", url: "https://x.com/notapoll", live: true },
+    { name: "Threads", handle: "@notapollorg", url: "https://www.threads.net/@notapollorg", live: true },
     { name: "Bluesky", handle: "@notapoll.org", url: "https://bsky.app/profile/notapoll.org", live: false },
   ],
 };
