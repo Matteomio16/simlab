@@ -56,6 +56,9 @@ Transparency is the brand. Right or wrong, we show what the engine said and what
   fixed disclaimer (to be written once, e.g. "Social simulation, not a poll. How it works: notapoll.org"). Some posts
   are about the method; most are about results.
 - **Keep text on slides short.** Every word must earn its place.
+- **Captions and post texts read like speech** (Matteo, 1 Oct): connected, conversational sentences, like explaining
+  something interesting to a friend, never a stack of headlines. Slides can be headline-style; the words around them
+  can't.
 
 ## What we post
 
