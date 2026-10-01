@@ -145,8 +145,11 @@ def build(out: Path = OUT) -> dict:
 CHECKLIST = """# Posting checklist, Sat 3 Oct (then the same for 4 and 5 Oct)
 
 Only after Matteo has approved each post. Times in SCHEDULE.md: Paris first (Buffer's time zone), UK and US Eastern
-in brackets. Before the
-first post: the notapoll.org launch page is live (the website session's steps in site/README.md, "Matteo's steps").
+in brackets. Before the first post: the notapoll.org launch page is live (the website session's steps in
+site/README.md, "Matteo's steps").
+
+**Reminder for Matteo, Sat 3 Oct after 14:00 Paris: pin the intro post on Instagram, X and Threads** (Buffer can't
+pin; it's one tap on each app). On X pin the first post of the thread.
 
 1. Buffer, Instagram channel: the slides of 01-intro in order, caption.txt, alt text from alt-text.txt (in
    Buffer if it offers it, otherwise on Instagram after posting). Pin it to the profile grid once it's up.
