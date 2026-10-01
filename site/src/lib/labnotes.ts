@@ -12,6 +12,9 @@ export type LabNote = {
   date: string | null;
   slides: { file: string; alt: string }[];
   caption: string;
+  // Optional "## Website article" (Matteo, 1 Oct): the full web version, with {{slide:N}} placing slide N beside the
+  // text that follows it and "#### In detail" opening a fold. Without it the page shows the caption and the slides.
+  article: string;
 };
 
 function section(md: string, name: string) {
@@ -31,7 +34,8 @@ export function parse(n: string, raw: string): LabNote {
     .filter((l) => !/^#\w/.test(l.trim()))
     .join("\n")
     .trim();
-  return { n, title: title.charAt(0).toUpperCase() + title.slice(1), date, slides, caption };
+  const article = section(md, "Website article");
+  return { n, title: title.charAt(0).toUpperCase() + title.slice(1), date, slides, caption, article };
 }
 
 export function allNotes(): LabNote[] {

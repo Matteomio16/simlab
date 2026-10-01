@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { TILES } from "@/lib/tiles";
 
 export type Tile = { state: string; fill: string; ink: string; value?: string; href?: string; title: string; special?: boolean };
@@ -12,21 +12,41 @@ const GAP = 3;
 const W = 12 * S + 11 * GAP;
 const H = 8 * S + 7 * GAP;
 const ZOOM_MS = 520;
+const WASH_DELAY_MS = 180;
+// Read by ArrivalWash on the race page, so the colour carries across the page change.
+export const ARRIVE_KEY = "np-arrive";
 
-// One square per state; states with no Senate race this year stay blank. Selecting a state zooms the map into its
-// square, then opens the race page (plain navigation for reduced motion and for new-tab clicks).
+// One square per state; states with no Senate race this year stay blank. Selecting a state dives into its square: the
+// map zooms until the square fills it, the square's colour washes over the screen from the click, and the race page
+// opens under the same colour (plain navigation for reduced motion and for new-tab clicks). Hovering a square fetches
+// its page ahead, so the page is ready when the dive ends.
 export default function TileMap({ tiles, className = "" }: { tiles: Tile[]; className?: string }) {
   const router = useRouter();
   const [zoom, setZoom] = useState<string | null>(null);
+  const [wash, setWash] = useState<{ x: number; y: number; fill: string } | null>(null);
+  const washRef = useRef<HTMLDivElement>(null);
   const byState = new Map(tiles.map((t) => [t.state, t]));
 
-  const open = (e: MouseEvent, st: string, href: string) => {
+  useEffect(() => {
+    if (!wash || !washRef.current) return;
+    washRef.current.animate(
+      [{ clipPath: `circle(0px at ${wash.x}px ${wash.y}px)` }, { clipPath: `circle(150vmax at ${wash.x}px ${wash.y}px)` }],
+      { duration: ZOOM_MS - WASH_DELAY_MS + 60, delay: WASH_DELAY_MS, easing: "cubic-bezier(0.5, 0, 0.3, 1)", fill: "both" },
+    );
+  }, [wash]);
+
+  const open = (e: MouseEvent, t: Tile) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
     e.preventDefault();
+    const href = t.href!;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return router.push(href);
     router.prefetch(href);
-    setZoom(st);
-    setTimeout(() => router.push(href), ZOOM_MS);
+    try {
+      sessionStorage.setItem(ARRIVE_KEY, JSON.stringify({ state: t.state, fill: t.fill, t: Date.now() }));
+    } catch {}
+    setZoom(t.state);
+    setWash({ x: e.clientX, y: e.clientY, fill: t.fill });
+    setTimeout(() => router.push(href), ZOOM_MS + 60);
   };
 
   const z = zoom ? TILES[zoom] : null;
@@ -41,7 +61,7 @@ export default function TileMap({ tiles, className = "" }: { tiles: Tile[]; clas
         aria-label="Map of the states, one square each"
         style={{
           transformOrigin: origin,
-          transform: zoom ? "scale(7)" : "none",
+          transform: zoom ? `scale(${(W / S) * 1.12})` : "none",
           transition: `transform ${ZOOM_MS}ms cubic-bezier(0.6, 0, 0.2, 1)`,
         }}
       >
@@ -66,7 +86,15 @@ export default function TileMap({ tiles, className = "" }: { tiles: Tile[]; clas
             </g>
           );
           return t?.href ? (
-            <Link key={st} href={t.href} prefetch={false} onClick={(e) => open(e, st, t.href!)} aria-label={t.title}>
+            <Link
+              key={st}
+              href={t.href}
+              prefetch={false}
+              onClick={(e) => open(e, t)}
+              onMouseEnter={() => router.prefetch(t.href!)}
+              onFocus={() => router.prefetch(t.href!)}
+              aria-label={t.title}
+            >
               {body}
             </Link>
           ) : (
@@ -74,6 +102,7 @@ export default function TileMap({ tiles, className = "" }: { tiles: Tile[]; clas
           );
         })}
       </svg>
+      {wash && <div ref={washRef} className="pointer-events-none fixed inset-0 z-50" style={{ background: wash.fill, clipPath: "circle(0px at 0 0)" }} aria-hidden="true" />}
     </div>
   );
 }

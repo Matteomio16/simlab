@@ -8,6 +8,7 @@ import { HAS_FORECAST, IS_SAMPLE, load, raceCode, raceTitle, senateRacesSafe } f
 import { in100, leader, longDate, margin, partyName, partyVar, surname, tierColor } from "@/lib/format";
 import { STATES } from "@/lib/states";
 import TileMap from "@/components/TileMap";
+import ArrivalWash from "@/components/ArrivalWash";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import RaceCards from "@/components/RaceCards";
@@ -75,6 +76,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
 
   return (
     <article className="mx-auto max-w-[1200px] px-4 pt-8 sm:px-6 sm:pt-10">
+      <ArrivalWash state={meta.state} />
       <nav className="text-[0.85rem] font-semibold text-ink-2">
         <Link href="/" className="hover:underline">Senate forecast</Link> <span className="text-muted">/</span> {raceTitle(meta)}
       </nav>
@@ -189,7 +191,8 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
             ))}
           </ul>
         )}
-        <p className="mt-4 max-w-3xl text-[0.95rem] text-ink-2">
+        <p className="mt-5 max-w-3xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
+          <strong className="mr-2 font-bold">What the news is worth.</strong>
           {newsLine}
         </p>
       </Reveal>

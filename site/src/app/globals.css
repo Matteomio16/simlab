@@ -31,10 +31,12 @@
   --ind-2: #8a93a5;
   --ind-3: #c4c9d3;
   --tile-empty: #eeeeea;
+  --note: #fde68a;
   color-scheme: light;
 }
 
 @theme inline {
+  --color-note: var(--note);
   --color-paper: var(--paper);
   --color-paper-2: var(--paper-2);
   --color-ink: var(--ink);
@@ -281,6 +283,17 @@ a:hover > .tile,
     transform: scale(1.8);
   }
 }
+.wash-out {
+  animation: wash-out 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.05s both;
+}
+@keyframes wash-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
 .rise {
   animation: rise 0.3s ease-out both;
 }
@@ -292,6 +305,7 @@ a:hover > .tile,
 }
 @media (prefers-reduced-motion: reduce) {
   .arrive,
+  .wash-out,
   .rise {
     animation: none;
   }
