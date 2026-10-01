@@ -681,7 +681,8 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     return {"articles": len(arts), "stories": len(events), "new": new, "carried": len(events) - new,
             "continued": len(cont),
             "selected": {r: sum(bool(e["selected"].get(r)) for e in events) for r in races + ["US"]},
-            "cards_written": written, "cards_failed": failed, "unlabeled": len(skipped)}
+            "cards_written": written, "cards_failed": failed, "unlabeled": len(skipped),
+            "label_errors": sum(bool(e.get("label_error")) for e in events)}
 
 
 def main() -> None:

@@ -130,6 +130,9 @@ Decided in Claude Code, 27 Sep (reasons in `docs/CHANGELOG.md`):
 - Pinned hosts per LLM, one quantisation per model (GLM → InferenceNet with DeepInfra overflow, DeepSeek →
   DeepInfra, MiMo → Xiaomi + DeepInfra, Luna → OpenAI); GLM reasoning `effort: minimal` (can't be disabled, 0
   reasoning tokens).
+- GLM hosts (Matteo, 1 Oct): OpenInference fp4 first, DeepInfra and InferenceNet fp4 as ordered fallbacks. This
+  reverses the 27 Sep pin, because every host now makes GLM reason (11-36 tokens a call); same answers to the 64
+  calibration events (correlation 0.95, directions unchanged), $0.000013 against $0.000031 a call.
 - Fidelity targets: vote among CES validated voters (`vvweight_post`); turnout from the Census CPS 2024 November
   supplement (`simlab/cps.py`: self-reported, non-answerers dropped, each state reweighted to its official 2024
   turnout in `simlab/turnout2024.json`), demographic cells only. CES validated turnout is not used: it tracks
@@ -141,7 +144,7 @@ Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructu
 - Site at **notapoll.org** (Matteo, 29 Sep; `site/`, Next.js static export on a Cloudflare Worker, as scaliastudio.dev);
   `labs.scaliastudio.dev/midterms` redirects there. 3 Oct: no numbers; 12 Oct: forecast pages after Matteo's go.
   Brand domain notapoll.org, shown on every image; its own site comes later. Handles: Instagram and Threads
-  @notapoll.org, X @notapoll, Bluesky @notapoll.org. Scheduling on free tools only: Buffer Free for X, Threads and
+  @notapollorg (notapoll.org was taken; Matteo, 30 Sep), X @notapoll, Bluesky @notapoll.org. Scheduling on free tools only: Buffer Free for X, Threads and
   Bluesky; Instagram's own scheduler.
 - No paid publishing tools: Instagram posting is free (Meta Business Suite by hand, official API later); X by hand or
   through Buffer's free plan, never paid X API credits. Threads and Bluesky optional. Social accounts created later.

@@ -13,8 +13,9 @@ Decided by Matteo, 28 Sep:
 - On camera twice (launch on 12 Oct, results on 4 Nov); Matteo's voice over the weekly Reels. No AI presenters or AI
   voices.
 - Channels: Instagram, X, Threads and Bluesky only (no TikTok, YouTube Shorts or LinkedIn).
-- Name: **NotAPoll.org**. Handles: @notapoll.org on Instagram (Creator account) and Threads, @notapoll on X,
-  @notapoll.org on Bluesky (verified with a `_atproto` TXT record in Cloudflare).
+- Name: **NotAPoll.org**. Handles: @notapollorg on Instagram (Creator account) and Threads (notapoll.org was taken;
+  Matteo, 30 Sep), @notapoll on X, @notapoll.org on Bluesky (verified with a `_atproto` TXT record in Cloudflare).
+  Images keep showing the domain notapoll.org.
 - Domain (Matteo, 28 Sep, evening; relayed by the roadmap session): Matteo bought notapoll.org on his Cloudflare
   account. Images and videos show "notapoll.org" (the header wordmark reads NotAPoll.org). notapoll.org is the site's
   home: the launch page from 3 Oct, the forecast from 12 Oct; labs.scaliastudio.dev/midterms redirects there (Matteo,
