@@ -115,7 +115,7 @@ export default function Overview() {
               {[
                 ["If the election were today", s.today ? `${in100(s.today.p_r_50plus)} in 100` : "–"],
                 ["Statistics only, no simulation", `${in100(s.stats_only.p_r_50plus)} in 100`],
-                ["Prediction market", s.benchmarks.market == null ? "–" : `${in100(s.benchmarks.market)}%`],
+                ["Prediction markets", s.benchmarks.market == null ? "–" : `${in100(s.benchmarks.market)}%`],
                 ["If news matters less / more", `${in100(s.news.if_weaker)} / ${in100(s.news.if_stronger)}`],
               ].map(([k, v]) => (
                 <div key={k} className="flex items-baseline justify-between gap-3 border-b border-rule py-2">
@@ -124,7 +124,7 @@ export default function Overview() {
                 </div>
               ))}
             </dl>
-            <p className="note mt-2">All figures are Republican control; the market is the Republican price.</p>
+            <p className="note mt-2">All figures are Republican control; the prediction markets show the Republican price.</p>
           </div>
         </Reveal>
         <div className="mt-6">

@@ -13,7 +13,7 @@ export default function Footer({ forecast }: { forecast: boolean }) {
             <Lockup dark stacked height={72} />
             <p className="mt-3 max-w-md leading-relaxed">
               A forecast of the 2026 US midterms built by social simulation. Voter personas and simulated elections;
-              every number beside the poll average, the prediction market and the Cook Political Report.
+              every number beside the poll average, the prediction markets and the Cook Political Report.
             </p>
           </div>
           <div>
@@ -43,7 +43,7 @@ export default function Footer({ forecast }: { forecast: boolean }) {
         <div className="border-t border-white/10">
           <div className="mx-auto flex max-w-[1200px] flex-wrap justify-between gap-3 px-4 py-5 text-xs opacity-80 sm:px-6">
             <span>
-              A project by <a href={SITE.studio.url} className="underline underline-offset-2 hover:text-white">{SITE.studio.name}</a>. Independent; not affiliated with any campaign or party.
+              Independent; not affiliated with any campaign or party.
             </span>
             <span>Poll data from Wikipedia, CC BY-SA 4.0.</span>
           </div>
