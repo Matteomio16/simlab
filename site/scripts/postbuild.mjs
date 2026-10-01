@@ -33,6 +33,8 @@ const headers = [
   ...(preview ? ["  X-Robots-Tag: noindex, nofollow"] : []),
   "/_next/static/*",
   "  Cache-Control: public, max-age=31536000, immutable",
+  "/social/*",
+  "  X-Robots-Tag: noindex, nofollow",
   "/data/*",
   "  Access-Control-Allow-Origin: *",
   "/opengraph-image",
