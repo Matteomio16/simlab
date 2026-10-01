@@ -21,7 +21,8 @@ LIMIT = {"x": 280, "bluesky": 300, "threads": 500}
 MAX_IMAGES = {"x": 4, "bluesky": 4, "threads": 10}
 # Buffer Free: Instagram, X and Threads, one queued thread at a time, 10 posts per channel (Matteo, 1 Oct). "Start
 # here" is the thread, on X; everything else goes out as single posts. Bluesky is outside Buffer: by hand until the C9
-# poster exists. UK times (BST); US Eastern is five hours behind.
+# poster exists. Times are stored as UK time (BST) and shown as Paris time first (Matteo thinks in it, 1 Oct), with UK
+# and US Eastern in brackets: Paris = UK + 1, Eastern = UK - 5.
 SCHEDULE = [("Sat 3 Oct", "13:00", "01-start-here", "thread on X (the one Buffer thread); single post on Threads; "
                                                      "pin it everywhere when convenient"),
             ("Sat 3 Oct", "17:00", "02-lab-notes-01", "single posts"),
@@ -122,18 +123,19 @@ def build(out: Path = OUT) -> dict:
         k = f"0{n + 1}-lab-notes-0{n}"
         report[k] = post_folder(out / k, p.slides, p.instagram, p.thread, p.allow)
         report[k] += single_file(out / k, single[k], len(p.slides))
-    rows = ["# Posting schedule, Sat 3 – Mon 5 Oct (UK time)", "",
+    rows = ["# Posting schedule, Sat 3 – Mon 5 Oct (Paris time; UK and US Eastern in brackets)", "",
             "Queue everything in Buffer once Matteo has approved each post (set Buffer's time zone to "
             "Europe/London): the Instagram carousel with caption.txt, X and Threads from single-post.md. Buffer "
             "Free holds one thread at a time and 10 posts per channel; this plan uses one thread and four posts per "
             "channel. Instagram alt text: in Buffer's Instagram options if offered, otherwise on Instagram after it "
             "posts (… → Edit → Edit alt text). Bluesky is outside Buffer: post its single-post.md text by hand at "
             "the same time, once the account exists.", "",
-            "| Day | UK time (ET) | Post | Instagram (Buffer) | X, Threads (Buffer); Bluesky (by hand) |",
+            "| Day | Paris (UK, ET) | Post | Instagram (Buffer) | X, Threads (Buffer); Bluesky (by hand) |",
             "|---|---|---|---|---|"]
     for day, hhmm, k, how in SCHEDULE:
-        et = f"{int(hhmm[:2]) - 5:02d}:{hhmm[3:]}"
-        rows.append(f"| {day} | {hhmm} ({et}) | `{k}` | carousel, caption.txt | {how} (single-post.md) |")
+        h, m = int(hhmm[:2]), hhmm[3:]
+        rows.append(f"| {day} | {h + 1:02d}:{m} ({hhmm} UK, {h - 5:02d}:{m} ET) | `{k}` | carousel, caption.txt | "
+                    f"{how} (single-post.md) |")
     (out / "SCHEDULE.md").write_bytes(("\n".join(rows) + "\n").encode("utf-8"))
     (out / "CHECKLIST.md").write_bytes(CHECKLIST.encode("utf-8"))
     (prof / "REDIRECT.md").unlink(missing_ok=True)  # retired: notapoll.org serves a launch page (Matteo, 30 Sep)
@@ -142,7 +144,8 @@ def build(out: Path = OUT) -> dict:
 
 CHECKLIST = """# Posting checklist, Sat 3 Oct (then the same for 4 and 5 Oct)
 
-Only after Matteo has approved each post. Around 13:00–15:00 UK (8–10 am US Eastern) is a common choice. Before the
+Only after Matteo has approved each post. Times in SCHEDULE.md: Paris first (Buffer's time zone), UK and US Eastern
+in brackets. Before the
 first post: the notapoll.org launch page is live (the website session's steps in site/README.md, "Matteo's steps").
 
 1. Buffer, Instagram channel: the slides of 01-start-here in order, caption.txt, alt text from alt-text.txt (in

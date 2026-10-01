@@ -24,6 +24,7 @@ PACK = ROOT / "kits" / "launch"
 APPROVED = PACK / "APPROVED.json"
 API = "https://api.buffer.com"
 LONDON = ZoneInfo("Europe/London")
+PARIS = ZoneInfo("Europe/Paris")  # Buffer's time zone and Matteo's: shown first in every printout
 WEEKEND = [("01-start-here", "2026-10-03 13:00"), ("02-lab-notes-01", "2026-10-03 17:00"),
            ("03-lab-notes-02", "2026-10-04 15:00"), ("04-lab-notes-03", "2026-10-05 13:00")]
 X_IMAGES = 4
@@ -57,6 +58,13 @@ def channels() -> dict[str, dict]:
 def utc(local: str) -> str:
     return datetime.strptime(local, "%Y-%m-%d %H:%M").replace(tzinfo=LONDON).astimezone(ZoneInfo("UTC")) \
         .strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
+
+def shown(local: str) -> str:
+    """ "Sat 3 Oct 14:00 Paris (13:00 UK, 08:00 ET)" for a UK time."""
+    t = datetime.strptime(local, "%Y-%m-%d %H:%M").replace(tzinfo=LONDON)
+    p, e = t.astimezone(PARIS), t.astimezone(ZoneInfo("America/New_York"))
+    return f"{p:%a %d %b %H:%M} Paris ({t:%H:%M} UK, {e:%H:%M} ET)"
 
 
 def section(md: str, name: str) -> str:
@@ -130,7 +138,7 @@ def main(argv: list[str]) -> int:
     elif cmd == "plan":  # no network: what would be queued
         for folder, local in WEEKEND:
             for p in posts_for(folder, base):
-                print(f"{local} UK ({utc(local)})  {p['service']:<9} {len(p['text']):>4} chars, {len(p['assets'])} "
+                print(f"{shown(local)}  {p['service']:<9} {len(p['text']):>4} chars, {len(p['assets'])} "
                       f"images{' + thread' if 'twitter' in p.get('metadata', {}) else ''}  {folder}")
         print("approved:", approved() or "nothing yet")
     elif cmd == "queue":
@@ -150,7 +158,8 @@ def main(argv: list[str]) -> int:
                 print(folder, p["service"], create(p, chs[p["service"]]["id"], utc(local)))
     elif cmd == "queued":
         for n in queued():
-            print(n["dueAt"], n["channelService"], n["id"], n["text"][:60].replace("\n", " "))
+            due = datetime.fromisoformat(n["dueAt"].replace("Z", "+00:00")).astimezone(PARIS)
+            print(f"{due:%a %d %b %H:%M} Paris", n["channelService"], n["id"], n["text"][:60].replace("\n", " "))
     elif cmd == "delete":
         print(gql("mutation($i: PostId!) { deletePost(input: {id: $i}) { __typename } }", {"i": argv[1]}))
     return 0
