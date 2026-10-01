@@ -1,7 +1,7 @@
 {
   "methods": false,
   "labNotes": false,
-  "about": false,
+  "about": true,
   "trackRecord": false,
   "changelog": false
 }
