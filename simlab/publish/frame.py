@@ -26,7 +26,9 @@ from matplotlib.text import Text
 from PIL import Image, ImageFont
 
 LABEL = "Social simulation, not a poll"
-SITE = "notapoll.org"  # Matteo, 28 Sep (relayed by the roadmap session): images show the domain
+SITE = "notapoll.org"
+# The fixed line that ends every caption (communication.md, 1 Oct). Wording still open with Matteo: option A for now.
+DISCLAIMER = f"{LABEL}. How it works: {SITE}"  # Matteo, 28 Sep (relayed by the roadmap session): images show the domain
 # The logo: H1, two hills, with the wordmark in Newsreader 560 (Matteo, 29 Sep; the kit is brand/final.py). The old
 # ballot-box mark and the theme-face wordmark stay behind switches: NOTAPOLL_LOGO=grid, NOTAPOLL_WORDMARK=theme.
 LOGO = os.environ.get("NOTAPOLL_LOGO", "hills")
@@ -85,6 +87,7 @@ class Theme:
     overprint: str | None = None  # second ink offset behind hero numbers (riso)
     tossup: str | None = None  # fill for the 35–65% toss-up zone; hairline when None
     swing_band: bool = False  # blue, purple, red band along the top of the label strip
+    note: str = "#F6DD6E"  # post-it yellow for highlights: a note, a flag, "what changed" (communication.md)
 
 
 BROADSHEET = Theme("broadsheet")
@@ -318,6 +321,23 @@ class Slide:
             hills(self.ax, left - 0.42 * cap - HILLS_W * h / HILLS_H, base, h, (self.t.dem, self.t.rep, purple))
         else:
             self.logomark(left - 58, y - 22, 44, color)
+
+    def note(self, text: str, x: float | None = None, y: float | None = None, width: float = 520, px: int = 32,
+             rot: float = -1.5):
+        """A post-it: yellow paper with a soft shadow, slightly turned, for "what changed" or a flag."""
+        x = MARGIN if x is None else x
+        y = self.y if y is None else y
+        lines = self.wrap(text, "sans", 600, px, width - 56)
+        h = len(lines) * px * 1.3 + 52
+        from matplotlib.transforms import Affine2D
+        turn = Affine2D().rotate_deg_around(x + width / 2, y + h / 2, rot) + self.ax.transData
+        self.ax.add_patch(plt.Rectangle((x + 6, y + 8), width, h, color="#00000018", lw=0, zorder=4, transform=turn))
+        self.ax.add_patch(plt.Rectangle((x, y), width, h, color=self.t.note, lw=0, zorder=5, transform=turn))
+        for i, line in enumerate(lines):
+            self.ax.text(x + 28, y + 26 + i * px * 1.3, typeset(line), fontproperties=self.font("sans", 600, px),
+                         color=self.t.ink, va="top", zorder=6, transform=turn)
+        self.y = y + h + 24
+        return self
 
     def logomark(self, x: float, y: float, size: float, color: str):
         """The NotAPoll mark: a ballot box holding a 3x3 grid of simulated voters instead of a tick."""

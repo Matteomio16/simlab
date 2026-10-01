@@ -1,7 +1,14 @@
 # Publishing: chart factory and post kits
 
 Content & site session. Design approved by Matteo on 28 Sep: matplotlib draws every image and video frame. The content
-plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing) and CLAUDE.md.
+plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing) and CLAUDE.md. **Voice and message:
+`docs/communication.md` (Matteo, 1 Oct) wins over anything here**; this file keeps the mechanics.
+
+- **Every caption ends with the fixed disclaimer** `frame.DISCLAIMER`, currently "Social simulation, not a poll. How it
+  works: notapoll.org" (wording still open with Matteo). Hashtags go before it. Single posts end with it when it fits
+  the platform's limit, else with the label alone.
+- **Slides stay short:** a headline, one or two lines, a chart or a post-it. The method lives on the website.
+- **Post-it notes** (`Slide.note`): yellow `#F6DD6E`, slightly turned, for "what changed", a flag or the next post.
 
 ## Brand
 
@@ -44,7 +51,7 @@ page and for Lab notes that are about a specific model; `text.style()` flags the
 
 | Say | Avoid | Never (rules) |
 | --- | --- | --- |
-| voter personas (built from real survey answers, by party, race and education, in each state), social simulation, simulated elections, the simulation; prediction markets, markets | AI voters, bots, LLM, agents, AI-simulated | poll, survey, voters say, % of voters, respondents, anything implying real people answered; synthetic, synthetic voters (Matteo, 1 Oct: too surreal); betting, bets, bettors, gambling, wagers, bookies (Matteo, 30 Sep) |
+| social simulation; voter personas (built from real survey answers); voter groups; live experiment; transparent; independent; simulated elections; prediction markets, markets; "wins 7 in 10" | AI voters, LLM, AI-simulated, anything cold or mechanical | poll, survey, voters say, % of voters, respondents for our outputs; synthetic; bots; agents; AI-powered, revolutionary, game-changer; betting and its kin; Matteo or his story; Hungary (communication.md, 1 Oct; enforced by `text.check`) |
 
 "Virtual interactions" only once voters actually interact: today each group reacts on its own (no social-network layer
 in `docs/engine-design.md`). "Voter personas" or "simulated" must stay in every post, so no reader mistakes them for

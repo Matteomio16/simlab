@@ -10,8 +10,8 @@ miss gets published; the making-of is shown as it happens.
 
 Decided by Matteo, 28 Sep:
 - Formats A to F below. "Ask the lab" dropped.
-- On camera twice (launch on 12 Oct, results on 4 Nov); Matteo's voice over the weekly Reels. No AI presenters or AI
-  voices.
+- No face and no voice (communication.md, 1 Oct, replacing the earlier on-camera plan): "we", a small independent lab.
+  No AI presenters or AI voices.
 - Channels: Instagram, X, Threads and Bluesky only (no TikTok, YouTube Shorts or LinkedIn).
 - Vocabulary (Matteo, 1 Oct): "voter personas", built from real survey answers by party, race and education in each
   state, replace "synthetic voters" everywhere; "Social simulation, not a poll" stays. No Hungary in public copy, and
@@ -93,15 +93,38 @@ week before the US).
 | Wed 30 Sep – Fri 2 Oct | — | You pick; Lab notes 1–3 drafts on Thu 1; you create the accounts on Fri 2 | |
 | Sat 3 – Sun 4 Oct | Lab notes 1–2 | Chart factory and daily kit ready (Sun 4) | |
 | Mon 5 – Sun 11 Oct (private pilot) | Lab notes 3–9, one a day | Daily kits for OH, NC, TX stay internal; site ready Fri 9; ethics review Sat 10; go or no-go Sun 11 | Ohio early voting from about 6 Oct |
-| Mon 12 – Sun 18 Oct (launch) | Mon 12: launch video (on camera), Senate Reel, first receipts. Then the weekly rhythm | Posting automation behind the approval flag | Code freeze 12 Oct; NC early voting 15 Oct (Early-vote watch starts) |
+| Mon 12 – Sun 18 Oct (launch) | Mon 12: launch post and Senate overview, first forecasts. Then the weekly rhythm | Posting automation behind the approval flag | Code freeze 12 Oct; NC early voting 15 Oct (Early-vote watch starts) |
 | Mon 19 – Sun 25 Oct | Weekly rhythm | | Texas early voting from about 19 Oct; UK clocks change 25 Oct |
 | Mon 26 Oct – Sun 1 Nov | Weekly rhythm; Sat 31: every path to Senate control | | US clocks change 1 Nov |
 | Mon 2 Nov | Final forecast, locked and timestamped | | Last scoring date |
 | Tue 3 Nov | Morning: what to watch tonight, with poll-closing times in ET and UK; the site's live page; night posts only if you're up to approve them | | First polls close 23:00 UK |
-| Wed 4 Nov | How we did, first look: every called race, misses first (on camera) | | |
+| Wed 4 Nov | How we did, first look: every called race, misses first; the experiment reaching its result | | |
 
-Weekly rhythm from 12 Oct: the daily forecast every day, plus Mon receipts, Tue and Sat early-vote watch, Wed why it
-moved, Fri lab notes, Sun every future. About 25 minutes a day of your time.
+Weekly rhythm from 12 Oct: see §6 (the recurring formats in `docs/communication.md`). About 25 minutes a day of your
+time.
+
+## 6. Recurring formats from 12 Oct (communication guide, 1 Oct)
+
+Most posts are results, reported like journalism; a few are about the method. Every caption ends with the fixed
+disclaimer. Times: Paris first.
+
+| Day | Format | What it shows | Data it needs |
+|---|---|---|---|
+| Every day | **Where the races are heading** | The daily kit: up to four races (the closest plus the biggest mover), a post-it for what changed | `forecast.json` (have) |
+| Monday | **Where our engine says the polls are wrong** | The races where our chance differs most from what the poll average implies, and why; from 19 Oct, last week's calls scored, hits and misses alike | poll-implied chance per race (Statistics) and the weekly scores (Kev, A9) |
+| Wednesday, when real | **Engine evidence** | "This news moved these voter groups by this much, so these races shifted." Only when the engine actually shows it (a story's effect at or above the quoting threshold) | `moves.json` by group and by event (have) |
+| Friday | **Upset of the week** | What changed most in seven days, and how it could affect the election (Senate control) | 7-day change per race and `senate` (have) |
+| Sunday | **Special edition** | One of the five designs (The Chamber, The Map, The Ballot, The Main Event, The Seismograph), often with the video | as each design needs |
+| About every 10 days | **Behind the engine** | How the engine is built; how we fine-tune models on real survey data; how people stay at the centre of the model. Model names in plain words | none |
+| Big news days | **Signal post** | A clear "this matters" post, never clickbait, only when the day's effect is real | the day's movers |
+
+From 12 Oct: Mon 12 launch and first forecasts; Wed 14 first engine evidence (if real); Fri 16 first upset of the week;
+Sun 18 The Chamber; Mon 19 first "polls are wrong" with scored calls; Thu 22 behind the engine (fine-tuning on real
+survey data); Sun 25 The Map; Thu 29 behind the engine (people at the centre); Sat 31 every path to Senate control;
+Sun 1 Nov The Ballot or The Main Event for the closest race; Mon 2 the final forecast.
+
+Open with Matteo before any of these go out: how strongly we may speak about polls (the Monday format's title is a
+working title), whether to mention "social interactions", the "long research" story, and the disclaimer wording.
 
 ## 5. Tone and distribution
 

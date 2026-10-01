@@ -14,10 +14,14 @@ BANNED = {"poll": r"\bpoll(s|ed|ing|ster|sters)?\b", "survey": r"\bsurvey(s|ed)?
           "% of voters": r"%\s+of\s+voters"}
 # Never, whatever the context (Matteo, 30 Sep): the markets are "prediction markets" or "markets", never betting.
 NEVER = {"synthetic": r"\bsynthetic\b",  # Matteo, 1 Oct: "voter personas" instead
+         # communication.md (1 Oct): never in posts
+         "bots": r"\bbots?\b", "agents": r"\bagents?\b", "AI-powered": r"\bai[- ]powered\b",
+         "revolutionary": r"\brevolutionar", "game-changer": r"\bgame[- ]chang", "Matteo": r"\bmatteo\b",
+         "Hungary": r"\bhungar",
          "betting": r"\bbet(s|ting|tor|tors)?\b|\bgambl\w*|\bwager\w*|\bbookmakers?\b|\bpunters?\b|\bbookies?\b"}
 
 
-STYLE = {"AI": r"\bAIs?\b|artificial intelligence", "bot": r"\bbots?\b", "LLM": r"\bLLMs?\b",
+STYLE = {"AI": r"\bAIs?\b|artificial intelligence", "LLM": r"\bLLMs?\b",
          "respondents": r"\brespondents?\b"}
 
 
@@ -39,8 +43,8 @@ def check(s: str, *, caption: bool = True, allow: tuple[str, ...] = ()) -> list[
             out.append(f'uses "{word}" (never for model outputs)')
     for word, pattern in NEVER.items():
         if re.search(pattern, low):
-            out.append(f'uses "{word}" (say ' + ('"voter personas")' if word == "synthetic" else
-                                                    '"prediction markets" or "markets")'))
+            hint = {"synthetic": 'say "voter personas"', "betting": 'say "prediction markets" or "markets"'}
+            out.append(f'uses "{word}" ({hint.get(word, "never on NotAPoll, communication.md")})')
     return out
 
 

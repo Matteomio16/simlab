@@ -70,10 +70,13 @@ class TextCheckTest(unittest.TestCase):
 
     def test_style_notes_flag_ai_wording(self):
         notes = " ".join(text.style("Our AI voters and bots, an LLM, 500 respondents"))
-        for w in ("AI", "bot", "LLM", "respondents"):
+        for w in ("AI", "LLM", "respondents"):
             self.assertIn(w, notes)
         self.assertEqual(text.style("Voter personas in a social simulation"), [])
         self.assertTrue(text.check("Synthetic voters react.", caption=False))
+        for s in ("our bots", "AI agents", "an AI-powered forecast", "a game-changer", "Matteo built it",
+                  "Hungary's election"):
+            self.assertTrue(text.check(s, caption=False), s)
 
     def test_allow_list_for_real_surveys(self):
         self.assertEqual(text.check(f"The survey's own data. {frame.LABEL}", allow=("survey",)), [])

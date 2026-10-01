@@ -13,7 +13,7 @@ import shutil
 from pathlib import Path
 
 from . import brand, labnotes, text
-from .frame import LABEL
+from .frame import DISCLAIMER, LABEL
 from .labnotes import contact_sheet
 
 OUT = Path(__file__).resolve().parents[2] / "kits" / "launch"
@@ -38,10 +38,10 @@ def singles() -> dict[str, dict[str, str]]:
     one, both = f"{abs(lean('glm1')):.0f}%", f"{abs(lean('glm')):.0f}%"
     out = {
         "01-intro": (
-            "We're forecasting the 2026 midterms with voter personas built from real survey answers, every day until "
-            "3 November, scored in public every Monday. We'll publish what we get wrong too.",
-            " It's not a poll: nobody is asked anything, so our number always sits beside the poll average, the "
-            "prediction markets and Cook. notapoll.org"),
+            "Democracy, rehearsed. A live experiment: forecasting the 2026 midterms by modelling how groups of voters "
+            "react to the news, every day until 3 November. Right or wrong, you'll see it.",
+            " Our number always sits beside the poll average, the prediction markets and Cook, and every Monday from "
+            "19 October we publish our record against them."),
         "02-lab-notes-01": (
             "Before forecasting a single race, we asked six models to behave like voters. Each was good at one thing, "
             "none at everything, and all were too calm about real shocks.",
@@ -58,9 +58,10 @@ def singles() -> dict[str, dict[str, str]]:
             " Some models favour whichever answer comes first. It doubles the cost, still a few cents per thousand "
             "answers. Lab notes 03."),
     }
-    label = f" {LABEL}."
-    return {k: {"x": short + label, "bluesky": short + label, "threads": short + more + label}
-            for k, (short, more) in out.items()}
+    def end(t: str, limit: int) -> str:  # the fixed disclaimer when it fits, else the label alone
+        return f"{t} {DISCLAIMER}" if len(t) + 1 + len(DISCLAIMER) <= limit else f"{t} {LABEL}."
+    return {k: {"x": end(short, LIMIT["x"]), "bluesky": end(short, LIMIT["bluesky"]),
+                "threads": end(short + more, LIMIT["threads"])} for k, (short, more) in out.items()}
 
 
 def single_file(d: Path, posts: dict[str, str], slides: int, allow=()) -> list[str]:
