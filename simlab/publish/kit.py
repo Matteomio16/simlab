@@ -194,7 +194,7 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
         if top:
             lines.append(f"What moved it: {top[0]['card']}")
         lines.append("")
-    lines += ["How to read it: synthetic voters react to each day's news, and each simulated election plays the race "
+    lines += ["How to read it: voter personas react to each day's news, and each simulated election plays the race "
               "out once. Anything from 35% to 65% is a toss-up.", "", f"{LABEL}.", "",
               "#midterms2026 #elections #socialsimulation"]
     caption = "\n".join(lines)

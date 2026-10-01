@@ -41,16 +41,13 @@ def ep01(theme: Theme = LAB) -> Post:
     glm_dir = s[("events", "glm")]["sign_accuracy_nonnull"]
     k = "LAB NOTES 01"
 
-    a = Slide(day, k, theme).headline("In April we simulated Hungary’s election. We called the winner and missed "
-                                      "by 16 points.", px=80)
-    a.dek("TISZA’s share of the vote")
-    charts.hbars(a, [("Our simulation", 36.7, theme.ai), ("The result", 53.2, theme.data)], 60,
-                 lambda v: f"{v:.1f}%")
-    a.y += 30
-    a.text("So this time nothing goes into the forecast until it has been tested against what really happened.",
-           "serif", 600, 44)
-    a.source("Hungary, April 2026. Simulation: 45 simulated voters, run before the vote. Result: the official "
-             "count.")
+    a = Slide(day, k, theme).headline("Before forecasting a single race, we asked six models to behave like "
+                                      "voters.", px=80)
+    a.dek("Four tests, the same questions for every model, scored against what really happened. Nothing goes into "
+          "the forecast until it has passed.", px=38)
+    a.at_bottom(charts.stats_height(rule=True))
+    charts.stats(a, [("6", "models"), ("4", "tests"), ("$1.52", "total cost")], rule=True)
+    a.source("Test bench, 27–28 Sep 2026.")
 
     b = Slide(day, f"{k} · THE TESTS", theme).headline("Six models, four questions.", px=84)
     b.y += 10
@@ -84,16 +81,16 @@ def ep01(theme: Theme = LAB) -> Post:
     e = Slide(day, f"{k} · WHAT IT MEANS", theme).headline("Statistics decide where each race starts. The simulation "
                                                            "only moves it.", px=76)
     e.text("The starting point of every race comes from past results, the economy and the poll average. Each voter "
-           "group’s starting split comes from Kev, a model we trained on real survey answers. Synthetic voters then "
+           "group’s starting split comes from Kev, a model we trained on real survey answers. The voter personas then "
            "react to each day’s news, and every week the latest poll average decides how much of that to keep.",
            px=36, color=theme.ink2, after=1.0)
     e.text("Tomorrow: one model changed its answer on 41% of headlines when we swapped “Fox News” for “MSNBC”.",
            "serif", 600, 42)
     e.source("Forecasts go public on Monday 12 October.")
 
-    return Post(day, "Lab notes 01: we missed Hungary by 16 points, so we tested everything", [
-        (a, "In April we simulated Hungary's election: we called the winner and missed by 16 points. Bar chart of "
-            "TISZA's share: our simulation 36.7 percent, the result 53.2 percent."),
+    return Post(day, "Lab notes 01: six models, four tests, one shared blind spot", [
+        (a, "Before forecasting a single race, we asked six models to behave like voters: four tests, six models, "
+            "$1.52 in total."),
         (b, "Six models, four questions: does irrelevant news move a race; does the reaction swap when the parties "
             "swap; does it move the way people really moved on 19 measured events; does it know how groups voted in "
             "2024."),
@@ -104,21 +101,19 @@ def ep01(theme: Theme = LAB) -> Post:
             "like the debates, so reaction sizes come from measured shifts, never from a model."),
         (e, "Statistics decide where each race starts; the simulation only moves it, and the weekly poll average "
             "decides how much movement to keep."),
-    ], f"""In April we simulated Hungary's election. We called the winner and missed the size by 16 points.
-
-So before the midterms we put six models through four questions. Does a football score move a Senate race? (It shouldn't.) If you swap the parties in a story, does the reaction swap? Does the model move the way people actually moved on 19 events since 2012? Does it know how groups voted in 2024?
+    ], f"""Before forecasting a single race, we asked six models to behave like voters, and put them through four questions. Does a football score move a Senate race? (It shouldn't.) If you swap the parties in a story, does the reaction swap? Does the model move the way people actually moved on 19 events since 2012? Does it know how groups voted in 2024?
 
 Each model was good at one thing and none at everything. Jev ignores news that doesn't matter ({null_jev:.0%} of the time). GLM gets the direction of a reaction right ({glm_dir * 13:.0f} of 13 real events). Nobody gets the size right.
 
-And they all fail the same way: too calm about real shocks like COVID and January 6, too excited about media spectacles like debates. Averaging them doesn't fix that. So in our forecast, statistics decide where each race starts, reaction sizes come from shifts that were actually measured, and the synthetic voters only decide which way the news pushes each group.
+And they all fail the same way: too calm about real shocks like COVID and January 6, too excited about media spectacles like debates. Averaging them doesn't fix that. So in our forecast, statistics decide where each race starts, reaction sizes come from shifts that were actually measured, and the voter personas only decide which way the news pushes each group.
 
 The whole test bench cost $1.52. We'll keep publishing what fails as well as what works.
 
 {LABEL}.
 
 #midterms2026 #elections #socialsimulation #dataviz""", [
-        f"In April we simulated Hungary's election. We called the winner and missed the size by 16 points. So before "
-        f"the midterms we tested six models on four questions. What we found, in five posts. {LABEL}.",
+        f"Before forecasting the 2026 midterms, we asked six models to behave like voters and tested them on four "
+        f"questions. What we found, in five posts. {LABEL}.",
         f"Ignoring news that doesn't matter: Jev said “no change” {null_jev:.0%} of the time. An untuned Kev reacted to "
         f"about 1 story in {1 / null_kev:.0f}.",
         f"Which way a group moves: GLM-5.3 Flash was right on {glm_dir * 13:.0f} of 13 real events. How far: no model. "

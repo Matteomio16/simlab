@@ -13,6 +13,9 @@ Decided by Matteo, 28 Sep:
 - On camera twice (launch on 12 Oct, results on 4 Nov); Matteo's voice over the weekly Reels. No AI presenters or AI
   voices.
 - Channels: Instagram, X, Threads and Bluesky only (no TikTok, YouTube Shorts or LinkedIn).
+- Vocabulary (Matteo, 1 Oct): "voter personas", built from real survey answers by party, race and education in each
+  state, replace "synthetic voters" everywhere; "Social simulation, not a poll" stays. No Hungary in public copy, and
+  no "by Scalia Studio" sign-offs on posts. Voice table: `docs/publishing.md`.
 - Name: **NotAPoll.org**. Handles: @notapollorg on Instagram (Creator account) and Threads (notapoll.org was taken;
   Matteo, 30 Sep), @notapoll on X, @notapoll.org on Bluesky (verified with a `_atproto` TXT record in Cloudflare).
   Images keep showing the domain notapoll.org.

@@ -13,7 +13,8 @@ ALLOWED = ("not a poll", "poll average", "polling average", "polls close", "poll
 BANNED = {"poll": r"\bpoll(s|ed|ing|ster|sters)?\b", "survey": r"\bsurvey(s|ed)?\b", "voters say": r"\bvoters say\b",
           "% of voters": r"%\s+of\s+voters"}
 # Never, whatever the context (Matteo, 30 Sep): the markets are "prediction markets" or "markets", never betting.
-NEVER = {"betting": r"\bbet(s|ting|tor|tors)?\b|\bgambl\w*|\bwager\w*|\bbookmakers?\b|\bpunters?\b|\bbookies?\b"}
+NEVER = {"synthetic": r"\bsynthetic\b",  # Matteo, 1 Oct: "voter personas" instead
+         "betting": r"\bbet(s|ting|tor|tors)?\b|\bgambl\w*|\bwager\w*|\bbookmakers?\b|\bpunters?\b|\bbookies?\b"}
 
 
 STYLE = {"AI": r"\bAIs?\b|artificial intelligence", "bot": r"\bbots?\b", "LLM": r"\bLLMs?\b",
@@ -21,9 +22,9 @@ STYLE = {"AI": r"\bAIs?\b|artificial intelligence", "bot": r"\bbots?\b", "LLM": 
 
 
 def style(s: str) -> list[str]:
-    """Voice notes, not rule failures (Matteo, 28 Sep): say social simulation, synthetic or simulated voters; keep
+    """Voice notes, not rule failures (Matteo, 28 Sep; 1 Oct): say social simulation and voter personas; keep
     "AI" for the methods page; "respondents" implies real people."""
-    return [f'style: "{w}" (prefer synthetic or simulated voters)' for w, pat in STYLE.items() if re.search(pat, s)]
+    return [f'style: "{w}" (prefer voter personas or social simulation)' for w, pat in STYLE.items() if re.search(pat, s)]
 
 
 def check(s: str, *, caption: bool = True, allow: tuple[str, ...] = ()) -> list[str]:
@@ -38,7 +39,8 @@ def check(s: str, *, caption: bool = True, allow: tuple[str, ...] = ()) -> list[
             out.append(f'uses "{word}" (never for model outputs)')
     for word, pattern in NEVER.items():
         if re.search(pattern, low):
-            out.append(f'uses "{word}" (say "prediction markets" or "markets")')
+            out.append(f'uses "{word}" (say ' + ('"voter personas")' if word == "synthetic" else
+                                                    '"prediction markets" or "markets")'))
     return out
 
 

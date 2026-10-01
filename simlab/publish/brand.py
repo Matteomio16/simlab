@@ -154,20 +154,19 @@ def pinned(t=LAB):
     """The Start here carousel: the promise first (scored in public, misses included), then how it works."""
     k = "START HERE"
     a = Slide(PINNED_DAY, k, t)
-    a.headline("We’re forecasting the 2026 midterms with a society of synthetic voters.", px=80)
-    a.dek("Every day until 3 November. 35 Senate races, about 40 House seats, 40,000 simulated elections each. "
+    a.headline("We’re forecasting the 2026 midterms with thousands of voter personas.", px=80)
+    a.dek("Built from real survey answers, by party, race and education, in each state. Every day until 3 November. "
           "Scored in public.", px=36)
     electorate(a.ax, t, MARGIN, a.y + 6, a.width, 330, n=1000)
     a.y += 350
-    a.text("Each dot: one synthetic voter.", px=30, color=t.ink2)
+    a.text("Each dot: one voter persona.", px=30, color=t.ink2)
 
     b = Slide(PINNED_DAY, f"{k} · HOW IT WORKS", t)
     b.headline("Every morning, three steps.", px=80)
     steps = [("Start from what we know", "Past results, the economy and the poll average set where each race "
                                          "begins."),
-             ("Let the news land", "Synthetic voters, built from how real groups of Americans vote, react to the "
-                                   "day’s events. Only people who could still change their mind, or still decide "
-                                   "whether to vote, move the numbers."),
+             ("Let the news land", "The voter personas react to the day’s events. Only those who could still change "
+                                   "their mind, or still decide whether to vote, move the numbers."),
              ("Play it out 40,000 times", "The share of simulated elections a candidate wins is their chance.")]
     for n, (head, body) in enumerate(steps, 1):
         b.y += 10
@@ -178,9 +177,9 @@ def pinned(t=LAB):
 
     c = Slide(PINNED_DAY, f"{k} · WHAT IT ISN’T", t)
     c.headline("Not a poll. Nobody was asked anything.", px=88)
-    c.text("Our voters are synthetic. They stand in for groups of people; they are not people. So our number never "
-           "travels alone: it always sits beside the poll average, the prediction markets and the Cook Political "
-           "Report.", px=38, color=t.ink2, after=1.0)
+    c.text("Our voter personas stand in for groups of people. They are not people, and nobody answers us. So our "
+           "number never travels alone: it always sits beside the poll average, the prediction markets and the Cook "
+           "Political Report.", px=38, color=t.ink2, after=1.0)
     c.text("Between 35% and 65%, we call a race a toss-up. We won’t pretend to know more than that.", "serif", 600,
            44)
 
@@ -198,51 +197,52 @@ def pinned(t=LAB):
         d.text(body, px=36, x=MARGIN + 220, width=d.width - 220, after=0.8)
     d.rule(t.hairline)
     d.at_bottom(2 * 42 * 1.25 + 10)
-    d.text("In April we simulated Hungary and missed by 16 points. This time we’re showing our work.", "serif", 600,
-           42)
-    slides = [(a, "A dot map of the United States, each dot a synthetic voter in blue, red or purple. Headline: we're "
-                  "forecasting the 2026 midterms with a society of synthetic voters, every day until 3 November, "
+    d.text("We’ll publish what we get wrong, not just what we get right.", "serif", 600, 42)
+    slides = [(a, "A dot map of the United States, each dot a voter persona in blue, red or purple. Headline: we're "
+                  "forecasting the 2026 midterms with thousands of voter personas, built from real survey answers, "
                   "scored in public."),
               (b, "Every morning, three steps: start from past results, the economy and the poll average; let the "
-                  "news land on synthetic voters; play each race out 40,000 times."),
+                  "news land on the voter personas; play each race out 40,000 times."),
               (c, "Not a poll: nobody was asked anything. Our number always sits beside the poll average, the "
                   "prediction markets and the Cook Political Report. 35% to 65% is a toss-up."),
               (d, "Every Monday from 19 October we publish our score against the poll average, the markets and Cook, "
-                  "misses included. In April we simulated Hungary and missed by 16 points.")]
+                  "misses included.")]
     for s, _ in slides:
-        s.source("NotAPoll, by Scalia Studio.")
+        s.source("Forecasts go public on Monday 12 October.")
     caption = (
-        "Start here.\n\n"
-        "We're forecasting the 2026 US midterms with a society of synthetic voters, every day until 3 November, and "
+        "We're forecasting the 2026 US midterms with thousands of voter personas, every day until 3 November, and "
         "we'll be scored in public.\n\n"
         "Every morning: past results, the economy and the poll average set where each race starts. Then the day's "
-        "news lands on synthetic voters built from how real groups of Americans vote, and only the people who could "
-        "still change their mind, or still decide whether to vote, move the numbers. Each race is played out 40,000 "
-        "times; the share a candidate wins is their chance.\n\n"
+        "news lands on voter personas built from real survey answers, by party, race and education, in each state. "
+        "Only the personas who could still change their mind, or still decide whether to vote, move the numbers. "
+        "Each race is played out 40,000 times; the share a candidate wins is their chance.\n\n"
         "It's not a poll. Nobody was asked anything. So our number never travels alone: it sits beside the poll "
         "average, the prediction markets and Cook. Every Monday from 19 October we publish how we're doing against "
         "all of them, misses included.\n\n"
-        "In April we simulated Hungary's election and missed by 16 points. This time we're showing our work, starting "
-        "with Lab notes 01.\n\n"
+        "We'll publish what we get wrong, not just what we get right, starting with Lab notes 01.\n\n"
         f"{LABEL}.\n\n#midterms2026 #elections #socialsimulation #dataviz")
-    thread = [f"We're forecasting the 2026 US midterms with a society of synthetic voters, every day until 3 "
-              f"November, scored in public. {LABEL}.",
-              "Every morning: statistics set where each race starts, the day's news lands on synthetic voters, and "
+    thread = [f"We're forecasting the 2026 US midterms with thousands of voter personas, every day until 3 November, "
+              f"scored in public. {LABEL}.",
+              "Every morning: statistics set where each race starts, the day's news lands on the voter personas, and "
               "each race is played out 40,000 times. The share won is the chance.",
               "Nobody is asked anything. So our number always sits beside the poll average, prediction markets and "
               "Cook, and every Monday from 19 Oct we publish our record, misses included.",
-              f"In April we simulated Hungary and missed by 16 points. This time we're showing our work. {SITE}"]
+              f"We'll publish what we get wrong, not just what we get right. {SITE}"]
     return slides, caption, thread
 
 
+ALLOW = ("survey",)  # "real survey answers": the real respondents the personas are built from, not our output
+
+
 BIOS = {
-    "instagram": ("Democracy, rehearsed.\nThe 2026 midterms, simulated every day by synthetic voters.\n"
-                  "Not a poll. By Scalia Studio", 150),
-    "x": ("Democracy, rehearsed. The 2026 US midterms, simulated every day by synthetic voters and played out 40,000 "
-          "times. Not a poll. By Scalia Studio", 160),
-    "bluesky": ("Democracy, rehearsed.\n\nThe 2026 US midterms, simulated every day: synthetic voters react to the "
+    "instagram": ("Democracy, rehearsed.\nThe 2026 midterms, simulated every day with voter personas built from "
+                  "real survey answers.\nNot a poll.", 150),
+    "x": ("Democracy, rehearsed. The 2026 midterms, simulated every day with voter personas built from real survey "
+          "answers, each race played out 40,000 times. Not a poll.", 160),
+    "bluesky": ("Democracy, rehearsed.\n\nThe 2026 US midterms, simulated every day: voter personas built from real "
+                "survey answers react to the "
                 "news, then every race is played out 40,000 times.\n\nNot a poll. Shown beside the poll average, "
-                "markets and Cook; scored weekly.\n\nBy Scalia Studio", 256),
+                "markets and Cook; scored weekly.", 256),
 }
 
 
@@ -270,8 +270,10 @@ def write():
     slides, caption, thread = pinned()
     paths = [s.save(OUT / "pinned" / f"slide-{i}.jpg") for i, (s, _) in enumerate(slides, 1)]
     contact_sheet(paths, OUT / "pinned" / "contact.jpg", scale=0.3)
-    problems = [f"caption: {p}" for p in text.check(caption)] + [f"thread 1: {p}" for p in text.check(thread[0])]
-    problems += [f"thread {i}: {p}" for i, t in enumerate(thread, 1) for p in text.check(t, caption=False)]
+    problems = [f"caption: {p}" for p in text.check(caption, allow=ALLOW)]
+    problems += [f"thread 1: {p}" for p in text.check(thread[0], allow=ALLOW)]
+    problems += [f"thread {i}: {p}" for i, t in enumerate(thread, 1) for p in text.check(t, caption=False, allow=ALLOW)]
+    problems += [f"bio {k}: {p}" for k, (b, _) in BIOS.items() for p in text.check(b, caption=False, allow=ALLOW)]
     problems += [f"thread {i}: {len(t)} characters" for i, t in enumerate(thread, 1) if len(t) > 280]
     problems += [f"bio {k}: {len(b)} of {n} characters" for k, (b, n) in BIOS.items() if len(b) > n]
     notes = sorted({n for s in [caption, *thread, *(b for b, _ in BIOS.values())] for n in text.style(s)})

@@ -72,7 +72,8 @@ class TextCheckTest(unittest.TestCase):
         notes = " ".join(text.style("Our AI voters and bots, an LLM, 500 respondents"))
         for w in ("AI", "bot", "LLM", "respondents"):
             self.assertIn(w, notes)
-        self.assertEqual(text.style("Synthetic voters in a social simulation"), [])
+        self.assertEqual(text.style("Voter personas in a social simulation"), [])
+        self.assertTrue(text.check("Synthetic voters react.", caption=False))
 
     def test_allow_list_for_real_surveys(self):
         self.assertEqual(text.check(f"The survey's own data. {frame.LABEL}", allow=("survey",)), [])

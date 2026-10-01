@@ -840,6 +840,16 @@ Matteo's answers, 28 Sep evening (stats-groundwork §8, D14–D20):
 - Gap before the GitHub Actions rehearsals (3 Oct): the levels read the MIT files, which are gitignored. Their fixed
   inputs (lean, candidate records, the national House vote by year) need to be frozen into a committed file.
 
+## 2026-10-01 (Content & site): voter personas; no Hungary; Buffer queue step
+
+- Matteo, 1 Oct (after reviewing the weekend posts): "voter personas" replace "synthetic voters" in every post,
+  caption, thread, single post, alt text, slide, bio and the daily kit; `text.check` now rejects "synthetic". The
+  "Start here." opening line, the "by Scalia Studio" sign-offs and every mention of Hungary are gone; Lab notes 01 now
+  opens with the six models and four tests. New bios drafted for him.
+- Buffer: channels are Instagram, X and Threads (Bluesky by hand until a C9 poster); one queued thread at a time.
+  `simlab/publish/buffer.py` queues approved posts through Buffer's GraphQL API (images by public URL, alt text,
+  carousels, the X thread) only when `kits/launch/APPROVED.json` names them; times shown in Paris time first.
+
 ## 2026-09-30 (Content & site): Instagram handle @notapollorg
 
 - Matteo, 30 Sep: Instagram and Threads are @notapollorg (notapoll.org was taken); X stays @notapoll, Bluesky

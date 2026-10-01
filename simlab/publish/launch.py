@@ -38,13 +38,13 @@ def singles() -> dict[str, dict[str, str]]:
     one, both = f"{abs(lean('glm1')):.0f}%", f"{abs(lean('glm')):.0f}%"
     out = {
         "01-start-here": (
-            "We're forecasting the 2026 midterms with a society of synthetic voters, every day until 3 November, "
-            "scored in public every Monday. In April we missed Hungary by 16 points. This time we show our work.",
+            "We're forecasting the 2026 midterms with voter personas built from real survey answers, every day until "
+            "3 November, scored in public every Monday. We'll publish what we get wrong too.",
             " It's not a poll: nobody is asked anything, so our number always sits beside the poll average, the "
             "prediction markets and Cook. notapoll.org"),
         "02-lab-notes-01": (
-            "In April we simulated Hungary's election and missed by 16 points. So we tested six models first. Each was "
-            "good at one thing, none at everything, and all were too calm about real shocks.",
+            "Before forecasting a single race, we asked six models to behave like voters. Each was good at one thing, "
+            "none at everything, and all were too calm about real shocks.",
             " They over-reacted to debates and spectacles too. So statistics set where each race starts, and reaction "
             "sizes come from shifts that were actually measured. Lab notes 01."),
         "03-lab-notes-02": (
@@ -63,13 +63,13 @@ def singles() -> dict[str, dict[str, str]]:
             for k, (short, more) in out.items()}
 
 
-def single_file(d: Path, posts: dict[str, str], slides: int) -> list[str]:
+def single_file(d: Path, posts: dict[str, str], slides: int, allow=()) -> list[str]:
     lines, problems = ["# Single posts (X and Threads through Buffer; Bluesky by hand)", ""], []
     for k in ("x", "threads", "bluesky"):
         t, n = posts[k], min(slides, MAX_IMAGES[k])
         lines += [f"## {k.capitalize() if k != 'x' else 'X'} ({len(t)} of {LIMIT[k]} characters; attach slide-1 to "
                   f"slide-{n})", "", t, ""]
-        problems += [f"{k}: {p}" for p in text.check(t)]
+        problems += [f"{k}: {p}" for p in text.check(t, allow=allow)]
         problems += [f"{k}: {len(t)} characters (limit {LIMIT[k]})" for _ in [0] if len(t) > LIMIT[k]]
     (d / "single-post.md").write_bytes("\n".join(lines).encode("utf-8"))
     return problems
@@ -116,13 +116,13 @@ def build(out: Path = OUT) -> dict:
 
     report, single = {}, singles()
     slides, caption, thread = brand.pinned()
-    report["01-start-here"] = post_folder(out / "01-start-here", slides, caption, thread)
-    report["01-start-here"] += single_file(out / "01-start-here", single["01-start-here"], len(slides))
+    report["01-start-here"] = post_folder(out / "01-start-here", slides, caption, thread, brand.ALLOW)
+    report["01-start-here"] += single_file(out / "01-start-here", single["01-start-here"], len(slides), brand.ALLOW)
     for n in (1, 2, 3):
         p = getattr(labnotes, f"ep0{n}")()
         k = f"0{n + 1}-lab-notes-0{n}"
         report[k] = post_folder(out / k, p.slides, p.instagram, p.thread, p.allow)
-        report[k] += single_file(out / k, single[k], len(p.slides))
+        report[k] += single_file(out / k, single[k], len(p.slides), p.allow)
     rows = ["# Posting schedule, Sat 3 – Mon 5 Oct (Paris time; UK and US Eastern in brackets)", "",
             "Queue everything in Buffer once Matteo has approved each post (set Buffer's time zone to "
             "Europe/London): the Instagram carousel with caption.txt, X and Threads from single-post.md. Buffer "
