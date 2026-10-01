@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// An illustration of the method, not data: a field of voter personas. Every few seconds a news story ripples out
+// An illustration of the method, not data: a field of squares standing for voters. Every few seconds a news story ripples out
 // from a point. Persuadable voters (a minority) shift colour a little, mobilisable voters light up, firm partisans
 // barely move; then the effect fades, as stories do. Canvas 2D; paused off screen and in background tabs; a still
 // frame for reduced motion.
@@ -147,12 +147,13 @@ export default function VoterField({ className = "" }: { className?: string }) {
         <canvas ref={ref} className="absolute inset-0 h-full w-full" aria-hidden="true" />
         <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 bg-paper/90 px-2 py-1 text-[0.72rem] font-semibold">
           <span className="live-dot" aria-hidden="true" />
-          <span>{story ? `News: ${story}` : "Voter personas"}</span>
+          <span>{story ? `News: ${story}` : "Illustration"}</span>
         </div>
       </div>
       <figcaption className="note mt-2">
-        Illustration, not data. Each square is a voter persona. When a story spreads, persuadable voters shift and
-        voters unsure whether to vote light up; firm partisans barely move. Then the effect fades.
+        An illustration, not a forecast. The real personas: 28 voter groups in each state. When a story spreads,
+        persuadable voters shift and voters unsure whether to vote light up; firm partisans barely move. Then the
+        effect fades.
       </figcaption>
     </figure>
   );
