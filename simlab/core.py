@@ -202,9 +202,12 @@ class Chat:
         self.reasoning = reasoning or {"enabled": False}
 
     def complete(self, messages: list[dict], tag: str = "", max_tokens: int = 300, json_mode: bool = True) -> str:
+        """The reply's text. A model that must reason gets REASONING_ROOM more tokens, because its hosts count the
+        reasoning against max_tokens; an empty reply is asked again (twice at most) and never cached (1 Oct: 7% of
+        GLM's reaction rows were unreadable, cut off at 70 tokens or empty from the fallback host)."""
         payload = {"model": self.model, "messages": messages, "temperature": self.temperature,
-                   "max_tokens": max_tokens, "usage": {"include": True},
-                   "reasoning": self.reasoning}
+                   "max_tokens": max_tokens + (REASONING_ROOM if self.reasoning.get("effort") else 0),
+                   "usage": {"include": True}, "reasoning": self.reasoning}
         if json_mode:
             payload["response_format"] = {"type": "json_object"}
         if self.provider_order:
@@ -212,13 +215,16 @@ class Chat:
                                    if self.model in {LLMS[m] for m in ORDERED} else {"only": self.provider_order})
         k = Cache.key("chat", self.model, payload)
         hit = CACHE.get(k)
-        if hit is not None:
+        if hit:
             return hit
-        Ledger.check()
-        resp = _post(f"{OR_BASE}/api/v1/chat/completions", payload, _or_headers())
-        Ledger.add(self.model, _cost(resp), tag)
-        text = resp["choices"][0]["message"]["content"] or ""
-        CACHE.put(k, text)
+        for _ in range(3):
+            Ledger.check()
+            resp = _post(f"{OR_BASE}/api/v1/chat/completions", payload, _or_headers())
+            Ledger.add(self.model, _cost(resp), tag)
+            text = resp["choices"][0]["message"]["content"] or ""
+            if text.strip():
+                CACHE.put(k, text)
+                break
         return text
 
     def distribution(self, system: str, user: str, options: list[str], tag: str = "") -> dict:
@@ -260,5 +266,7 @@ LLMS = {
 HOSTS = {"glm": ["OpenInference", "DeepInfra", "InferenceNet"], "mimo": ["Xiaomi", "DeepInfra"],
          "deepseek": ["DeepInfra"], "luna": ["OpenAI"]}
 ORDERED = {"glm"}  # hosts tried in the listed order; the others are load-balanced by OpenRouter
-# GLM can't turn reasoning off: "minimal" used 0 reasoning tokens on 27 Sep, 11-36 a call since 30 Sep. Others: off.
+# GLM can't turn reasoning off: "minimal" used 0 reasoning tokens on 27 Sep, 11-36 a call since 30 Sep (up to 70 on
+# OpenInference, counted against max_tokens: Chat.complete adds REASONING_ROOM). Others: off.
 REASONING = {"glm": {"effort": "minimal"}}
+REASONING_ROOM = 200

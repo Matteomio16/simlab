@@ -75,6 +75,17 @@ class React(unittest.TestCase):
         self.assertEqual((len(rows), failed, len(glm.calls)), (3 * 28, 0, 2 * 28))  # the Senate race asks its own
         self.assertEqual({r["race_id"] for r in rows}, {"OH-1", "OH-9", "OH-S"})
 
+    def test_an_unreadable_answer_is_asked_again(self):
+        # 1 Oct: 105 GLM rows came back unreadable and would never have been asked again
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp) / "2026-10-01"
+            d.mkdir()
+            rows = [{"race_id": "OH-S", "event_id": "E", "group": g, "model": "glm", "parse_error": g == "b"}
+                    for g in ("a", "b")]
+            (d / "reactions.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+            seen = harness.asked_before(Path(tmp), date(2026, 10, 2))
+        self.assertEqual(seen, {("OH-S", "E", "a", "glm")})
+
     def test_skip_and_shadow(self):
         skip = {("OH-S", "OH-S-1", g["group"], "glm") for g in harness.personas("OH-S")}
         rows, _ = harness.react(EVENTS[:1], [("glm", FakeLLM(), False), ("kev", FakeDecision(), True)], "direct", skip)

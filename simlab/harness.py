@@ -74,7 +74,8 @@ def questions(race_id: str, wording: str = "direct") -> dict:
 
 
 def asked_before(derived_root: Path, day: date, lookback: int = 14) -> set:
-    """(race_id, event_id, group, model) already asked in the previous `lookback` days."""
+    """(race_id, event_id, group, model) already answered in the previous `lookback` days. An answer that couldn't be
+    read doesn't count, so the row is asked again while its story is selected."""
     seen = set()
     for k in range(1, lookback + 1):
         p = derived_root / f"{day - timedelta(days=k):%Y-%m-%d}" / "reactions.jsonl"
@@ -82,7 +83,8 @@ def asked_before(derived_root: Path, day: date, lookback: int = 14) -> set:
             for line in p.read_text(encoding="utf-8").splitlines():
                 if line.strip():
                     r = json.loads(line)
-                    seen.add((r["race_id"], r["event_id"], r["group"], r["model"]))
+                    if not r.get("parse_error"):
+                        seen.add((r["race_id"], r["event_id"], r["group"], r["model"]))
     return seen
 
 
@@ -126,14 +128,16 @@ def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> t
 
 
 def run(day: date, derived_root: Path, run_id: str, askers: list[tuple], wording: str = "direct") -> dict:
-    """React to the day's selected events; rows asked earlier today or in the last 14 days are not asked again."""
+    """React to the day's selected events; rows answered earlier today or in the last 14 days are not asked again
+    (unreadable answers are)."""
     d = derived_root / f"{day:%Y-%m-%d}"
     events = [json.loads(l) for l in (d / "events.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
     out = d / "reactions.jsonl"
     skip = asked_before(derived_root, day)
     if out.exists():
         skip |= {(r["race_id"], r["event_id"], r["group"], r["model"])
-                 for r in (json.loads(l) for l in out.read_text(encoding="utf-8").splitlines() if l.strip())}
+                 for r in (json.loads(l) for l in out.read_text(encoding="utf-8").splitlines() if l.strip())
+                 if not r.get("parse_error")}
     new, failed = react(events, askers, wording, skip)
     rows = [{**r, "date": f"{day}", "run_id": run_id} for r in new]
     with out.open("a", encoding="utf-8") as f:
