@@ -154,7 +154,7 @@ def pinned(t=LAB):
     """The intro carousel, the post to pin (communication.md): a live experiment, people first, short slides, no
     eyebrow labels (Matteo's design pass, 1 Oct); the method lives on the website."""
     new = lambda: Slide(PINNED_DAY, "", t)
-    a = new()
+    a = Slide(PINNED_DAY, "THE 2026 MIDTERMS", t)  # the one eyebrow Matteo kept (2 Oct)
     a.headline("Democracy, rehearsed.", px=104)
     a.dek("Polls ask people. We simulate how people react. An independent forecast of the 2026 midterms, scored in "
           "public.", px=38)
@@ -163,9 +163,9 @@ def pinned(t=LAB):
     a.text("Illustration, not a forecast.", px=28, color=t.ink2)
 
     b = new()
-    b.headline("Every morning, the day’s news meets more than a thousand voter personas.", px=72)
+    b.headline("Voter groups, reacting to the news.", px=80)
     for n, line in enumerate(["We start from past results and the poll average.",
-                              "The personas react to the day’s events, group by group.",
+                              "More than a thousand voter personas react to each day’s events.",
                               "Each race is played out 40,000 times."], 1):
         b.y += 10
         top = b.y
@@ -191,9 +191,9 @@ def pinned(t=LAB):
     d.rule(t.hairline)
     slides = [(a, "Democracy, rehearsed. Polls ask people; we simulate how people react. An independent forecast of "
                   "the 2026 midterms, scored in public, over an illustrative dot map of the United States."),
-              (b, "Every morning, the day's news meets more than a thousand voter personas: we start from past "
-                  "results and the poll average; the personas react, group by group; each race is played out 40,000 "
-                  "times. Full method at notapoll.org."),
+              (b, "Voter groups, reacting to the news: we start from past results and the poll average; more than a "
+                  "thousand voter personas react to each day's events; each race is played out 40,000 times. Full "
+                  "method at notapoll.org."),
               (c, "Not a poll: we don't ask people what they think today, we model how they react. Our number always "
                   "sits beside the poll average, the prediction markets and Cook."),
               (d, "Right or wrong, you'll see it: daily updates, a public record every Monday from 19 October, the "

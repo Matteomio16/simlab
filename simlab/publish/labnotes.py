@@ -46,7 +46,9 @@ def ep01(theme: Theme = LAB) -> Post:
     new = lambda: Slide(day, "", theme, series=k)
 
     a = new().headline("Before forecasting a single race, we asked six models to behave like voters.", px=80)
-    a.dek("Six models, four tests, $1.52 in total.", px=40)
+    a.dek("Four tests, scored against what really happened.", px=40)
+    a.at_bottom(charts.stats_height(rule=True))
+    charts.stats(a, [("6", "models"), ("4", "tests"), ("$1.52", "total cost")], rule=True)
     a.source("Test bench, 27–28 Sep 2026.")
 
     b = new().headline("Four questions we asked every model.", px=84)
@@ -68,25 +70,26 @@ def ep01(theme: Theme = LAB) -> Post:
     d = new().headline("They all got the same things wrong.", px=84)
     d.text("Too calm about real shocks: COVID, January 6, the fall of Kabul. Too excited about spectacles: the "
            "debates.", px=40, color=theme.ink2, after=1.2)
+    d.note("So the size of every reaction comes from how people really moved.", width=700)
     d.source("19 real events, 2012–2026. Errors correlate +0.88 to +0.97 between models.")
 
-    e = new().headline("So real history sets the size of every reaction.", px=80)
+    e = new().headline("Real history sets the size of every reaction.", px=80)
     e.text("Statistics set where each race starts and the voter personas react to each day’s news. How far each "
            "group moves comes from how people really moved in past events.", px=38, color=theme.ink2, after=1.2)
     e.note("Tomorrow: one model changed 41% of its answers when we swapped “Fox News” for “MSNBC”.", width=760)
     e.source("How each group of voters usually splits between the parties: a model trained on real survey answers.")
 
     return Post(day, "Lab notes 01: six models, four tests, one shared blind spot", [
-        (a, "Before forecasting a single race, we asked six models to behave like voters. Six models, four tests, "
-            "$1.52 in total."),
+        (a, "Before forecasting a single race, we asked six models to behave like voters: four tests, scored against "
+            "what really happened. Six models, four tests, $1.52 in total."),
         (b, "Four questions we asked every model: does a football score move a Senate race; if the parties swap, does "
             "the reaction swap; does it move the way people really moved; does it know how groups voted in 2024."),
         (c, f"Some got the direction right, none got the size: Jev ignores irrelevant news {null_jev:.0%} of the "
             f"time; GLM gets the direction right on {glm_dir * 13:.0f} of 13 events; no model gets the size right; "
             "plain statistics know how groups voted better than every model."),
         (d, "They all got the same things wrong: too calm about real shocks like COVID and January 6, too excited "
-            "about the debates."),
-        (e, "So real history sets the size of every reaction. Statistics set where each race starts, the voter "
+            "about the debates. So the size of every reaction comes from how people really moved."),
+        (e, "Real history sets the size of every reaction. Statistics set where each race starts, the voter "
             "personas react to each day's news, and how far each group moves comes from past events."),
     ], f"""Before forecasting a single race, we wanted to know whether a model can react to the news the way a group of voters really would. We put six models through four tests. Does a football score move a Senate race? It shouldn't. If you swap the parties in a story, does the reaction swap too? Does the model move the way people actually moved on 19 real events since 2012? Does it know how groups voted in 2024?
 
@@ -122,7 +125,7 @@ def ep02(theme: Theme = LAB) -> Post:
     a.y += 20
     a.text(f"{flips['GLM']:.0%}", "sans", 800, 300, leading=1.0, after=0.15)
     a.headline("of headlines got a different answer when we swapped “Fox News” for “MSNBC.”", px=76)
-    a.dek("Same story, same words. Only the outlet’s name changed.")
+    a.dek("Same story, same words. We asked a model which party the news helps; only the outlet’s name changed.")
     a.source("80 real headlines about 2026 Senate races, September 2026. Model: GLM-5.3 Flash.")
 
     b = new().headline("The same headline, shown three ways.", px=84)
@@ -186,6 +189,9 @@ def ep03(theme: Theme = LAB) -> Post:
 
     a = new().headline("One model looked Republican. It was the order of the answers.", px=84)
     a.dek("We test every model for a built-in party lean.", px=40)
+    a.at_bottom(charts.stats_height(150, rule=True) + 40 + 80)
+    charts.stats(a, [(pct(glm[1]), "GLM, asked one way"), (pct(glm[2]), "asked both ways")], px=150, rule=True)
+    a.text("Built-in lean toward Republicans, as a share of a typical reaction.", px=30, color=theme.ink2)
     a.source("Mirror test: 16 news stories, each with the parties swapped, 28 voter personas. Sep 2026.")
 
     b = new().headline("We tell every story twice, with the parties swapped.", px=80)
@@ -208,8 +214,9 @@ def ep03(theme: Theme = LAB) -> Post:
 
     names = ", ".join(f"{n} {pct(b1)} → {pct(b2)}" for n, b1, b2 in items[:3])
     return Post(day, "Lab notes 03: one model looked Republican", [
-        (a, "One model looked Republican. It was the order of the answers. We test every model for a built-in party "
-            "lean."),
+        (a, f"One model looked Republican. It was the order of the answers. We test every model for a built-in party "
+            f"lean: GLM's, as a share of a typical reaction, was {pct(glm[1])} asked one way and {pct(glm[2])} asked "
+            f"both ways."),
         (b, "We tell every story twice, with the parties swapped; a fair model mirrors itself exactly. Then every "
             "question is asked in both orders."),
         (c, f"Dot chart of each model's built-in lean, as a share of a typical reaction, one way versus both ways "
