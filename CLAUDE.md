@@ -4,6 +4,36 @@ You are picking up a research build started in Claude Cowork. Read this whole fi
 (Scalia Studio, LSE Econ & Politics). He works in voice-dictated messages; be concise, explain jargon plainly, and ask
 before any spend beyond the budget below.
 
+## 0. Working from the cloud or the phone (added 2 Oct 2026)
+
+Matteo sometimes asks from his phone, in a cloud session (claude.ai/code or the Claude app). A cloud session sees one
+repo and none of the laptop: no `.env`, no local memory notes, no other sessions, and maybe no `gh`. What you need:
+
+- **Where things stand:** `docs/roadmap.md`, section "Where we are (2 Oct)" first, then the task tables and "What only
+  Matteo can do"; the newest entries of `docs/CHANGELOG.md`. Voice and copy rules: `docs/communication.md` and
+  `docs/publishing.md`.
+- **How today's run went:** the run outputs are in the private repo `Matteomio16/simlab-data`, not here. Start a cloud
+  session on that repo (its CLAUDE.md explains `derived/<day>/run.json`). If `gh` works, `gh run list -R
+  Matteomio16/simlab --limit 20` shows the workflows; otherwise the data repo's commits show what ran. The GitHub app
+  on his phone shows run status too.
+- **What runs by itself:** a Cloudflare Worker (`ops/cron`) dispatches the workflows: news every 15 minutes, snapshots
+  every 3 hours, early-vote files, and the daily job (`daily.yml`) from 09:47 UTC, once a day. Sunday 4 Oct's drills
+  (`drills.yml`) start after that day's run. A failed run emails Matteo from GitHub. Spend caps are in the code.
+- **Laptop sessions** (Engine, Statistics, Kev, Content & site, Website, Roadmap) work on `main` and share one git
+  index. From the cloud, work on a branch and say so; never push to `main`.
+
+Rules that live only in Matteo's local notes, copied here:
+- **Read and report by default.** From the cloud, never spend money (paid model calls, Modal), never run the pipeline,
+  never change GitHub variables or secrets, never post anything. Nothing public goes live (posts, site pages, routes on
+  notapoll.org) without Matteo's direct yes; a page counts as published as soon as its URL is reachable.
+- **Words:** "social simulation" and "voter personas" (never "synthetic voters"), keep "AI" to a minimum, never call
+  an output a poll, no Hungary and no Matteo in public text. Public copy must be specific and human, never generic or
+  template-like: he rejects anything that reads "AI-like".
+- **Replies:** plain language, short, no emojis. End a report with about 5 numbered decisions, each with a recommended
+  answer, so he can reply "1 yes, 3 no".
+- **Voice dictation:** words and names get mis-transcribed ("full skate rehearsal" = full-scale rehearsal, "side
+  switches" = site switches). Read by context; when a dictated date clashes with the plan, say which reading you took.
+
 ## 1. The project in one paragraph
 
 Build an AI **simulation engine** that forecasts the US midterms on **3 November 2026**: all **35 Senate races + ~40
@@ -163,7 +193,7 @@ Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructu
   expiring credit first, then at most $12 in October. Every training run is capped with `--timeout` (≤ 3000 s) and
   preceded by `python -m modal billing summary`.
 - Daily Claude check at 11:30 UK: desktop scheduled task `midterm-daily-check` (runs while the app is open); emails
-  Matteo a digest, and drafts posts once forecasts exist.
+  Matteo a digest, and drafts posts once forecasts exist. Dropped 2 Oct (Matteo: not needed).
 
 Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.md` §8 and `docs/CHANGELOG.md`):
 - Partisan polls are those sponsored by a party, campaign or partisan group, not Wikipedia's "(R)"/"(D)" pollster tags.

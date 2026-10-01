@@ -34,6 +34,30 @@ Checkpoints and fallbacks:
   voters join a week later.
 - **Sun 11 Oct:** pilot review (criteria below), then go or no-go for the public launch.
 
+## Where we are (2 Oct)
+
+Matteo is away Fri 2 and Sat 3 Oct, back Sun 4 Oct, and checks in from his phone.
+
+- **Engine: on track, runs by itself.** Every workflow passed on 1 Oct: news every 15 minutes, snapshots, early-vote
+  files and the first scheduled daily run (09:47 UTC, about 19 minutes, $0.10). GLM's 105 unreadable answers on 1 Oct
+  are fixed; the next run re-asks them. Spend so far about $2.20 of the $19 the code allows. Kev runs in shadow mode
+  (never applied) and gives the voter-group splits; Modal October spend $0.37.
+- **Sat 3 Oct dry run:** the normal scheduled daily run plus its pass check (`docs/rehearsal.md`). **Sun 4 Oct:** the
+  scheduled run, then the failure drills (`drills.yml`) start by themselves.
+- **Posts:** the launch posts (intro, Lab notes 01-03) are in their v6 version; Matteo approves them on 2 Oct (he
+  compared v5 and v6 side by side), then the commits are pushed, the slides go up at notapoll.org/social/ and Buffer
+  queues them: Sat 3 Oct 14:00 and 18:00, Sun 4 Oct 16:00, Mon 5 Oct 14:00 Paris time. Threads is connected in Buffer;
+  Bluesky is left for now.
+- **Dropped:** the daily email digest (scheduled task `midterm-daily-check`; Matteo, 2 Oct).
+- **Matteo on Sun 4 Oct:** go or no-go for the pilot after both dry runs; plan the content from Mon 5 Oct (only Lab
+  notes 01-03 exist, so nothing is scheduled after Mon 5 Oct 14:00).
+- **Open questions waiting for him:** start the caption disclaimer with "Not a poll."? (recommended yes); Kev session:
+  build weekly scoring this week instead of 19 Oct (recommended yes) and keep Kev as is for the pilot (recommended yes);
+  should the site's "35 to 65 in 100 is a toss-up" line go, as it did from the intro post?
+- **Next dates:** Mon 5 Oct pilot starts; Wed 7 Oct full-scale rehearsal; Fri 9 Oct House check and the
+  labs.scaliastudio.dev redirect; Sat 10 Oct publishing and ethics review, OSF yes or no; Sun 11 Oct go or no-go, then
+  the three `SITE_*` variables; Mon 12 Oct public launch.
+
 ## Where we are (28 Sep)
 
 - **Done:**
