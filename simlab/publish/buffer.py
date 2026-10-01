@@ -2,7 +2,7 @@
 
 Buffer's GraphQL API (api.buffer.com, bearer key BUFFER_API_KEY from .env, never printed). What its schema allows
 (checked 1 Oct 2026): createPost takes images only as public URLs (there is no upload), with alt text per image;
-Instagram carousels (metadata.instagram.type = carousel); X threads (metadata.twitter.thread, which lists every post
+Instagram carousels (type "post" with several images; Buffer refuses "carousel"); X threads (metadata.twitter.thread, which lists every post
 including the first); drafts (saveToDraft); customScheduled posts with dueAt in UTC. Buffer fetches images when the
 post goes out, so the URLs must stay up until then (guides/hosting-media).
 
@@ -91,7 +91,7 @@ def posts_for(folder: str, base: str) -> list[dict]:
     imgs = [image(f"{base}/{folder}/{p.name}", alts[p.name]) for p in slides]
     single = (d / "single-post.md").read_text(encoding="utf-8")
     out = [{"service": "instagram", "text": (d / "caption.txt").read_text(encoding="utf-8"), "assets": imgs,
-            "metadata": {"instagram": {"type": "carousel" if len(imgs) > 1 else "post", "shouldShareToFeed": True}}}]
+            "metadata": {"instagram": {"type": "post", "shouldShareToFeed": True}}}]
     if folder == "01-intro":  # the one Buffer thread (Buffer Free queues one at a time)
         parts = (d / "thread.txt").read_text(encoding="utf-8").split("\n\n---\n\n")
         # Buffer's thread list includes the first post, which also stays in `text` (examples/create-threaded-post)
@@ -120,9 +120,11 @@ def create(p: dict, channel: str, due: str, draft: bool = False) -> dict:
 def queued() -> list[dict]:
     chs = channels()
     org = next(iter(chs.values()))["organizationId"]
-    q = """query($o: OrganizationId!) { posts(first: 50, input: {organizationId: $o, filter: {status: [scheduled],
-           channelIds: [], postTypes: []}, sort: []}) { edges { node { id dueAt channelService text } } } }"""
-    return [e["node"] for e in gql(q, {"o": org})["posts"]["edges"]]
+    # an empty channelIds list matches nothing, so pass every channel
+    q = """query($o: OrganizationId!, $c: [ChannelId!]) { posts(first: 50, input: {organizationId: $o,
+           filter: {channelIds: $c}}) { edges { node { id dueAt channelService status text } } } }"""
+    nodes = [e["node"] for e in gql(q, {"o": org, "c": [c["id"] for c in chs.values()]})["posts"]["edges"]]
+    return sorted((n for n in nodes if n["status"] == "scheduled"), key=lambda n: n["dueAt"])
 
 
 def approved() -> dict:
