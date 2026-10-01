@@ -135,6 +135,11 @@ Tests: `python -m unittest tests.test_kit`.
   X 280, Bluesky 300, Threads 500 characters, with the slides to attach) and `SCHEDULE.md` (UK times); "Start here" is
   the one thread. The daily kit writes `single_post.txt` (the closest race on X and Bluesky, more races on Threads).
   From 12 Oct a daily X thread needs either one queued at a time or the posting automation (C9).
+- **Queueing in Buffer** (`python -m simlab.publish.buffer plan | queue | queued | delete ID`; roadmap C9, built
+  1 Oct): images go in only as public URLs, fetched when the post goes out, so the slides must stay at a stable
+  public address (planned: notapoll.org/social/<post>/slide-N.jpg) until then. Alt text goes in per image; Instagram
+  carousels and the X thread are supported. `queue` sends nothing unless `kits/launch/APPROVED.json` names the post
+  with the date of Matteo's direct yes, and it checks every image URL first.
 - **Bluesky is outside Buffer:** by hand until C9 adds a small poster (Bluesky's API is free with an app password:
   sign in, upload each image, create the post with alt text) behind the same approval flag.
 - **Two views** (Matteo, 29 Sep): the headline number is 3 Nov; "if the election were today" (`races[rid].today`) sits beside it: a ledger row on The Stamp, and in the caption, thread, alt text and note. Captions count "in 100" so the two numbers can differ visibly. `senate.today` waits for The Chamber.

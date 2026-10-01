@@ -1,0 +1,160 @@
+"""Queue approved posts in Buffer (roadmap C9): python -m simlab.publish.buffer channels | plan | queue | queued | delete ID
+
+Buffer's GraphQL API (api.buffer.com, bearer key BUFFER_API_KEY from .env, never printed). What its schema allows
+(checked 1 Oct 2026): createPost takes images only as public URLs (there is no upload), with alt text per image;
+Instagram carousels (metadata.instagram.type = carousel); X threads (metadata.twitter.thread, which lists every post
+including the first); drafts (saveToDraft); customScheduled posts with dueAt in UTC. Buffer fetches images when the
+post goes out, so the URLs must stay up until then (guides/hosting-media).
+
+The approval flag: `queue` sends nothing unless kits/launch/APPROVED.json names the post, with the date of Matteo's
+yes given directly in the Content & site session. It also checks that every image URL answers before it sends.
+"""
+from __future__ import annotations
+
+import json
+import sys
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+import requests
+
+ROOT = Path(__file__).resolve().parents[2]
+PACK = ROOT / "kits" / "launch"
+APPROVED = PACK / "APPROVED.json"
+API = "https://api.buffer.com"
+LONDON = ZoneInfo("Europe/London")
+WEEKEND = [("01-start-here", "2026-10-03 13:00"), ("02-lab-notes-01", "2026-10-03 17:00"),
+           ("03-lab-notes-02", "2026-10-04 15:00"), ("04-lab-notes-03", "2026-10-05 13:00")]
+X_IMAGES = 4
+
+
+def key() -> str:
+    for line in (ROOT.parent / ".env").read_text(encoding="utf-8").splitlines():
+        if line.startswith("BUFFER_API_KEY="):
+            return line.split("=", 1)[1].strip().strip('"')
+    raise SystemExit("BUFFER_API_KEY is not in .env")
+
+
+def gql(query: str, variables: dict | None = None) -> dict:
+    r = requests.post(API, json={"query": query, "variables": variables or {}},
+                      headers={"Authorization": f"Bearer {key()}"}, timeout=60)
+    r.raise_for_status()
+    out = r.json()
+    if out.get("errors"):
+        raise RuntimeError(out["errors"][0].get("message", out["errors"]))
+    return out["data"]
+
+
+def channels() -> dict[str, dict]:
+    """The organisation's connected channels by service (instagram, twitter, threads, ...)."""
+    org = gql("query { account { organizations { id } } }")["account"]["organizations"][0]["id"]
+    chs = gql("query($o: OrganizationId!) { channels(input: {organizationId: $o}) { id service name isDisconnected "
+              "isQueuePaused } }", {"o": org})["channels"]
+    return {c["service"]: c | {"organizationId": org} for c in chs if not c["isDisconnected"]}
+
+
+def utc(local: str) -> str:
+    return datetime.strptime(local, "%Y-%m-%d %H:%M").replace(tzinfo=LONDON).astimezone(ZoneInfo("UTC")) \
+        .strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
+
+def section(md: str, name: str) -> str:
+    """The text under '## <name> (...)' in single-post.md."""
+    lines, out, on = md.splitlines(), [], False
+    for line in lines:
+        if line.startswith("## "):
+            on = line[3:].startswith(name)
+            continue
+        if on and line.strip():
+            out.append(line)
+    return "\n".join(out).strip()
+
+
+def image(url: str, alt: str) -> dict:
+    return {"image": {"url": url, "metadata": {"altText": alt, "userTags": []}}}
+
+
+def posts_for(folder: str, base: str) -> list[dict]:
+    """The createPost inputs for one launch post, without channel ids: one per platform."""
+    d = PACK / folder
+    slides = sorted(d.glob("slide-*.jpg"), key=lambda p: int(p.stem.split("-")[1]))
+    alts = dict(line.split(": ", 1) for line in (d / "alt-text.txt").read_text(encoding="utf-8").splitlines())
+    imgs = [image(f"{base}/{folder}/{p.name}", alts[p.name]) for p in slides]
+    single = (d / "single-post.md").read_text(encoding="utf-8")
+    out = [{"service": "instagram", "text": (d / "caption.txt").read_text(encoding="utf-8"), "assets": imgs,
+            "metadata": {"instagram": {"type": "carousel" if len(imgs) > 1 else "post", "shouldShareToFeed": True}}}]
+    if folder == "01-start-here":  # the one Buffer thread (Buffer Free queues one at a time)
+        parts = (d / "thread.txt").read_text(encoding="utf-8").split("\n\n---\n\n")
+        # Buffer's thread list includes the first post, which also stays in `text` (examples/create-threaded-post)
+        thread = [{"text": parts[0], "assets": imgs[:X_IMAGES]}] + [{"text": t, "assets": []} for t in parts[1:]]
+        out.append({"service": "twitter", "text": parts[0], "assets": imgs[:X_IMAGES],
+                    "metadata": {"twitter": {"thread": thread}}})
+    else:
+        out.append({"service": "twitter", "text": section(single, "X"), "assets": imgs[:X_IMAGES]})
+    out.append({"service": "threads", "text": section(single, "Threads"), "assets": imgs[:10]})
+    return out
+
+
+CREATE = """mutation($i: CreatePostInput!) { createPost(input: $i) {
+  ... on PostActionSuccess { post { id dueAt channelService status } }
+  ... on MutationError { message } } }"""
+
+
+def create(p: dict, channel: str, due: str, draft: bool = False) -> dict:
+    i = {"channelId": channel, "text": p["text"], "assets": p["assets"], "mode": "customScheduled", "dueAt": due,
+         "schedulingType": "automatic", "needsApproval": False, "tagIds": [], "saveToDraft": draft}
+    if p.get("metadata"):
+        i["metadata"] = p["metadata"]
+    return gql(CREATE, {"i": i})["createPost"]
+
+
+def queued() -> list[dict]:
+    chs = channels()
+    org = next(iter(chs.values()))["organizationId"]
+    q = """query($o: OrganizationId!) { posts(first: 50, input: {organizationId: $o, filter: {status: [scheduled],
+           channelIds: [], postTypes: []}, sort: []}) { edges { node { id dueAt channelService text } } } }"""
+    return [e["node"] for e in gql(q, {"o": org})["posts"]["edges"]]
+
+
+def approved() -> dict:
+    return json.loads(APPROVED.read_text(encoding="utf-8")) if APPROVED.exists() else {}
+
+
+def main(argv: list[str]) -> int:
+    cmd = argv[0] if argv else "plan"
+    base = "https://notapoll.org/social"  # where the slides must be reachable before queueing
+    if cmd == "channels":
+        for s, c in channels().items():
+            print(s, c["name"], "queue paused" if c["isQueuePaused"] else "")
+    elif cmd == "plan":  # no network: what would be queued
+        for folder, local in WEEKEND:
+            for p in posts_for(folder, base):
+                print(f"{local} UK ({utc(local)})  {p['service']:<9} {len(p['text']):>4} chars, {len(p['assets'])} "
+                      f"images{' + thread' if 'twitter' in p.get('metadata', {}) else ''}  {folder}")
+        print("approved:", approved() or "nothing yet")
+    elif cmd == "queue":
+        ok, chs = approved(), channels()
+        for folder, local in WEEKEND:
+            if folder not in ok:
+                print(f"skip {folder}: not approved")
+                continue
+            for p in posts_for(folder, base):
+                if p["service"] not in chs:
+                    print(f"skip {folder} {p['service']}: channel not connected in Buffer")
+                    continue
+                dead = [a["image"]["url"] for a in p["assets"] if requests.head(a["image"]["url"], timeout=20)
+                        .status_code != 200]
+                if dead:
+                    raise SystemExit(f"{folder}: images not reachable yet: {dead[:2]}")
+                print(folder, p["service"], create(p, chs[p["service"]]["id"], utc(local)))
+    elif cmd == "queued":
+        for n in queued():
+            print(n["dueAt"], n["channelService"], n["id"], n["text"][:60].replace("\n", " "))
+    elif cmd == "delete":
+        print(gql("mutation($i: PostId!) { deletePost(input: {id: $i}) { __typename } }", {"i": argv[1]}))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
