@@ -105,7 +105,7 @@ Checkpoints and fallbacks:
 | C6 | Site at notapoll.org (labs.scaliastudio.dev/midterms redirects there): 3 Oct home, methods, Lab notes, About with no numbers; 12 Oct Senate overview, map, simulator and race pages; week of 19 Oct track record, changelog, archive; election-night page by 3 Nov | Website session; Matteo sets up Cloudflare (`site/README.md`) | 3 Oct, then 12 Oct | built 29 Sep in `site/` (Next.js static export, newsroom design approved by Matteo, sample data); methods text drafted for Matteo's review |
 | C7 | Publishing and ethics review (Field Guide checklist); OSF pre-registration yes or no | Matteo with a new review session (not Content & site, which made the posts) | Sat 10 Oct | open task |
 | C8 | Posting by hand: Meta Business Suite for Instagram, x.com's scheduler | Matteo | making-of from 3 Oct, forecasts from 12 Oct | — |
-| C9 | Automated posting behind an approval flag: the Instagram API, and Buffer's free plan for X, Threads and Bluesky | Content & site; Matteo creates the apps and keys | 12–18 Oct | — |
+| C9 | Automated posting behind an approval flag: Buffer's free plan for Instagram, X and Threads (one queued thread at a time, 10 posts per channel), and a small Bluesky poster (free API, app password; images with alt text) | Content & site; Matteo creates the Buffer API key and the Bluesky app password | 12–18 Oct | launch pack has single-post versions and a UK-time schedule (1 Oct); Bluesky poster proposed |
 
 ## The pilot week (5–11 Oct, private)
 

@@ -49,12 +49,13 @@ on every image leads somewhere. No redirect. Deploy steps: `site/README.md`, "Ma
 5. Settings → Privacy and security → turn on two-factor authentication (Bluesky's own option; check whether it offers an
    authenticator app or only email codes).
 
-## 5. Buffer (X, Threads, Bluesky)
+## 5. Buffer (Instagram, X, Threads)
 
 1. Sign up at buffer.com (your own inbox or `buffer@notapoll.org`). Choose **Free**, not the 14-day trial: the trial
    asks for a card.
-2. Connect three channels: X, Threads, Bluesky. Instagram stays on its own scheduler (the Instagram app or Meta Business
-   Suite), which keeps Buffer inside its 3 free channels.
+2. Connect three channels: Instagram, X and Threads (Matteo, 1 Oct). Instagram carousels and Reels go through Buffer
+   too, and count toward its 10 queued posts per channel. Bluesky stays outside Buffer: by hand until the small
+   Bluesky poster in roadmap C9 exists (its API is free with an app password).
 3. Turn on two-factor authentication in Buffer's account settings.
 4. The API key comes later (roadmap C9, 12–18 Oct), when posting is automated behind the approval flag.
 

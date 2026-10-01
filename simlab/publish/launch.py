@@ -19,10 +19,11 @@ from .labnotes import contact_sheet
 OUT = Path(__file__).resolve().parents[2] / "kits" / "launch"
 LIMIT = {"x": 280, "bluesky": 300, "threads": 500}
 MAX_IMAGES = {"x": 4, "bluesky": 4, "threads": 10}
-# Buffer Free queues one thread at a time (Matteo, 1 Oct): "Start here" is that thread, on X; everything else goes out
-# as single posts. UK times (BST); US Eastern is five hours behind.
-SCHEDULE = [("Sat 3 Oct", "13:00", "01-start-here", "thread on X (the one Buffer thread); single post on Threads and "
-                                                     "Bluesky; pin it on every platform when convenient"),
+# Buffer Free: Instagram, X and Threads, one queued thread at a time, 10 posts per channel (Matteo, 1 Oct). "Start
+# here" is the thread, on X; everything else goes out as single posts. Bluesky is outside Buffer: by hand until the C9
+# poster exists. UK times (BST); US Eastern is five hours behind.
+SCHEDULE = [("Sat 3 Oct", "13:00", "01-start-here", "thread on X (the one Buffer thread); single post on Threads; "
+                                                     "pin it everywhere when convenient"),
             ("Sat 3 Oct", "17:00", "02-lab-notes-01", "single posts"),
             ("Sun 4 Oct", "15:00", "03-lab-notes-02", "single posts"),
             ("Mon 5 Oct", "13:00", "04-lab-notes-03", "single posts")]
@@ -62,7 +63,7 @@ def singles() -> dict[str, dict[str, str]]:
 
 
 def single_file(d: Path, posts: dict[str, str], slides: int) -> list[str]:
-    lines, problems = [f"# Single posts (Buffer: X, Threads, Bluesky)", ""], []
+    lines, problems = ["# Single posts (X and Threads through Buffer; Bluesky by hand)", ""], []
     for k in ("x", "threads", "bluesky"):
         t, n = posts[k], min(slides, MAX_IMAGES[k])
         lines += [f"## {k.capitalize() if k != 'x' else 'X'} ({len(t)} of {LIMIT[k]} characters; attach slide-1 to "
@@ -122,11 +123,14 @@ def build(out: Path = OUT) -> dict:
         report[k] = post_folder(out / k, p.slides, p.instagram, p.thread, p.allow)
         report[k] += single_file(out / k, single[k], len(p.slides))
     rows = ["# Posting schedule, Sat 3 – Mon 5 Oct (UK time)", "",
-            "Queue everything once Matteo has approved each post: Instagram in the Instagram app (Advanced settings "
-            "→ Schedule; add each slide's alt text first), the rest in Buffer (set Buffer's time zone to "
-            "Europe/London). Buffer Free holds one thread at a time and 10 posts per channel: this plan uses one "
-            "thread and four posts per channel.", "",
-            "| Day | UK time (ET) | Post | Instagram | X, Threads, Bluesky |", "|---|---|---|---|---|"]
+            "Queue everything in Buffer once Matteo has approved each post (set Buffer's time zone to "
+            "Europe/London): the Instagram carousel with caption.txt, X and Threads from single-post.md. Buffer "
+            "Free holds one thread at a time and 10 posts per channel; this plan uses one thread and four posts per "
+            "channel. Instagram alt text: in Buffer's Instagram options if offered, otherwise on Instagram after it "
+            "posts (… → Edit → Edit alt text). Bluesky is outside Buffer: post its single-post.md text by hand at "
+            "the same time, once the account exists.", "",
+            "| Day | UK time (ET) | Post | Instagram (Buffer) | X, Threads (Buffer); Bluesky (by hand) |",
+            "|---|---|---|---|---|"]
     for day, hhmm, k, how in SCHEDULE:
         et = f"{int(hhmm[:2]) - 5:02d}:{hhmm[3:]}"
         rows.append(f"| {day} | {hhmm} ({et}) | `{k}` | carousel, caption.txt | {how} (single-post.md) |")
@@ -141,14 +145,14 @@ CHECKLIST = """# Posting checklist, Sat 3 Oct (then the same for 4 and 5 Oct)
 Only after Matteo has approved each post. Around 13:00–15:00 UK (8–10 am US Eastern) is a common choice. Before the
 first post: the notapoll.org launch page is live (the website session's steps in site/README.md, "Matteo's steps").
 
-1. Instagram: new post → the slides of 01-start-here in order → paste caption.txt → Advanced settings →
-   Accessibility → paste each slide's alt text from alt-text.txt → Share. Then pin it to the profile grid.
-2. X: "Start here" goes out as the thread (thread.txt, split at ---; slides 1–4 on the first post): Buffer Free holds
-   only one scheduled thread. Threads and Bluesky, and every Lab note on all three: single-post.md, one post each.
-3. 02-lab-notes-01 at 17:00 the same way: Instagram with all slides, single posts elsewhere. All times: SCHEDULE.md.
-4. Check every image shows "SOCIAL SIMULATION, NOT A POLL" and the caption ends with the label line; no boosts.
-5. Sun 4 Oct: 03-lab-notes-02. Mon 5 Oct: 04-lab-notes-03. Each can be scheduled the day before (Instagram's own
-   scheduler; Buffer for the rest), each only with Matteo's yes.
+1. Buffer, Instagram channel: the slides of 01-start-here in order, caption.txt, alt text from alt-text.txt (in
+   Buffer if it offers it, otherwise on Instagram after posting). Pin it to the profile grid once it's up.
+2. Buffer, X: "Start here" as the thread (thread.txt, split at ---; slides 1–4 on the first post); Buffer Free holds
+   only one scheduled thread. Buffer, Threads, and every Lab note on X and Threads: single-post.md, one post each.
+3. Bluesky (outside Buffer, once the account exists): the Bluesky text from single-post.md, by hand, at the same time.
+4. Check every image shows "SOCIAL SIMULATION, NOT A POLL" and every caption ends with the label line; no boosts.
+5. Lab notes 01, 02 and 03 the same way at the times in SCHEDULE.md; all can be queued today, each only with
+   Matteo's yes.
 """
 
 
