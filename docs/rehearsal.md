@@ -3,16 +3,24 @@
 The baseline is the first run of the whole chain on GitHub Actions: 29 Sep, run 36629024522 (manual, day 2026-09-29,
 the five pilot races). It passed every check below.
 
+**Everything below runs on its own (1 Oct), with the laptop off.** The Cloudflare timer starts each day's run. The run
+checks its own pass criteria (`python -m simlab.rehearsal check-day`, the Saturday table below) and starts the planned
+extras: Sunday's drills on 4 Oct (`drills.yml`) and the full-scale rehearsal on 7 Oct. A day with no run by 12:00 UTC
+fails a news run. Anything that fails fails its GitHub run, and GitHub emails Matteo; green runs need no one. A
+session only has to look when an email arrives, or for Statistics' judgment of the weekly filter's numbers.
+
 ## Before Saturday
 
-| Item | Who | State on 29 Sep |
+| Item | Who | State on 1 Oct |
 | --- | --- | --- |
 | The scheduler Worker (`ops/cron`) is deployed, so the news job runs every 15 minutes | Matteo | live since 29 Sep 21:13 UTC (first dispatches: earlyvote 21:13, news 21:15) |
-| Secrets `OPENROUTER_API_KEY`, `KEV_API_KEY`, `SIMLAB_DATA_DEPLOY_KEY` | Matteo | all set |
-| Variables `PIPELINE_ON=true` (any time: scheduled runs start on 1 Oct by themselves) and `KEV_URL` (Kev shadow) | Matteo | not set |
-| The OpenRouter cap raised to $20, and `SIMLAB_BUDGET_USD=19` in `.env` (local lifetime cap); `daily.yml` keeps $2 per run | Matteo | cap raised; `.env` line to add |
+| Secrets `OPENROUTER_API_KEY`, `KEV_API_KEY`, `SIMLAB_DATA_DEPLOY_KEY`, `MEDIACLOUD_API_KEY` | Matteo | all set |
+| Variables `PIPELINE_ON=true` and `KEV_URL` (Kev shadow) | Matteo | set |
+| The OpenRouter cap stays at $20 (Matteo, 30 Sep), `SIMLAB_BUDGET_USD=19` in `.env`; `daily.yml` keeps $2 per run, and the budget safeguard switches to economy at $17 | Matteo | done |
+| GitHub emails Matteo when a run fails: github.com/settings/notifications → Actions → failed workflows only, by email | Matteo | to check (the alerts depend on it) |
+| GLM's host: OpenInference first, today's hosts as fallbacks (about $0.25 a day saved, same answers) | Matteo | his yes or no |
 | Every session has moved its local `simlab-data/derived/` aside, then pulled: the job commits `derived/<day>/` and untracked local copies block `git pull` | all | Engine done (backup in `simlab-data/derived_local/`) |
-| The news job has run for at least a day: its page shows runs every 15 minutes, each saving the RSS feeds and 1-3 GDELT queries | Engine | one manual run on 29 Sep: 3 feeds and 2 GDELT queries saved |
+| The news job has run for at least a day: GDELT, Media Cloud (since 30 Sep) and RSS every 15 minutes | Engine | running; down 29 Sep 23:45 to 30 Sep 09:00 UTC (fixed) |
 
 ## Saturday 3 Oct: the scheduled path
 
@@ -35,7 +43,11 @@ The Worker starts `daily.yml` at 09:47 UTC with `scheduled=true`. Nobody starts 
 The scheduled run comes first. Sunday is the post kit's first video day (`--reel auto`: a 9:16 video of the first
 featured race). Pass: the kit's summary has `"reel": true` and `problems` 0, and the job is still under 45 minutes.
 
-Then run each drill by hand (Actions → daily → Run workflow, with the day).
+Then the drills, each on its own runner's copy of the data (never pushed). The calendar job in `daily.yml` starts
+`drills.yml` after Sunday's run; by hand: Actions → drills → Run workflow, with the day. Each drill checks its pass
+rule and fails its job on a miss. Tested on 30 Sep (run 36841017151): Kev down, budget cap and weekly filter passed.
+The same-day replay found new rows only because the code had changed since that day's run. The no-news drill now also
+removes news that older snapshots held.
 
 1. **The same day again.** News gives the same event ids; the harness asks nothing new; statistics shows
    `deselected_pairs` 0. Pass: every step ok, no new reaction rows.

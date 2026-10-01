@@ -6,7 +6,9 @@
 # "true"; a manual run works any time. Logs are public: the steps print statuses and counts, never data. Package versions come from uv.lock.
 # From 12 Oct the publish job copies the day's public files to the site once Matteo switches SITE_PUBLISH on.
 # full_rehearsal=true (7 Oct, Matteo's yes) runs every race on a copy of the data and saves it to rehearsal/<day>-all/,
-# so the day's own record stays as the pilot left it; a rehearsal is never published.
+# so the day's own record stays as the pilot left it; a rehearsal is never published. Each run then checks the pass
+# criteria (simlab/rehearsal.py; a miss fails the run, so GitHub emails Matteo), and the calendar job starts the
+# planned extras: Sunday's drills on 4 Oct, the full-scale rehearsal on 7 Oct.
 name: daily
 
 on:
@@ -42,14 +44,18 @@ jobs:
     outputs:
       day: ${{ steps.public.outputs.day }}
       publish: ${{ steps.public.outputs.publish }}
+      pushed: ${{ steps.push.outcome }}
+      ran_day: ${{ steps.day.outputs.day }}
     env:
       REHEARSAL: ${{ inputs.full_rehearsal }}
     steps:
       - uses: actions/checkout@v4
       - name: Day
+        id: day
         run: |
           d="${{ inputs.date }}"
           echo "DAY=${d:-$(date -u +%F)}" >> "$GITHUB_ENV"
+          echo "day=${d:-$(date -u +%F)}" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@v4
         with:
           repository: Matteomio16/simlab-data
@@ -143,6 +149,33 @@ jobs:
           else
             echo "day=${DAY}" >> "$GITHUB_OUTPUT"; echo "publish=true" >> "$GITHUB_OUTPUT"
           fi
+      - name: Pass criteria (docs/rehearsal.md)
+        # after the outputs are saved and the site decision is made: a miss fails the run, so GitHub emails Matteo
+        if: ${{ !cancelled() && steps.push.outcome == 'success' }}
+        run: |
+          data=data-repo; [ "$REHEARSAL" = true ] && data=rehearsal-data
+          uv run python -m simlab.rehearsal check-day --date "$DAY" --data "$data"
+
+  # The rehearsal calendar (docs/rehearsal.md), started by the day's scheduled run so that nobody needs to be at a
+  # laptop: Sunday's drills on 4 Oct, the full-scale rehearsal on 7 Oct (both after that day's own run).
+  calendar:
+    needs: daily
+    if: ${{ !cancelled() && (github.event_name == 'schedule' || inputs.scheduled) && needs.daily.outputs.pushed == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+    env:
+      DAY: ${{ needs.daily.outputs.ran_day }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Anything planned today?
+        run: |
+          case "$DAY" in
+            2026-10-04) gh workflow run drills.yml -R "$GITHUB_REPOSITORY" -f date="$DAY" ;;
+            2026-10-07) gh workflow run daily.yml -R "$GITHUB_REPOSITORY" -f date="$DAY" -f full_rehearsal=true ;;
+            *) echo "nothing planned for ${DAY}" ;;
+          esac
 
   # The site's daily files (Website session; approved by Matteo 29 Sep, for 12 Oct after his 11 Oct go). A job of its
   # own, so only this short step holds a token that can write to this public repository. Only forecast.json, draws.json

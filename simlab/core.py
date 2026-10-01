@@ -208,7 +208,8 @@ class Chat:
         if json_mode:
             payload["response_format"] = {"type": "json_object"}
         if self.provider_order:
-            payload["provider"] = {"only": self.provider_order}
+            payload["provider"] = ({"order": self.provider_order, "only": self.provider_order}
+                                   if self.model in {LLMS[m] for m in ORDERED} else {"only": self.provider_order})
         k = Cache.key("chat", self.model, payload)
         hit = CACHE.get(k)
         if hit is not None:
@@ -252,10 +253,12 @@ LLMS = {
     "luna": "openai/gpt-6-luna",
 }
 # Allowed hosts per model, all at the same quantisation, so a run never mixes precisions (probed 27 Sep 2026).
-# GLM: InferenceNet fp4 (the Field Guide's price) with DeepInfra fp4 as overflow, because InferenceNet rate-limits
-# upstream. DeepSeek: InferenceNet was 429ing most calls and DeepSeek's own endpoint is excluded by the account's
-# guardrail, so DeepInfra fp8. MiMo: two fp8 hosts, load-balanced.
-HOSTS = {"glm": ["InferenceNet", "DeepInfra"], "mimo": ["Xiaomi", "DeepInfra"], "deepseek": ["DeepInfra"],
-         "luna": ["OpenAI"]}
-# GLM can't turn reasoning off; "minimal" used 0 reasoning tokens in the probe. Others: off.
+# GLM: OpenInference fp4 first, then DeepInfra and InferenceNet fp4 when it refuses (Matteo, 1 Oct): since 30 Sep
+# every host makes GLM reason, and OpenInference costs $0.000013 a call against $0.000031, with the same answers to
+# the 64 historical events. DeepSeek: InferenceNet was 429ing most calls and DeepSeek's own endpoint is excluded by
+# the account's guardrail, so DeepInfra fp8. MiMo: two fp8 hosts, load-balanced.
+HOSTS = {"glm": ["OpenInference", "DeepInfra", "InferenceNet"], "mimo": ["Xiaomi", "DeepInfra"],
+         "deepseek": ["DeepInfra"], "luna": ["OpenAI"]}
+ORDERED = {"glm"}  # hosts tried in the listed order; the others are load-balanced by OpenRouter
+# GLM can't turn reasoning off: "minimal" used 0 reasoning tokens on 27 Sep, 11-36 a call since 30 Sep. Others: off.
 REASONING = {"glm": {"effort": "minimal"}}
