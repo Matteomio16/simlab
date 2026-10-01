@@ -12,7 +12,7 @@ export default function Footer({ forecast }: { forecast: boolean }) {
           <div>
             <Lockup dark stacked height={72} />
             <p className="mt-3 max-w-md leading-relaxed">
-              A forecast of the 2026 US midterms built by social simulation. Synthetic voters and simulated elections;
+              A forecast of the 2026 US midterms built by social simulation. Voter personas and simulated elections;
               every number beside the poll average, the prediction market and the Cook Political Report.
             </p>
           </div>

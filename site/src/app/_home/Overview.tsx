@@ -91,7 +91,7 @@ export default function Overview() {
           {headline(s.p_r_50plus, s.p_d_caucus_51)}
         </h1>
         <p className="mt-4 max-w-3xl text-[1.2rem] leading-relaxed text-ink-2">
-          {`In ${forecast.draws.toLocaleString("en-US")} simulated elections, Republicans keep 50 or more seats, enough with the Vice President’s tie-break, in ${nR} of every 100. The simulation moves each race from its statistical starting line as synthetic voters react to the news.`}
+          {`In ${forecast.draws.toLocaleString("en-US")} simulated elections, Republicans keep 50 or more seats, enough with the Vice President’s tie-break, in ${nR} of every 100. The simulation moves each race from its statistical starting line as voter personas react to the news.`}
         </p>
 
         <Reveal className="mt-10 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1.25fr_1fr]">
@@ -200,7 +200,7 @@ export default function Overview() {
           <p className="label">What moved</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">The stories behind today&rsquo;s changes</h2>
           <p className="mt-2 max-w-2xl text-ink-2">
-            Each story&rsquo;s effect on the Nov. 3 margin, after the synthetic voters&rsquo; reactions and the fade with time.
+            Each story&rsquo;s effect on the Nov. 3 margin, after the voter personas&rsquo; reactions and the fade with time.
             Stories are summarized neutrally, without outlet names.
           </p>
           <ul className="mt-6 grid gap-x-10 md:grid-cols-2">

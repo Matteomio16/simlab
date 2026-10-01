@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: { default: "NotAPoll.org: the 2026 midterms, simulated every day", template: "%s · NotAPoll.org" },
   description:
-    "A forecast of the 2026 US midterms built by social simulation: synthetic voters react to each day's news, and every number sits beside the poll average, the market and Cook. Not a poll.",
+    "A forecast of the 2026 US midterms built by social simulation: voter personas built from real survey answers react to each day's news, and every number sits beside the poll average, the market and Cook. Not a poll.",
   openGraph: { siteName: SITE.name, type: "website", locale: "en_US" },
   twitter: { card: "summary_large_image" },
   robots: PREVIEW ? { index: false, follow: false } : undefined,

@@ -31,7 +31,7 @@ const TARGET = { polls_next_week: "Polls of the following week", result: "Electi
 const OFFICE = { senate: "Senate", house: "House", all: "All races" };
 const SCORING_DATES = ["2026-10-19", "2026-10-26", "2026-11-02"];
 const BASELINES = [
-  ["Social simulation", "The headline forecast: statistics plus synthetic voters, corrected by the weekly filter."],
+  ["Social simulation", "The headline forecast: statistics plus voter personas, corrected by the weekly filter."],
   ["Statistics only", "The same chain with the simulation switched off: the number the simulation has to beat."],
   ["Prediction markets", "Kalshi and Polymarket prices, averaged."],
   ["Cook Political Report", "Cook's ratings, turned into chances."],

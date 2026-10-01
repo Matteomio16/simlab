@@ -16,7 +16,7 @@ export default async function Image() {
         <div style={{ display: "flex", fontSize: 96, fontWeight: 800, letterSpacing: -3, lineHeight: 1 }}>The 2026 midterms,</div>
         <div style={{ display: "flex", fontSize: 96, fontWeight: 800, letterSpacing: -3, lineHeight: 1.05, color: "#7a4fc0" }}>simulated every day.</div>
         <div style={{ display: "flex", marginTop: 26, fontSize: 32, fontWeight: 600, color: "#3d434c", maxWidth: 1000 }}>
-          Not a poll. Synthetic voters, 40,000 simulated elections. Forecasts go public October 12.
+          Not a poll. Voter personas, 40,000 simulated elections. Forecasts go public October 12.
         </div>
       </OgFrame>,
       { ...size, fonts },
