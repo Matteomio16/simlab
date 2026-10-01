@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import Reveal from "@/components/Reveal";
+import Dateline from "@/components/Dateline";
 import { DATA, HAS_FORECAST } from "@/lib/data";
 import { ROOT } from "@/lib/root";
 
@@ -31,7 +32,7 @@ const TARGET = { polls_next_week: "Polls of the following week", result: "Electi
 const OFFICE = { senate: "Senate", house: "House", all: "All races" };
 const SCORING_DATES = ["2026-10-19", "2026-10-26", "2026-11-02"];
 const BASELINES = [
-  ["Social simulation", "The headline forecast: statistics plus voter personas, corrected by the weekly filter."],
+  ["Social simulation", "The headline forecast: statistics plus voter personas, checked against the evidence every Monday."],
   ["Statistics only", "The same chain with the simulation switched off: the number the simulation has to beat."],
   ["Prediction markets", "Kalshi and Polymarket prices, averaged."],
   ["Cook Political Report", "Cook's ratings, turned into chances."],
@@ -49,8 +50,8 @@ export default function TrackRecord() {
 
   return (
     <div className="mx-auto max-w-[1200px] px-4 pt-10 sm:px-6 sm:pt-12">
-      <p className="label">Track record</p>
-      <h1 className="rise mt-3 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
+      <Dateline left="Track record" />
+      <h1 className="rise mt-6 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
         Every forecast is scored, including the misses
       </h1>
       <p className="mt-4 max-w-3xl text-[1.2rem] leading-relaxed text-ink-2">

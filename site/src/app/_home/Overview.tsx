@@ -199,7 +199,7 @@ export default function Overview() {
         <Reveal as="section" className="mt-16 section-rule">
           <p className="label">What moved</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">The stories behind today&rsquo;s changes</h2>
-          <p className="mt-2 max-w-2xl text-ink-2">
+          <p className="mt-3 max-w-2xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
             Each story&rsquo;s effect on the Nov. 3 margin, after the voter personas&rsquo; reactions and the fade with time.
             Stories are summarized neutrally, without outlet names.
           </p>

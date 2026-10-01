@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { allNotes } from "@/lib/labnotes";
+import Dateline from "@/components/Dateline";
 
 export const metadata: Metadata = {
   title: "Lab notes",
@@ -11,12 +12,12 @@ export default function LabNotes() {
   const notes = allNotes();
   return (
     <div className="mx-auto max-w-[1200px] px-4 pt-10 sm:px-6 sm:pt-12">
-      <p className="label">Lab notes</p>
-      <h1 className="mt-3 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
+      <Dateline left="Lab notes" />
+      <h1 className="mt-6 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
         The making-of, published as we go
       </h1>
       <p className="mt-4 max-w-2xl text-[1.2rem] leading-relaxed text-ink-2">
-        What we tested, what failed and what we changed. The same notes run on Instagram, Threads, X and Bluesky.
+        What we tested, what failed and what we changed. A short version of each runs on Instagram, Threads and X.
       </p>
       <div className="mt-8 border-t-[3px] border-rule-strong">
         {notes.length === 0 ? (
