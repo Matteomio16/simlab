@@ -38,25 +38,24 @@ def singles() -> dict[str, dict[str, str]]:
     one, both = f"{abs(lean('glm1')):.0f}%", f"{abs(lean('glm')):.0f}%"
     out = {
         "01-intro": (
-            "Democracy, rehearsed. Polls ask people; we simulate how people react. An independent forecast of the "
-            "2026 midterms, every day from 12 October, scored in public.",
-            " Our number always sits beside the poll average, the prediction markets and Cook, and every Monday from "
-            "19 October we publish our record against them."),
+            "Democracy, rehearsed. Polls ask people what they think; we simulate how they react. From 12 October we'll "
+            "forecast the midterms that way, every day, and show you how we're doing.",
+            " Our number always sits next to the poll average, the prediction markets and Cook, so you can judge it for "
+            "yourself."),
         "02-lab-notes-01": (
             "We asked six models to behave like voters. They stayed calm where people were shaken, and got excited "
             "where people shrugged. So every reaction's size comes from how people really moved.",
-            " Each model was good at one thing and none at everything; statistics set where each race starts. The "
-            "whole test cost $1.52. Lab notes 01."),
+            " Each one was good at one thing and none at everything, and the whole test cost $1.52. Lab notes 01."),
         "03-lab-notes-02": (
-            "We credited 80 real headlines to Fox News, then to MSNBC. Same words. One model changed its answer on which "
-            "party the news helps 41% of the time.",
-            " So no model in our forecast ever sees an outlet's name: every story becomes a short, neutral event card "
-            "first. A forecast shouldn't care where you read the news. Lab notes 02."),
+            "We showed two models the same 80 headlines, credited first to Fox News, then to MSNBC. One changed its "
+            "answer about which party the news helps on 41% of them.",
+            " So no model in our forecast ever sees where a story came from. A forecast shouldn't care where you read "
+            "the news. Lab notes 02."),
         "04-lab-notes-03": (
-            f"We test every model for a built-in party lean. One model's lean was {one} of a typical reaction; asked "
-            f"both ways, {both}. So we ask every question both ways.",
-            " Our answer scale listed the Republican side first, and some models favour whichever answer comes first. "
-            "Asking twice costs a few cents per thousand answers. Lab notes 03."),
+            f"We test every model for a built-in party lean. One looked Republican, but it was just the order of the "
+            f"answers: asked both ways, its lean fell from {one} to {both}.",
+            " That's why every question in our forecast is now asked both ways, for a few cents per thousand answers. "
+            "Lab notes 03."),
     }
     def end(t: str, limit: int) -> str:  # the fixed disclaimer when it fits, else the label alone
         return f"{t} {DISCLAIMER}" if len(t) + 1 + len(DISCLAIMER) <= limit else f"{t} {LABEL}."

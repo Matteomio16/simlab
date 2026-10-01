@@ -177,7 +177,6 @@ def pinned(t=LAB):
     c.text("We don’t ask people what they think today. We model how they react. Our number always sits beside the "
            "poll average, the prediction markets and Cook.",
            px=40, color=t.ink2, after=1.2)
-    c.note("Between 35 and 65 in 100, we call it a toss-up.", width=640)
 
     d = Slide(PINNED_DAY, "KEEPING SCORE", t)
     d.headline("Right or wrong, you’ll see it.", px=88)
@@ -195,28 +194,32 @@ def pinned(t=LAB):
               (b, "How it works: start from past results and the poll average; more than a thousand voter personas "
                   "react to each day's events; each race is played out 40,000 times. Full method at notapoll.org."),
               (c, "Not a poll: we don't ask people what they think today, we model how they react. Our number always "
-                  "sits beside the poll average, the prediction markets and Cook. 35 to 65 in 100 is a toss-up."),
+                  "sits beside the poll average, the prediction markets and Cook."),
               (d, "Keeping score: daily updates, a public record every Monday from 19 October, the final forecast on "
                   "3 November.")]
     for s, _ in slides:
         s.source("Forecasts go public on Monday 12 October.")
     caption = (
         "Democracy, rehearsed.\n\n"
-        "Polls ask people. We simulate how people react. NotAPoll is an independent forecast of the 2026 midterms, "
-        "scored in public, and built on long-term research focused on social dynamics.\n\n"
-        "From 12 October, every day until 3 November, more than a thousand voter personas, by party, race and "
-        "education in each state, react to each day's news. Then every Senate race and about 40 House races are "
-        "played out 40,000 times.\n\n"
-        "Our number always sits beside the poll average, the prediction markets and Cook. From 19 October, every "
-        "Monday, we publish how we're doing against all of them. Right or wrong, you'll see it.\n\n"
+        "Polls ask people what they think. We wanted to try something different: simulate how people react. So from "
+        "12 October, every day until 3 November, we'll forecast the 2026 midterms by modelling how each day's news "
+        "moves different groups of voters.\n\n"
+        "Here's how it works. More than a thousand voter personas, one for each mix of party, race and education in "
+        "every state, react to the day's news. Then we play every Senate race, and about 40 House races, 40,000 times "
+        "and count who wins.\n\n"
+        "You'll always see our number next to the poll average, the prediction markets and Cook, so you can judge it "
+        "for yourself. And every Monday from 19 October we'll show how we're doing against all of them. Right or "
+        "wrong, you'll see it.\n\n"
+        "It's an independent project, built on long-term research focused on social dynamics, and we'd love you to "
+        "follow along.\n\n"
         f"#midterms2026 #elections\n\n{DISCLAIMER}")
-    thread = [f"Democracy, rehearsed. Polls ask people; we simulate how people react. An independent forecast of "
-              f"the 2026 midterms, scored in public. {LABEL}.",
-              "More than a thousand voter personas react to each day's news. Then every race is played out 40,000 "
-              "times.",
-              "Our number always sits beside the poll average, prediction markets and Cook. Every Monday from 19 Oct "
-              "we publish our record against them. Right or wrong.",
-              f"Built on long-term research focused on social dynamics. Forecasts from 12 October: {SITE}"]
+    thread = [f"Democracy, rehearsed. Polls ask people what they think; we're going to simulate how people react, "
+              f"and forecast the 2026 midterms that way, in public. {LABEL}.",
+              "Here's how: more than a thousand voter personas react to each day's news, then we play every race out "
+              "40,000 times and count who wins.",
+              "Our number always sits next to the poll average, the prediction markets and Cook, so you can judge it "
+              "yourself. Every Monday from 19 Oct we'll show how we're doing.",
+              f"It's built on long-term research focused on social dynamics. Forecasts start on 12 October: {SITE}"]
     return slides, caption, thread
 
 

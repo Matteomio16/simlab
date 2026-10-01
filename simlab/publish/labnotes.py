@@ -93,29 +93,28 @@ def ep01(theme: Theme = LAB) -> Post:
             "about the debates. So the size of every reaction comes from how people really moved."),
         (e, "Statistics set the starting line; the simulation moves it. Voter personas react to each day's news, and "
             "each week the poll average decides how much of the shift to keep."),
-    ], f"""Before forecasting a single race, we asked six models to behave like voters.
+    ], f"""Before we forecast a single race, we wanted to know something simple: can a model stand in for a group of voters and react to the news the way those people really would?
 
-Four questions. Does a football score move a Senate race? It shouldn't. If you swap the parties in a story, does the reaction swap? Does a model move the way people actually moved on 19 events since 2012? Does it know how groups voted in 2024?
+So we asked six models to try, and tested them on four questions. Does a football score move a Senate race? (It shouldn't.) If you swap the parties in a story, does the reaction swap too? Does the model move the way people actually moved on 19 real events since 2012? And does it know how groups voted in 2024?
 
-Each model was good at one thing and none at everything. And they all failed the same way: too calm about real shocks like COVID and January 6, too excited about spectacles like debates.
+Here's what we found. Each model was good at one thing, and none was good at everything. But the most interesting part was what they all got wrong, together: they stayed calm where people were shaken, like COVID and January 6, and got excited where people shrugged, like the debates.
 
-So statistics set where each race starts, and a model trained on real survey answers estimates how each group of voters usually splits between the parties. The voter personas decide which way the news pushes each group.
+That's why, in our forecast, statistics set where each race starts, a model trained on real survey answers estimates how each group of voters usually splits between the parties, and the size of every reaction comes from how people really moved. The voter personas decide which way the news pushes each group.
 
-The lesson was a human one. Models stayed calm where people were shaken, and got excited where people shrugged. So the size of every reaction comes from how people really moved.
-
-The whole test bench cost $1.52.
+The whole test cost $1.52. Tomorrow: what happened when we put a different TV channel's name on the same headline.
 
 #midterms2026 #elections
 
 {DISCLAIMER}""", [
-        f"Before forecasting the 2026 midterms, we asked six models to behave like voters and tested them on four "
-        f"questions. What we found. {LABEL}.",
-        f"Ignoring news that doesn't matter: Jev, {null_jev:.0%} of the time. An untuned Kev reacted to about 1 story "
-        f"in {1 / null_kev:.0f}.",
-        f"Which way a group moves: GLM-5.3 Flash was right on {glm_dir * 13:.0f} of 13 real events. How far: no model.",
-        "Statistics set the starting line; the simulation moves it. The test bench cost $1.52.",
-        f"Models stayed calm where people were shaken, and got excited where people shrugged. So the size of every "
-        f"reaction comes from how people really moved. {SITE}",
+        f"Before forecasting a single race, we wanted to know: can a model react to the news the way a group of voters "
+        f"really would? So we tested six of them on four questions. {LABEL}.",
+        f"Here's what we found. Jev was best at ignoring news that doesn't matter ({null_jev:.0%} of the time), and "
+        f"GLM-5.3 Flash at reading which way a group moves ({glm_dir * 13:.0f} of 13 real events). None got the size "
+        f"right.",
+        "And they all failed the same way: calm where people were shaken (COVID, January 6), excited where people "
+        "shrugged (the debates). So the size of every reaction comes from how people really moved.",
+        f"The whole test cost $1.52, and an untuned Kev reacted to about 1 irrelevant story in {1 / null_kev:.0f}. "
+        f"More in our Lab notes: {SITE}",
     ], allow=("survey", "poll"))  # real survey answers (the personas' source) and real polls (the poll average)
 
 
@@ -161,24 +160,22 @@ def ep02(theme: Theme = LAB) -> Post:
         (c, "Bar charts. Shift toward helps Democrats when the outlet is MSNBC instead of Fox: GLM plus 30 points, Jev "
             "plus 15. Top answer flipped: GLM 41 percent, Jev 15 percent."),
         (d, "So no model ever sees an outlet's name: stories become short neutral event cards first."),
-    ], f"""Same headline, two outlets. The model changed its answer.
+    ], f"""Here's a small experiment with a big lesson. We took 80 real headlines about this year's Senate races and showed each one to two models three times: once on its own, once credited to Fox News, and once credited to MSNBC. Same words every time.
 
-We took 80 real headlines about 2026 Senate races and asked two models which party each story helps. Three versions of every headline: no outlet, credited to Fox News, credited to MSNBC. Same words every time.
+Then we asked which party the news helps. If a model judges the event, its answer shouldn't move. It did. When the same headline came "from MSNBC" instead of "from Fox", GLM leaned 30 points more towards "helps Democrats", and on 41% of headlines its answer flipped completely. Jev moved about half as much.
 
-Credited to MSNBC instead of Fox, GLM's lean toward "helps Democrats" rose by 30 points, and its top answer flipped on 41% of headlines. Jev moved half as much.
+To be clear, this says nothing about either channel. It shows that the models have learned to read the outlet as a clue about the story. People do that too, but a forecast shouldn't.
 
-The models read the outlet as a clue about the story. So no model in our forecast ever sees an outlet's name: every story becomes a short, neutral event card first.
-
-A forecast shouldn't care where you read the news.
+So no model in our forecast ever sees where a story came from. Each story is first rewritten as a short, neutral description of what happened. A forecast shouldn't care where you read the news.
 
 #midterms2026 #elections
 
 {DISCLAIMER}""", [
-        f"Same headline, two outlets: we credited it to Fox News, then to MSNBC. The model's top answer on which party it "
-        f"helps flipped on 41% of 80 headlines. {LABEL}.",
-        "Credited to MSNBC instead of Fox, GLM's lean toward “helps Democrats” rose by 30 points. Jev moved half as "
-        "much.",
-        "So no model in our forecast ever sees an outlet's name: every story becomes a short, neutral event card "
+        f"We showed two models the same 80 headlines, credited first to Fox News, then to MSNBC. One of them changed its "
+        f"answer about which party the news helps on 41% of them. {LABEL}.",
+        "It's not about either channel. The models have learned to read the outlet as a clue about the story, and "
+        "people do that too. A forecast shouldn't.",
+        "So no model in our forecast ever sees where a story came from; each one becomes a short, neutral description "
         "first. A forecast shouldn't care where you read the news.",
     ])
 
@@ -228,25 +225,27 @@ def ep03(theme: Theme = LAB) -> Post:
         (c, f"Dot chart of each model's leftover lean, one way versus both ways averaged: {names}; the rest near zero "
             "except untuned Kev, which got worse."),
         (d, "So every question is asked both ways. A fixed correction removed only about two-thirds of the lean."),
-    ], f"""We test every model for a built-in party lean. The simplest fix removed almost all of it.
+    ], f"""We test every model we use for a built-in party lean, and one result surprised us.
 
-Some models favour whichever answer comes first. Our answer scale listed the Republican side first, so a model with that habit looks like it leans Republican.
+The test is simple: we tell each story twice, with the parties swapped. A fair model should react the same way to both versions, and whatever is left over is a lean.
 
-The mirror test: 16 news stories, each shown twice with the parties swapped. A fair model's reactions mirror each other; whatever is left over is a built-in lean. Then we asked every question in both orders.
+At first, GLM looked like it leaned Republican: its lean was {pct(glm[1])} of a typical reaction. But it wasn't politics at all. Some models favour whichever answer comes first, and our answer scale happened to list the Republican side first.
 
-Asked one way, GLM's built-in lean was {pct(glm[1])} of a typical reaction. Asked both ways and averaged, {pct(glm[2])}. DeepSeek went from {pct(items[1][1])} to {pct(items[1][2])}, MiMo from {pct(items[2][1])} to {pct(items[2][2])}.
+So we asked every question both ways, once in each order, and averaged the two. The lean dropped to {pct(glm[2])}. DeepSeek went from {pct(items[1][1])} to {pct(items[1][2])}, and MiMo from {pct(items[2][1])} to {pct(items[2][2])}.
 
-So every question in our forecast is asked both ways. It doubles the cost of each answer, still a few cents per thousand. A fixed correction would have been cheaper, and it removed only two-thirds of the lean.
+That's why every question in our forecast is now asked both ways. It costs a few cents per thousand answers, and it stops a quirk of question order from quietly tilting the numbers.
+
+Next in Lab notes: the models know which way voters move, but not how far.
 
 #midterms2026 #elections
 
 {DISCLAIMER}""", [
-        f"We test every model for a built-in party lean. GLM's was {pct(glm[1])} of a typical reaction; asked both "
-        f"ways, {pct(glm[2])}. {LABEL}.",
-        "Why: some models favour whichever answer comes first, and our scale listed the Republican side first. Swap "
-        "the order and the lean flips with it.",
+        f"We test every model for a built-in party lean. One looked Republican, with a lean of {pct(glm[1])} of a "
+        f"typical reaction. It turned out to be the order of the answers, not politics. {LABEL}.",
+        "Some models favour whichever answer comes first, and our scale listed the Republican side first. So we asked "
+        f"every question both ways and averaged: the lean fell to {pct(glm[2])}.",
         f"DeepSeek went from {pct(items[1][1])} to {pct(items[1][2])}, MiMo from {pct(items[2][1])} to "
-        f"{pct(items[2][2])}. So every question in our forecast is asked both ways.",
+        f"{pct(items[2][2])}. That's why every question in our forecast is now asked both ways.",
     ])
 
 
