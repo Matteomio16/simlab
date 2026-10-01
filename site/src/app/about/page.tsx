@@ -20,7 +20,7 @@ const PARTS = [
   },
   {
     k: "How you can check",
-    t: "It is a live experiment. Every forecast is scored in public every Monday from October 19, against the same benchmarks, right or wrong.",
+    t: "It is a live experiment, and you can follow its progress on our map, updated every day from October 12, race by race. Every forecast is scored in public every Monday from October 19, against the same benchmarks, right or wrong.",
   },
 ];
 
