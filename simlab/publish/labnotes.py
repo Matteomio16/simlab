@@ -42,23 +42,21 @@ def ep01(theme: Theme = LAB) -> Post:
     null_jev = min(s[("null", "jev")]["support_p_no_change"], s[("null", "jev")]["turnout_p_no_change"])
     null_kev = 1 - s[("null", "kev")]["support_p_no_change"]
     glm_dir = s[("events", "glm")]["sign_accuracy_nonnull"]
-    k = "LAB NOTES 01"
+    k = "Lab notes 01"
+    new = lambda: Slide(day, "", theme, series=k)
 
-    a = Slide(day, k, theme).headline("Before forecasting a single race, we asked six models to behave like "
-                                      "voters.", px=80)
-    a.dek("Four tests, scored against what really happened.", px=40)
-    a.at_bottom(charts.stats_height(rule=True))
-    charts.stats(a, [("6", "models"), ("4", "tests"), ("$1.52", "total cost")], rule=True)
+    a = new().headline("Before forecasting a single race, we asked six models to behave like voters.", px=80)
+    a.dek("Six models, four tests, $1.52 in total.", px=40)
     a.source("Test bench, 27–28 Sep 2026.")
 
-    b = Slide(day, f"{k} · THE TESTS", theme).headline("Four questions.", px=88)
+    b = new().headline("Four questions we asked every model.", px=84)
     b.y += 10
-    for n, q in enumerate(["Does a football score move a Senate race?", "If the parties swap, does the reaction swap?",
-                           "Does it move the way people really moved?", "Does it know how groups voted in 2024?"], 1):
-        b.text(f"{n}  {q}", "serif", 600, 46, after=0.7)
+    for q in ["Does a football score move a Senate race?", "If the parties swap, does the reaction swap?",
+              "Does it move the way people really moved?", "Does it know how groups voted in 2024?"]:
+        b.text(q, "serif", 600, 46, after=0.7)
     b.source("Jev 1.13, Kev 4B, GLM-5.3 Flash, MiMo-V2.6 Flash, DeepSeek V4.1 Flash, GPT-6 Luna. 27–28 Sep 2026.")
 
-    c = Slide(day, f"{k} · WHAT WE FOUND", theme).headline("Each was good at one thing. None at everything.", px=80)
+    c = new().headline("Some got the direction right. None got the size.", px=80)
     charts.rows(c, [
         ("Ignore news that doesn’t matter", "Jev", f"{null_jev:.0%} of the time"),
         ("Which way a group moves", "GLM-5.3 Flash", f"{glm_dir * 13:.0f} of 13 events"),
@@ -67,70 +65,67 @@ def ep01(theme: Theme = LAB) -> Post:
     ])
     c.source("Scores: null, mirror, events and fidelity tests, 27–28 Sep 2026. Off-the-shelf models.")
 
-    d = Slide(day, f"{k} · THE BLIND SPOT", theme).headline("They all got the same things wrong.", px=84)
+    d = new().headline("They all got the same things wrong.", px=84)
     d.text("Too calm about real shocks: COVID, January 6, the fall of Kabul. Too excited about spectacles: the "
            "debates.", px=40, color=theme.ink2, after=1.2)
-    d.note("So the size of every reaction comes from how people really moved.", width=700)
     d.source("19 real events, 2012–2026. Errors correlate +0.88 to +0.97 between models.")
 
-    e = Slide(day, f"{k} · WHAT IT MEANS", theme).headline("Statistics set the starting line. The simulation "
-                                                           "moves it.", px=80)
-    e.text("Each day the voter personas react to the news. Each week the latest poll average decides how much of "
-           "that shift to keep.", px=38, color=theme.ink2, after=1.2)
+    e = new().headline("So real history sets the size of every reaction.", px=80)
+    e.text("Statistics set where each race starts and the voter personas react to each day’s news. How far each "
+           "group moves comes from how people really moved in past events.", px=38, color=theme.ink2, after=1.2)
     e.note("Tomorrow: one model changed 41% of its answers when we swapped “Fox News” for “MSNBC”.", width=760)
-    e.source("Race starting points: statistics. How each group of voters usually splits between the parties: a model "
-             "trained on real survey answers.")
+    e.source("How each group of voters usually splits between the parties: a model trained on real survey answers.")
 
     return Post(day, "Lab notes 01: six models, four tests, one shared blind spot", [
-        (a, "Before forecasting a single race, we asked six models to behave like voters: four tests, scored against "
-            "what really happened. Six models, four tests, $1.52 in total."),
-        (b, "Four questions: does a football score move a Senate race; if the parties swap, does the reaction swap; "
-            "does it move the way people really moved; does it know how groups voted in 2024."),
-        (c, f"What we found: Jev ignores irrelevant news {null_jev:.0%} of the time; GLM gets the direction right on "
-            f"{glm_dir * 13:.0f} of 13 events; no model gets the size right; plain statistics know how groups voted "
-            "better than every model."),
+        (a, "Before forecasting a single race, we asked six models to behave like voters. Six models, four tests, "
+            "$1.52 in total."),
+        (b, "Four questions we asked every model: does a football score move a Senate race; if the parties swap, does "
+            "the reaction swap; does it move the way people really moved; does it know how groups voted in 2024."),
+        (c, f"Some got the direction right, none got the size: Jev ignores irrelevant news {null_jev:.0%} of the "
+            f"time; GLM gets the direction right on {glm_dir * 13:.0f} of 13 events; no model gets the size right; "
+            "plain statistics know how groups voted better than every model."),
         (d, "They all got the same things wrong: too calm about real shocks like COVID and January 6, too excited "
-            "about the debates. So the size of every reaction comes from how people really moved."),
-        (e, "Statistics set the starting line; the simulation moves it. Voter personas react to each day's news, and "
-            "each week the poll average decides how much of the shift to keep."),
-    ], f"""Before we forecast a single race, we wanted to know something simple: can a model stand in for a group of voters and react to the news the way those people really would?
+            "about the debates."),
+        (e, "So real history sets the size of every reaction. Statistics set where each race starts, the voter "
+            "personas react to each day's news, and how far each group moves comes from past events."),
+    ], f"""Before forecasting a single race, we wanted to know whether a model can react to the news the way a group of voters really would. We put six models through four tests. Does a football score move a Senate race? It shouldn't. If you swap the parties in a story, does the reaction swap too? Does the model move the way people actually moved on 19 real events since 2012? Does it know how groups voted in 2024?
 
-So we asked six models to try, and tested them on four questions. Does a football score move a Senate race? (It shouldn't.) If you swap the parties in a story, does the reaction swap too? Does the model move the way people actually moved on 19 real events since 2012? And does it know how groups voted in 2024?
+Some got the direction right. Jev ignored irrelevant news {null_jev:.0%} of the time, and GLM-5.3 Flash read the direction of {glm_dir * 13:.0f} out of 13 real events correctly. None of them got the size of a reaction right.
 
-Here's what we found. Each model was good at one thing, and none was good at everything. But the most interesting part was what they all got wrong, together: they stayed calm where people were shaken, like COVID and January 6, and got excited where people shrugged, like the debates.
+They also failed in the same way. They stayed calm where people were shaken, like COVID and January 6, and got excited where people shrugged, like the debates. Averaging them doesn't fix that.
 
-That's why, in our forecast, statistics set where each race starts, a model trained on real survey answers estimates how each group of voters usually splits between the parties, and the size of every reaction comes from how people really moved. The voter personas decide which way the news pushes each group.
+In our forecast, statistics set where each race starts, and a model trained on real survey answers estimates how each group of voters usually splits between the parties. The size of every reaction comes from how people really moved in past events, and the voter personas decide which way the news pushes each group.
 
-The whole test cost $1.52. Tomorrow: what happened when we put a different TV channel's name on the same headline.
+The whole test cost $1.52. Tomorrow we'll show what happened when we put a different TV channel's name on the same headline.
 
 #midterms2026 #elections
 
 {DISCLAIMER}""", [
-        f"Before forecasting a single race, we wanted to know: can a model react to the news the way a group of voters "
-        f"really would? So we tested six of them on four questions. {LABEL}.",
-        f"Here's what we found. Jev was best at ignoring news that doesn't matter ({null_jev:.0%} of the time), and "
-        f"GLM-5.3 Flash at reading which way a group moves ({glm_dir * 13:.0f} of 13 real events). None got the size "
-        f"right.",
-        "And they all failed the same way: calm where people were shaken (COVID, January 6), excited where people "
-        "shrugged (the debates). So the size of every reaction comes from how people really moved.",
+        f"Before forecasting a single race, we wanted to know whether a model can react to the news the way a group "
+        f"of voters really would. So we tested six of them on four questions. {LABEL}.",
+        f"Jev ignored irrelevant news {null_jev:.0%} of the time, and GLM-5.3 Flash read the direction of "
+        f"{glm_dir * 13:.0f} of 13 real events. None of them got the size of a reaction right.",
+        "They also failed the same way: calm where people were shaken (COVID, January 6), excited where people "
+        "shrugged (the debates). Real history sets the size of every reaction instead.",
         f"The whole test cost $1.52, and an untuned Kev reacted to about 1 irrelevant story in {1 / null_kev:.0f}. "
         f"More in our Lab notes: {SITE}",
     ], allow=("survey", "poll"))  # real survey answers (the personas' source) and real polls (the poll average)
 
 
 def ep02(theme: Theme = LAB) -> Post:
-    day, k = date(2026, 10, 4), "LAB NOTES 02"
+    day, k = date(2026, 10, 4), "Lab notes 02"
     gap = {"GLM": 0.30, "Jev": 0.15}
     flips = {"GLM": 0.41, "Jev": 0.15}
+    new = lambda: Slide(day, "", theme, series=k)
 
-    a = Slide(day, k, theme)
+    a = new()
     a.y += 20
     a.text(f"{flips['GLM']:.0%}", "sans", 800, 300, leading=1.0, after=0.15)
     a.headline("of headlines got a different answer when we swapped “Fox News” for “MSNBC.”", px=76)
-    a.dek("Same story, same words. We asked a model which party the news helps; only the outlet's name changed.")
+    a.dek("Same story, same words. Only the outlet’s name changed.")
     a.source("80 real headlines about 2026 Senate races, September 2026. Model: GLM-5.3 Flash.")
 
-    b = Slide(day, f"{k} · THE TEST", theme).headline("One story, three versions.")
+    b = new().headline("The same headline, shown three ways.", px=84)
     b.y += 10
     for label, body in [("No outlet", "The headline on its own."), ("“Fox News”", "The same headline, credited to Fox."),
                         ("“MSNBC”", "The same headline, credited to MSNBC.")]:
@@ -139,7 +134,7 @@ def ep02(theme: Theme = LAB) -> Post:
     b.note("Same event, so the answer shouldn’t move. Two models, 80 headlines each.", width=760)
     b.source("Headlines: Google News, September 2026. Question: which party does this news help?")
 
-    c = Slide(day, f"{k} · RESULTS", theme).headline("Both models moved. One moved a lot.", px=80)
+    c = new().headline("Credited to MSNBC, GLM leaned 30 points more Democratic.", px=76)
     charts.hbars(c, [(m, 100 * v, theme.data) for m, v in gap.items()], 50, lambda v: f"+{v:.0f} points",
                  title="Shift toward “helps Democrats” when the outlet is MSNBC instead of Fox")
     c.y += 20
@@ -147,7 +142,7 @@ def ep02(theme: Theme = LAB) -> Post:
                  title="Headlines where the top answer flipped")
     c.source("Shift: change in P(helps Democrats) minus P(helps Republicans), scale −100 to +100. 80 headlines.")
 
-    d = Slide(day, f"{k} · WHAT WE CHANGED", theme).headline("So no model ever sees an outlet's name.")
+    d = new().headline("Our models never see an outlet’s name.", px=84)
     d.text("Before any model reads the news, we strip the outlet and rewrite the story as a short, neutral event "
            "card. A forecast shouldn’t care where you read the news.", px=40, color=theme.ink2, after=1.2)
     d.note("Tomorrow: a model looked Republican because of the order we listed the answers in.", width=760)
@@ -156,94 +151,87 @@ def ep02(theme: Theme = LAB) -> Post:
     return Post(day, "Lab notes 02: the outlet name changed the answer", [
         (a, "41 percent of headlines got a different answer when we swapped Fox News for MSNBC. Same story; only the "
             "outlet's name changed."),
-        (b, "The test: each headline asked three ways, with no outlet, credited to Fox News, and credited to MSNBC."),
-        (c, "Bar charts. Shift toward helps Democrats when the outlet is MSNBC instead of Fox: GLM plus 30 points, Jev "
-            "plus 15. Top answer flipped: GLM 41 percent, Jev 15 percent."),
-        (d, "So no model ever sees an outlet's name: stories become short neutral event cards first."),
-    ], f"""Here's a small experiment with a big lesson. We took 80 real headlines about this year's Senate races and showed each one to two models three times: once on its own, once credited to Fox News, and once credited to MSNBC. Same words every time.
+        (b, "The same headline, shown three ways: with no outlet, credited to Fox News, and credited to MSNBC."),
+        (c, "Credited to MSNBC, GLM leaned 30 points more Democratic. Bar charts: shift toward helps Democrats, GLM "
+            "plus 30 points, Jev plus 15; top answer flipped, GLM 41 percent, Jev 15 percent."),
+        (d, "Our models never see an outlet's name: stories become short neutral event cards first."),
+    ], f"""We took 80 real headlines about this year's Senate races and showed each one to two models three times: once on its own, once credited to Fox News and once credited to MSNBC. The words never changed. Then we asked which party the news helps.
 
-Then we asked which party the news helps. If a model judges the event, its answer shouldn't move. It did. When the same headline came "from MSNBC" instead of "from Fox", GLM leaned 30 points more towards "helps Democrats", and on 41% of headlines its answer flipped completely. Jev moved about half as much.
+If a model judges the event, the answer should stay put. It didn't. Credited to MSNBC instead of Fox, the same headline made GLM lean 30 points more towards "helps Democrats", and on 41% of headlines its answer flipped completely. Jev moved about half as much.
 
-To be clear, this says nothing about either channel. It shows that the models have learned to read the outlet as a clue about the story. People do that too, but a forecast shouldn't.
+This says nothing about either channel. It shows that the models read the outlet as a clue about the story, the way many readers do.
 
-So no model in our forecast ever sees where a story came from. Each story is first rewritten as a short, neutral description of what happened. A forecast shouldn't care where you read the news.
+Our models never see where a story came from. Each story is first rewritten as a short, neutral description of what happened, because a forecast shouldn't care where you read the news.
 
 #midterms2026 #elections
 
 {DISCLAIMER}""", [
         f"We showed two models the same 80 headlines, credited first to Fox News, then to MSNBC. One of them changed its "
         f"answer about which party the news helps on 41% of them. {LABEL}.",
-        "It's not about either channel. The models have learned to read the outlet as a clue about the story, and "
-        "people do that too. A forecast shouldn't.",
-        "So no model in our forecast ever sees where a story came from; each one becomes a short, neutral description "
-        "first. A forecast shouldn't care where you read the news.",
+        "It isn't about either channel. The models have learned to read the outlet as a clue about the story, the way "
+        "many readers do.",
+        "Our models never see where a story came from; each one becomes a short, neutral description first. A forecast "
+        "shouldn't care where you read the news.",
     ])
 
 
 def ep03(theme: Theme = LAB) -> Post:
-    s, day, k = latest(), date(2026, 10, 5), "LAB NOTES 03"
+    s, day, k = latest(), date(2026, 10, 5), "Lab notes 03"
     lean = lambda m: s[("mirror", m)]["mean_asymmetry"] / s[("mirror", m)]["mean_abs_reaction"]
     order = ["glm", "deepseek", "mimo", "luna", "jev", "kev"]
     items = [(MODELS[m], 100 * lean(m + "1"), 100 * lean(m)) for m in order]
     pct = lambda v: f"{v:+.0f}%".replace("-", "−") if v else "0"
-
-    a = Slide(day, k, theme).headline("We test every model for a built-in party lean. The simplest fix removed "
-                                      "almost all of it.", px=76)
-    a.dek("One lean came from the order of the answers, not from politics.", px=38)
     glm = items[0]
-    a.at_bottom(charts.stats_height(150, rule=True) + 40 + 80)
-    charts.stats(a, [(pct(glm[1]), "GLM, asked one way"), (pct(glm[2]), "asked both ways")], px=150, rule=True)
-    a.text("Built-in lean toward Republicans, as a share of a typical reaction.", px=30, color=theme.ink2)
-    a.source("Mirror test: 16 news stories, each with the parties swapped, 28 simulated voter types. Sep 2026.")
+    new = lambda: Slide(day, "", theme, series=k)
 
-    b = Slide(day, f"{k} · THE TEST", theme).headline("The mirror test.")
-    b.text("Every story is told twice, with the parties swapped. A fair model mirrors itself exactly.", px=40,
-           color=theme.ink2, after=1.0)
+    a = new().headline("One model looked Republican. It was the order of the answers.", px=84)
+    a.dek("We test every model for a built-in party lean.", px=40)
+    a.source("Mirror test: 16 news stories, each with the parties swapped, 28 voter personas. Sep 2026.")
+
+    b = new().headline("We tell every story twice, with the parties swapped.", px=80)
+    b.text("A fair model mirrors itself exactly.", px=40, color=theme.ink2, after=1.0)
     b.note("Then every question in both orders. If the lean flips with the order, it isn’t politics.", width=760)
-
     b.source("Scale: strongly toward the Republican to strongly toward the Democrat, five steps.")
 
-    c = Slide(day, f"{k} · RESULTS", theme).headline("Averaging both orders cancels most of it.", px=80)
+    c = new().headline("Averaging both orders cancels most of it.", px=80)
     charts.legend_dots(c, [("Asked one way", theme.data, False), ("Both ways, averaged", theme.ai, True)])
     c.y += 10
     charts.dumbbell(c, items, 80, 500, "leans Republican", "leans Democratic", pct)
     c.text("Kev, untuned, got worse. It failed other checks too.", px=30, color=theme.ink2)
     c.source("Lean = average of the two mirrored reactions, as a share of the model's typical reaction size.")
 
-    d = Slide(day, f"{k} · WHAT WE CHANGED", theme).headline("So every question is asked both ways.")
+    d = new().headline("Now every question is asked both ways.", px=84)
     d.text("Asking twice costs a few cents per thousand answers. A fixed correction removed only two-thirds of "
            "the lean.", px=40, color=theme.ink2, after=1.2)
     d.note("Every question, both ways, for every model.", width=640)
     d.source("Forecasts go public on Monday 12 October.")
 
     names = ", ".join(f"{n} {pct(b1)} → {pct(b2)}" for n, b1, b2 in items[:3])
-    return Post(day, "Lab notes 03: ask it backwards", [
-        (a, f"We test every model for a built-in party lean; the simplest fix removed almost all of it. GLM's lean, "
-            f"as a share of a typical reaction: {pct(glm[1])} asked one way, {pct(glm[2])} asked both ways."),
-        (b, "The mirror test: each story shown twice with the parties swapped, and every question asked in both "
-            "orders."),
-        (c, f"Dot chart of each model's leftover lean, one way versus both ways averaged: {names}; the rest near zero "
-            "except untuned Kev, which got worse."),
-        (d, "So every question is asked both ways. A fixed correction removed only about two-thirds of the lean."),
-    ], f"""We test every model we use for a built-in party lean, and one result surprised us.
+    return Post(day, "Lab notes 03: one model looked Republican", [
+        (a, "One model looked Republican. It was the order of the answers. We test every model for a built-in party "
+            "lean."),
+        (b, "We tell every story twice, with the parties swapped; a fair model mirrors itself exactly. Then every "
+            "question is asked in both orders."),
+        (c, f"Dot chart of each model's built-in lean, as a share of a typical reaction, one way versus both ways "
+            f"averaged: {names}; the rest near zero except untuned Kev, which got worse."),
+        (d, "Now every question is asked both ways. A fixed correction removed only about two-thirds of the lean."),
+    ], f"""For a while, one of our models looked Republican. Every model we use is tested for a built-in party lean: we tell each story twice with the parties swapped, and a fair model reacts the same way to both versions.
 
-The test is simple: we tell each story twice, with the parties swapped. A fair model should react the same way to both versions, and whatever is left over is a lean.
+GLM didn't. Its lean was {pct(glm[1])} of a typical reaction. The cause turned out to be the answer scale, which listed the Republican side first; some models favour whichever answer comes first.
 
-At first, GLM looked like it leaned Republican: its lean was {pct(glm[1])} of a typical reaction. But it wasn't politics at all. Some models favour whichever answer comes first, and our answer scale happened to list the Republican side first.
+We asked every question both ways, once in each order, and averaged the two. GLM's lean dropped to {pct(glm[2])}, DeepSeek's went from {pct(items[1][1])} to {pct(items[1][2])} and MiMo's from {pct(items[2][1])} to {pct(items[2][2])}.
 
-So we asked every question both ways, once in each order, and averaged the two. The lean dropped to {pct(glm[2])}. DeepSeek went from {pct(items[1][1])} to {pct(items[1][2])}, and MiMo from {pct(items[2][1])} to {pct(items[2][2])}.
-
-That's why every question in our forecast is now asked both ways. It costs a few cents per thousand answers, and it stops a quirk of question order from quietly tilting the numbers.
+Now every question in our forecast is asked both ways. It costs a few cents per thousand answers and keeps the order of a question from tilting the numbers.
 
 #midterms2026 #elections
 
 {DISCLAIMER}""", [
-        f"We test every model for a built-in party lean. One looked Republican, with a lean of {pct(glm[1])} of a "
-        f"typical reaction. It turned out to be the order of the answers, not politics. {LABEL}.",
-        "Some models favour whichever answer comes first, and our scale listed the Republican side first. So we asked "
-        f"every question both ways and averaged: the lean fell to {pct(glm[2])}.",
+        f"For a while, one of our models looked Republican, with a built-in lean of {pct(glm[1])} of a typical "
+        f"reaction. It turned out to be the order of the answers. {LABEL}.",
+        "Some models favour whichever answer comes first, and our scale listed the Republican side first. Asked both "
+        f"ways and averaged, the lean fell to {pct(glm[2])}.",
         f"DeepSeek went from {pct(items[1][1])} to {pct(items[1][2])}, MiMo from {pct(items[2][1])} to "
-        f"{pct(items[2][2])}. That's why every question in our forecast is now asked both ways.",
+        f"{pct(items[2][2])}. Now every question in our forecast is asked both ways.",
     ])
 
 

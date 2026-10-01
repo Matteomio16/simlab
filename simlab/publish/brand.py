@@ -151,9 +151,10 @@ def header(t=LAB, w: int = 1500, h: int = 500, scale: int = 1, name: str = "head
 
 
 def pinned(t=LAB):
-    """The intro carousel, the post to pin (communication.md): a live experiment, people first, short slides; the
-    method lives on the website. No "start here" wording anywhere (Matteo, 1 Oct)."""
-    a = Slide(PINNED_DAY, "THE 2026 MIDTERMS", t)
+    """The intro carousel, the post to pin (communication.md): a live experiment, people first, short slides, no
+    eyebrow labels (Matteo's design pass, 1 Oct); the method lives on the website."""
+    new = lambda: Slide(PINNED_DAY, "", t)
+    a = new()
     a.headline("Democracy, rehearsed.", px=104)
     a.dek("Polls ask people. We simulate how people react. An independent forecast of the 2026 midterms, scored in "
           "public.", px=38)
@@ -161,10 +162,10 @@ def pinned(t=LAB):
     a.y += 320
     a.text("Illustration, not a forecast.", px=28, color=t.ink2)
 
-    b = Slide(PINNED_DAY, "HOW IT WORKS", t)
-    b.headline("Voter groups, reacting to the news.", px=80)
+    b = new()
+    b.headline("Every morning, the day’s news meets more than a thousand voter personas.", px=72)
     for n, line in enumerate(["We start from past results and the poll average.",
-                              "More than a thousand voter personas react to each day’s events.",
+                              "The personas react to the day’s events, group by group.",
                               "Each race is played out 40,000 times."], 1):
         b.y += 10
         top = b.y
@@ -172,13 +173,12 @@ def pinned(t=LAB):
         b.text(line, "serif", 600, 44, x=MARGIN + 96, width=b.width - 96, after=0.9)
     b.note("The full method, step by step: notapoll.org", y=b.y + 30, width=620)
 
-    c = Slide(PINNED_DAY, "WHAT IT ISN’T", t)
+    c = new()
     c.headline("Not a poll.", px=104)
     c.text("We don’t ask people what they think today. We model how they react. Our number always sits beside the "
-           "poll average, the prediction markets and Cook.",
-           px=40, color=t.ink2, after=1.2)
+           "poll average, the prediction markets and Cook.", px=40, color=t.ink2, after=1.2)
 
-    d = Slide(PINNED_DAY, "KEEPING SCORE", t)
+    d = new()
     d.headline("Right or wrong, you’ll see it.", px=88)
     rows = [("Daily", "Where the races are heading, and why."),
             ("Mondays", "From 19 October: our record against the poll average, the markets and Cook."),
@@ -186,40 +186,41 @@ def pinned(t=LAB):
     for head, body in rows:
         d.rule(t.hairline, after=22)
         top = d.y
-        d._put(MARGIN, top, head.upper(), "mono", 600, 28, t.ai, va="top")
+        d._put(MARGIN, top, head, "sans", 600, 32, t.ai, va="top")
         d.text(body, px=38, x=MARGIN + 220, width=d.width - 220, after=0.8)
     d.rule(t.hairline)
     slides = [(a, "Democracy, rehearsed. Polls ask people; we simulate how people react. An independent forecast of "
                   "the 2026 midterms, scored in public, over an illustrative dot map of the United States."),
-              (b, "How it works: start from past results and the poll average; more than a thousand voter personas "
-                  "react to each day's events; each race is played out 40,000 times. Full method at notapoll.org."),
+              (b, "Every morning, the day's news meets more than a thousand voter personas: we start from past "
+                  "results and the poll average; the personas react, group by group; each race is played out 40,000 "
+                  "times. Full method at notapoll.org."),
               (c, "Not a poll: we don't ask people what they think today, we model how they react. Our number always "
                   "sits beside the poll average, the prediction markets and Cook."),
-              (d, "Keeping score: daily updates, a public record every Monday from 19 October, the final forecast on "
-                  "3 November.")]
+              (d, "Right or wrong, you'll see it: daily updates, a public record every Monday from 19 October, the "
+                  "final forecast on 3 November.")]
     for s, _ in slides:
         s.source("Forecasts go public on Monday 12 October.")
     caption = (
         "Democracy, rehearsed.\n\n"
-        "Polls ask people what they think. We wanted to try something different: simulate how people react. So from "
-        "12 October, every day until 3 November, we'll forecast the 2026 midterms by modelling how each day's news "
-        "moves different groups of voters.\n\n"
-        "Here's how it works. More than a thousand voter personas, one for each mix of party, race and education in "
-        "every state, react to the day's news. Then we play every Senate race, and about 40 House races, 40,000 times "
-        "and count who wins.\n\n"
-        "You'll always see our number next to the poll average, the prediction markets and Cook, so you can judge it "
-        "for yourself. And every Monday from 19 October we'll show how we're doing against all of them. Right or "
-        "wrong, you'll see it.\n\n"
-        "It's an independent project, built on long-term research focused on social dynamics, and we'd love you to "
-        "follow along.\n\n"
+        "Polls ask people what they think. We simulate how people react. From 12 October until 3 November, we'll "
+        "forecast the 2026 midterms every day by modelling how the news moves different groups of voters.\n\n"
+        "Every morning, more than a thousand voter personas, one for each mix of party, race and education in every "
+        "state, react to the day's news. Then we play every Senate race and about 40 House races 40,000 times and "
+        "count the wins.\n\n"
+        "Our number will always sit next to the poll average, the prediction markets and Cook, so you can judge it "
+        "for yourself, and from 19 October we'll publish how we're doing against them every Monday. Right or wrong, "
+        "you'll see it.\n\n"
+        "NotAPoll is independent, and built on long-term research focused on social dynamics. The first forecast is "
+        "out on 12 October. Follow along.\n\n"
         f"#midterms2026 #elections\n\n{DISCLAIMER}")
     thread = [f"Democracy, rehearsed. Polls ask people what they think; we're going to simulate how people react, "
               f"and forecast the 2026 midterms that way, in public. {LABEL}.",
-              "Here's how: more than a thousand voter personas react to each day's news, then we play every race out "
-              "40,000 times and count who wins.",
+              "Every morning, more than a thousand voter personas react to the day's news. Then every race is played "
+              "out 40,000 times and we count the wins.",
               "Our number always sits next to the poll average, the prediction markets and Cook, so you can judge it "
               "yourself. Every Monday from 19 Oct we'll show how we're doing.",
-              f"It's built on long-term research focused on social dynamics. Forecasts start on 12 October: {SITE}"]
+              f"It's built on long-term research focused on social dynamics. The first forecast is out on 12 October: "
+              f"{SITE}"]
     return slides, caption, thread
 
 

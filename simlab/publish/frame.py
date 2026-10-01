@@ -209,7 +209,9 @@ class Slide:
     label strip with the date). `size` can be (1080, 1920) for video frames and stories."""
 
     def __init__(self, day: date, kicker: str, theme: Theme = BROADSHEET, size: tuple[int, int] = (W, H),
-                 run: str | None = None):
+                 run: str | None = None, series: str | None = None):
+        # kicker: the small label above the heading ("" for none: posts carry no eyebrow, Matteo, 1 Oct);
+        # series: shown in the bottom strip before the date ("LAB NOTES 01 · 3 OCT 2026")
         self.t, (self.w, self.h) = theme, size
         t = theme
         self.fig = plt.figure(figsize=(self.w / DPI, self.h / DPI), dpi=DPI)
@@ -226,11 +228,14 @@ class Slide:
         T = self.top
         if t.header == "bar":
             self.ax.add_patch(plt.Rectangle((0, T), self.w, 128, color=t.ink, lw=0, zorder=1))
-            self._put(MARGIN, T + 64, kicker, "mono", 500, 30, t.paper, va="center", zorder=2)
+            if kicker:
+                self._put(MARGIN, T + 64, kicker, "mono", 500, 30, t.paper, va="center", zorder=2)
             self.wordmark(T + 64, 800, t.paper, t.paper)
             self.y = T + 184
         else:
-            if t.header == "chip":
+            if not kicker:
+                pass
+            elif t.header == "chip":
                 wk = self.pil("mono", 600, 28).getlength(typeset(kicker))
                 self.ax.add_patch(plt.Rectangle((MARGIN - 12, T + 42), wk + 24, 46, color=t.accent, lw=0, zorder=1))
                 self._put(MARGIN, T + 65, kicker, "mono", 600, 28, t.strip_fg if t.strip_bg == t.accent else t.paper,
@@ -250,9 +255,11 @@ class Slide:
                 self.ax.add_patch(plt.Rectangle((self.w * i / 3, self.foot - STRIP - 10), self.w / 3, 10, color=c,
                                                 lw=0, zorder=1))
         mid = self.foot - STRIP / 2
-        self._put(MARGIN, mid, LABEL.upper(), "mono", 600, 30, t.strip_fg, va="center", gid="footer", zorder=2)
-        self._put(self.w - MARGIN, mid, fmt_day(day), "mono", 400, 28, t.strip_fg, ha="right", va="center",
-                  gid="footer", zorder=2)
+        # plain sans, not monospace "technical" type (Matteo's design pass, 1 Oct)
+        self._put(MARGIN, mid, LABEL.upper(), "sans", 600, 28, t.strip_fg, va="center", gid="footer", zorder=2)
+        right = f"{series.upper()} · {fmt_day(day)}" if series else fmt_day(day)
+        self._put(self.w - MARGIN, mid, right, "sans", 500, 26, t.strip_fg, ha="right", va="center", gid="footer",
+                  zorder=2)
 
     def _texture(self):
         t = self.t
@@ -382,11 +389,11 @@ class Slide:
         return ax
 
     def source(self, s: str):
-        lines = self.wrap(s, "mono", 400, 22, self.width)
+        lines = self.wrap(s, "sans", 400, 23, self.width)
         if len(lines) > 2:
             raise ValueError(f"source line too long ({len(lines)} lines): {s!r}")
         for i, line in enumerate(reversed(lines)):
-            self._put(MARGIN, self.foot - STRIP - 28 - i * 30, line, "mono", 400, 22, self.t.muted, va="bottom",
+            self._put(MARGIN, self.foot - STRIP - 28 - i * 30, line, "sans", 400, 23, self.t.muted, va="bottom",
                       gid="footer")
         return self
 
