@@ -44,8 +44,8 @@ Matteo is away Fri 2 and Sat 3 Oct, back Sun 4 Oct, and checks in from his phone
   (never applied) and gives the voter-group splits; Modal October spend $0.37.
 - **Sat 3 Oct dry run:** the normal scheduled daily run plus its pass check (`docs/rehearsal.md`). **Sun 4 Oct:** the
   scheduled run, then the failure drills (`drills.yml`) start by themselves.
-- **Posts:** the launch posts (intro, Lab notes 01-03) are in their v6 version; Matteo approves them on 2 Oct (he
-  compared v5 and v6 side by side), then the commits are pushed, the slides go up at notapoll.org/social/ and Buffer
+- **Posts:** the launch posts (intro, Lab notes 01-03) are in their v7 version, Matteo's slide-by-slide mix of v5 and
+  v6; he gives the final yes on 2 Oct, then the commits are pushed, the slides go up at notapoll.org/social/ and Buffer
   queues them: Sat 3 Oct 14:00 and 18:00, Sun 4 Oct 16:00, Mon 5 Oct 14:00 Paris time. Threads is connected in Buffer;
   Bluesky is left for now.
 - **Dropped:** the daily email digest (scheduled task `midterm-daily-check`; Matteo, 2 Oct).
