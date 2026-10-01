@@ -87,9 +87,8 @@ export default function Prelaunch({ today }: { today: string }) {
               simulated every day.
             </h1>
             <p className="mt-5 max-w-xl text-[1.2rem] leading-relaxed text-ink-2">
-              <strong className="font-bold text-ink">Polls ask people. We simulate how people react.</strong> Voter
-              personas, built from real survey answers, react to each day&rsquo;s news, and 40,000 simulated elections turn
-              their reactions into chances for all 35 Senate races.
+              <strong className="mb-1.5 block font-bold leading-snug text-ink">Polls ask people. We simulate how people react.</strong>
+              {"Voter personas, built from real survey answers, react to each day’s news, and 40,000 simulated elections turn their reactions into chances for all 35 Senate races."}
             </p>
             <p className="mt-4 flex max-w-xl items-baseline gap-2 text-[1.05rem] font-semibold leading-snug">
               <span className="inline-block h-2 w-2 shrink-0 -translate-y-px bg-sim" aria-hidden="true" />
