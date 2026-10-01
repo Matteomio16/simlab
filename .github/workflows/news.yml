@@ -60,3 +60,15 @@ jobs:
             sleep 15
           done
           exit 1
+      - name: Missed day?
+        # A day whose daily run never started sends no failure email of its own. From 12:00 to 12:29 UTC (the run
+        # starts at 09:47), a day without derived/<day>/run.json fails this step, so GitHub emails Matteo.
+        if: ${{ !cancelled() && vars.PIPELINE_ON == 'true' }}
+        working-directory: data-repo
+        run: |
+          day=$(date -u +%F); now=$(date -u +%H%M)
+          if [[ ! "$day" < "2026-10-01" ]] && (( 10#$now >= 1200 && 10#$now < 1230 )); then
+            git fetch --quiet --depth 1 origin HEAD
+            if git cat-file -e "FETCH_HEAD:derived/${day}/run.json" 2>/dev/null; then echo "${day} has run"
+            else echo "no daily run for ${day} by $(date -u +%H:%M) UTC"; exit 1; fi
+          fi

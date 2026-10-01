@@ -1,0 +1,64 @@
+# Sunday 4 Oct (A10, docs/rehearsal.md): the failure drills, each on its own runner's copy of the data repo, which is
+# never pushed. The daily job starts this after Sunday's scheduled run; it can also be started by hand (Actions ->
+# drills -> Run workflow). A drill that misses its pass rule fails its job, so GitHub emails Matteo. Logs print
+# statuses and counts, never data.
+name: drills
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "The day the drills replay (YYYY-MM-DD, default today UTC); its daily run must have finished"
+        required: false
+
+concurrency:
+  group: drills
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  drill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        drill: [again, kev-down, no-news, budget, weekly-filter]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Day
+        run: |
+          d="${{ inputs.date }}"
+          echo "DAY=${d:-$(date -u +%F)}" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          repository: Matteomio16/simlab-data
+          ssh-key: ${{ secrets.SIMLAB_DATA_DEPLOY_KEY }}
+          path: data-repo
+          fetch-depth: 1
+          sparse-checkout: |
+            /README.md
+            /derived/
+            /house/
+          sparse-checkout-cone-mode: false
+      - name: The day's snapshots
+        working-directory: data-repo
+        run: git sparse-checkout add $(for k in 2 1 0; do d=$(date -u -d "$DAY -$k day" +%F); echo "/snapshots/$d/ /news/$d/"; done)
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - uses: actions/cache/restore@v4
+        with:
+          path: runs/cache.sqlite
+          key: llm-cache-${{ env.DAY }}-drills
+          restore-keys: llm-cache-${{ env.DAY }}-
+      - name: Drill
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          KEV_API_KEY: ${{ secrets.KEV_API_KEY }}
+          SIMLAB_BUDGET_USD: "2"
+        # only the replay of the day asks Kev, as the daily job does; the others leave its GPU asleep
+        run: >-
+          uv run python -m simlab.rehearsal ${{ matrix.drill }} --date "$DAY" --data data-repo
+          --kev "${{ matrix.drill == 'again' && vars.KEV_URL || '' }}"
