@@ -59,7 +59,7 @@ class KitTest(unittest.TestCase):
             note = (kit / "note.md").read_text(encoding="utf-8")
             self.assertIn("TX-SEN: no market price", note)  # missing benchmark is reported, not hidden
             caption = (kit / "caption_instagram.txt").read_text(encoding="utf-8")
-            self.assertIn("Social simulation, not a poll", caption)
+            self.assertIn("A live experiment in social simulation", caption)
             self.assertIn("Up 8 points this week", caption)  # NC moved 0.50 -> 0.58
             self.assertIn("No meaningful change", caption)
 

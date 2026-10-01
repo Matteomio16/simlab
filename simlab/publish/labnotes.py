@@ -73,7 +73,7 @@ def ep01(theme: Theme = LAB) -> Post:
     e = Slide(day, f"{k} · WHAT IT MEANS", theme).headline("Statistics set the starting line. The simulation "
                                                            "moves it.", px=80)
     e.text("Each day the voter personas react to the news. Each week the latest poll average decides how much of "
-           "that movement to keep.", px=38, color=theme.ink2, after=1.2)
+           "that shift to keep.", px=38, color=theme.ink2, after=1.2)
     e.note("Tomorrow: one model changed 41% of its answers when we swapped “Fox News” for “MSNBC”.", width=760)
     e.source("Race starting points: statistics. Each voter group's starting split: a model trained on real survey "
              "answers.")
@@ -89,7 +89,7 @@ def ep01(theme: Theme = LAB) -> Post:
         (d, "They all got the same things wrong: too calm about real shocks like COVID and January 6, too excited "
             "about the debates. So reaction sizes come from shifts that were actually measured."),
         (e, "Statistics set the starting line; the simulation moves it. Voter personas react to each day's news, and "
-            "each week the poll average decides how much movement to keep."),
+            "each week the poll average decides how much of the shift to keep."),
     ], f"""Before forecasting a single race, we asked six models to behave like voters.
 
 Four questions. Does a football score move a Senate race? It shouldn't. If you swap the parties in a story, does the reaction swap? Does a model move the way people actually moved on 19 events since 2012? Does it know how groups voted in 2024?

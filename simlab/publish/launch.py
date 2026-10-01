@@ -38,8 +38,8 @@ def singles() -> dict[str, dict[str, str]]:
     one, both = f"{abs(lean('glm1')):.0f}%", f"{abs(lean('glm')):.0f}%"
     out = {
         "01-intro": (
-            "Democracy, rehearsed. A live experiment: forecasting the 2026 midterms by modelling how groups of voters "
-            "react to the news, every day until 3 November. Right or wrong, you'll see it.",
+            "Democracy, rehearsed. From 12 October we forecast the 2026 midterms every day, by modelling human "
+            "reactions to the news. Right or wrong, you'll see it.",
             " Our number always sits beside the poll average, the prediction markets and Cook, and every Monday from "
             "19 October we publish our record against them."),
         "02-lab-notes-01": (
@@ -53,10 +53,10 @@ def singles() -> dict[str, dict[str, str]]:
             " People read the source as a clue too; a forecast can't. So no model in our forecast ever sees an outlet's "
             "name: every story becomes a short, neutral event card first. Lab notes 02."),
         "04-lab-notes-03": (
-            f"Our answer scale listed the Republican side first, and one model leaned Republican by {one} of its typical "
-            f"reaction. Asked both ways and averaged: {both}. So every question in our forecast is asked both ways.",
-            " Some models favour whichever answer comes first. It doubles the cost, still a few cents per thousand "
-            "answers. Lab notes 03."),
+            f"Our answer scale listed the Republican side first, and one model leaned Republican by {one}. Asked both "
+            f"ways: {both}. So we ask every question both ways.",
+            " Some models favour whichever answer comes first. Asking twice doubles the cost, still a few cents per "
+            "thousand answers. Lab notes 03."),
     }
     def end(t: str, limit: int) -> str:  # the fixed disclaimer when it fits, else the label alone
         return f"{t} {DISCLAIMER}" if len(t) + 1 + len(DISCLAIMER) <= limit else f"{t} {LABEL}."

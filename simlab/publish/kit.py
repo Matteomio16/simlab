@@ -16,7 +16,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 from . import racecards, text
-from .frame import LABEL
+from .frame import DISCLAIMER, LABEL
 from .geo import state_name
 from .labnotes import contact_sheet
 from .themes import LAB
@@ -195,8 +195,7 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
             lines.append(f"What moved it: {top[0]['card']}")
         lines.append("")
     lines += ["How to read it: voter personas react to each day's news, and each simulated election plays the race "
-              "out once. Anything from 35% to 65% is a toss-up.", "", f"{LABEL}.", "",
-              "#midterms2026 #elections #socialsimulation"]
+              "out once. Anything from 35% to 65% is a toss-up.", "", "#midterms2026 #elections", "", DISCLAIMER]
     caption = "\n".join(lines)
     thread = [f"Where the races stand, in 40,000 simulated elections each: on 3 Nov, and if the election were "
               f"today. {LABEL}."]
@@ -210,7 +209,7 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
                       f"{racecards.who(r)} wins {round(r['p'] * 100)} in 100 simulated elections. Poll average "
                       f"{r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}.")
     by_close = sorted(rs, key=lambda r: abs(r["p"] - 0.5))
-    tail = f" {LABEL}. notapoll.org"
+    tail = f" {LABEL}. notapoll.org"  # X and Bluesky have no room for the full disclaimer next to a race line
     single = {"x": f"Closest race today. {line(by_close[0])}{tail}"}
     single["bluesky"] = single["x"]
     more = f"Where the races stand, {day:%d %b}."

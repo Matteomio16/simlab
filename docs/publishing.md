@@ -4,9 +4,11 @@ Content & site session. Design approved by Matteo on 28 Sep: matplotlib draws ev
 plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing) and CLAUDE.md. **Voice and message:
 `docs/communication.md` (Matteo, 1 Oct) wins over anything here**; this file keeps the mechanics.
 
-- **Every caption ends with the fixed disclaimer** `frame.DISCLAIMER`, currently "Social simulation, not a poll. How it
-  works: notapoll.org" (wording still open with Matteo). Hashtags go before it. Single posts end with it when it fits
-  the platform's limit, else with the label alone.
+- **Every caption ends with the fixed disclaimer** `frame.DISCLAIMER`: "A live experiment in social simulation, built
+  from real survey answers. Method: notapoll.org" (Matteo, 1 Oct). Hashtags go before it. Single posts end with it
+  when it fits the platform's limit, else with the label alone. Images keep the label strip "Social simulation, not a
+  poll". Never "movement" for us, never "reactionary", never "social interactions" (say human reactions, social
+  dynamics); the research line is "built on long-term research focused on social dynamics".
 - **Slides stay short:** a headline, one or two lines, a chart or a post-it. The method lives on the website.
 - **Post-it notes** (`Slide.note`): yellow `#F6DD6E`, slightly turned, for "what changed", a flag or the next post.
 

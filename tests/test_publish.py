@@ -58,7 +58,7 @@ class TextCheckTest(unittest.TestCase):
         self.assertEqual(text.check(f"Ohio moved a little. {frame.LABEL}. Poll average beside ours."), [])
 
     def test_missing_label(self):
-        self.assertIn("missing the label", " ".join(text.check("Ohio moved a little.")))
+        self.assertIn("missing the disclaimer", " ".join(text.check("Ohio moved a little.")))
 
     def test_banned_words(self):
         msgs = " ".join(text.check(f"Our poll shows it. Voters say yes. A survey. 40% of voters. {frame.LABEL}"))
