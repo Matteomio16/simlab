@@ -213,7 +213,7 @@ def ep03(theme: Theme = LAB) -> Post:
     d = Slide(day, f"{k} · WHAT WE CHANGED", theme).headline("So every question is asked both ways.")
     d.text("Asking twice costs a few cents per thousand answers. A fixed correction removed only two-thirds of "
            "the lean.", px=40, color=theme.ink2, after=1.2)
-    d.note("Next in Lab notes: the models know which way voters move, not how far.", width=760)
+    d.note("Every question, both ways, for every model.", width=640)
     d.source("Forecasts go public on Monday 12 October.")
 
     names = ", ".join(f"{n} {pct(b1)} → {pct(b2)}" for n, b1, b2 in items[:3])
@@ -234,8 +234,6 @@ At first, GLM looked like it leaned Republican: its lean was {pct(glm[1])} of a 
 So we asked every question both ways, once in each order, and averaged the two. The lean dropped to {pct(glm[2])}. DeepSeek went from {pct(items[1][1])} to {pct(items[1][2])}, and MiMo from {pct(items[2][1])} to {pct(items[2][2])}.
 
 That's why every question in our forecast is now asked both ways. It costs a few cents per thousand answers, and it stops a quirk of question order from quietly tilting the numbers.
-
-Next in Lab notes: the models know which way voters move, but not how far.
 
 #midterms2026 #elections
 

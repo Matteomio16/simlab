@@ -33,5 +33,3 @@ It is also a reminder of why we test before we trust. A lean that comes from the
 
 #### In detail
 In practice, every scale question is asked as written and reversed, and every multiple-choice question in three different orders; the answers are averaged before anything enters the forecast. On the mirror test, GLM's leftover lean was −0.124 asked one way, −0.045 with the fixed correction, and −0.006 asked both ways. We keep the both-ways rule for every model in the forecast, including the ones that looked fair, so that no lean can creep in unnoticed as stories change.
-
-Next in Lab notes: the models know which way voters move, but not how far, and what we use instead.

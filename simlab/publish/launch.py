@@ -53,7 +53,7 @@ def singles() -> dict[str, dict[str, str]]:
             "the news. Lab notes 02."),
         "04-lab-notes-03": (
             f"We test every model for a built-in party lean. One looked Republican, but it was just the order of the "
-            f"answers: asked both ways, its lean fell from {one} to {both}.",
+            f"answers: asked both ways, its lean fell from {one} of a typical reaction to {both}.",
             " That's why every question in our forecast is now asked both ways, for a few cents per thousand answers. "
             "Lab notes 03."),
     }
