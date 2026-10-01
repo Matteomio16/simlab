@@ -27,8 +27,8 @@ from PIL import Image, ImageFont
 
 LABEL = "Social simulation, not a poll"
 SITE = "notapoll.org"
-# The fixed line that ends every caption (communication.md, 1 Oct). Wording still open with Matteo: option A for now.
-DISCLAIMER = f"{LABEL}. How it works: {SITE}"  # Matteo, 28 Sep (relayed by the roadmap session): images show the domain
+# The fixed line that ends every caption (Matteo, 1 Oct; communication.md, "Settled with Matteo").
+DISCLAIMER = f"A live experiment in social simulation, built from real survey answers. Method: {SITE}"  # Matteo, 28 Sep (relayed by the roadmap session): images show the domain
 # The logo: H1, two hills, with the wordmark in Newsreader 560 (Matteo, 29 Sep; the kit is brand/final.py). The old
 # ballot-box mark and the theme-face wordmark stay behind switches: NOTAPOLL_LOGO=grid, NOTAPOLL_WORDMARK=theme.
 LOGO = os.environ.get("NOTAPOLL_LOGO", "hills")

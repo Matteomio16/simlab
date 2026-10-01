@@ -155,8 +155,8 @@ def pinned(t=LAB):
     method lives on the website. No "start here" wording anywhere (Matteo, 1 Oct)."""
     a = Slide(PINNED_DAY, "THE 2026 MIDTERMS", t)
     a.headline("Democracy, rehearsed.", px=104)
-    a.dek("A live experiment: forecasting the 2026 midterms by modelling how groups of voters react to the news. "
-          "Every day until 3 November.", px=38)
+    a.dek("Polls ask people. We simulate how people react. An independent forecast of the 2026 midterms, scored in "
+          "public.", px=38)
     electorate(a.ax, t, MARGIN, a.y + 6, a.width, 300, n=900)
     a.y += 320
     a.text("Illustration, not a forecast.", px=28, color=t.ink2)
@@ -173,8 +173,9 @@ def pinned(t=LAB):
     b.note("The full method, step by step: notapoll.org", y=b.y + 30, width=620)
 
     c = Slide(PINNED_DAY, "WHAT IT ISN’T", t)
-    c.headline("Not a poll. Nobody is asked anything.", px=88)
-    c.text("Our number always sits beside the poll average, the prediction markets and the Cook Political Report.",
+    c.headline("Not a poll.", px=104)
+    c.text("We don’t ask people what they think today. We model how they react. Our number always sits beside the "
+           "poll average, the prediction markets and Cook.",
            px=40, color=t.ink2, after=1.2)
     c.note("Between 35 and 65 in 100, we call it a toss-up.", width=640)
 
@@ -189,32 +190,33 @@ def pinned(t=LAB):
         d._put(MARGIN, top, head.upper(), "mono", 600, 28, t.ai, va="top")
         d.text(body, px=38, x=MARGIN + 220, width=d.width - 220, after=0.8)
     d.rule(t.hairline)
-    slides = [(a, "Democracy, rehearsed. A live experiment forecasting the 2026 midterms by modelling how groups of "
-                  "voters react to the news, over an illustrative dot map of the United States."),
+    slides = [(a, "Democracy, rehearsed. Polls ask people; we simulate how people react. An independent forecast of "
+                  "the 2026 midterms, scored in public, over an illustrative dot map of the United States."),
               (b, "How it works: start from past results and the poll average; more than a thousand voter personas "
                   "react to each day's events; each race is played out 40,000 times. Full method at notapoll.org."),
-              (c, "Not a poll: nobody is asked anything. Our number always sits beside the poll average, the "
-                  "prediction markets and the Cook Political Report. 35 to 65 in 100 is a toss-up."),
+              (c, "Not a poll: we don't ask people what they think today, we model how they react. Our number always "
+                  "sits beside the poll average, the prediction markets and Cook. 35 to 65 in 100 is a toss-up."),
               (d, "Keeping score: daily updates, a public record every Monday from 19 October, the final forecast on "
                   "3 November.")]
     for s, _ in slides:
         s.source("Forecasts go public on Monday 12 October.")
     caption = (
         "Democracy, rehearsed.\n\n"
-        "From 12 October we'll forecast every Senate race and about 40 House races of the 2026 midterms, every day "
-        "until 3 November. Not by asking people, but by modelling how groups of voters react to each day's news.\n\n"
-        "More than a thousand voter personas, built from real survey answers by party, race and education in each "
-        "state, take in the day's events. Then every race is played out 40,000 times.\n\n"
+        "Polls ask people. We simulate how people react. NotAPoll is an independent forecast of the 2026 midterms, "
+        "scored in public, and built on long-term research focused on social dynamics.\n\n"
+        "From 12 October, every day until 3 November, more than a thousand voter personas, by party, race and "
+        "education in each state, react to each day's news. Then every Senate race and about 40 House races are "
+        "played out 40,000 times.\n\n"
         "Our number always sits beside the poll average, the prediction markets and Cook. From 19 October, every "
         "Monday, we publish how we're doing against all of them. Right or wrong, you'll see it.\n\n"
         f"#midterms2026 #elections\n\n{DISCLAIMER}")
-    thread = [f"Democracy, rehearsed. A live experiment: forecasting the 2026 midterms by modelling how groups of "
-              f"voters react to the news, every day until 3 November. {LABEL}.",
-              "More than a thousand voter personas, built from real survey answers, take in each day's events. Then "
-              "every race is played out 40,000 times.",
+    thread = [f"Democracy, rehearsed. Polls ask people; we simulate how people react. An independent forecast of "
+              f"the 2026 midterms, scored in public. {LABEL}.",
+              "More than a thousand voter personas react to each day's news. Then every race is played out 40,000 "
+              "times.",
               "Our number always sits beside the poll average, prediction markets and Cook. Every Monday from 19 Oct "
               "we publish our record against them. Right or wrong.",
-              f"Forecasts from 12 October. How it works: {SITE}"]
+              f"Built on long-term research focused on social dynamics. Forecasts from 12 October: {SITE}"]
     return slides, caption, thread
 
 
@@ -222,14 +224,13 @@ ALLOW = ("survey",)  # "real survey answers": the real respondents the personas 
 
 
 BIOS = {
-    "instagram": ("Democracy, rehearsed.\nThe 2026 midterms, simulated every day with voter personas built from "
-                  "real survey answers.\nNot a poll.", 150),
-    "x": ("Democracy, rehearsed. The 2026 midterms, simulated every day with voter personas built from real survey "
-          "answers, each race played out 40,000 times. Not a poll.", 160),
-    "bluesky": ("Democracy, rehearsed.\n\nThe 2026 US midterms, simulated every day: voter personas built from real "
-                "survey answers react to the "
-                "news, then every race is played out 40,000 times.\n\nNot a poll. Shown beside the poll average, "
-                "markets and Cook; scored weekly.", 256),
+    "instagram": ("Democracy, rehearsed.\nA live experiment in social simulation, forecasting the 2026 midterms "
+                  "every day.\nNot a poll.", 150),
+    "x": ("Democracy, rehearsed. A live experiment in social simulation, built from real survey answers: the 2026 "
+          "midterms, forecast every day. Not a poll.", 160),
+    "bluesky": ("Democracy, rehearsed.\n\nA live experiment forecasting the 2026 US midterms by modelling human "
+                "reactions to the news, with voter personas built from real survey answers.\n\nNot a poll. Shown "
+                "beside the poll average, markets and Cook; scored weekly.", 256),
 }
 
 

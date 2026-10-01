@@ -7,9 +7,11 @@ from __future__ import annotations
 
 import re
 
-from .frame import LABEL
+from .frame import DISCLAIMER, LABEL
 
-ALLOWED = ("not a poll", "poll average", "polling average", "polls close", "polls closed", "polls open")
+ALLOWED = ("not a poll", "poll average", "polling average", "polls close", "polls closed", "polls open",
+           "built from real survey answers",  # the personas' real source, in the fixed disclaimer
+           "polls ask people")  # the approved line on the launch page and the intro post (Matteo, 1 Oct)
 BANNED = {"poll": r"\bpoll(s|ed|ing|ster|sters)?\b", "survey": r"\bsurvey(s|ed)?\b", "voters say": r"\bvoters say\b",
           "% of voters": r"%\s+of\s+voters"}
 # Never, whatever the context (Matteo, 30 Sep): the markets are "prediction markets" or "markets", never betting.
@@ -18,10 +20,12 @@ NEVER = {"synthetic": r"\bsynthetic\b",  # Matteo, 1 Oct: "voter personas" inste
          "bots": r"\bbots?\b", "agents": r"\bagents?\b", "AI-powered": r"\bai[- ]powered\b",
          "revolutionary": r"\brevolutionar", "game-changer": r"\bgame[- ]chang", "Matteo": r"\bmatteo\b",
          "Hungary": r"\bhungar",
+         # Settled with Matteo, 1 Oct: never a political label; personas don't interact with each other yet
+         "reactionary": r"\breactionar", "social interactions": r"\bsocial interactions?\b",
          "betting": r"\bbet(s|ting|tor|tors)?\b|\bgambl\w*|\bwager\w*|\bbookmakers?\b|\bpunters?\b|\bbookies?\b"}
 
 
-STYLE = {"AI": r"\bAIs?\b|artificial intelligence", "LLM": r"\bLLMs?\b",
+STYLE = {"AI": r"\bAIs?\b|artificial intelligence", "LLM": r"\bLLMs?\b", "movement": r"\bmovement\b",
          "respondents": r"\brespondents?\b"}
 
 
@@ -33,9 +37,9 @@ def style(s: str) -> list[str]:
 
 def check(s: str, *, caption: bool = True, allow: tuple[str, ...] = ()) -> list[str]:
     out, low = [], s.lower()
-    if caption and LABEL.lower() not in low:
-        out.append(f'missing the label "{LABEL}"')
-    scrubbed = low.replace(LABEL.lower(), " ")
+    if caption and LABEL.lower() not in low and DISCLAIMER.lower() not in low:
+        out.append(f'missing the disclaimer "{DISCLAIMER}" (or the label "{LABEL}")')
+    scrubbed = low.replace(LABEL.lower(), " ").replace(DISCLAIMER.lower(), " ")
     for phrase in ALLOWED:
         scrubbed = scrubbed.replace(phrase, " ")
     for word, pattern in BANNED.items():

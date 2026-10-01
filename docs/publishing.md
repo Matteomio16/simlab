@@ -4,9 +4,11 @@ Content & site session. Design approved by Matteo on 28 Sep: matplotlib draws ev
 plan is `docs/content-plan.md`; the rules come from the Field Guide (publishing) and CLAUDE.md. **Voice and message:
 `docs/communication.md` (Matteo, 1 Oct) wins over anything here**; this file keeps the mechanics.
 
-- **Every caption ends with the fixed disclaimer** `frame.DISCLAIMER`, currently "Social simulation, not a poll. How it
-  works: notapoll.org" (wording still open with Matteo). Hashtags go before it. Single posts end with it when it fits
-  the platform's limit, else with the label alone.
+- **Every caption ends with the fixed disclaimer** `frame.DISCLAIMER`: "A live experiment in social simulation, built
+  from real survey answers. Method: notapoll.org" (Matteo, 1 Oct). Hashtags go before it. Single posts end with it
+  when it fits the platform's limit, else with the label alone. Images keep the label strip "Social simulation, not a
+  poll". Never "movement" for us, never "reactionary", never "social interactions" (say human reactions, social
+  dynamics); the research line is "built on long-term research focused on social dynamics".
 - **Slides stay short:** a headline, one or two lines, a chart or a post-it. The method lives on the website.
 - **Post-it notes** (`Slide.note`): yellow `#F6DD6E`, slightly turned, for "what changed", a flag or the next post.
 
@@ -106,7 +108,10 @@ featured race's win chance moved 10 points or more in a week, that race (`--reel
 
 `kits/labnotes/NN/post.md` keeps this shape; tell the website session before changing it: first line
 `# Lab notes NN: <title>`; a `Planned date: <Day DD Mon YYYY>` line; `## Slides and alt text` with items
-``N. `slide-N.jpg`: <alt text>``; `## Instagram caption` with the caption body.
+``N. `slide-N.jpg`: <alt text>``; `## Instagram caption` with the caption body. Optional, last: `## Website article` (Matteo, 1 Oct: a web
+article of about 600–900 words, each slide beside the claim it shows, `{{slide:N}}` markers, `#### In detail` folds),
+written in `simlab/publish/articles/labnotes-NN.md` with its numbers filled from the scorecard; the build checks the
+rules and the word count.
 
 ## For the website session (C6 moved there, 29 Sep)
 
