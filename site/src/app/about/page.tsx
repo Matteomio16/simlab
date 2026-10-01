@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const PARTS = [
   {
     k: "What we want",
-    t: "Forecasting that is independent, transparent and understands how people actually react.",
+    t: "Polls can be biased or inaccurate. We want forecasting that is independent, transparent and built on human reactions: how the news moves different groups of voters.",
   },
   {
     k: "How we do it",
@@ -64,8 +64,9 @@ export default function About() {
         </div>
         <div className="max-w-[640px] text-[1.02rem] leading-relaxed text-ink-2">
           <p>
-            NotAPoll.org is published by <a href={SITE.studio.url} className="link font-semibold text-ink">{SITE.studio.name}</a>.
-            The name says what this is: a social simulation, not a poll. Nobody was asked anything.
+            Our work is built on long-term research focused on social dynamics. NotAPoll.org is published by{" "}
+            <a href={SITE.studio.url} className="link font-semibold text-ink">{SITE.studio.name}</a>. The name says what this
+            is: a social simulation, not a poll. Nobody was asked anything.
           </p>
           <p className="mt-4">
             Corrections, questions and press:{" "}

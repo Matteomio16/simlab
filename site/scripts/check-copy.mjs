@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const OUT = path.join(path.dirname(path.dirname(fileURLToPath(import.meta.url))), "out");
 const ALLOWED = /("voters say"|Current Population Survey|\breal poll\w*|\breal survey respondents|\bnot a poll|same poll|poll avg|a poll was taken|the poll enters|real survey answers|survey respondents interviewed|poll averages?|polls? (?:average|aggregat)|pollsters?|real polls|new polls|the polls|polls with|polls,|polls\.|polls get|polls enter|polls from|about polls|of polls|and polls|2026 polls|poll-bias|poll table|poll tables|poll data|poll scarcity|polls or|polls and|polls are|polls in)/gi;
-const BANNED = [/\bpoll\b/i, /\bsurvey(?:ed|s)?\b/i, /\bvoters say\b/i, /\b% of voters\b/i, /\brespondents\b/i, /\bAI voters\b/i, /\bsynthetic\b/i, /\bHungar/i];
+const BANNED = [/\bpoll\b/i, /\bsurvey(?:ed|s)?\b/i, /\bvoters say\b/i, /\b% of voters\b/i, /\brespondents\b/i, /\bAI voters\b/i, /\bsynthetic\b/i, /\bHungar/i, /\breactionary\b/i, /\bsocial interactions?\b/i];
 
 const files = [];
 const walk = (d) => readdirSync(d).forEach((f) => {
