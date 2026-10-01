@@ -103,8 +103,12 @@ def kev_down(day: str, data: Path, kev: str) -> list:
 
 
 def no_news(day: str, data: Path, kev: str) -> list:
-    """3. No new news: the day replayed with the news job's folder emptied; statistics and the kit run on the polls."""
+    """3. No new news: the day replayed with every news file gone (the news job's folder, and any news a snapshot run
+    saved before 30 Sep); statistics and the kit run on the polls."""
     shutil.rmtree(data / "news", ignore_errors=True)
+    for m in (data / "snapshots").glob("*/*/manifest.json"):
+        j = json.loads(m.read_text(encoding="utf-8"))
+        m.write_text(json.dumps({**j, "files": [f for f in j["files"] if f.get("source") != "news"]}), encoding="utf-8")
     shutil.rmtree(data / "derived" / day, ignore_errors=True)
     _daily(day, data, kev)
     rec = _record(data, day)
