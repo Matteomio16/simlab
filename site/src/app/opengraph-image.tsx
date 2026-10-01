@@ -25,7 +25,7 @@ export default async function Image() {
   const { forecast } = load();
   const s = forecast.senate;
   return new ImageResponse(
-    <OgFrame kicker="2026 Senate forecast" date={longDate(forecast.date)} sample={IS_SAMPLE} bench={[`Statistics only: ${in100(s.stats_only.p_r_50plus)} in 100`, `Prediction market: ${s.benchmarks.market == null ? "n/a" : `${in100(s.benchmarks.market)}%`}`]}>
+    <OgFrame kicker="2026 Senate forecast" date={longDate(forecast.date)} sample={IS_SAMPLE} bench={[`Statistics only: ${in100(s.stats_only.p_r_50plus)} in 100`, `Prediction markets: ${s.benchmarks.market == null ? "n/a" : `${in100(s.benchmarks.market)}%`}`]}>
       <div style={{ display: "flex", fontSize: 40, fontWeight: 600, color: "#3d434c" }}>Republicans hold the Senate in</div>
       <div style={{ display: "flex", alignItems: "baseline", marginTop: 6 }}>
         <span style={{ fontSize: 190, fontWeight: 800, color: "#e34948", letterSpacing: -6, lineHeight: 1 }}>{in100(s.p_r_50plus)}</span>

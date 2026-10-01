@@ -1,8 +1,8 @@
 Every day we forecast the 35 Senate races of 3 November 2026 by simulating the social dynamics of the campaign: how
 the news moves different groups of voters.
 Statistics set where each race starts. **Voter personas**, built from real survey answers, carry each day's events
-into every race. Then each race is played out 40,000 times. It is a social simulation, not a poll: nobody is asked
-anything. Each step below takes a few lines; open **In detail** for the full method.
+into every race. Then each race is played out 40,000 times. It is a social simulation, not a poll: we don't ask
+people what they think today, we model how they react. Each step below takes a few lines; open **In detail** for the full method.
 
 ## How a forecast is made
 

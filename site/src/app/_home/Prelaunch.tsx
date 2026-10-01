@@ -87,12 +87,13 @@ export default function Prelaunch({ today }: { today: string }) {
               simulated every day.
             </h1>
             <p className="mt-5 max-w-xl text-[1.2rem] leading-relaxed text-ink-2">
-              Voter personas react to each day&rsquo;s news, and 40,000 simulated elections turn their reactions into
-              chances for all 35 Senate races.
+              <strong className="font-bold text-ink">Polls ask people. We simulate how people react.</strong> Voter
+              personas, built from real survey answers, react to each day&rsquo;s news, and 40,000 simulated elections turn
+              their reactions into chances for all 35 Senate races.
             </p>
-            <p className="mt-3 flex items-center gap-2 text-[1.05rem] font-bold">
-              <span className="inline-block h-2 w-2 bg-sim" aria-hidden="true" />
-              Not a poll. Nobody was asked anything.
+            <p className="mt-4 flex max-w-xl items-baseline gap-2 text-[1.05rem] font-semibold leading-snug">
+              <span className="inline-block h-2 w-2 shrink-0 -translate-y-px bg-sim" aria-hidden="true" />
+              A live experiment: an independent forecast built on how people actually react to the news, scored in public.
             </p>
             <dl className="mt-8 grid grid-cols-3 border-y-2 border-rule-strong">
               {[
@@ -128,7 +129,7 @@ export default function Prelaunch({ today }: { today: string }) {
         <Reveal as="section" className="mt-16">
           <p id="how-it-works" className="label scroll-mt-6">How it works</p>
           <h2 className="mt-2 max-w-3xl text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">
-            Polls ask people. We simulate how people react.
+            Three steps, every day.
           </h2>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {STEPS.map((d) => (

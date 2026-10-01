@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const PARTS = [
   {
     k: "What we want",
-    t: "Polls can be biased or inaccurate. We want forecasting that is independent, transparent and built on human reactions: how the news moves different groups of voters.",
+    t: "Forecasting that is independent, transparent and built on human reactions: how the news moves different groups of voters. Polls can be biased or inaccurate; we show where and why our engine sees something different.",
   },
   {
     k: "How we do it",
@@ -66,7 +66,7 @@ export default function About() {
           <p>
             Our work is built on long-term research focused on social dynamics. NotAPoll.org is published by{" "}
             <a href={SITE.studio.url} className="link font-semibold text-ink">{SITE.studio.name}</a>. The name says what this
-            is: a social simulation, not a poll. Nobody was asked anything.
+            is: not a poll. We don&rsquo;t ask people what they think today; we model how they react.
           </p>
           <p className="mt-4">
             Corrections, questions and press:{" "}

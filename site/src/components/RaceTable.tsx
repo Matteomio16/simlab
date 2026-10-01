@@ -57,7 +57,7 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
             <th className="py-2 pr-3">Chance of winning, Nov. 3</th>
             <th className="hidden py-2 pr-3 text-right md:table-cell">Today</th>
             <th className="hidden py-2 pr-3 text-right sm:table-cell">Poll avg.</th>
-            <th className="hidden py-2 pr-3 text-right sm:table-cell">Market</th>
+            <th className="hidden py-2 pr-3 text-right sm:table-cell">Markets</th>
             <th className="hidden py-2 text-right lg:table-cell">Cook</th>
           </tr>
         </thead>
@@ -104,8 +104,8 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
       </table>
       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
         <p className="note max-w-xl">
-          Today: the Democrat&rsquo;s (or independent&rsquo;s) chance in 100 if the election were held today. Market: that
-          candidate&rsquo;s price on Kalshi and Polymarket. Poll avg.: the margin. Markets and Cook are shown for comparison and never enter the forecast.
+          Today: the Democrat&rsquo;s (or independent&rsquo;s) chance in 100 if the election were held today. Markets: that
+          candidate&rsquo;s price on the prediction markets Kalshi and Polymarket. Poll avg.: the margin. Markets and Cook are shown for comparison and never enter the forecast.
         </p>
         {rows.length > competitive.length && (
           <button onClick={() => setAll(!all)} className="text-sm font-semibold underline underline-offset-4">
