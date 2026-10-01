@@ -2,7 +2,7 @@
 
 - avatar.jpg (1080x1080): the logomark, kept inside the circle crop; used by Instagram, Threads, X and Bluesky
 - header-x.jpg (1500x500) and banner-bluesky.jpg (3000x1000): the simulated electorate as a dot map of the lower 48
-- pinned/: the "Start here" carousel with its caption, alt text and thread (post.md), for Matteo's approval
+- pinned/: the intro carousel (the post to pin) with its caption, alt text and thread (post.md), for approval
 The avatar is too small to carry the label strip; every other image carries "Social simulation, not a poll".
 """
 from __future__ import annotations
@@ -151,17 +151,17 @@ def header(t=LAB, w: int = 1500, h: int = 500, scale: int = 1, name: str = "head
 
 
 def pinned(t=LAB):
-    """The Start here carousel: the promise first (scored in public, misses included), then how it works."""
-    k = "START HERE"
-    a = Slide(PINNED_DAY, k, t)
-    a.headline("We’re forecasting the 2026 midterms with thousands of voter personas.", px=80)
+    """The intro carousel, the post to pin: the promise first (scored in public, misses included), then how it works.
+    No "start here" wording anywhere (Matteo, 1 Oct)."""
+    a = Slide(PINNED_DAY, "THE 2026 MIDTERMS", t)
+    a.headline("We’re forecasting the 2026 midterms with more than a thousand voter personas.", px=80)
     a.dek("Built from real survey answers, by party, race and education, in each state. Every day until 3 November. "
           "Scored in public.", px=36)
-    electorate(a.ax, t, MARGIN, a.y + 6, a.width, 330, n=1000)
-    a.y += 350
-    a.text("Each dot: one voter persona.", px=30, color=t.ink2)
+    electorate(a.ax, t, MARGIN, a.y + 6, a.width, 280, n=900)
+    a.y += 300
+    a.text("An illustration, not a forecast. The real personas: 28 voter groups in each state.", px=30, color=t.ink2)
 
-    b = Slide(PINNED_DAY, f"{k} · HOW IT WORKS", t)
+    b = Slide(PINNED_DAY, "HOW IT WORKS", t)
     b.headline("Every morning, three steps.", px=80)
     steps = [("Start from what we know", "Past results, the economy and the poll average set where each race "
                                          "begins."),
@@ -175,7 +175,7 @@ def pinned(t=LAB):
         b.text(head, "serif", 600, 46, x=MARGIN + 100, width=b.width - 100, after=0.2)
         b.text(body, px=34, color=t.ink2, x=MARGIN + 100, width=b.width - 100, after=0.9)
 
-    c = Slide(PINNED_DAY, f"{k} · WHAT IT ISN’T", t)
+    c = Slide(PINNED_DAY, "WHAT IT ISN’T", t)
     c.headline("Not a poll. Nobody was asked anything.", px=88)
     c.text("Our voter personas stand in for groups of people. They are not people, and nobody answers us. So our "
            "number never travels alone: it always sits beside the poll average, the prediction markets and the Cook "
@@ -183,7 +183,7 @@ def pinned(t=LAB):
     c.text("Between 35% and 65%, we call a race a toss-up. We won’t pretend to know more than that.", "serif", 600,
            44)
 
-    d = Slide(PINNED_DAY, f"{k} · KEEPING SCORE", t)
+    d = Slide(PINNED_DAY, "KEEPING SCORE", t)
     d.headline("Every Monday, we publish our score.", px=84)
     rows = [("Daily", "Where the races stand, and which events moved them."),
             ("Sundays", "One race or the whole Senate, up close."),
@@ -198,8 +198,8 @@ def pinned(t=LAB):
     d.rule(t.hairline)
     d.at_bottom(2 * 42 * 1.25 + 10)
     d.text("We’ll publish what we get wrong, not just what we get right.", "serif", 600, 42)
-    slides = [(a, "A dot map of the United States, each dot a voter persona in blue, red or purple. Headline: we're "
-                  "forecasting the 2026 midterms with thousands of voter personas, built from real survey answers, "
+    slides = [(a, "An illustrative dot map of the United States in blue, red and purple. Headline: we're forecasting "
+                  "the 2026 midterms with more than a thousand voter personas, built from real survey answers, "
                   "scored in public."),
               (b, "Every morning, three steps: start from past results, the economy and the poll average; let the "
                   "news land on the voter personas; play each race out 40,000 times."),
@@ -210,7 +210,8 @@ def pinned(t=LAB):
     for s, _ in slides:
         s.source("Forecasts go public on Monday 12 October.")
     caption = (
-        "We're forecasting the 2026 US midterms with thousands of voter personas, every day until 3 November, and "
+        "We're forecasting the 2026 US midterms with more than a thousand voter personas, every day until 3 November, "
+        "and "
         "we'll be scored in public.\n\n"
         "Every morning: past results, the economy and the poll average set where each race starts. Then the day's "
         "news lands on voter personas built from real survey answers, by party, race and education, in each state. "
@@ -221,8 +222,8 @@ def pinned(t=LAB):
         "all of them, misses included.\n\n"
         "We'll publish what we get wrong, not just what we get right, starting with Lab notes 01.\n\n"
         f"{LABEL}.\n\n#midterms2026 #elections #socialsimulation #dataviz")
-    thread = [f"We're forecasting the 2026 US midterms with thousands of voter personas, every day until 3 November, "
-              f"scored in public. {LABEL}.",
+    thread = [f"We're forecasting the 2026 US midterms with more than a thousand voter personas, every day until 3 "
+              f"November, scored in public. {LABEL}.",
               "Every morning: statistics set where each race starts, the day's news lands on the voter personas, and "
               "each race is played out 40,000 times. The share won is the chance.",
               "Nobody is asked anything. So our number always sits beside the poll average, prediction markets and "

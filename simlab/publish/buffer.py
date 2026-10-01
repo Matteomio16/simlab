@@ -25,7 +25,7 @@ APPROVED = PACK / "APPROVED.json"
 API = "https://api.buffer.com"
 LONDON = ZoneInfo("Europe/London")
 PARIS = ZoneInfo("Europe/Paris")  # Buffer's time zone and Matteo's: shown first in every printout
-WEEKEND = [("01-start-here", "2026-10-03 13:00"), ("02-lab-notes-01", "2026-10-03 17:00"),
+WEEKEND = [("01-intro", "2026-10-03 13:00"), ("02-lab-notes-01", "2026-10-03 17:00"),
            ("03-lab-notes-02", "2026-10-04 15:00"), ("04-lab-notes-03", "2026-10-05 13:00")]
 X_IMAGES = 4
 
@@ -92,7 +92,7 @@ def posts_for(folder: str, base: str) -> list[dict]:
     single = (d / "single-post.md").read_text(encoding="utf-8")
     out = [{"service": "instagram", "text": (d / "caption.txt").read_text(encoding="utf-8"), "assets": imgs,
             "metadata": {"instagram": {"type": "carousel" if len(imgs) > 1 else "post", "shouldShareToFeed": True}}}]
-    if folder == "01-start-here":  # the one Buffer thread (Buffer Free queues one at a time)
+    if folder == "01-intro":  # the one Buffer thread (Buffer Free queues one at a time)
         parts = (d / "thread.txt").read_text(encoding="utf-8").split("\n\n---\n\n")
         # Buffer's thread list includes the first post, which also stays in `text` (examples/create-threaded-post)
         thread = [{"text": parts[0], "assets": imgs[:X_IMAGES]}] + [{"text": t, "assets": []} for t in parts[1:]]

@@ -1,7 +1,7 @@
 """The launch pack: python -m simlab.publish.launch -> kits/launch/, everything Matteo needs to go live, ready to paste.
 
 00-profiles/        avatar, X header, Bluesky banner, one bio file per platform, where each goes
-01-start-here/      the pinned carousel
+01-intro/           the carousel to pin
 02-lab-notes-01/ … 04-lab-notes-03/
 Each post folder: slide-N.jpg, contact.jpg, caption.txt (Instagram), thread.txt (X, Threads, Bluesky; posts
 separated by ---), alt-text.txt (one line per slide) and checks.txt. CHECKLIST.md is the posting order for 3–5 Oct.
@@ -23,7 +23,7 @@ MAX_IMAGES = {"x": 4, "bluesky": 4, "threads": 10}
 # here" is the thread, on X; everything else goes out as single posts. Bluesky is outside Buffer: by hand until the C9
 # poster exists. Times are stored as UK time (BST) and shown as Paris time first (Matteo thinks in it, 1 Oct), with UK
 # and US Eastern in brackets: Paris = UK + 1, Eastern = UK - 5.
-SCHEDULE = [("Sat 3 Oct", "13:00", "01-start-here", "thread on X (the one Buffer thread); single post on Threads; "
+SCHEDULE = [("Sat 3 Oct", "13:00", "01-intro", "thread on X (the one Buffer thread); single post on Threads; "
                                                      "pin it everywhere when convenient"),
             ("Sat 3 Oct", "17:00", "02-lab-notes-01", "single posts"),
             ("Sun 4 Oct", "15:00", "03-lab-notes-02", "single posts"),
@@ -37,7 +37,7 @@ def singles() -> dict[str, dict[str, str]]:
     lean = lambda m: 100 * s[("mirror", m)]["mean_asymmetry"] / s[("mirror", m)]["mean_abs_reaction"]
     one, both = f"{abs(lean('glm1')):.0f}%", f"{abs(lean('glm')):.0f}%"
     out = {
-        "01-start-here": (
+        "01-intro": (
             "We're forecasting the 2026 midterms with voter personas built from real survey answers, every day until "
             "3 November, scored in public every Monday. We'll publish what we get wrong too.",
             " It's not a poll: nobody is asked anything, so our number always sits beside the poll average, the "
@@ -116,8 +116,8 @@ def build(out: Path = OUT) -> dict:
 
     report, single = {}, singles()
     slides, caption, thread = brand.pinned()
-    report["01-start-here"] = post_folder(out / "01-start-here", slides, caption, thread, brand.ALLOW)
-    report["01-start-here"] += single_file(out / "01-start-here", single["01-start-here"], len(slides), brand.ALLOW)
+    report["01-intro"] = post_folder(out / "01-intro", slides, caption, thread, brand.ALLOW)
+    report["01-intro"] += single_file(out / "01-intro", single["01-intro"], len(slides), brand.ALLOW)
     for n in (1, 2, 3):
         p = getattr(labnotes, f"ep0{n}")()
         k = f"0{n + 1}-lab-notes-0{n}"
@@ -148,9 +148,9 @@ Only after Matteo has approved each post. Times in SCHEDULE.md: Paris first (Buf
 in brackets. Before the
 first post: the notapoll.org launch page is live (the website session's steps in site/README.md, "Matteo's steps").
 
-1. Buffer, Instagram channel: the slides of 01-start-here in order, caption.txt, alt text from alt-text.txt (in
+1. Buffer, Instagram channel: the slides of 01-intro in order, caption.txt, alt text from alt-text.txt (in
    Buffer if it offers it, otherwise on Instagram after posting). Pin it to the profile grid once it's up.
-2. Buffer, X: "Start here" as the thread (thread.txt, split at ---; slides 1–4 on the first post); Buffer Free holds
+2. Buffer, X: the intro post as the thread (thread.txt, split at ---; slides 1–4 on the first post); Buffer Free holds
    only one scheduled thread. Buffer, Threads, and every Lab note on X and Threads: single-post.md, one post each.
 3. Bluesky (outside Buffer, once the account exists): the Bluesky text from single-post.md, by hand, at the same time.
 4. Check every image shows "SOCIAL SIMULATION, NOT A POLL" and every caption ends with the label line; no boosts.
