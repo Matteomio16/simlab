@@ -1,14 +1,15 @@
 # Methods: the statistics layer, in plain language
 
 For the website session (C6). Written by the Statistics session on 29 Sep 2026, in the vocabulary of
-`docs/publishing.md`: social simulation, synthetic voters, simulated elections; never "poll", "survey" or "voters say"
+`docs/publishing.md` as Matteo set it on 1 Oct: social simulation, voter personas (built from real survey answers, by
+voter group, in each state), simulated elections; never "synthetic voters", "poll", "survey" or "voters say"
 for our outputs. Model names appear only where the methods page needs them. Numbers are the parameters in force on 29
 Sep; `docs/stats-groundwork.md` and `docs/CHANGELOG.md` hold the details and sources. The last section lists changes
 suggested for `site/content/methods.md`.
 
 ## What the statistics layer does
 
-Statistics decide where each race starts and how uncertain it is. The synthetic voters then decide how the news moves
+Statistics decide where each race starts and how uncertain it is. The voter personas then decide how the news moves
 it. Statistics never use prediction markets or expert ratings: those are shown beside our numbers, never inside them.
 
 ## Where each race starts
@@ -67,7 +68,7 @@ four-year degree or not. Each group carries:
 
 ## How big a reaction is
 
-The synthetic voters give the direction and strength of a reaction; real events set its size. The scale was fitted on
+The voter personas give the direction and strength of a reaction; real events set its size. The scale was fitted on
 45 past events with measured opinion shifts. The strongest possible reaction to a story with full attention moves
 about a fifth of a group's persuadable voters, or of its mobilisable voters for turnout.
 
