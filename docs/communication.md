@@ -105,7 +105,14 @@ experiment scored in public.
 Show up as an experiment reaching its result: what the engine said, what happened, what worked and what didn't. If it
 worked, celebrate the experiment. If it didn't, the transparency is the story.
 
-## Open points (to settle with Matteo)
+## Settled with Matteo (1 Oct)
 
-See the follow-up questions in the roadmap session of 1 Oct: claims about polls, "social interactions" in the engine,
-the "long research" story, and the caption disclaimer wording.
+- **Polls:** don't hit them hard. NotAPoll is a response to polls that can be biased or inaccurate: we show where and
+  why our engine sees something different, never "polls don't work". Never call ourselves a "movement", and never
+  "reactionary" (it reads as a political label).
+- **What the engine models:** say "human reactions" and "social dynamics" (how the news moves different groups of
+  voters). Don't claim personas interact with each other until the engine actually models that.
+- **The research behind it:** "built on long-term research focused on social dynamics". Not "we've studied this for a
+  long time", no dates, no Hungary.
+- **Caption disclaimer** (frame.DISCLAIMER): "A live experiment in social simulation, built from real survey answers.
+  Method: notapoll.org"
