@@ -23,8 +23,8 @@ const STEPS = [
   },
   {
     k: "2 · How the news moves it",
-    t: "Synthetic voters react",
-    b: "Synthetic voters, built from real data on how groups of Americans vote, react to each day's events. Only those who could still change their mind, or still decide whether to vote, move the numbers, and every story fades.",
+    t: "Voter personas react",
+    b: "Voter personas, built from real survey answers for each group of voters in each state, react to each day's events. Only those who could still change their mind, or still decide whether to vote, move the numbers, and every story fades.",
     c: "var(--sim)",
   },
   {
@@ -36,7 +36,7 @@ const STEPS = [
 ];
 
 const BENCHMARKS: [string, string, boolean?][] = [
-  ["Our social simulation", "Statistics plus synthetic voters, corrected every Monday.", true],
+  ["Our social simulation", "Statistics plus voter personas, corrected every Monday.", true],
   ["Statistics only", "The same model with the simulation switched off: the number to beat."],
   ["Poll average", "The average of published polls in each race."],
   ["Prediction markets", "Kalshi and Polymarket prices, averaged."],
@@ -87,7 +87,7 @@ export default function Prelaunch({ today }: { today: string }) {
               simulated every day.
             </h1>
             <p className="mt-5 max-w-xl text-[1.2rem] leading-relaxed text-ink-2">
-              Synthetic voters react to each day&rsquo;s news, and 40,000 simulated elections turn their reactions into
+              Voter personas react to each day&rsquo;s news, and 40,000 simulated elections turn their reactions into
               chances for all 35 Senate races.
             </p>
             <p className="mt-3 flex items-center gap-2 text-[1.05rem] font-bold">

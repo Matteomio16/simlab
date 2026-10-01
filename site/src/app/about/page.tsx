@@ -21,9 +21,8 @@ export default function About() {
           </p>
           <p>
             It is built by <strong>Matteo Mio</strong>, a student of economics and politics at the London School of
-            Economics, and published by <a href={SITE.studio.url}>{SITE.studio.name}</a>. An earlier simulation of
-            Hungary&rsquo;s April 2026 election called the winner but badly missed the size of the win. This project is
-            designed around that lesson, and its misses will be published too.
+            Economics, and published by <a href={SITE.studio.url}>{SITE.studio.name}</a>. Its misses will be published
+            too.
           </p>
           <h2>Independence</h2>
           <ul>
@@ -34,7 +33,7 @@ export default function About() {
           <h2>The name</h2>
           <p>
             Simulation results get reported as polls once they travel without their caption. The name carries the
-            caption: these are synthetic voters and simulated elections. Nobody real was asked anything.
+            caption: these are voter personas and simulated elections. Nobody real was asked anything.
           </p>
           <h2>Contact</h2>
           <p>

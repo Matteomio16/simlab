@@ -1,5 +1,5 @@
 NotAPoll.org forecasts the 3 November 2026 US midterms with a **social simulation**: statistics set where each race
-starts, then **synthetic voters** react to the news as it happens, day by day, until election day. It is not a poll —
+starts, then **voter personas** react to the news as it happens, day by day, until election day. It is not a poll —
 nobody is asked a question, and no output here should be read as "voters say" anything. Every number we publish sits
 next to the poll average, the prediction market and the Cook Political Report rating, so you can see where we agree
 and where we don't.
@@ -9,7 +9,7 @@ and where we don't.
 1. **Statistics set each race's starting level.** A blend of polls (corrected for pollster lean) and fundamentals
    (the state's partisan lean, the national mood and the candidates' past results) gives each Senate and House race a starting margin and an uncertainty
    range, before any simulation runs.
-2. **Synthetic voter groups react to each day's news.** Twenty-eight synthetic voter groups per race read a neutral
+2. **Voter personas react to each day's news.** Twenty-eight voter personas per race, one for each voter group, read a neutral
    summary of the day's stories and react on vote choice and turnout. Only the people who can still move count: the
    *persuadable share* of a group for vote choice, and the *mobilisable share* for turnout. Firm partisans and
    habitual voters barely move the numbers, however strongly they react.
@@ -41,7 +41,7 @@ polls starts from the fundamentals alone. Each race shows how much its polls cou
 
 ### Voter groups
 
-Each race splits its electorate into the same 28 synthetic voter groups: party identification (seven levels) × white
+Each race splits its electorate into the same 28 voter groups, each with its voter persona: party identification (seven levels) × white
 or not × a four-year degree or not. Each group carries:
 - **its share of the electorate:** Census data on who lives in the state, with party identification from a large
   academic study of voters (CES), matched to the state's 2024 result;
@@ -72,15 +72,14 @@ from a model's guess, which only breaks ties.
 
 ### How big a reaction is
 
-The synthetic voters give the direction and strength of a reaction; real events set its size. The scale was fitted on
+The voter personas give the direction and strength of a reaction; real events set its size. The scale was fitted on
 45 past events with measured opinion shifts: the strongest possible reaction to a story with full attention moves
 about a fifth of a group's persuadable voters, or of its mobilisable voters for turnout.
 
 This isn't one fixed number. Each simulated election draws its sizes in three layers: one overall scale, each state's
 sensitivity, and each story's strength (a story can turn out about 40% stronger or weaker than simulated, as past
 events did). A national story's draw is shared by every race it reaches; a state story's stays in its own race. So no
-single estimate drives the forecast, a lesson from an earlier project that got a result's direction right but badly
-understated its size (see "What this can't do"). Each race shows how its forecast changes if the news matters less or
+single estimate drives the forecast. Each race shows how its forecast changes if the news matters less or
 more.
 
 ### The weekly filter
@@ -114,8 +113,8 @@ fundamentals error. The news never gets that floor: a story about one state move
 
 ### The statistics-only twin
 
-Every day, the same chain also runs with the news reactions switched off: statistics and polls only, no synthetic
-voters. This is the benchmark the simulation has to beat, and if it can't, that is reported.
+Every day, the same chain also runs with the news reactions switched off: statistics and polls only, no voter
+personas. This is the benchmark the simulation has to beat, and if it can't, that is reported.
 
 ### Two numbers: 3 November and "if the election were today"
 
@@ -138,7 +137,7 @@ bench, not for being the biggest or best-known AI model:
 - **Jev** (a decision model, not a text generator) labels the day's news — is this story relevant to this race, and
   what kind of event is it — because it passed our null test almost perfectly (99% "no change" on irrelevant news)
   and flipped its reactions most cleanly when the parties in a story were swapped.
-- **GLM-5.3 Flash** turns each event card into a reaction from each synthetic voter group, because it ranked 19 real
+- **GLM-5.3 Flash** turns each event card into a reaction from each voter persona, because it ranked 19 real
   events from 2012 to 2026 best of all tested models and got the direction right on every one that moved opinion. No
   model got the size of reactions right, which is why sizes come from data (see above).
 - **DeepSeek V4.1 Flash** writes the short, neutral event cards that voter groups read.
@@ -170,16 +169,12 @@ the misses are published too. See the [track record](/track-record).
 - **Training-data leakage.** Some models were trained on data covering past elections and events, so backtests
   before 2026 can be partly the model remembering how something turned out, not reasoning about it. We flag this
   rather than claim clean validation on older data.
-- **Simulated voters are not real people.** They are statistical constructs built from real survey respondents, not
+- **Voter personas are not real people.** They are statistical constructs built from real survey respondents, not
   a panel of actual people who were asked anything. Their reactions are an estimate, not a measurement.
 - **Models can carry hidden bias.** Testing every model with the same story told with the parties swapped shows most
   keep a small, sometimes uneven, lean; we measure and publish this rather than assume neutrality.
 - **Poll scarcity early on.** Several 2026 Senate races have few or no polls yet, so their early forecasts rest mostly
   on fundamentals and carry wider uncertainty until more polling arrives.
-- **The Hungary lesson.** An earlier social-simulation project (April 2026, on Hungary's election) correctly called
-  the winner but badly understated the size of the result — the simulated vote share was about 16 points short of
-  the actual outcome, and turnout was also badly off. That is why this project sets starting levels from statistics
-  rather than the simulation itself, and treats reaction sizes as ranges, not single numbers.
 
 ## Sources and credits
 

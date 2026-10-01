@@ -5,13 +5,13 @@ import { listItems, loadMethods, splitBold, type Section } from "@/lib/methods";
 
 export const metadata: Metadata = {
   title: "Methods",
-  description: "How the NotAPoll.org social simulation works: starting levels, synthetic voters, news reactions, the weekly filter and simulated elections.",
+  description: "How the NotAPoll.org social simulation works: starting levels, voter personas, news reactions, the weekly filter and simulated elections.",
 };
 
 // Key figures, each stated in the methods text below (content/methods.md).
 const FACTS = [
   { n: "40,000", label: "simulated elections a day", color: "var(--sim)" },
-  { n: "28", label: "synthetic voter groups in every race", color: "var(--dem)" },
+  { n: "28", label: "voter personas in every race", color: "var(--dem)" },
   { n: "5.5 days", label: "half-life of a news story", color: "var(--rep)" },
   { n: "80%", label: "most weight polls ever get", color: "var(--ink)" },
   { n: "45", label: "past events that set reaction sizes", color: "var(--sim)" },

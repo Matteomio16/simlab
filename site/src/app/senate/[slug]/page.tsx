@@ -172,7 +172,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
 
       <Reveal as="section" className="mt-14 section-rule">
         <p className="label">What moved it</p>
-        <h2 className="mt-2 text-xl font-bold">The news, as the synthetic voters reacted to it</h2>
+        <h2 className="mt-2 text-xl font-bold">The news, as the voter personas reacted to it</h2>
         {f.movers.length === 0 ? (
           <p className="mt-3 text-ink-2">
             {`No story moved this race today.${meta.tier === "simulate" ? "" : " It runs on statistics, with the biggest stories on watch."}`}
