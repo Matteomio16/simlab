@@ -18,7 +18,7 @@ session only has to look when an email arrives, or for Statistics' judgment of t
 | Variables `PIPELINE_ON=true` and `KEV_URL` (Kev shadow) | Matteo | set |
 | The OpenRouter cap stays at $20 (Matteo, 30 Sep), `SIMLAB_BUDGET_USD=19` in `.env`; `daily.yml` keeps $2 per run, and the budget safeguard switches to economy at $17 | Matteo | done |
 | GitHub emails Matteo when a run fails: github.com/settings/notifications → Actions → failed workflows only, by email | Matteo | to check (the alerts depend on it) |
-| GLM's host: OpenInference first, today's hosts as fallbacks (about $0.25 a day saved, same answers) | Matteo | his yes or no |
+| GLM's host: OpenInference first, today's hosts as fallbacks (about $0.25 a day saved, same answers) | Matteo | yes (1 Oct); live from the 1 Oct run |
 | Every session has moved its local `simlab-data/derived/` aside, then pulled: the job commits `derived/<day>/` and untracked local copies block `git pull` | all | Engine done (backup in `simlab-data/derived_local/`) |
 | The news job has run for at least a day: GDELT, Media Cloud (since 30 Sep) and RSS every 15 minutes | Engine | running; down 29 Sep 23:45 to 30 Sep 09:00 UTC (fixed) |
 
@@ -87,17 +87,17 @@ before 12 Oct and tells Matteo.
 The cap stays at $20 and everything must fit inside $19 (Matteo, 30 Sep). Spent so far: $2.20 (OpenRouter's own
 count for the key, 30 Sep afternoon). The 30 Sep pilot-scale test run cost $0.135: news $0.03, reactions $0.105.
 
-| Period | Days | GLM on today's hosts | GLM on OpenInference first |
+| Period | Days | GLM on OpenInference first (from 1 Oct, Matteo's yes) | had GLM stayed on the old hosts |
 | --- | --- | --- | --- |
-| Pilot and dry runs, 1-11 Oct | 11 | about $1.30 | about $0.80 |
-| Full-scale rehearsal, 7 Oct (every story new) | 1 | about $1.10 | about $0.60 |
-| Full run, 12 Oct - 3 Nov (about $0.66 or $0.41 a day) | 23 | about $15.20 | about $9.40 |
-| Total by 3 Nov, with what is spent | | about $19.80: economy from about 28 Oct | about $13 |
+| Pilot and dry runs, 1-11 Oct | 11 | about $0.80 | about $1.30 |
+| Full-scale rehearsal, 7 Oct (every story new) | 1 | about $0.60 | about $1.10 |
+| Full run, 12 Oct - 3 Nov (about $0.41 or $0.66 a day) | 23 | about $9.40 | about $15.20 |
+| Total by 3 Nov, with what is spent | | about $13, inside the $19 limit | about $19.80: economy from about 28 Oct |
 
 - **Why the costs rose.** Since about 30 Sep GLM's hosts require reasoning ("mandatory for this endpoint", 11-36
   tokens a call), so a group row (4 prompts) costs $0.000134, against $0.00005 on 29 Sep. The answers held: re-asked
   the 64 historical events of 27 Sep, they correlate 0.96 (training) and 0.94 (held-out) with the old ones.
-- **The cheaper host (Matteo's decision).** OpenInference runs the same model at the same 4-bit precision for
+- **The cheaper host (Matteo's yes, 1 Oct; live from that day's run).** OpenInference runs the same model at the same 4-bit precision for
   $0.000013 a call instead of $0.000031. Its answers to the same 64 events correlate 0.95 with the 27 Sep ones on both
   sets, with the direction right on 92% (training) and 100% (held-out) of the events that moved opinion, the same as
   on 27 Sep. It limits how fast we can ask, so today's hosts stay as fallbacks. It saves about $0.25 a day at full

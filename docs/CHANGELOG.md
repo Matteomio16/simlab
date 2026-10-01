@@ -82,6 +82,28 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   Engine adds the simulated seats to newsraces.json (from 12 Oct).
 - 29 Sep, stats-only: 222.6 expected Democratic seats at a national House vote of D+4.5.
 
+## 2026-10-01 (Engine session): GLM on OpenInference; the weekend runs on its own
+
+- **GLM's hosts (Matteo's yes, 1 Oct, relayed by the roadmap session).** This reverses the 27 Sep choice: GLM is now
+  asked on OpenInference first, then DeepInfra and InferenceNet in that order when it refuses (`core.HOSTS`,
+  `core.ORDERED`).
+  - All three run the same model at the same 4-bit precision.
+  - OpenInference costs $0.000013 a call against about $0.000031. Its answers to the 64 historical events match the
+    27 Sep calibration as closely as the old hosts' (correlation 0.95; held-out directions 100%).
+  - The other models keep their routing and their cached answers.
+  - Projection: about $13 by 3 Nov, inside the $19 limit.
+- **The weekend needs no laptop:**
+  - Each daily run checks the Saturday pass criteria (`python -m simlab.rehearsal check-day`). A miss fails the run,
+    so GitHub emails Matteo.
+  - A calendar job starts Sunday's drills (`drills.yml`, each on a copy of the data, each checking its own pass rule)
+    on 4 Oct, and the full-scale rehearsal on 7 Oct.
+  - The news job fails once between 12:00 and 12:29 UTC if the day has no run.json, so a day that never ran also
+    sends an email.
+  - The news summary now counts label errors, which makes missing news visible.
+- **Drills tested on 30 Sep** (run 36841017151): Kev down, budget cap and weekly filter passed. The same-day replay
+  found new rows only because the code had changed since that day's run. The no-news drill now also removes the news
+  that older snapshots held.
+
 ## 2026-09-30 afternoon (Engine session): fitting inside the $20 cap
 
 Matteo keeps the OpenRouter key's cap at $20, so everything must fit inside $19 by 3 Nov.
