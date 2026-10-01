@@ -26,7 +26,7 @@ MEANINGFUL = 0.03  # a smaller 7-day move in the win chance is "no meaningful ch
 MOVER_MIN = 0.5  # margin points on 3 Nov; smaller story effects stay in note.md, out of public captions
 BIG_MOVE = 0.10  # a 7-day move in a featured race's win chance this large earns the video (Matteo, 29 Sep)
 LAUNCH = date(2026, 10, 12)
-LIMITS = {"instagram": 2200, "thread": 280}
+LIMITS = {"instagram": 2200, "thread": 280, "x": 280, "bluesky": 300, "threads": 500}
 PILOT = ("OH-S", "NC", "TX", "IA", "ME")
 FEATURED = 4  # races per daily post from the launch: the closest races plus the biggest mover
 COOK = {"Tossup": "Toss-up", "Toss Up": "Toss-up"}
@@ -204,6 +204,25 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
                f"wins {round(r['p'] * 100)} in 100 on 3 Nov.{today_txt(r, short=True)} Poll average {r['poll']}, "
                f"market {racecards.pct_txt(r['market'])}, Cook {r['cook']}. {r['change']}." for r in rs]
 
+    # Single posts for Buffer Free, which queues one thread at a time (Matteo, 1 Oct): the closest race, then more
+    # races on Threads while they fit
+    line = lambda r: (f"{r['state']} {r['office']}, {racecards.verdict(r['p'], racecards.lean(r))}: "
+                      f"{racecards.who(r)} wins {round(r['p'] * 100)} in 100 simulated elections. Poll average "
+                      f"{r['poll']}, market {racecards.pct_txt(r['market'])}, Cook {r['cook']}.")
+    by_close = sorted(rs, key=lambda r: abs(r["p"] - 0.5))
+    tail = f" {LABEL}. notapoll.org"
+    single = {"x": f"Closest race today. {line(by_close[0])}{tail}"}
+    single["bluesky"] = single["x"]
+    more = f"Where the races stand, {day:%d %b}."
+    for r in by_close:
+        if len(f"{more} {line(r)}{tail}") > LIMITS["threads"]:
+            break
+        more += f" {line(r)}"
+    single["threads"] = more + tail
+    for k, t in single.items():
+        problems += [f"Single post ({k}): {p}" for p in text.check(t)]
+        if len(t) > LIMITS[k]:
+            problems.append(f"Single post ({k}): {len(t)} characters (limit {LIMITS[k]})")
     problems += [f"Instagram caption: {p}" for p in text.check(caption)]
     if len(caption) > LIMITS["instagram"]:
         problems.append(f"Instagram caption: {len(caption)} characters")
@@ -217,6 +236,8 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
     (out / "caption_instagram.txt").write_text(caption, encoding="utf-8")
     (out / "alt_text.json").write_text(json.dumps(alts, indent=1, ensure_ascii=False), encoding="utf-8")
     (out / "thread.txt").write_text("\n\n".join(thread), encoding="utf-8")
+    (out / "single_post.txt").write_text("\n\n".join(f"[{k}, {len(t)} characters]\n{t}" for k, t in single.items()),
+                                         encoding="utf-8")
     note = [f"# Post kit {day:%a %d %b %Y}" + (" (pilot: internal, not for posting)" if pilot else ""), "",
             "## Checks", ""] + ([f"- {p}" for p in problems] or ["- All rules pass."]) + [""]
     note += ["## Style notes", ""] + ([f"- {n}" for n in notes] or ["- None."]) + [""]

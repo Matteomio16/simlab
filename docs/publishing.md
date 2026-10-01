@@ -130,6 +130,11 @@ Tests: `python -m unittest tests.test_kit`.
 
 - **Independents:** where `left_party` is "I" (NE, ID, SD, MT in 2026) the cards say "the independent", use I+ margins
   and draw that side in the neutral independent grey instead of blue.
+- **Buffer Free queues one thread at a time** (Matteo, 1 Oct; 10 posts per channel, 3 channels). The launch pack
+  gives every post a single-post version (`single-post.md`: X 280, Bluesky 300, Threads 500 characters, with the
+  slides to attach) and `SCHEDULE.md` (UK times); "Start here" is the one thread. The daily kit writes
+  `single_post.txt` (the closest race on X and Bluesky, more races on Threads). From 12 Oct a daily X thread needs
+  either one queued at a time or the posting automation (C9).
 - **Two views** (Matteo, 29 Sep): the headline number is 3 Nov; "if the election were today" (`races[rid].today`) sits beside it: a ledger row on The Stamp, and in the caption, thread, alt text and note. Captions count "in 100" so the two numbers can differ visibly. `senate.today` waits for The Chamber.
 - **Movers** (`movers[].delta`, 28 Sep): each story's effect on the 3 Nov margin. Captions quote a story only at 0.5 points or more (`MOVER_MIN`); `note.md` lists all of them, plus each race's news effect, its win chance if news matters less or more, and its tier.
 - **Senate control, still to wire** (The Chamber): `p_r_50plus`, `p_d_caucus_51` and `p_independents_decide` add to 1; new independents are shown as independents (Matteo); the final presentation is decided later.
