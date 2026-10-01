@@ -108,7 +108,10 @@ featured race's win chance moved 10 points or more in a week, that race (`--reel
 
 `kits/labnotes/NN/post.md` keeps this shape; tell the website session before changing it: first line
 `# Lab notes NN: <title>`; a `Planned date: <Day DD Mon YYYY>` line; `## Slides and alt text` with items
-``N. `slide-N.jpg`: <alt text>``; `## Instagram caption` with the caption body.
+``N. `slide-N.jpg`: <alt text>``; `## Instagram caption` with the caption body. Optional, last: `## Website article` (Matteo, 1 Oct: a web
+article of about 600–900 words, each slide beside the claim it shows, `{{slide:N}}` markers, `#### In detail` folds),
+written in `simlab/publish/articles/labnotes-NN.md` with its numbers filled from the scorecard; the build checks the
+rules and the word count.
 
 ## For the website session (C6 moved there, 29 Sep)
 

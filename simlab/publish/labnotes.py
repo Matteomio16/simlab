@@ -6,6 +6,7 @@ Test-bench numbers come from runs/scorecard.jsonl; the outlet-name test was prin
 """
 from __future__ import annotations
 
+import re
 import sys
 from dataclasses import dataclass
 from datetime import date
@@ -20,6 +21,8 @@ from .frame import DISCLAIMER, LABEL, SITE, Slide, Theme
 from .themes import LAB
 
 KITS = RUNS.parent / "kits" / "labnotes"
+ARTICLES = Path(__file__).parent / "articles"  # the website versions (labnotes-NN.md), read by the site from post.md
+WORDS = (600, 900)  # Matteo, 1 Oct: web articles of about 600-900 words, slides beside the claims
 LIMITS = {"instagram": 2200, "thread": 280}
 MODELS = {"jev": "Jev", "kev": "Kev (untuned)", "glm": "GLM", "mimo": "MiMo", "deepseek": "DeepSeek", "luna": "GPT-6 Luna"}
 
@@ -260,6 +263,35 @@ def contact_sheet(paths: list[Path], out: Path, scale: float = 0.4, gap: int = 1
     return out
 
 
+def signed(v: float) -> str:
+    return f"{'−' if v < 0 else '+'}{abs(v):.0f}%"
+
+
+def article_values(n: int) -> dict[str, str]:
+    """The numbers the website articles quote, from the same scorecard as the slides."""
+    s = latest()
+    if n == 1:
+        return {"null_jev": f"{min(s[('null', 'jev')]['support_p_no_change'], s[('null', 'jev')]['turnout_p_no_change']):.0%}",
+                "glm_dir": f"{s[('events', 'glm')]['sign_accuracy_nonnull'] * 13:.0f}",
+                "kev_noise": f"{1 / (1 - s[('null', 'kev')]['support_p_no_change']):.0f}"}
+    if n == 3:
+        lean = lambda m: 100 * s[("mirror", m)]["mean_asymmetry"] / s[("mirror", m)]["mean_abs_reaction"]
+        return {"glm1": f"{abs(lean('glm1')):.0f}%", "glm2": f"{abs(lean('glm')):.0f}%",
+                "ds1": signed(lean("deepseek1")), "ds2": signed(lean("deepseek")),
+                "mimo1": signed(lean("mimo1")), "mimo2": signed(lean("mimo")),
+                "kev1": signed(lean("kev1")), "kev2": signed(lean("kev"))}
+    return {}
+
+
+def article(n: int) -> str:
+    """The note's website article with its numbers filled in; {{slide:N}} markers are left for the site."""
+    path = ARTICLES / f"labnotes-{n:02d}.md"
+    if not path.exists():
+        return ""
+    values = article_values(n)
+    return re.sub(r"(?<!\{)\{(\w+)\}(?!\})", lambda m: values[m.group(1)], path.read_text(encoding="utf-8")).strip()
+
+
 def write(n: int, theme: Theme = LAB) -> Path:
     post = EPISODES[n](theme)
     out = KITS / f"{n:02d}"
@@ -275,14 +307,22 @@ def write(n: int, theme: Theme = LAB) -> Path:
         problems += [f"Thread post {i}: {p}" for p in text.check(t, caption=False, allow=post.allow)]
         if len(t) > LIMITS["thread"]:
             problems.append(f"Thread post {i}: {len(t)} characters (limit {LIMITS['thread']})")
+    art = article(n)
+    if art:
+        problems += [f"Website article: {p}" for p in text.check(art, caption=False, allow=post.allow)]
+        words = len(re.sub(r"\{\{slide:\d+\}\}|#### In detail", " ", art).split())
+        if not WORDS[0] <= words <= WORDS[1]:
+            problems.append(f"Website article: {words} words (aim {WORDS[0]}–{WORDS[1]})")
     lines += ["## Checks", ""] + ([f"- {p}" for p in problems] or ["- All rules pass."]) + [""]
-    notes = sorted({n for t in [post.instagram, *post.thread] + [a for _, a in post.slides] for n in text.style(t)})
+    notes = sorted({n for t in [post.instagram, *post.thread, art] + [a for _, a in post.slides] for n in text.style(t)})
     lines += ["## Style notes", ""] + ([f"- {n}" for n in notes] or ["- None."]) + [""]
     lines += ["## Slides and alt text", ""] + [f"{i}. `slide-{i}.jpg`: {alt}" for i, (_, alt) in
                                              enumerate(post.slides, 1)] + [""]
     lines += ["## Instagram caption", "", post.instagram, ""]
     lines += ["## Thread for X, Threads and Bluesky", ""]
     lines += [f"{i}/ ({len(t)} characters) {t}" for i, t in enumerate(post.thread, 1)] + [""]
+    if art:
+        lines += ["## Website article", "", art, ""]
     (out / "post.md").write_text("\n".join(lines), encoding="utf-8")
     print(f"{out}: {len(post.slides)} slides; " + ("; ".join(problems) if problems else "all rules pass"))
     return out
