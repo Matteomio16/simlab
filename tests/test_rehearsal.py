@@ -42,5 +42,34 @@ class DayChecks(unittest.TestCase):
         self.assertEqual(failed(record(spend={"harness": 1.2})), ["spend"])
 
 
+class SameDayAgain(unittest.TestCase):
+    # 4 Oct: the replay asked again the day's one unreadable answer, by design, and the drill called it a failure
+    def replay(self, appended):
+        import json
+        import tempfile
+        from pathlib import Path
+        from unittest import mock
+        row = lambda g, err=False: {"race_id": "TX", "event_id": "E", "group": g, "model": "glm", "parse_error": err}
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp) / "derived" / "2026-10-04"
+            d.mkdir(parents=True)
+            (d / "events.jsonl").write_text(json.dumps({"event_id": "E"}) + "\n", encoding="utf-8")
+            (d / "reactions.jsonl").write_text(json.dumps(row("a")) + "\n" + json.dumps(row("b", True)) + "\n",
+                                               encoding="utf-8")
+            (d / "run.json").write_text(json.dumps(record()), encoding="utf-8")
+
+            def daily(day, data, kev="", env=None):
+                with (d / "reactions.jsonl").open("a", encoding="utf-8") as f:
+                    f.writelines(json.dumps(row(g)) + "\n" for g in appended)
+            with mock.patch.object(rehearsal, "_daily", daily):
+                return {name: ok for name, ok, _ in rehearsal.again("2026-10-04", Path(tmp), "")}
+
+    def test_an_unreadable_answer_asked_again_passes(self):
+        self.assertTrue(self.replay(["b"])["nothing asked again"])
+
+    def test_a_readable_answer_asked_again_fails(self):
+        self.assertFalse(self.replay(["a"])["nothing asked again"])
+
+
 if __name__ == "__main__":
     unittest.main()

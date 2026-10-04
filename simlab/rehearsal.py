@@ -75,16 +75,22 @@ def _daily(day: str, data: Path, kev: str = "", env: dict | None = None) -> int:
 
 
 def again(day: str, data: Path, kev: str) -> list:
-    """1. The same day again: the same stories, nothing asked again, no deselected pairs."""
+    """1. The same day again: the same stories, nothing asked again (except answers that were unreadable the first
+    time, which are asked again by design), no deselected pairs."""
+    key = lambda r: (r["race_id"], r["event_id"], r["group"], r["model"])
     before = {e["event_id"] for e in _jsonl(data / "derived" / day / "events.jsonl")}
+    first = _jsonl(data / "derived" / day / "reactions.jsonl")
+    unreadable = {key(r) for r in first if r.get("parse_error")} - {key(r) for r in first if not r.get("parse_error")}
     _daily(day, data, kev)
     rec = _record(data, day)
     after = {e["event_id"] for e in _jsonl(data / "derived" / day / "events.jsonl")}
-    rows = (_step(rec, "reactions").get("summary") or {}).get("rows")
+    new = _jsonl(data / "derived" / day / "reactions.jsonl")[len(first):]
+    extra = [r for r in new if key(r) not in unreadable]
     stats = _step(rec, "statistics").get("summary") or {}
     return [("steps", all(s["status"] == "ok" for s in rec["steps"]), ", ".join(s["status"] for s in rec["steps"])),
             ("same stories", before == after, f"{len(before & after)} of {len(before)} kept, {len(after - before)} new"),
-            ("nothing asked again", rows == 0, f"{rows} new reaction rows"),
+            ("nothing asked again", not extra,
+             f"{len(extra)} new reaction rows ({len(new) - len(extra)} unreadable answers asked again, by design)"),
             ("no deselected pairs", stats.get("deselected_pairs") == 0, f"{stats.get('deselected_pairs')}")]
 
 
