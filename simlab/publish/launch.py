@@ -13,11 +13,12 @@ import shutil
 from pathlib import Path
 
 from . import brand, labnotes, text
-from .frame import DISCLAIMER, LABEL
+from .frame import DISCLAIMER, LABEL, SITE
 from .labnotes import contact_sheet
 
 OUT = Path(__file__).resolve().parents[2] / "kits" / "launch"
 LIMIT = {"x": 280, "bluesky": 300, "threads": 500}
+X_LINK = 23  # X counts every link, notapoll.org included, as 23 characters
 MAX_IMAGES = {"x": 4, "bluesky": 4, "threads": 10}
 # Buffer Free: Instagram, X and Threads, one queued thread at a time, 10 posts per channel (Matteo, 1 Oct). "Start
 # here" is the thread, on X; everything else goes out as single posts. Bluesky is outside Buffer: by hand until the C9
@@ -43,8 +44,8 @@ def singles() -> dict[str, dict[str, str]]:
             " Our number always sits next to the poll average, the prediction markets and Cook, so you can judge it for "
             "yourself."),
         "02-lab-notes-01": (
-            "We asked six models to behave like voters. They stayed calm where people were shaken, and got excited "
-            "where people shrugged. So every reaction's size comes from how people really moved.",
+            "We asked six models to behave like voters. They stayed calm where people were shaken, and excited where "
+            "people shrugged. So reaction sizes come from how people really moved.",
             " Each one was good at one thing and none at everything, and the whole test cost $1.52. Lab notes 01."),
         "03-lab-notes-02": (
             "We showed two models the same 80 headlines, credited first to Fox News, then to MSNBC. One changed its "
@@ -52,14 +53,15 @@ def singles() -> dict[str, dict[str, str]]:
             " So no model in our forecast ever sees where a story came from. A forecast shouldn't care where you read "
             "the news. Lab notes 02."),
         "04-lab-notes-03": (
-            f"We test every model for a built-in party lean. One looked Republican, but it was just the order of the "
+            f"We test every model for a built-in party lean. One looked Republican, but it was the order of the "
             f"answers: asked both ways, its lean fell from {one} of a typical reaction to {both}.",
             " That's why every question in our forecast is now asked both ways, for a few cents per thousand answers. "
             "Lab notes 03."),
     }
-    def end(t: str, limit: int) -> str:  # the fixed disclaimer when it fits, else the label alone
-        return f"{t} {DISCLAIMER}" if len(t) + 1 + len(DISCLAIMER) <= limit else f"{t} {LABEL}."
-    return {k: {"x": end(short, LIMIT["x"]), "bluesky": end(short, LIMIT["bluesky"]),
+    def end(t: str, limit: int, link: int = 0) -> str:  # the fixed disclaimer when it fits, else the label alone
+        fits = len(t) + 1 + len(DISCLAIMER) + (link - len(SITE) if link else 0) <= limit
+        return f"{t} {DISCLAIMER}" if fits else f"{t} {LABEL}."
+    return {k: {"x": end(short, LIMIT["x"], X_LINK), "bluesky": end(short, LIMIT["bluesky"]),
                 "threads": end(short + more, LIMIT["threads"])} for k, (short, more) in out.items()}
 
 
@@ -145,8 +147,11 @@ def build(out: Path = OUT) -> dict:
 CHECKLIST = """# Posting checklist, Sat 3 Oct (then the same for 4 and 5 Oct)
 
 Only after Matteo has approved each post. Times in SCHEDULE.md: Paris first (Buffer's time zone), UK and US Eastern
-in brackets. Before the
-first post: the notapoll.org launch page is live (the website session's steps in site/README.md, "Matteo's steps").
+in brackets. Before the first post: the notapoll.org launch page is live (the website session's steps in
+site/README.md, "Matteo's steps").
+
+**Reminder for Matteo, Sat 3 Oct after 14:00 Paris: pin the intro post on Instagram, X and Threads** (Buffer can't
+pin; it's one tap on each app). On X pin the first post of the thread.
 
 1. Buffer, Instagram channel: the slides of 01-intro in order, caption.txt, alt text from alt-text.txt (in
    Buffer if it offers it, otherwise on Instagram after posting). Pin it to the profile grid once it's up.
