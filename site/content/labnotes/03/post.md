@@ -4,7 +4,7 @@ Draft for Matteo's approval. Planned date: Mon 05 Oct 2026.
 
 ## Checks
 
-- All rules pass.
+- Website article: 573 words (aim 600–900)
 
 ## Style notes
 
