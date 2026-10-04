@@ -181,7 +181,7 @@ Our models never see where a story came from. Each story is first rewritten as a
 def ep03(theme: Theme = LAB) -> Post:
     s, day, k = latest(), date(2026, 10, 5), "Lab notes 03"
     lean = lambda m: s[("mirror", m)]["mean_asymmetry"] / s[("mirror", m)]["mean_abs_reaction"]
-    order = ["glm", "deepseek", "mimo", "luna", "jev", "kev"]
+    order = ["glm", "deepseek", "mimo", "luna", "jev"]  # untuned Kev isn't used in the forecast (Matteo, 4 Oct)
     items = [(MODELS[m], 100 * lean(m + "1"), 100 * lean(m)) for m in order]
     pct = lambda v: f"{v:+.0f}%".replace("-", "−") if v else "0"
     glm = items[0]
@@ -203,7 +203,6 @@ def ep03(theme: Theme = LAB) -> Post:
     charts.legend_dots(c, [("Asked one way", theme.data, False), ("Both ways, averaged", theme.ai, True)])
     c.y += 10
     charts.dumbbell(c, items, 80, 500, "leans Republican", "leans Democratic", pct)
-    c.text("Kev, untuned, got worse. It failed other checks too.", px=30, color=theme.ink2)
     c.source("Lean = average of the two mirrored reactions, as a share of the model's typical reaction size.")
 
     d = new().headline("Now every question is asked both ways.", px=84)
@@ -220,7 +219,7 @@ def ep03(theme: Theme = LAB) -> Post:
         (b, "We tell every story twice, with the parties swapped; a fair model mirrors itself exactly. Then every "
             "question is asked in both orders."),
         (c, f"Dot chart of each model's built-in lean, as a share of a typical reaction, one way versus both ways "
-            f"averaged: {names}; the rest near zero except untuned Kev, which got worse."),
+            f"averaged: {names}; GPT-6 Luna and Jev near zero."),
         (d, "Now every question is asked both ways. A fixed correction removed only about two-thirds of the lean."),
     ], f"""For a while, one of our models looked Republican. Every model we use is tested for a built-in party lean: we tell each story twice with the parties swapped, and a fair model reacts the same way to both versions.
 
