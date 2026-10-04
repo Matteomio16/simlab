@@ -17,10 +17,10 @@ Averaging both orders cancels most of it.
 
 Asked one way, GLM-5.3 Flash leaned {glm1} of its typical reaction toward Republicans. Asked both ways and averaged, the lean fell to {glm2}. DeepSeek went from {ds1} to {ds2}, and MiMo, which leaned the other way, from {mimo1} to {mimo2}.
 
-GPT-6 Luna barely leaned either way, and Jev's small lean hardly changed. One got worse: Kev, before any training of ours, leaned more after averaging. It had failed other checks too, which is part of why we trained our own version.
+GPT-6 Luna barely leaned either way, and Jev's small lean hardly changed.
 
 #### In detail
-Negative numbers lean Republican and positive numbers lean Democratic. Kev untuned went from {kev1} to {kev2}. These are leans on stories built to be perfectly symmetric, so a fair model would score zero; they say nothing about which party any real event helps.
+Negative numbers lean Republican and positive numbers lean Democratic. These are leans on stories built to be perfectly symmetric, so a fair model would score zero; they say nothing about which party any real event helps.
 
 {{slide:4}}
 So every question in our forecast is asked both ways.

@@ -1,4 +1,5 @@
 """Queue approved posts in Buffer (roadmap C9): python -m simlab.publish.buffer channels | plan | queue | queued | delete ID
+    python -m simlab.publish.buffer queue-daily FOLDER "YYYY-MM-DD HH:MM"    # a kits/daily post, Paris time
 
 Buffer's GraphQL API (api.buffer.com, bearer key BUFFER_API_KEY from .env, never printed). What its schema allows
 (checked 1 Oct 2026): createPost takes images only as public URLs (there is no upload), with alt text per image;
@@ -7,7 +8,8 @@ including the first); drafts (saveToDraft); customScheduled posts with dueAt in 
 post goes out, so the URLs must stay up until then (guides/hosting-media).
 
 The approval flag: `queue` sends nothing unless kits/launch/APPROVED.json names the post, with the date of Matteo's
-yes given directly in the Content & site session. It also checks that every image URL answers before it sends.
+yes given directly in the Content & site session (kits/daily/APPROVED.json for daily posts). It also checks that
+every image URL answers before it sends.
 """
 from __future__ import annotations
 
@@ -22,6 +24,7 @@ import requests
 ROOT = Path(__file__).resolve().parents[2]
 PACK = ROOT / "kits" / "launch"
 APPROVED = PACK / "APPROVED.json"
+DAILY = ROOT / "kits" / "daily"
 API = "https://api.buffer.com"
 LONDON = ZoneInfo("Europe/London")
 PARIS = ZoneInfo("Europe/Paris")  # Buffer's time zone and Matteo's: shown first in every printout
@@ -55,8 +58,8 @@ def channels() -> dict[str, dict]:
     return {c["service"]: c | {"organizationId": org} for c in chs if not c["isDisconnected"]}
 
 
-def utc(local: str) -> str:
-    return datetime.strptime(local, "%Y-%m-%d %H:%M").replace(tzinfo=LONDON).astimezone(ZoneInfo("UTC")) \
+def utc(local: str, tz: ZoneInfo = LONDON) -> str:
+    return datetime.strptime(local, "%Y-%m-%d %H:%M").replace(tzinfo=tz).astimezone(ZoneInfo("UTC")) \
         .strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 
@@ -83,9 +86,9 @@ def image(url: str, alt: str) -> dict:
     return {"image": {"url": url, "metadata": {"altText": alt, "userTags": []}}}
 
 
-def posts_for(folder: str, base: str) -> list[dict]:
-    """The createPost inputs for one launch post, without channel ids: one per platform."""
-    d = PACK / folder
+def posts_for(folder: str, base: str, pack: Path = PACK) -> list[dict]:
+    """The createPost inputs for one post, without channel ids: one per platform."""
+    d = pack / folder
     slides = sorted(d.glob("slide-*.jpg"), key=lambda p: int(p.stem.split("-")[1]))
     alts = dict(line.split(": ", 1) for line in (d / "alt-text.txt").read_text(encoding="utf-8").splitlines())
     imgs = [image(f"{base}/{folder}/{p.name}", alts[p.name]) for p in slides]
@@ -127,8 +130,20 @@ def queued() -> list[dict]:
     return sorted((n for n in nodes if n["status"] == "scheduled"), key=lambda n: n["dueAt"])
 
 
-def approved() -> dict:
-    return json.loads(APPROVED.read_text(encoding="utf-8")) if APPROVED.exists() else {}
+def approved(path: Path = APPROVED) -> dict:
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def send(folder: str, posts: list[dict], due: str, chs: dict) -> None:
+    for p in posts:
+        if p["service"] not in chs:
+            print(f"skip {folder} {p['service']}: channel not connected in Buffer")
+            continue
+        dead = [a["image"]["url"] for a in p["assets"] if requests.head(a["image"]["url"], timeout=20)
+                .status_code != 200]
+        if dead:
+            raise SystemExit(f"{folder}: images not reachable yet: {dead[:2]}")
+        print(folder, p["service"], create(p, chs[p["service"]]["id"], due))
 
 
 def main(argv: list[str]) -> int:
@@ -149,15 +164,12 @@ def main(argv: list[str]) -> int:
             if folder not in ok:
                 print(f"skip {folder}: not approved")
                 continue
-            for p in posts_for(folder, base):
-                if p["service"] not in chs:
-                    print(f"skip {folder} {p['service']}: channel not connected in Buffer")
-                    continue
-                dead = [a["image"]["url"] for a in p["assets"] if requests.head(a["image"]["url"], timeout=20)
-                        .status_code != 200]
-                if dead:
-                    raise SystemExit(f"{folder}: images not reachable yet: {dead[:2]}")
-                print(folder, p["service"], create(p, chs[p["service"]]["id"], utc(local)))
+            send(folder, posts_for(folder, base), utc(local), chs)
+    elif cmd == "queue-daily":
+        folder, local = argv[1], argv[2]
+        if folder not in approved(DAILY / "APPROVED.json"):
+            raise SystemExit(f"{folder}: not in kits/daily/APPROVED.json")
+        send(folder, posts_for(folder, base, DAILY), utc(local, PARIS), channels())
     elif cmd == "queued":
         for n in queued():
             due = datetime.fromisoformat(n["dueAt"].replace("Z", "+00:00")).astimezone(PARIS)
