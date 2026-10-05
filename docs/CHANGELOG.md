@@ -2,6 +2,22 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-05 (Statistics session): first weekly filter update reviewed
+
+- **Run 37292395167 (pilot day 1).** The update learned almost nothing yet, as expected after six days of stories and
+  few new polls.
+  - The dials sit just under 1: switching 0.90-0.93, turnout 0.96-0.99, with posterior spreads equal to the prior's.
+  - The GLM lean offset stayed at 0.078, not negative, so no flag.
+  - The fade half-life stayed at 5.44 days.
+  - One surprise flag: a single Idaho poll, z -2.6. One flag in 29 races at p < 0.01 is what chance gives, so no
+    action.
+- **Fixed:** `polls_alone` printed unidentified noise (e.g. a switching dial of 13 for Ohio) for units whose polls
+  carry no information yet. It now reports None until a dial's standard error is under 5 (bea8e32).
+- **Starting lines checked.** In all five pilot races the blend is exactly w x polls + (1 - w) x fundamentals, with
+  w = 0.69-0.71 five weeks out, and the win chances follow from it. The market sits more Democratic than us in Ohio and
+  Texas, where the fundamentals lean R and the polls lean D, and more Republican in Maine (Collins's record). That's
+  the designed difference: polls cap at about 80% by election day, and the market is never an input.
+
 ## 2026-09-30 (Statistics session): House seats' news uncertainty
 
 - **The House seats now carry news uncertainty like the Senate races** (`simlab/statsday.py`, `simlab/montecarlo.py`;
