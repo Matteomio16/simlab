@@ -1,6 +1,6 @@
 {
-  "methods": false,
-  "labNotes": false,
+  "methods": true,
+  "labNotes": true,
   "about": true,
   "trackRecord": false,
   "changelog": false
