@@ -2,6 +2,27 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-05 (Statistics session): poll weight checked cycle by cycle (Matteo's question)
+
+Matteo asked whether 70/30 (polls/fundamentals) beat polls only and 85/15 consistently. Data: the no-peeking backtest
+(`runs/backtest_senate_2018_2024.csv`: polls counted once published, fundamentals refitted without the tested year),
+Senate races with polls. RMSE of the margin, points:
+
+| | 70/30 | 85/15 | polls only | chain (own weight) |
+|---|---|---|---|---|
+| 35 days out, 2018 / 2020 / 2022 / 2024 | 5.6 / 4.4 / 8.6 / 5.2 | 6.1 / 5.6 / 9.5 / 5.5 | 7.0 / 7.1 / 10.5 / 5.9 | 5.6 / 3.7 / 7.6 / 5.2 |
+| 35 days out, all 100 races | 6.1 | 6.8 | 7.7 | 5.7 |
+| 14 days out, all | 5.5 | 6.1 | 7.0 | 5.2 |
+| 1 day out, all | 5.1 | 5.6 | 6.4 | 5.0 |
+
+- 70/30 beat both 85/15 and polls only in every cycle at all three horizons. The chain's own weight (median 0.56
+  five weeks out, 0.78 the day before) did best.
+- Why: polls alone ran too Democratic in every cycle, by 3-6 points on average five weeks out. The fundamentals hedge
+  that. In the pilot states the polls were too Democratic in 10 of 11 races (Ohio by 6-7 points in 2018, 2022 and
+  2024), and 70/30 came closer in 10 of 11.
+- Caveats: four cycles, not six. 2014 and 2016 are outside the no-peeking backtest because their polls lack
+  publication dates. Part of the edge is the polls' Democratic lean in those years.
+
 ## 2026-10-05 (Statistics session): first weekly filter update reviewed
 
 - **Run 37292395167 (pilot day 1).** The update learned almost nothing yet, as expected after six days of stories and
