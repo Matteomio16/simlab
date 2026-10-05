@@ -203,6 +203,16 @@ def surprises(p, m: dict, params: dict, d: int, dials: dict, election=ELECTION, 
     return out
 
 
+def _alone(a: np.ndarray, b: np.ndarray, most: float = 5.0) -> dict:
+    """What a unit's polls say about its two dials on their own: the estimate and its standard error, or None for a dial
+    the polls don't pin down yet (no information, or a standard error above `most`)."""
+    cov = np.linalg.pinv(a)
+    k, var = cov @ b, np.diag(cov)
+    ok = [v > 0 and np.sqrt(v) <= most for v in var]
+    return {"k": [round(float(k[i]), 3) if ok[i] else None for i in range(2)],
+            "se": [round(float(np.sqrt(var[i])), 3) if ok[i] else None for i in range(2)]}
+
+
 def _dial(x: dict) -> dict:
     return {"k_s": round(float(x["mean"][0]), 4), "k_t": round(float(x["mean"][1]), 4),
             "sd_s": round(float(np.sqrt(x["cov"][0][0])), 4), "sd_t": round(float(np.sqrt(x["cov"][1][1])), 4)}
@@ -226,11 +236,7 @@ def run(day: date, t: dict, m: dict, mp: dict, election=ELECTION) -> dict:
     us = tuple(state_dial(pool(units(p, m, params, d, election, h_age=h, offset=off), prior), "US", prior)["mean"])
     u = units(p, m, params, d, election, dials_us=us, h_age=h, offset=off)
     post = pool(u, prior)
-    alone = {}
-    for name, (a, b, _) in u.items():
-        cov = np.linalg.pinv(a)
-        alone[name] = {"k": [round(float(v), 3) for v in cov @ b],
-                       "se": [round(float(np.sqrt(max(v, 0))), 3) if v > 0 else None for v in np.diag(cov)]}
+    alone = {name: _alone(a, b) for name, (a, b, _) in u.items()}
     means = {name: tuple(x["mean"]) for name, x in post["units"].items()}
     return {"polls": {"n": int(len(p)), "first": str(p.mid.min()), "last": str(p.mid.max())}, "prior": prior,
             "fade": fade, "offset": lean, "posterior": {k: post[k] for k in ("labels", "mean", "cov", "log_evidence")},
