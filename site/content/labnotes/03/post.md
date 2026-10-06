@@ -4,7 +4,7 @@ Draft for Matteo's approval. Planned date: Mon 05 Oct 2026.
 
 ## Checks
 
-- All rules pass.
+- Website article: 573 words (aim 600–900)
 
 ## Style notes
 
@@ -14,7 +14,7 @@ Draft for Matteo's approval. Planned date: Mon 05 Oct 2026.
 
 1. `slide-1.jpg`: One model looked Republican. It was the order of the answers. We test every model for a built-in party lean: GLM's, as a share of a typical reaction, was −44% asked one way and −2% asked both ways.
 2. `slide-2.jpg`: We tell every story twice, with the parties swapped; a fair model mirrors itself exactly. Then every question is asked in both orders.
-3. `slide-3.jpg`: Dot chart of each model's built-in lean, as a share of a typical reaction, one way versus both ways averaged: GLM −44% → −2%, DeepSeek −65% → −16%, MiMo +70% → +27%; the rest near zero except untuned Kev, which got worse.
+3. `slide-3.jpg`: Dot chart of each model's built-in lean, as a share of a typical reaction, one way versus both ways averaged: GLM −44% → −2%, DeepSeek −65% → −16%, MiMo +70% → +27%; GPT-6 Luna and Jev near zero.
 4. `slide-4.jpg`: Now every question is asked both ways. A fixed correction removed only about two-thirds of the lean.
 
 ## Instagram caption
@@ -58,10 +58,10 @@ Averaging both orders cancels most of it.
 
 Asked one way, GLM-5.3 Flash leaned 44% of its typical reaction toward Republicans. Asked both ways and averaged, the lean fell to 2%. DeepSeek went from −65% to −16%, and MiMo, which leaned the other way, from +70% to +27%.
 
-GPT-6 Luna barely leaned either way, and Jev's small lean hardly changed. One got worse: Kev, before any training of ours, leaned more after averaging. It had failed other checks too, which is part of why we trained our own version.
+GPT-6 Luna barely leaned either way, and Jev's small lean hardly changed.
 
 #### In detail
-Negative numbers lean Republican and positive numbers lean Democratic. Kev untuned went from +9% to +29%. These are leans on stories built to be perfectly symmetric, so a fair model would score zero; they say nothing about which party any real event helps.
+Negative numbers lean Republican and positive numbers lean Democratic. These are leans on stories built to be perfectly symmetric, so a fair model would score zero; they say nothing about which party any real event helps.
 
 {{slide:4}}
 So every question in our forecast is asked both ways.

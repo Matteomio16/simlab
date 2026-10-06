@@ -70,6 +70,7 @@ export default function Prelaunch({ today }: { today: string }) {
     title: `${STATES[m.state]}${m.special ? " (special)" : ""}: seat held by ${m.incumbent_party === "D" ? "Democrats" : m.incumbent_party === "R" ? "Republicans" : "an independent"}`,
   }));
   const notes = allNotes().slice(0, 3);
+  const first = allNotes().at(-1);
   const social = SITE.social.filter((s) => s.live);
 
   return (
@@ -114,8 +115,8 @@ export default function Prelaunch({ today }: { today: string }) {
               <Link href={SHOW.methods ? "/methods" : "#how-it-works"} className="bg-ink px-4 py-2.5 text-white transition-colors hover:bg-sim">
                 How it works
               </Link>
-              {SHOW.labNotes && notes[0] && (
-                <Link href={`/lab-notes/${notes[0].n}`} className="link">Read the first Lab note</Link>
+              {SHOW.labNotes && first && (
+                <Link href={`/lab-notes/${first.n}`} className="link">Read the first Lab note</Link>
               )}
             </div>
           </div>
