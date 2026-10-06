@@ -385,7 +385,204 @@ All our Lab notes: notapoll.org/lab-notes
         more=" More in our Lab notes: notapoll.org/lab-notes.")
 
 
-EPISODES = {1: ep01, 2: ep02, 3: ep03, 4: ep04, 5: ep05}
+def ep06(theme: Theme = LAB) -> Post:
+    """Plain statistics beat every model (content-plan §3, no. 6). docs/fidelity2.md: average TVD over 14 CES 2024
+    items and 132 demographic cells; for yes/no items TVD is the gap in the headline share, so it reads as points."""
+    day, k = date(2026, 10, 8), "Lab notes 06"
+    bars = [("Statistics", 7), ("GLM", 14), ("Jev", 36)]
+    new = lambda: Slide(day, "", theme, series=k)
+
+    a = new().headline("Plain statistics beat every model.", px=92)
+    a.dek("We asked each one to match how groups of Americans voted and what they thought in 2024.", px=40)
+    a.at_bottom(charts.stats_height(150, rule=True) + 40 + 80)
+    charts.stats(a, [("7", "points off: statistics"), ("14", "points off: best model")], px=150, rule=True)
+    a.text("Average gap between predicted and real answers, 14 questions, 132 voter groups.", px=30,
+           color=theme.ink2)
+    a.source("Fidelity test against the 2024 Cooperative Election Study, Sep 2026.")
+
+    b = new().headline("The models missed by two to five times as much.", px=80)
+    charts.hbars(b, [(n, v, theme.data if n == "Statistics" else theme.ai) for n, v in bars], 40,
+                 lambda v: f"{v:.0f} pts", label_w=260)
+    b.text("One exception: GLM matched the 2024 Texas vote a little better (12 points off against 14).", px=34,
+           color=theme.ink2)
+    b.source("Average gap between predicted and real answer shares, per voter group and question.")
+
+    c = new().headline("So statistics set where every race starts.", px=84)
+    c.text("Past results, the poll average and each candidate's record set the starting point. The simulation only "
+           "models how it changes as the news comes in.", px=40, color=theme.ink2, after=1.2)
+    c.note("Starting point: statistics. What changes it: social simulation.", width=760)
+    c.source("Forecasts go public on Monday 12 October.")
+
+    return Post(day, "Lab notes 06: plain statistics beat every model", [
+        (a, "Plain statistics beat every model: matching how groups of Americans voted and what they thought in 2024, "
+            "statistics missed by 7 points on average, the best model, GLM, by 14."),
+        (b, "Bar chart of the average miss: statistics 7 points, GLM 14, Jev 36. One exception: GLM matched the 2024 "
+            "Texas vote a little better, 12 points off against 14."),
+        (c, "So statistics set where every race starts, and the simulation only models how it changes as the news "
+            "comes in."),
+    ], f"""How well can a model answer like American voters? We asked two models to answer 14 real survey questions the way different groups of Americans did in 2024, from how they voted to what they thought of the economy, and compared them with plain statistics fitted on the same data.
+
+Statistics won, and not narrowly. Its answers were about 7 points off the real ones on average. The best model, GLM, was 14 points off, and Jev 36. Across 132 voter groups and 14 questions, the models only beat statistics in a few places, like the 2024 vote in Texas.
+
+That settled how our forecast is built. Where each race starts comes from statistics: past results, the poll average and each candidate's record. The simulation does the part statistics can't, modelling how different groups react as the news comes in.
+
+All our Lab notes: notapoll.org/lab-notes
+
+#midterms2026 #elections #datascience
+
+{DISCLAIMER}""", [
+        f"Plain statistics beat every model we tested: 7 points off real 2024 answers on average, against 14 for the "
+        f"best model. {LABEL}.",
+        "So statistics set where every race starts, and the simulation models how it changes with the news.",
+    ], allow=("survey", "poll"), short=("Plain statistics beat every model we tested: about 7 points off real 2024 "
+                                        "answers on average, against 14 for the best model. So statistics set where "
+                                        "every race starts, and the simulation models how it changes."),
+        more=" More in our Lab notes: notapoll.org/lab-notes.",
+        platform={
+            "x": ("We asked models to answer like groups of 2024 voters. Plain statistics beat them all: 7 points off "
+                  "on average, against 14 for the best model. So statistics set where every race starts."),
+            "threads": ("We asked two models to answer 14 real survey questions the way groups of 2024 voters did. "
+                        "Plain statistics beat them: about 7 points off on average, against 14 for the best model and "
+                        "36 for the other. So statistics set where every race starts, and the simulation handles how "
+                        "it changes. Where would you trust a model over plain numbers?"),
+            "topic": "2026 Midterms",
+            "first_comment": "Where would you trust a model over plain statistics, and where not? Tell us below.",
+        })
+
+
+def ep07(theme: Theme = LAB) -> Post:
+    """Turnout asked on its own (content-plan §3, no. 7). docs/model-recipes.md (+51 points when bundled) and
+    docs/CHANGELOG.md (CES validated turnout tracks voter-file match rates, correlation 0.99 across cells)."""
+    day, k = date(2026, 10, 9), "Lab notes 07"
+    new = lambda: Slide(day, "", theme, series=k)
+
+    a = new().headline("Ask a model how someone voted, and it assumes they voted.", px=80)
+    a.dek("Asking about the vote and about turnout in the same question changed the turnout answers.", px=40)
+    a.at_bottom(charts.stats_height(160, rule=True) + 40 + 80)
+    charts.stats(a, [("+51", "points of turnout, in one test")], px=160, rule=True)
+    a.text("Same voter personas, same model: only the questions were bundled.", px=30, color=theme.ink2)
+    a.source("Turnout check, test bench, Sep 2026.")
+
+    b = new().headline("The survey’s turnout data had a catch too.", px=84)
+    b.text("Its turnout records followed how well each group could be matched to the voter rolls, not whether they "
+           "voted.", px=40, color=theme.ink2, after=1.0)
+    b.at_bottom(charts.stats_height(160, rule=True) + 40)
+    charts.stats(b, [("0.99", "correlation with match rates")], px=160, rule=True)
+    b.source("Across voter groups, 2024 Cooperative Election Study.")
+
+    c = new().headline("So turnout is asked on its own and checked against the Census.", px=80)
+    c.text("Turnout targets come from the Census Bureau’s survey of who voted in 2024, adjusted to each state’s "
+           "official turnout.", px=40, color=theme.ink2, after=1.2)
+    c.note("In a midterm, who shows up decides as much as who people prefer.", width=760)
+    c.source("Forecasts go public on Monday 12 October.")
+
+    return Post(day, "Lab notes 07: the model assumed everyone voted", [
+        (a, "Ask a model how someone voted and it assumes they voted: bundling the vote question with the turnout "
+            "question pushed turnout answers up 51 points in one test."),
+        (b, "The survey's turnout data had a catch too: its records followed how well each group could be matched to "
+            "the voter rolls (correlation 0.99), not whether they voted."),
+        (c, "So turnout is asked on its own and checked against the Census Bureau's survey of who voted in 2024, "
+            "adjusted to each state's official turnout."),
+    ], f"""Who turns out decides a midterm as much as who people prefer, so we tested turnout twice as hard, and found two traps.
+
+The first was in how we asked. When the question about someone's vote sat next to the question about whether they voted, the model read "how did this person vote" as proof that they voted. In one test that pushed turnout answers up by 51 points.
+
+The second was in the data. The survey we use for opinions also records turnout, but those records followed how well each group could be matched to the voter rolls, almost perfectly (a correlation of 0.99), rather than whether people actually voted.
+
+So turnout is now asked on its own, and our turnout targets come from the Census Bureau's survey of who voted in 2024, adjusted to each state's official turnout.
+
+All our Lab notes: notapoll.org/lab-notes
+
+#midterms2026 #elections #turnout
+
+{DISCLAIMER}""", [
+        f"Ask a model how someone voted and it assumes they voted: bundling the two questions pushed turnout answers "
+        f"up 51 points. {LABEL}.",
+        "So turnout is asked on its own, and checked against the Census Bureau's survey of who voted in 2024.",
+    ], allow=("survey",), short=("Ask a model how someone voted and it assumes they voted: bundling the two questions "
+                                 "pushed turnout answers up 51 points in one test. So turnout is asked on its own and "
+                                 "checked against the Census."),
+        more=" More in our Lab notes: notapoll.org/lab-notes.",
+        platform={
+            "x": ("Ask a model how someone voted, and it assumes they voted. In one test, that pushed turnout answers "
+                  "up 51 points. So turnout is asked on its own and checked against the Census."),
+            "threads": ("Small wording, big effect: when we asked a model how someone voted and whether they voted in "
+                        "the same question, it assumed everyone voted. Turnout answers jumped 51 points in one test. "
+                        "Now turnout is asked on its own and checked against the Census. In a midterm, what do you "
+                        "think decides who shows up?"),
+            "topic": "2026 Midterms",
+            "first_comment": "In a midterm, what do you think decides who actually shows up to vote?",
+        })
+
+
+def ep08(theme: Theme = LAB) -> Post:
+    """We trained our own model (content-plan §3, no. 8), kept positive and factual (Matteo, 4 Oct). docs/CHANGELOG.md:
+    Kev ces-v3b answers the 28 voter groups in all 51 states (1,428 group starting points); the reaction version's
+    null and party-swap checks (no change 0.955/0.965, every sign flips); shadow mode, scored weekly."""
+    day, k = date(2026, 10, 10), "Lab notes 08"
+    new = lambda: Slide(day, "", theme, series=k)
+
+    a = new().headline("We trained our own model on real survey answers.", px=84)
+    a.dek("An open model, fine-tuned on how real Americans answered in 2024.", px=40)
+    a.at_bottom(charts.stats_height(150, rule=True) + 40 + 80)
+    charts.stats(a, [("28", "voter groups"), ("51", "states and DC")], px=150, rule=True)
+    a.text("It sets where each group starts: 1,428 starting points in all.", px=30, color=theme.ink2)
+    a.source("Fine-tuned on the 2024 Cooperative Election Study, Sep 2026.")
+
+    b = new().headline("It passes both fairness checks.", px=88)
+    b.at_bottom(charts.stats_height(150, rule=True) + 40 + 80)
+    charts.stats(b, [("96%", "ignored irrelevant news"), ("16", "of 16 flipped, parties swapped")], px=150,
+                 rule=True)
+    b.text("The two fairness checks every model has to pass before it touches a forecast.", px=30, color=theme.ink2)
+    b.source("Null test: 20 irrelevant stories. Mirror test: 16 stories told twice, parties swapped. Sep 2026.")
+
+    c = new().headline("Next, it has to earn the reaction job.", px=84)
+    c.text("For now a hosted model gives the reactions to the news. Ours answers alongside it every day and is scored "
+           "each week against what really happened.", px=40, color=theme.ink2, after=1.2)
+    c.note("A model only takes over a job when it does it better.", width=700)
+    c.source("Forecasts go public on Monday 12 October.")
+
+    return Post(day, "Lab notes 08: we trained our own model", [
+        (a, "We trained our own model on real survey answers from 2024. It sets 1,428 starting points: 28 voter groups "
+            "in every state and DC."),
+        (b, "It passes both fairness checks: no reaction to irrelevant news 96% of the time, and its reaction flipped "
+            "on all 16 stories when we swapped the parties."),
+        (c, "Next, it has to earn the reaction job: it answers alongside the hosted model every day and is scored "
+            "each week against what really happened."),
+    ], f"""This is the part of NotAPoll we built ourselves: our own model, trained on how real Americans answered a 2024 election survey.
+
+We took an open model and fine-tuned it on how real Americans answered the 2024 Cooperative Election Study. It now sets where each of 28 voter groups starts in every state and DC, 1,428 starting points in all.
+
+It also passes both of our fairness checks. Shown 20 news stories that shouldn't matter to anyone, it reacted to almost none of them. Shown 16 stories twice, once as written and once with the parties swapped, its reaction flipped every single time, exactly what a model with no built-in lean should do.
+
+Reactions to the daily news are the next job. For now a hosted model gives them, and ours answers alongside it every day, scored each week against what really happened. A model only takes over a job when it does it better.
+
+All our Lab notes: notapoll.org/lab-notes
+
+#midterms2026 #opensource #elections
+
+{DISCLAIMER}""", [
+        f"We trained our own model on real 2024 survey answers. It sets 1,428 starting points: 28 voter groups in "
+        f"every state and DC. {LABEL}.",
+        "It passes both fairness checks: its reaction flipped on all 16 stories when we swapped the parties.",
+        "Next it has to earn the reaction job, scored every week against what really happened.",
+    ], allow=("survey",), short=("We trained our own model on real 2024 survey answers. It sets 1,428 starting "
+                                 "points, and it passes both fairness checks: its reaction flipped on all 16 stories "
+                                 "when we swapped the parties."),
+        more=" More in our Lab notes: notapoll.org/lab-notes.",
+        platform={
+            "x": ("We trained our own model on real 2024 survey answers. Swap the parties in a story and its reaction "
+                  "flips: 16 times out of 16. Now it sets 1,428 starting points across every state."),
+            "threads": ("We trained our own model on how real Americans answered a big 2024 election survey. It now "
+                        "sets where 28 voter groups start in every state and DC. And it passes our fairness checks: "
+                        "tell it a story twice with the parties swapped, and its reaction flips every time. "
+                        "What check would you want a model to pass before you trusted it?"),
+            "topic": "2026 Midterms",
+            "first_comment": "What test would you want a model to pass before you trusted it with a forecast?",
+        })
+
+
+EPISODES = {1: ep01, 2: ep02, 3: ep03, 4: ep04, 5: ep05, 6: ep06, 7: ep07, 8: ep08}
 
 
 def daily(n: int, folder: str, theme: Theme = LAB) -> tuple[Path, list[str]]:
@@ -405,7 +602,8 @@ def daily(n: int, folder: str, theme: Theme = LAB) -> tuple[Path, list[str]]:
     (out / "alt-text.txt").write_text("".join(f"slide-{i}.jpg: {a}\n" for i, (_, a) in enumerate(post.slides, 1)),
                                       encoding="utf-8")
     pf = post.platform or {}
-    posts = {"x": end(pf.get("x", post.short), LIMIT["x"], X_LINK), "bluesky": end(post.short, LIMIT["bluesky"]),
+    posts = {"x": f'{pf.get("x", post.short)} {LABEL}.',  # no link on X: it cuts reach
+             "bluesky": end(post.short, LIMIT["bluesky"]),
              "threads": end(pf.get("threads", post.short + post.more), LIMIT["threads"])}
     meta = {k2: pf[k1] for k1, k2 in (("topic", "threads_topic"), ("first_comment", "instagram_first_comment"))
             if pf.get(k1)}

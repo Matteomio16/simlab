@@ -229,7 +229,8 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
         problems += [f"slide {i}: {x}" for x in text.slide_problems(s, ALLOW)]
         s.save(out / f"slide-{i}.jpg")
     caption = f"{st['caption']}\n\n{DISCLAIMER}"
-    posts = {"x": end(st.get("x", st["short"]), LIMIT["x"], X_LINK), "bluesky": end(st["short"], LIMIT["bluesky"]),
+    posts = {"x": f'{st.get("x", st["short"])} {LABEL}.',  # no link on X: it cuts reach
+             "bluesky": end(st["short"], LIMIT["bluesky"]),
              "threads": end(st.get("threads", st["short"] + st["more"]), LIMIT["threads"])}
     meta = {k2: st[k1] for k1, k2 in (("topic", "threads_topic"), ("first_comment", "instagram_first_comment"))
             if st.get(k1)}
