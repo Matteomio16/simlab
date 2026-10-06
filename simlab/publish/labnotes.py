@@ -35,6 +35,8 @@ class Post:
     instagram: str
     thread: list[str]
     allow: tuple[str, ...] = ()
+    short: str = ""  # X and Bluesky
+    more: str = ""  # added for Threads
 
 
 def ep01(theme: Theme = LAB) -> Post:
@@ -241,7 +243,105 @@ Now every question in our forecast is asked both ways. It costs a few cents per 
     ])
 
 
-EPISODES = {1: ep01, 2: ep02, 3: ep03}
+def ep04(theme: Theme = LAB) -> Post:
+    """Direction right, size wrong (content-plan §3, no. 4). Untuned Kev stays out (Matteo, 4 Oct)."""
+    s, day, k = latest(), date(2026, 10, 6), "Lab notes 04"
+    order = ["glm", "mimo", "luna", "jev", "deepseek"]
+    hits = {m: round(13 * s[("events", m)]["sign_accuracy_nonnull"]) for m in order}
+    scale = {m: s[("events", m)]["scale_points_per_unit"] for m in order}
+    lo, hi = min(scale.values()), max(scale.values())
+    others = sorted(hits[m] for m in order if m != "glm")
+    new = lambda: Slide(day, "", theme, series=k)
+
+    a = new().headline("The models knew which way voters would move.", px=84)
+    a.dek("We checked them against 19 real events from 2012 to 2026, 13 of which moved opinion.", px=40)
+    a.at_bottom(charts.stats_height(150, rule=True) + 40 + 80)
+    charts.stats(a, [(f"{hits['glm']} of 13", "GLM, right direction"),
+                     (f"{others[0]}–{others[-1]}", "the other four, of 13")], px=150, rule=True)
+    a.text("Right direction: the model's reaction moved the same way real opinion did.", px=30, color=theme.ink2)
+    a.source("Events test: 19 events with measured opinion shifts, 2012–2026. Test bench, 27–28 Sep 2026.")
+
+    b = new().headline("Not how far.", px=104)
+    b.text("One step on the same reaction scale was worth 5 real points for one model and 18 for another.", px=40,
+           color=theme.ink2, after=1.0)
+    charts.hbars(b, [(MODELS[m], scale[m], theme.ai) for m in sorted(order, key=scale.get)], 20,
+                 lambda v: f"{v:.0f} pts", label_w=280)
+    b.source("Points of real opinion shift per step of each model's answer, fitted on the same 19 events.")
+
+    c = new().headline("So the size of every reaction comes from real history.", px=80)
+    c.text("The models tell us which way a group reacts. How far it moves comes from 45 real past opinion shifts.",
+           px=40, color=theme.ink2, after=1.2)
+    c.note("From 12 October, a weekly check against the polls updates those sizes, state by state.", width=760)
+    c.source("Forecasts go public on Monday 12 October.")
+
+    return Post(day, "Lab notes 04: which way, not how far", [
+        (a, f"The models knew which way voters would move. Against 19 real events from 2012 to 2026, 13 of which "
+            f"moved opinion, GLM got the direction right {hits['glm']} times out of 13, and the other four "
+            f"{others[0]} to {others[-1]}."),
+        (b, f"Not how far: bar chart of how many real points one step of each model's answer was worth, from "
+            f"{lo:.0f} to {hi:.0f}: " + ", ".join(f"{MODELS[m]} {scale[m]:.0f}" for m in sorted(order, key=scale.get))
+            + "."),
+        (c, "So the size of every reaction comes from real history: the models give the direction, 45 real past "
+            "opinion shifts give the size, and from 12 October a weekly check against the polls updates it state by "
+            "state."),
+    ], f"""The models we tested are good at one thing and unreliable at another. We gave them 19 real events from 2012 to 2026, 13 of which measurably moved opinion, and asked how different voters would react.
+
+They mostly got the direction right. GLM called it correctly for all {hits['glm']} events that moved opinion, and the other four models managed {others[0]} to {others[-1]}.
+
+How far is another story. To turn a model's answer into real points, we had to fit a scale for each one, and one step on the same answer scale was worth {lo:.0f} points for one model and {hi:.0f} for another. The models agree on which way people move, not on how much.
+
+So that's how our forecast splits the work. The models say which way each group of voters reacts to the news. How far they move comes from 45 real past opinion shifts, and from 12 October a weekly check against the polls updates those sizes, state by state.
+
+All our Lab notes: notapoll.org/lab-notes
+
+#midterms2026 #elections
+
+{DISCLAIMER}""", [
+        f"Our models knew which way voters would move: GLM got the direction right on {hits['glm']} of 13 real "
+        f"events that moved opinion. {LABEL}.",
+        f"Not how far: one step on the same answer scale was worth {lo:.0f} real points for one model and {hi:.0f} "
+        "for another.",
+        "So the models give the direction, and 45 real past opinion shifts give the size, checked against the polls "
+        "every week from 12 October.",
+    ], allow=("poll", "polls"), short=(f"Our models knew which way voters would move: GLM got the direction right on "
+              f"all {hits['glm']} real events that moved opinion. Not how far: one step on the same scale was worth {lo:.0f} real points for one model, "
+              f"{hi:.0f} for another. So sizes come from real history."),
+        more=" More in our Lab notes: notapoll.org/lab-notes.")
+
+
+EPISODES = {1: ep01, 2: ep02, 3: ep03, 4: ep04}
+
+
+def daily(n: int, folder: str, theme: Theme = LAB) -> tuple[Path, list[str]]:
+    """A Lab note as a Buffer-ready kits/daily/<folder> (slides, caption.txt, alt-text.txt, single-post.md,
+    checks.txt), the same layout as the launch posts and Reading the polls."""
+    from .launch import LIMIT, X_LINK
+    from .pollread import end
+    post = EPISODES[n](theme)
+    out = KITS.parent / "daily" / folder
+    out.mkdir(parents=True, exist_ok=True)
+    probs = []
+    for i, (sl, _) in enumerate(post.slides, 1):
+        probs += [f"slide {i}: {x}" for x in sl.layout_problems() + sl.missing_glyphs()
+                  + text.slide_problems(sl, post.allow)]
+        sl.save(out / f"slide-{i}.jpg")
+    (out / "caption.txt").write_text(post.instagram, encoding="utf-8")
+    (out / "alt-text.txt").write_text("".join(f"slide-{i}.jpg: {a}\n" for i, (_, a) in enumerate(post.slides, 1)),
+                                      encoding="utf-8")
+    posts = {"x": end(post.short, LIMIT["x"], X_LINK), "bluesky": end(post.short, LIMIT["bluesky"]),
+             "threads": end(post.short + post.more, LIMIT["threads"])}
+    lines = ["# Single posts (X and Threads through Buffer; Bluesky by hand)", ""]
+    for k in ("x", "threads", "bluesky"):
+        t = posts[k]
+        size = len(t) + (t.count("notapoll.org") * (X_LINK - len("notapoll.org")) if k == "x" else 0)
+        lines += [f"## {'X' if k == 'x' else k.capitalize()} ({size} of {LIMIT[k]} characters; attach slide-1 to "
+                  f"slide-{len(post.slides)})", "", t, ""]
+        probs += [f"{k}: {size} characters" for _ in [0] if size > LIMIT[k]]
+    (out / "single-post.md").write_text("\n".join(lines), encoding="utf-8")
+    for name, t in [("caption", post.instagram), *posts.items()]:
+        probs += [f"{name}: {x}" for x in text.check(t, caption=True, allow=post.allow)]
+    (out / "checks.txt").write_text("\n".join(probs) or "all rules pass", encoding="utf-8")
+    return out, probs
 
 
 def contact_sheet(paths: list[Path], out: Path, scale: float = 0.4, gap: int = 16) -> Path:

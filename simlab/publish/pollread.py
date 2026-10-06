@@ -26,7 +26,10 @@ KITS = ROOT / "kits"
 SERIES = "Reading the polls"
 ALLOW = ("poll", "polls", "pollster", "pollsters", "survey")
 SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Impact Research": "AARP",
-         "Alaska Survey Research": "Alaska Survey Res.", "Rasmussen Reports": "Rasmussen"}
+         "Alaska Survey Research": "Alaska Survey Res.", "Rasmussen Reports": "Rasmussen",
+         "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
+         "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
+         "Stratus Intelligence": "Stratus", "Marist University": "Marist"}
 
 STORIES = {
     "2026-10-05": {
@@ -61,12 +64,45 @@ STORIES = {
         "alt1": ("Dot chart of eight Alaska Senate polls since August, Peltola minus Sullivan. Seven sit between "
                  "Sullivan +2.5 and Peltola +5; the newest, NYT/Siena, is furthest out at Peltola +7."),
     },
+    "2026-10-06": {
+        "race": "TX", "since": "2026-09-15", "focus": "Pulse Decision Science", "folder": "06-reading-polls-02",
+        "left": "Talarico", "right": "Paxton", "exclude": ["Slingshot Strategies"],  # the TPOR poll, listed twice
+        "headline": "One Texas poll has Paxton up 3. Nine others have Talarico ahead or tied.",
+        "dek": "Ten Senate polls since mid-September: Talarico (D) minus Paxton (R), likely and registered voters.",
+        "source": "Polls ending 17–30 Sep 2026. Data: VoteHub (CC BY 4.0) and Wikipedia (CC BY-SA 4.0).",
+        "title2": "Outlier, or early?",
+        "against": ["It’s the only one of ten polls since mid-September with Paxton ahead.",
+                    "Its pollster isn’t in the 2018–24 records we use, so its usual lean is unknown.",
+                    "800 voters: the gap can swing about 7 points either way."],
+        "for": "Texas voted for Trump by 14 points in 2024. If Republicans who haven’t decided come home late, a "
+               "poll like this is where it would show first.",
+        "hypothesis": "Our hypothesis: Talarico still narrowly ahead, about +3. We’ll check it against the next three "
+                      "polls.",
+        "caption": (
+            "A new Texas Senate poll from Pulse Decision Science has Ken Paxton ahead of James Talarico by 3 points, "
+            "48 to 45. Of the ten polls since mid-September, it's the only one with Paxton in front; the other nine "
+            "have Talarico ahead or tied, by about 3 on average.\n\n"
+            "So is it an outlier or an early sign? There are reasons for caution. Pulse Decision Science isn't in the "
+            "2018 to 2024 polls we use to estimate each pollster's usual lean, so we can't tell which way it tends to "
+            "lean. And with 800 voters, the gap can move about 7 points either way.\n\n"
+            "But it could be right. Texas voted for Trump by 14 points in 2024. If Republicans who haven't made up "
+            "their minds come home late, a poll like this is where it would show first.\n\n"
+            "Our hypothesis: Talarico is still narrowly ahead, around +3. We'll check it against the next three polls "
+            "and report back.\n\n"
+            "#midterms2026 #Texas #elections"),
+        "short": ("A new Texas poll has Paxton up 3 on Talarico. The nine others since mid-September have Talarico "
+                  "ahead or tied, by about 3. New pollster, no track record, but Texas voted Trump +14 in 2024. Our "
+                  "hypothesis: Talarico still about +3."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "alt1": ("Dot chart of ten Texas Senate polls since mid-September, Talarico minus Paxton. Nine sit between a "
+                 "tie and Talarico +6; the Pulse Decision Science poll is the only one with Paxton ahead, by 3."),
+    },
 }
 
 
-def load(polls: Path, race: str, since: str) -> pd.DataFrame:
+def load(polls: Path, race: str, since: str, exclude=()) -> pd.DataFrame:
     s = pd.read_csv(polls / "senate.csv", parse_dates=["start", "end"])
-    s = s[(s.race_id == race) & (s.end >= since)].sort_values("end").copy()
+    s = s[(s.race_id == race) & (s.end >= since) & ~s.pollster.isin(exclude)].sort_values("end").copy()
     s["gap"] = s.left - s.right
     return s
 
@@ -85,7 +121,7 @@ def candidates(polls: Path, days: int = 7) -> pd.DataFrame:
 def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, lim: float = 10):
     """One row per poll, oldest at the top: a dot at the gap (left minus right), the featured poll ringed."""
     t = s.t
-    ax = s.chart(54 * len(p), left=340, right=40)
+    ax = s.chart(min(54, 480 / len(p)) * len(p), left=340, right=40)
     ax.set_xlim(-lim, lim)
     ax.set_ylim(len(p) - 0.5, -0.5)
     ax.set_yticks([])
@@ -108,7 +144,8 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
         ax.text(-lim * 1.04, i, typeset(name), va="center", ha="right", color=t.ink,
                 fontproperties=s.font("sans", 600 if hot else 400, 27))
         if hot:
-            ax.text(row.gap, i - 0.62, typeset(f"{left} +{row.gap:.0f}"), va="bottom", ha="center", color=t.ink,
+            who = left if row.gap > 0 else right
+            ax.text(row.gap, i - 0.62, typeset(f"{who} +{abs(row.gap):.0f}"), va="bottom", ha="center", color=t.ink,
                     fontproperties=s.font("sans", 600, 28))
     s.y += 50
     x0, x1 = MARGIN + 340, s.w - MARGIN
@@ -118,7 +155,8 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
     s._put(x1, s.y, " →", "mono", 400, 26, t.ink2, ha="right", va="top")
     s._put(x1 - arrow, s.y, f"{left} ahead", "sans", 400, 26, t.ink2, ha="right", va="top")
     s.y += 44
-    s._put(x0, s.y, f"- - -  average of the other {len(p) - 1}: {left} +{others:.0f}", "sans", 400, 26, t.ink2,
+    lead = f"{left} +{others:.0f}" if round(others) > 0 else f"{right} +{-others:.0f}" if round(others) < 0 else "even"
+    s._put(x0, s.y, f"- - -  average of the other {len(p) - 1}: {lead}", "sans", 400, 26, t.ink2,
            va="top")
     s.y += 50
     return others
@@ -131,7 +169,7 @@ def end(t: str, limit: int, link: int = 0) -> str:
 
 def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
     st, d = STORIES[day], date.fromisoformat(day)
-    p = load(polls, st["race"], st["since"])
+    p = load(polls, st["race"], st["since"], st.get("exclude", ()))
     a = Slide(d, "", theme, series=SERIES)
     a.headline(st["headline"], px=64)
     a.dek(st["dek"], px=34)
