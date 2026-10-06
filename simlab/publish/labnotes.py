@@ -17,7 +17,7 @@ from PIL import Image
 from ..core import RUNS
 from ..scorecard import latest
 from . import charts, text
-from .frame import DISCLAIMER, LABEL, SITE, Slide, Theme
+from .frame import DISCLAIMER, LABEL, SITE, Slide, Theme, pt, typeset
 from .themes import LAB
 
 KITS = RUNS.parent / "kits" / "labnotes"
@@ -309,7 +309,81 @@ All our Lab notes: notapoll.org/lab-notes
         more=" More in our Lab notes: notapoll.org/lab-notes.")
 
 
-EPISODES = {1: ep01, 2: ep02, 3: ep03, 4: ep04}
+def ep05(theme: Theme = LAB) -> Post:
+    """Models flatten party differences (content-plan spare, swapped in for no. 5 by Matteo, 6 Oct). Numbers:
+    docs/CHANGELOG.md, wider fidelity test (CES 2024, GLM asked both ways)."""
+    day, k = date(2026, 10, 7), "Lab notes 05"
+    rows = [("Democrats: approve of Biden", 83, 44), ("Democrats: economy got better", 53, 18),
+            ("Republicans: approve of Biden", 4, 15), ("Democrats: voted Harris", 96, 93)]
+    new = lambda: Slide(day, "", theme, series=k)
+
+    a = new().headline("Ask a model how Democrats rate Biden, and they come out lukewarm.", px=80)
+    a.dek("Approval of President Biden among Democrats, 2024.", px=40)
+    a.at_bottom(charts.stats_height(150, rule=True) + 40 + 80)
+    charts.stats(a, [("83%", "real survey answers"), ("44%", "GLM’s voter personas")], px=150, rule=True)
+    a.text("Same people, same question: the gap between the parties shrank from 79 points to 29.", px=30, color=theme.ink2)
+    a.source("Fidelity test: 14 questions from the 2024 Cooperative Election Study, Sep 2026.")
+
+    b = new().headline("Strong views came out softer. Votes held up.", px=80)
+    charts.legend_dots(b, [("Real survey answers", theme.data, False), ("GLM’s personas", theme.ai, True)])
+    b.y += 10
+    t = theme
+    ax = b.chart(110 * len(rows), left=28, right=40)
+    ax.set_xlim(0, 100)
+    ax.set_ylim(len(rows) - 0.4, -0.75)
+    ax.set_yticks([])
+    ax.set_xticks([0, 25, 50, 75, 100], [typeset(f"{x}%") for x in (0, 25, 50, 75, 100)])
+    for lab in ax.get_xticklabels():
+        lab.set_fontproperties(b.font("sans", 400, 28))
+    for x in (25, 50, 75):
+        ax.axvline(x, color=t.hairline, lw=pt(1), zorder=0)
+    for i, (name, real, model) in enumerate(rows):
+        ax.text(0, i - 0.26, typeset(name), va="bottom", ha="left", color=t.ink, fontproperties=b.font("sans", 600, 30))
+        ax.plot([real, model], [i, i], color=t.data, lw=pt(3), zorder=2, solid_capstyle="round")
+        ax.scatter([real], [i], s=pt(26) ** 2, facecolor=t.paper, edgecolor=t.data, linewidth=pt(3), zorder=3)
+        ax.scatter([model], [i], s=pt(26) ** 2, facecolor=t.ai, edgecolor=t.paper, linewidth=pt(3), zorder=4)
+    b.y += 70
+    b.source("Share answering yes in each party, 2024 Cooperative Election Study; GLM asked both ways and averaged.")
+
+    c = new().headline("So each group’s views come from real survey answers.", px=80)
+    c.text("A general model gets the direction of a vote right, but it smooths out how strongly groups feel. Our own "
+           "model, trained on real survey answers, sets where each group starts.", px=40, color=theme.ink2, after=1.2)
+    c.note("We never take a group’s opinions from a general model.", width=700)
+    c.source("Forecasts go public on Monday 12 October.")
+
+    return Post(day, "Lab notes 05: the model made partisans lukewarm", [
+        (a, "Ask a model how Democrats rate Biden, and they come out lukewarm: 83% of Democrats approved of him in "
+            "real 2024 survey answers, 44% among GLM's voter personas. Same people, same question."),
+        (b, "Strong views came out softer, votes held up. Dot chart, real survey answers versus GLM's personas: "
+            "Democrats approving of Biden 83% vs 44%; Democrats saying the economy got better 53% vs 18%; "
+            "Republicans approving of Biden 4% vs 15%; Democrats who voted Harris 96% vs 93%."),
+        (c, "So each group's views come from real survey answers: our own model, trained on them, sets where each "
+            "group starts. We never take a group's opinions from a general model."),
+    ], f"""Ask a general AI model to answer as a Democrat, and it gets the vote right but the feeling wrong. That's what we found when we gave GLM the same 14 questions real people answered in the 2024 Cooperative Election Study.
+
+In the real answers, 83% of Democrats approved of President Biden. GLM's voter personas, built from the same people's survey answers, came out at 44%. Republicans went the other way: 4% approval in real life, 15% from the model. Democrats saying the economy had got better: 53% real, 18% from the model.
+
+Votes held up much better. 96% of Democrats in the survey voted for Harris, and the model said 93%. So the model knows which side people are on, but it smooths out how strongly they feel, and in a forecast that's exactly the part that matters: how firmly each group holds its views decides how much the news can move it.
+
+That's why we never take a group's opinions from a general model. Our own model, trained on real survey answers, sets where each group starts, and the general models only tell us which way groups react to the day's news.
+
+All our Lab notes: notapoll.org/lab-notes
+
+#midterms2026 #elections
+
+{DISCLAIMER}""", [
+        f"Ask a model how Democrats rate Biden: 83% approved in real 2024 survey answers, 44% among its voter "
+        f"personas. {LABEL}.",
+        "Votes held up (96% of Democrats voted Harris, the model said 93%), but strong views came out softer.",
+        "So each group's views come from real survey answers, and general models only give the direction of a "
+        "reaction.",
+    ], allow=("survey",), short=("Ask a model how Democrats rate Biden: 83% approved in real 2024 survey answers, "
+                                 "44% among its voter personas. Votes held up (96% vs 93%), strong views came out "
+                                 "softer. So each group's views come from real survey answers."),
+        more=" More in our Lab notes: notapoll.org/lab-notes.")
+
+
+EPISODES = {1: ep01, 2: ep02, 3: ep03, 4: ep04, 5: ep05}
 
 
 def daily(n: int, folder: str, theme: Theme = LAB) -> tuple[Path, list[str]]:

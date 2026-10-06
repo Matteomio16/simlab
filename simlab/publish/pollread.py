@@ -29,7 +29,8 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Alaska Survey Research": "Alaska Survey Res.", "Rasmussen Reports": "Rasmussen",
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
-         "Stratus Intelligence": "Stratus", "Marist University": "Marist"}
+         "Stratus Intelligence": "Stratus", "Marist University": "Marist",
+         "Bowling Green State University/YouGov": "BGSU/YouGov", "Suffolk University": "Suffolk"}
 
 STORIES = {
     "2026-10-05": {
@@ -96,6 +97,37 @@ STORIES = {
         "more": " We'll check it against the next three polls. Reading the polls.",
         "alt1": ("Dot chart of ten Texas Senate polls since mid-September, Talarico minus Paxton. Nine sit between a "
                  "tie and Talarico +6; the Pulse Decision Science poll is the only one with Paxton ahead, by 3."),
+    },
+    "2026-10-07": {
+        "race": "OH-S", "since": "2026-09-01", "focus": "Marist University", "folder": "07-reading-polls-03",
+        "left": "Brown", "right": "Husted",
+        "headline": "One Ohio poll has Brown up 8. The ten others average about +3.",
+        "dek": "Eleven Senate polls since September: Brown (D) minus Husted (R).",
+        "source": "Polls ending 9 Sep – 1 Oct 2026. Data: VoteHub (CC BY 4.0) and Wikipedia (CC BY-SA 4.0).",
+        "title2": "Registered, or likely?",
+        "against": ["It asked all registered voters; the other ten asked likely voters.",
+                    "Marist has leaned about 2 points toward Democrats against the average pollster, 2018–24.",
+                    "The ten likely-voter polls since September average Brown +3."],
+        "for": "It’s a large sample, 1,298 voters, from an established pollster, and Brown has led in every Ohio "
+               "poll this month.",
+        "hypothesis": "Our hypothesis: nearer Brown +3. We’ll check it against the next three polls.",
+        "caption": (
+            "A new Ohio Senate poll from Marist has Sherrod Brown ahead of Jon Husted by 8 points, 51 to 43. The ten "
+            "other polls since September average about Brown +3.\n\n"
+            "The biggest difference is who was asked. Marist asked all registered voters; the other ten asked likely "
+            "voters, the people expected to turn out, and in a midterm that group can look quite different. Marist "
+            "has also leaned about 2 points toward Democrats compared with the average pollster in 2018 to 2024.\n\n"
+            "But it's a large sample from an established pollster, and Brown has led in every Ohio poll this month, so "
+            "the direction isn't in doubt. The size is.\n\n"
+            "Our hypothesis: the race is closer to Brown +3, where the likely-voter polls sit. We'll check it against "
+            "the next three polls and report back.\n\n"
+            "#midterms2026 #Ohio #elections"),
+        "short": ("A new Ohio poll, Marist, has Brown up 8 on Husted. The ten others since September average about +3. "
+                  "Marist asked registered voters, the others likely voters, and it has leaned about 2 points "
+                  "toward Democrats. Our hypothesis: nearer Brown +3."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "alt1": ("Dot chart of eleven Ohio Senate polls since September, Brown minus Husted. Ten likely-voter polls "
+                 "sit between Brown +0.5 and Brown +5; Marist, of registered voters, is furthest out at Brown +8."),
     },
 }
 
