@@ -2,6 +2,35 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-06 (Statistics session): poll-weight test extended to 2014 and 2016 (Matteo's yes, via the roadmap session)
+
+- **Only election eve can be tested for 2014 and 2016.** The local full-cycle Senate poll files start in 2018. For 2014
+  and 2016 only 538's pollster-ratings polls from the last three weeks are on disk, so those years test election eve,
+  not five weeks out.
+- **Method** (`runs/backtest_eve_2014_2022.csv`):
+  - a poll counts if it ended at least 4 days before the election (end date plus a few days, standing in for
+    publication);
+  - the poll average is the simple mean of each race's polls, races with 3+;
+  - the national mood is the final generic-ballot average, lowered by its historical lean computed without the tested
+    year;
+  - the fundamentals are refitted without the tested year.
+- **RMSE of the margin, points, election eve:**
+
+  | | 2014 | 2016 | 2018 | 2020 | 2022 | all 108 races |
+  |---|---|---|---|---|---|---|
+  | 70/30 | 5.5 | 6.6 | 4.7 | 5.0 | 5.4 | 5.5 |
+  | 85/15 | 5.5 | 6.3 | 4.5 | 6.3 | 5.8 | 5.7 |
+  | polls only | 6.0 | 6.3 | 4.7 | 7.8 | 6.3 | 6.3 |
+
+- **Reading:**
+  - At election eve 70/30 is best overall and in 2014, 2020 and 2022.
+  - In 2016 and 2018 heavier poll weights did slightly better (by 0.3).
+  - Five weeks out (the no-peeking backtest, 2018-2024) 70/30 won every cycle.
+  - This is the model's design: the poll weight comes from the fitted variances and rises from about 0.6-0.7 five
+    weeks out to about 0.8 on election day.
+  - The full backtest at 1 day out (2018-2024, house-effect-adjusted averages) had 70/30 best in all four cycles. The
+    simple poll mean here is a cruder average.
+
 ## 2026-10-05 (Statistics session): poll weight checked cycle by cycle (Matteo's question)
 
 Matteo asked whether 70/30 (polls/fundamentals) beat polls only and 85/15 consistently. Data: the no-peeking backtest
