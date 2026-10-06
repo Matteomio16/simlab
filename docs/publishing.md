@@ -174,3 +174,26 @@ Tests: `python -m unittest tests.test_kit`.
 - **Checks on top of `text.py`:** every forecast number beside the poll average, market and Cook; 35–65% called a
   toss-up; "no meaningful change" when the 7-day change is small; character limits (Instagram 2,200, thread posts
   280). A failed check will block the approval flag once posting is automated.
+
+## Two posts a day and platform tailoring (Matteo, 6-7 Oct)
+
+- **Rhythm:** 14:00 Paris a Lab note (the daily forecast from 12 Oct), 18:00 Paris Reading the polls
+  (`pollread.py`: one real poll, why it may overstate, why it may be right, one hypothesis; alternate which party the
+  featured poll favours). Approval: the scheduled task `notapoll-evening-approval` (19:00 Paris) drafts the next day's
+  posts in its own window and Matteo approves there or in the Content & site session, never through another session.
+  Approved folders go in `kits/daily/APPROVED.json`; images to `site/public/social/<folder>/`; then
+  `python -m simlab.publish.buffer queue-daily FOLDER "YYYY-MM-DD HH:MM"`.
+- **Every platform gets its own text** (research 7 Oct: Mosseri on Instagram signals; X's open-source ranker; Threads
+  reach guides). The slides stay the same.
+  - **X:** the hook in the first line (the number and the surprise), no link in the post (links cut reach), the label
+    at the end. Replies matter most: a reply the author answers is weighted far above a like, so answer replies in the
+    first hour.
+  - **Threads:** conversational, shorter than the caption, ends with one genuine question people can answer from their
+    own view (never bait); one topic tag in `meta.json` (`threads_topic`, e.g. "2026 Midterms"); images on every post.
+    Early replies drive reach: reply to every comment in the first hour.
+  - **Instagram:** the first line carries the searchable words (state, race, "Senate poll", "2026 midterms"); 3-5
+    hashtags at the end; an optional first comment (`instagram_first_comment`) with the question or the sources.
+    Sends (DM shares) and saves are the strongest signals: one clear chart people want to send.
+  - **Bluesky:** link-friendly; the full disclaimer with the link when it fits.
+- Fields: `pollread.STORIES[day]` and `labnotes.Post.platform` take optional `x`, `threads`, `topic`,
+  `first_comment`; the builders write `single-post.md` and `meta.json`, which `buffer.py` reads.

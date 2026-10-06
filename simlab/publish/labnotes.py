@@ -6,6 +6,7 @@ Test-bench numbers come from runs/scorecard.jsonl; the outlet-name test was prin
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 from dataclasses import dataclass
@@ -37,6 +38,7 @@ class Post:
     allow: tuple[str, ...] = ()
     short: str = ""  # X and Bluesky
     more: str = ""  # added for Threads
+    platform: dict | None = None  # optional "x", "threads" texts and "topic", "first_comment"
 
 
 def ep01(theme: Theme = LAB) -> Post:
@@ -402,8 +404,12 @@ def daily(n: int, folder: str, theme: Theme = LAB) -> tuple[Path, list[str]]:
     (out / "caption.txt").write_text(post.instagram, encoding="utf-8")
     (out / "alt-text.txt").write_text("".join(f"slide-{i}.jpg: {a}\n" for i, (_, a) in enumerate(post.slides, 1)),
                                       encoding="utf-8")
-    posts = {"x": end(post.short, LIMIT["x"], X_LINK), "bluesky": end(post.short, LIMIT["bluesky"]),
-             "threads": end(post.short + post.more, LIMIT["threads"])}
+    pf = post.platform or {}
+    posts = {"x": end(pf.get("x", post.short), LIMIT["x"], X_LINK), "bluesky": end(post.short, LIMIT["bluesky"]),
+             "threads": end(pf.get("threads", post.short + post.more), LIMIT["threads"])}
+    meta = {k2: pf[k1] for k1, k2 in (("topic", "threads_topic"), ("first_comment", "instagram_first_comment"))
+            if pf.get(k1)}
+    (out / "meta.json").write_text(json.dumps(meta, indent=1, ensure_ascii=False), encoding="utf-8")
     lines = ["# Single posts (X and Threads through Buffer; Bluesky by hand)", ""]
     for k in ("x", "threads", "bluesky"):
         t = posts[k]

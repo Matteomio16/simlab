@@ -229,8 +229,14 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
         problems += [f"slide {i}: {x}" for x in text.slide_problems(s, ALLOW)]
         s.save(out / f"slide-{i}.jpg")
     caption = f"{st['caption']}\n\n{DISCLAIMER}"
-    posts = {"x": end(st["short"], LIMIT["x"], X_LINK), "bluesky": end(st["short"], LIMIT["bluesky"]),
-             "threads": end(st["short"] + st["more"], LIMIT["threads"])}
+    posts = {"x": end(st.get("x", st["short"]), LIMIT["x"], X_LINK), "bluesky": end(st["short"], LIMIT["bluesky"]),
+             "threads": end(st.get("threads", st["short"] + st["more"]), LIMIT["threads"])}
+    meta = {k2: st[k1] for k1, k2 in (("topic", "threads_topic"), ("first_comment", "instagram_first_comment"))
+            if st.get(k1)}
+    (out / "meta.json").write_text(json.dumps(meta, indent=1, ensure_ascii=False), encoding="utf-8")
+    if meta.get("instagram_first_comment"):
+        problems += [f"first comment: {x}" for x in text.check(meta["instagram_first_comment"], caption=False,
+                                                                allow=ALLOW)]
     alt2 = " ".join([st["title2"], "Why it may be too high:", *st["against"], "Why it may be right:", st["for"],
                      st["hypothesis"]])
     (out / "caption.txt").write_text(caption, encoding="utf-8")
