@@ -13,12 +13,13 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 from PIL import Image
 
 from ..core import RUNS
 from ..scorecard import latest
 from . import charts, text
-from .frame import DISCLAIMER, LABEL, SITE, Slide, Theme, pt, typeset
+from .frame import DISCLAIMER, LABEL, MARGIN, SITE, Slide, Theme, pt, typeset
 from .themes import LAB
 
 KITS = RUNS.parent / "kits" / "labnotes"
@@ -582,7 +583,98 @@ All our Lab notes: notapoll.org/lab-notes
         })
 
 
-EPISODES = {1: ep01, 2: ep02, 3: ep03, 4: ep04, 5: ep05, 6: ep06, 7: ep07, 8: ep08}
+def ep09(theme: Theme = LAB) -> Post:
+    """How to read our forecast (content-plan §3, no. 9): an example card, stamped EXAMPLE, with invented numbers."""
+    from . import racecards as rc
+    day, k = date(2026, 10, 11), "Lab notes 09"
+    new = lambda: Slide(day, "", theme, series=k)
+    r = rc.RACE | {"today": 0.61, "kicker": "EXAMPLE · INVENTED NUMBERS",
+                   "source": "EXAMPLE: invented numbers, not a forecast. Real cards from Monday 12 October."}
+    card_path = KITS.parent / "daily" / "11-lab-notes-09" / "example-card.png"
+    card_path.parent.mkdir(parents=True, exist_ok=True)
+    rc.stamped(theme, r).save(card_path)
+
+    a = new().headline("From tomorrow, every Senate race gets a card like this.", px=68)
+    img = Image.open(card_path)
+    cw = 600
+    ch = cw * img.height / img.width
+    x0, y0 = MARGIN, a.y + 6
+    a.ax.imshow(img, extent=(x0, x0 + cw, y0 + ch, y0), zorder=2)
+    a.ax.add_patch(plt.Rectangle((x0, y0), cw, ch, fill=False, ec=theme.hairline, lw=pt(2), zorder=3))
+    rc.stamp(a, x0 + cw + 150, y0 + 170, "Example", px=52, rot=-8, color=theme.rep)
+    tx = x0 + cw + 40
+    a.y = y0 + 320
+    a.text("Invented numbers. Real forecasts start Monday 12 October.", "sans", 600, 32, theme.ink2,
+           x=tx, width=a.w - MARGIN - tx)
+    a.y = y0 + ch + 20
+    a.source("Our daily race card, with invented numbers.")
+
+    b = new().headline("How to read it.", px=96)
+    points = ["58 in 100: the Democrat wins 58 of every 100 simulated elections. About 6 in 10, not a vote share.",
+              "Anywhere from 35 to 65 in 100, we call the race a toss-up.",
+              "Beside our number: the poll average, the prediction markets and Cook.",
+              "Today and 3 November can differ: most news fades before election day."]
+    for n, line in enumerate(points, 1):
+        top = b.y
+        b._put(MARGIN, top - 6, str(n), "hero", theme.hero_weight, 64, theme.ai, va="top")
+        b.text(line, "serif", 600, 38, x=MARGIN + 76, width=b.width - 76, after=0.7)
+    b.source("Each card: 40,000 simulated elections per race, run every morning.")
+
+    c = new().headline("Every forecast is timestamped. Every miss is published.", px=80)
+    c.text("Each card carries its run code and date. From 19 October, every Monday, we score our calls against the "
+           "poll average, the markets and Cook, misses first.", px=40, color=theme.ink2, after=1.2)
+    c.note("First forecasts: tomorrow, Monday 12 October.", width=700)
+    c.source("notapoll.org")
+
+    return Post(day, "Lab notes 09: how to read our forecast", [
+        (a, "From tomorrow, every Senate race gets a card like this. An example race card for Ohio with invented numbers, "
+            "stamped EXAMPLE: 58 in 100 simulated elections won by the Democrat, a toss-up, with the poll average, "
+            "the market and Cook beside it. Real forecasts start Monday 12 October."),
+        (b, "How to read it: 58 in 100 means the Democrat wins 58 of every 100 simulated elections, about 6 in 10, not a "
+            "vote share. From 35 to 65 in 100 we call it a toss-up. Beside our number: the poll average, the "
+            "prediction markets and Cook. Today and 3 November can differ, because most news fades before election "
+            "day."),
+        (c, "Every forecast is timestamped and every miss is published: each card carries its run code and date, and "
+            "from 19 October we score our calls every Monday against the poll average, the markets and Cook, misses "
+            "first. First forecasts: Monday 12 October."),
+    ], f"""How to read the 2026 midterm forecast we start publishing tomorrow, Monday 12 October. Here's a race card with invented numbers, so you know what you're looking at when the real ones arrive.
+
+The big number is how many of our simulated elections a candidate wins. "58 in 100" means the Democrat won 58 of every 100 times we played the race out, about 6 in 10. It's a chance of winning, not a share of the vote. Anything from 35 to 65 in 100 we call a toss-up.
+
+Our number never stands alone. Each card shows the poll average, the prediction markets and the Cook Political Report beside it, so you can see where we agree and where we don't.
+
+There are two numbers in time: if the election were today, and on 3 November. They can differ, because most news fades before election day.
+
+And every forecast is timestamped. From 19 October, every Monday, we'll score our calls against the polls, the markets and Cook, misses first.
+
+All our Lab notes: notapoll.org/lab-notes
+
+#midterms2026 #elections #forecast
+
+{DISCLAIMER}""", [
+        f"From tomorrow, every Senate race gets a card like this one (invented numbers). {LABEL}.",
+        "58 in 100 means the Democrat wins 58 of every 100 simulated elections: about 6 in 10, not a vote share. 35 to "
+        "65 is a toss-up.",
+        "Beside our number: the poll average, the markets and Cook. Every Monday from 19 October, we score our calls, "
+        "misses first.",
+    ], allow=("poll", "polls"), short=("From tomorrow, every Senate race gets a card like this. 58 in 100 means the "
+                                       "Democrat wins 58 of every 100 simulated elections, not 58% of the vote. Beside "
+                                       "it: the poll average, the markets and Cook. Example, invented numbers."),
+        more=" First forecasts: Monday 12 October. More: notapoll.org/lab-notes.",
+        platform={
+            "x": ("From tomorrow, every Senate race gets a card like this (invented numbers here). 58 in 100 = wins "
+                  "58 of every 100 simulated elections, not 58% of the vote. And it always sits beside the polls, the "
+                  "markets and Cook."),
+            "threads": ("Tomorrow we start publishing our 2026 midterm forecast. Here's how to read a race card, with "
+                        "invented numbers: 58 in 100 means a candidate wins 58 of every 100 simulated elections, not 58% "
+                        "of the vote, and 35 to 65 is a toss-up. Our number always sits beside the poll average, the "
+                        "markets and Cook. Which race do you most want to see first?"),
+            "topic": "2026 Midterms",
+            "first_comment": "Which Senate race do you most want to see first tomorrow?",
+        })
+
+
+EPISODES = {1: ep01, 2: ep02, 3: ep03, 4: ep04, 5: ep05, 6: ep06, 7: ep07, 8: ep08, 9: ep09}
 
 
 def daily(n: int, folder: str, theme: Theme = LAB) -> tuple[Path, list[str]]:
