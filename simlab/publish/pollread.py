@@ -129,6 +129,47 @@ STORIES = {
         "alt1": ("Dot chart of eleven Ohio Senate polls since September, Brown minus Husted. Ten likely-voter polls "
                  "sit between Brown +0.5 and Brown +5; Marist, of registered voters, is furthest out at Brown +8."),
     },
+    "2026-10-08": {
+        "race": "FL-S", "since": "2026-09-15", "focus": "Mason-Dixon", "folder": "08-reading-polls-04",
+        "left": "Nixon", "right": "Moody",
+        "headline": "A new Florida poll has Moody up 10. The five others average about +5.",
+        "dek": "Six Senate polls since mid-September: Nixon (D) minus Moody (R), likely voters.",
+        "source": "Polls ending 17 Sep – 5 Oct 2026. Data: VoteHub (CC BY 4.0) and Wikipedia (CC BY-SA 4.0).",
+        "title2": "Too wide, or right?",
+        "against": ["625 voters: on a sample this size, the gap can swing about 8 points either way.",
+                    "YouGov polled the same week with 3,813 voters and found Moody +5.",
+                    "The five other polls since mid-September average Moody +5."],
+        "for": "Mason-Dixon has leaned less than a point in our 2018–24 records, Stetson also has Moody up 11, and "
+               "Trump won Florida by 13 in 2024.",
+        "hypothesis": "Our hypothesis: nearer Moody +6. We’ll check it against the next three polls.",
+        "caption": (
+            "Florida Senate poll: a new Mason-Dixon survey has Ashley Moody ahead of Angie Nixon by 10 points, 50 to "
+            "40. The five other polls since mid-September average about Moody +5, from a tie to Moody +11.\n\n"
+            "There are reasons to read it carefully. It's 625 likely voters, and on a sample that size the gap can "
+            "move about 8 points either way. YouGov was in the field the same week with 3,813 voters and found Moody "
+            "ahead by 5.\n\n"
+            "But it could be right. Mason-Dixon has leaned less than a point compared with the average pollster in "
+            "2018 to 2024, Stetson found a similar Moody +11 in September, and Trump won Florida by 13 points in "
+            "2024.\n\n"
+            "Our hypothesis: Moody is ahead, but nearer +6 than +10. We'll check it against the next three polls and "
+            "report back.\n\n"
+            "#midterms2026 #Florida #FloridaSenate #elections"),
+        "short": ("A new Florida poll, Mason-Dixon, has Moody up 10 on Nixon. The five others since mid-September "
+                  "average about +5, and YouGov found +5 the same week. Small sample, but Mason-Dixon barely leans. "
+                  "Our hypothesis: nearer Moody +6."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("Mason-Dixon has Moody up 10 in Florida. YouGov, same week, 3,813 voters: Moody +5. Six polls since "
+              "mid-September run from a tie to Moody +11. Our hypothesis: nearer +6, checked against the next three "
+              "polls."),
+        "threads": ("Two Florida Senate polls from the same week: Mason-Dixon has Ashley Moody up 10 on Angie Nixon, "
+                    "YouGov has her up 5. Mason-Dixon barely leans in past cycles, but 625 voters is a small sample. "
+                    "We think the race is nearer Moody +6, and we'll check it against the next three polls. If you "
+                    "live in Florida, does this race feel close where you are?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you live in Florida, does this Senate race feel close where you are?",
+        "alt1": ("Dot chart of six Florida Senate polls since mid-September, Nixon minus Moody. They run from a tie "
+                 "to Moody +11; the newest Mason-Dixon poll, ringed, has Moody +10."),
+    },
 }
 
 
@@ -150,11 +191,12 @@ def candidates(polls: Path, days: int = 7) -> pd.DataFrame:
         ["race_id", "pollster", "end", "population", "left", "right", "n", "tag", "margin", "mean", "count", "dev"]]
 
 
-def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, lim: float = 10,
+def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, lim: float | None = None,
                 row: float | None = None) -> dict:
     """One row per poll, oldest at the top: a dot at the gap (left minus right), the featured poll ringed. Returns
     the artists, so the reel can reveal them one by one."""
     t = s.t
+    lim = lim or (10 if p.gap.abs().max() <= 8 else 20)
     ax = s.chart((row or min(54, 480 / len(p))) * len(p), left=340, right=40)
     ax.set_xlim(-lim, lim)
     ax.set_ylim(len(p) - 0.5, -0.5)
