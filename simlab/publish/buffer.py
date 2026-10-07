@@ -95,11 +95,18 @@ def posts_for(folder: str, base: str, pack: Path = PACK) -> list[dict]:
     single = (d / "single-post.md").read_text(encoding="utf-8")
     meta = json.loads((d / "meta.json").read_text(encoding="utf-8")) if (d / "meta.json").exists() else {}
     ig = {"type": "post", "shouldShareToFeed": True}
-    if meta.get("instagram_first_comment"):
-        ig["firstComment"] = meta["instagram_first_comment"]
-    out = [{"service": "instagram", "text": (d / "caption.txt").read_text(encoding="utf-8"), "assets": imgs,
-            "metadata": {"instagram": ig}}]
-    if folder == "01-intro":  # the one Buffer thread (Buffer Free queues one at a time)
+    caption = (d / "caption.txt").read_text(encoding="utf-8")
+    if meta.get("instagram_first_comment") and "\n\n#" in caption:  # Buffer Free has no first comment: the question
+        head, tail = caption.split("\n\n#", 1)                       # goes in the caption, before the hashtags
+        caption = f"{head}\n\n{meta['instagram_first_comment']}\n\n#{tail}"
+    reel = meta.get("reel") and (d / "reel.mp4").exists()  # Instagram Reel and X video; Threads keeps the slides
+    video = [{"video": {"url": f"{base}/{folder}/reel.mp4", "thumbnailUrl": f"{base}/{folder}/reel-cover.jpg"}}]
+    if reel:
+        ig["type"] = "reel"
+    out = [{"service": "instagram", "text": caption, "assets": video if reel else imgs, "metadata": {"instagram": ig}}]
+    if reel:
+        out.append({"service": "twitter", "text": section(single, "X"), "assets": video})
+    elif folder == "01-intro":  # the one Buffer thread (Buffer Free queues one at a time)
         parts = (d / "thread.txt").read_text(encoding="utf-8").split("\n\n---\n\n")
         # Buffer's thread list includes the first post, which also stays in `text` (examples/create-threaded-post)
         thread = [{"text": parts[0], "assets": imgs[:X_IMAGES]}] + [{"text": t, "assets": []} for t in parts[1:]]
@@ -146,8 +153,9 @@ def send(folder: str, posts: list[dict], due: str, chs: dict) -> None:
         if p["service"] not in chs:
             print(f"skip {folder} {p['service']}: channel not connected in Buffer")
             continue
-        dead = [a["image"]["url"] for a in p["assets"] if requests.head(a["image"]["url"], timeout=20)
-                .status_code != 200]
+        urls = [u for a in p["assets"] for u in ((a.get("image") or a["video"])["url"],
+                                                  (a.get("video") or {}).get("thumbnailUrl")) if u]
+        dead = [u for u in urls if requests.head(u, timeout=20).status_code != 200]
         if dead:
             raise SystemExit(f"{folder}: images not reachable yet: {dead[:2]}")
         print(folder, p["service"], create(p, chs[p["service"]]["id"], due))

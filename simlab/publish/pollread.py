@@ -150,10 +150,12 @@ def candidates(polls: Path, days: int = 7) -> pd.DataFrame:
         ["race_id", "pollster", "end", "population", "left", "right", "n", "tag", "margin", "mean", "count", "dev"]]
 
 
-def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, lim: float = 10):
-    """One row per poll, oldest at the top: a dot at the gap (left minus right), the featured poll ringed."""
+def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, lim: float = 10,
+                row: float | None = None) -> dict:
+    """One row per poll, oldest at the top: a dot at the gap (left minus right), the featured poll ringed. Returns
+    the artists, so the reel can reveal them one by one."""
     t = s.t
-    ax = s.chart(min(54, 480 / len(p)) * len(p), left=340, right=40)
+    ax = s.chart((row or min(54, 480 / len(p))) * len(p), left=340, right=40)
     ax.set_xlim(-lim, lim)
     ax.set_ylim(len(p) - 0.5, -0.5)
     ax.set_yticks([])
@@ -166,19 +168,22 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
         if x:
             ax.axvline(x, color=t.hairline, lw=pt(1), zorder=0)
     others = p[p.pollster != focus].gap.mean()
-    ax.axvline(others, color=t.ink2, lw=pt(2), ls=(0, (3, 3)), zorder=1)
+    avg = ax.axvline(others, color=t.ink2, lw=pt(2), ls=(0, (3, 3)), zorder=1)
+    rows = []
     for i, row in enumerate(p.itertuples()):
         c = t.dem if row.gap > 0 else t.rep if row.gap < 0 else t.data
         hot = row.pollster == focus
-        ax.scatter([row.gap], [i], s=pt(34 if hot else 24) ** 2, facecolor=c, edgecolor=t.ink if hot else t.paper,
-                   linewidth=pt(4 if hot else 3), zorder=4 if hot else 3)
+        dot = ax.scatter([row.gap], [i], s=pt(34 if hot else 24) ** 2, facecolor=c,
+                         edgecolor=t.ink if hot else t.paper, linewidth=pt(4 if hot else 3), zorder=4 if hot else 3)
         name = f"{SHORT.get(row.pollster, row.pollster)}, {row.end.day} {row.end:%b}"
-        ax.text(-lim * 1.04, i, typeset(name), va="center", ha="right", color=t.ink,
-                fontproperties=s.font("sans", 600 if hot else 400, 27))
+        label = ax.text(-lim * 1.04, i, typeset(name), va="center", ha="right", color=t.ink,
+                        fontproperties=s.font("sans", 600 if hot else 400, 27))
+        tag = None
         if hot:
             who = left if row.gap > 0 else right
-            ax.text(row.gap, i - 0.62, typeset(f"{who} +{abs(row.gap):.0f}"), va="bottom", ha="center", color=t.ink,
-                    fontproperties=s.font("sans", 600, 28))
+            tag = ax.text(row.gap, i - 0.62, typeset(f"{who} +{abs(row.gap):.0f}"), va="bottom", ha="center",
+                          color=t.ink, fontproperties=s.font("sans", 600, 28))
+        rows.append({"dot": dot, "label": label, "tag": tag, "hot": hot})
     s.y += 50
     x0, x1 = MARGIN + 340, s.w - MARGIN
     arrow = s.pil("mono", 400, 26).getlength("← ")
@@ -188,10 +193,10 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
     s._put(x1 - arrow, s.y, f"{left} ahead", "sans", 400, 26, t.ink2, ha="right", va="top")
     s.y += 44
     lead = f"{left} +{others:.0f}" if round(others) > 0 else f"{right} +{-others:.0f}" if round(others) < 0 else "even"
-    s._put(x0, s.y, f"- - -  average of the other {len(p) - 1}: {lead}", "sans", 400, 26, t.ink2,
-           va="top")
+    avg_text = s._put(x0, s.y, f"- - -  average of the other {len(p) - 1}: {lead}", "sans", 400, 26, t.ink2,
+                      va="top")
     s.y += 50
-    return others
+    return {"rows": rows, "avg": [avg, avg_text], "others": others}
 
 
 def end(t: str, limit: int, link: int = 0) -> str:
@@ -255,17 +260,87 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
     return out, problems
 
 
+def reel(day: str, polls: Path, theme=LAB) -> dict:
+    """The 9:16 Reel of the day's story (Instagram Reel, X video): each poll lands in date order, then the average
+    line, then the featured poll, then the hypothesis. 30 fps, H.264, no sound; the cover is the last frame."""
+    import imageio_ffmpeg
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from PIL import Image
+
+    st, d = STORIES[day], date.fromisoformat(day)
+    p = load(polls, st["race"], st["since"], st.get("exclude", ()))
+    w, h, fps = 1080, 1920, 30
+    s = Slide(d, "", theme, size=(w, h), series=SERIES)
+    s.headline(st["headline"], px=64)  # no dek: the axis labels say what the dots are
+    s.y += 10
+    art = strip_chart(s, p, st["focus"], st["left"], st["right"], row=min(48, 460 / len(p)))
+    s.source(st["source"])
+    n_patches, n_texts = len(s.ax.patches), len(s.ax.texts)
+    s.note(st["hypothesis"], width=900, px=34)
+    note = s.ax.patches[n_patches:] + s.ax.texts[n_texts:]
+    if bad := s.layout_problems() + s.missing_glyphs() + text.slide_problems(s, ALLOW):
+        raise ValueError(f"reel layout: {bad}")
+
+    start, step = 0.8, 0.45
+    calm = [r for r in art["rows"] if not r["hot"]]
+    hot = [r for r in art["rows"] if r["hot"]]
+    times = {id(r): start + i * step for i, r in enumerate(calm)}
+    t_avg = start + len(calm) * step + 0.3
+    for r in hot:
+        times[id(r)] = t_avg + 0.9
+    t_note, total = t_avg + 2.3, t_avg + 5.2
+    base = {id(r): r["dot"].get_sizes()[0] for r in art["rows"]}
+
+    out = KITS / "daily" / st["folder"] / "reel.mp4"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    writer = imageio_ffmpeg.write_frames(str(out), (w, h), fps=fps, codec="libx264", quality=8, macro_block_size=8,
+                                         pix_fmt_in="rgb24", pix_fmt_out="yuv420p",
+                                         output_params=["-movflags", "+faststart"])
+    writer.send(None)
+    frame = None
+    for f in range(int(total * fps)):
+        now = f / fps
+        for r in art["rows"]:
+            t0 = times[id(r)]
+            on = now >= t0
+            for a in (r["dot"], r["label"], r["tag"]):
+                if a is not None:
+                    a.set_visible(on)
+            if on:  # a short pop: lands at 1.8x its size, settles in 0.25 s
+                u = min((now - t0) / 0.25, 1)
+                r["dot"].set_sizes([base[id(r)] * (1.8 - 0.8 * u * u)])
+        for a in art["avg"]:
+            a.set_visible(now >= t_avg)
+        for a in note:
+            a.set_visible(now >= t_note)
+        s.fig.canvas.draw()
+        frame = np.asarray(s.fig.canvas.buffer_rgba())[:, :, :3]
+        writer.send(np.ascontiguousarray(frame))
+    writer.close()
+    cover = out.with_name("reel-cover.jpg")
+    Image.fromarray(frame).save(cover, quality=92, subsampling=0)
+    plt.close(s.fig)
+    meta_path = out.with_name("meta.json")  # tells buffer.py to send the Reel to Instagram and X
+    meta = json.loads(meta_path.read_text(encoding="utf-8")) if meta_path.exists() else {}
+    meta_path.write_text(json.dumps(meta | {"reel": True}, indent=1, ensure_ascii=False), encoding="utf-8")
+    return {"video": out, "cover": cover, "seconds": round(total, 1)}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--date")
     ap.add_argument("--polls", type=Path, required=True)
     ap.add_argument("--candidates", action="store_true")
+    ap.add_argument("--reel", action="store_true")
     a = ap.parse_args()
     if a.candidates:
         print(candidates(a.polls).head(25).to_string())
         return
     out, problems = build(a.date, a.polls)
     print(out, "; ".join(problems) or "all rules pass")
+    if a.reel:
+        print(reel(a.date, a.polls))
 
 
 if __name__ == "__main__":
