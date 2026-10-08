@@ -3,11 +3,12 @@ import Link from "next/link";
 import { SHOW } from "@/lib/site";
 import { notFound } from "next/navigation";
 import { SimLabel } from "@/components/Brand";
-import { DotPlot, HistoryLine, MarginRanges, ProbBar, Responsive } from "@/components/charts";
+import { DotPlot, HistoryLine, MarginRanges, Responsive } from "@/components/charts";
 import { HAS_FORECAST, IS_SAMPLE, load, raceCode, raceTitle, senateRacesSafe } from "@/lib/data";
 import { in100, leader, longDate, margin, partyName, partyVar, surname, tierColor } from "@/lib/format";
 import { STATES } from "@/lib/states";
 import TileMap from "@/components/TileMap";
+import SplitChance from "@/components/SplitChance";
 import ArrivalWash from "@/components/ArrivalWash";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
@@ -100,18 +101,12 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
 
       <section className="rise mt-8 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1fr]">
         <div>
-          <div className="flex items-end justify-between">
-            <div>
-              <p className="label-muted">{meta.candidates.left} ({L})</p>
-              <p className="mt-1 text-[3rem] font-extrabold leading-none tracking-[-0.02em]" style={{ color: partyVar(L) }}><CountUp value={in100(f.p_dem_win)} /></p>
-            </div>
-            <p className="label-muted pb-2">Chance in 100, Nov. 3</p>
-            <div className="text-right">
-              <p className="label-muted">{meta.candidates.right} (R)</p>
-              <p className="mt-1 text-[3rem] font-extrabold leading-none tracking-[-0.02em] text-rep"><CountUp value={100 - in100(f.p_dem_win)} /></p>
-            </div>
-          </div>
-          <div className="mt-4"><ProbBar p={f.p_dem_win} left={L} height={12} /></div>
+          <SplitChance p={f.p_dem_win} left={L} render={(v) => <CountUp value={v} />} />
+          <p className="mt-3 text-[0.9rem] text-ink-2">
+            <span className="font-semibold" style={{ color: partyVar(L) }}>{`${meta.candidates.left} (${L})`}</span>
+            <span className="text-muted"> vs. </span>
+            <span className="font-semibold text-rep">{`${meta.candidates.right} (R)`}</span>
+          </p>
           {today && (
             <p className="mt-4 border-t border-rule pt-3 text-[0.95rem] text-ink-2">
               If the election were today: <strong className="text-ink">{`${surname(today.name)}, ${in100(today.p)} in 100`}</strong>
