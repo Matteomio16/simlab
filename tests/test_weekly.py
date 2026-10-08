@@ -101,6 +101,13 @@ def offset_synthetic(b_true, noise=0.3, seed=0):
                          "v": noise ** 2}), m
 
 
+class AloneTest(unittest.TestCase):
+    def test_a_unit_whose_polls_say_nothing_reports_no_dial_rather_than_noise(self):
+        self.assertEqual(weekly._alone(np.zeros((2, 2)), np.zeros(2)), {"k": [None, None], "se": [None, None]})
+        out = weekly._alone(np.diag([100.0, 1e-9]), np.array([80.0, 0.0]))
+        self.assertEqual((out["k"][0], out["se"][0], out["k"][1]), (0.8, 0.1, None))
+
+
 class OffsetTest(unittest.TestCase):
     PRIOR = {"mean": [1.0, 1.0], "sd": [0.5, 0.5], "tau": [0.3, 0.3]}
 

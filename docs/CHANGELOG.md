@@ -2,6 +2,72 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-06 (Statistics session): poll-weight test extended to 2014 and 2016 (Matteo's yes, via the roadmap session)
+
+- **Only election eve can be tested for 2014 and 2016.** The local full-cycle Senate poll files start in 2018. For 2014
+  and 2016 only 538's pollster-ratings polls from the last three weeks are on disk, so those years test election eve,
+  not five weeks out.
+- **Method** (`runs/backtest_eve_2014_2022.csv`):
+  - a poll counts if it ended at least 4 days before the election (end date plus a few days, standing in for
+    publication);
+  - the poll average is the simple mean of each race's polls, races with 3+;
+  - the national mood is the final generic-ballot average, lowered by its historical lean computed without the tested
+    year;
+  - the fundamentals are refitted without the tested year.
+- **RMSE of the margin, points, election eve:**
+
+  | | 2014 | 2016 | 2018 | 2020 | 2022 | all 108 races |
+  |---|---|---|---|---|---|---|
+  | 70/30 | 5.5 | 6.6 | 4.7 | 5.0 | 5.4 | 5.5 |
+  | 85/15 | 5.5 | 6.3 | 4.5 | 6.3 | 5.8 | 5.7 |
+  | polls only | 6.0 | 6.3 | 4.7 | 7.8 | 6.3 | 6.3 |
+
+- **Reading:**
+  - At election eve 70/30 is best overall and in 2014, 2020 and 2022.
+  - In 2016 and 2018 heavier poll weights did slightly better (by 0.3).
+  - Five weeks out (the no-peeking backtest, 2018-2024) 70/30 won every cycle.
+  - This is the model's design: the poll weight comes from the fitted variances and rises from about 0.6-0.7 five
+    weeks out to about 0.8 on election day.
+  - The full backtest at 1 day out (2018-2024, house-effect-adjusted averages) had 70/30 best in all four cycles. The
+    simple poll mean here is a cruder average.
+
+## 2026-10-05 (Statistics session): poll weight checked cycle by cycle (Matteo's question)
+
+Matteo asked whether 70/30 (polls/fundamentals) beat polls only and 85/15 consistently. Data: the no-peeking backtest
+(`runs/backtest_senate_2018_2024.csv`: polls counted once published, fundamentals refitted without the tested year),
+Senate races with polls. RMSE of the margin, points:
+
+| | 70/30 | 85/15 | polls only | chain (own weight) |
+|---|---|---|---|---|
+| 35 days out, 2018 / 2020 / 2022 / 2024 | 5.6 / 4.4 / 8.6 / 5.2 | 6.1 / 5.6 / 9.5 / 5.5 | 7.0 / 7.1 / 10.5 / 5.9 | 5.6 / 3.7 / 7.6 / 5.2 |
+| 35 days out, all 100 races | 6.1 | 6.8 | 7.7 | 5.7 |
+| 14 days out, all | 5.5 | 6.1 | 7.0 | 5.2 |
+| 1 day out, all | 5.1 | 5.6 | 6.4 | 5.0 |
+
+- 70/30 beat both 85/15 and polls only in every cycle at all three horizons. The chain's own weight (median 0.56
+  five weeks out, 0.78 the day before) did best.
+- Why: polls alone ran too Democratic in every cycle, by 3-6 points on average five weeks out. The fundamentals hedge
+  that. In the pilot states the polls were too Democratic in 10 of 11 races (Ohio by 6-7 points in 2018, 2022 and
+  2024), and 70/30 came closer in 10 of 11.
+- Caveats: four cycles, not six. 2014 and 2016 are outside the no-peeking backtest because their polls lack
+  publication dates. Part of the edge is the polls' Democratic lean in those years.
+
+## 2026-10-05 (Statistics session): first weekly filter update reviewed
+
+- **Run 37292395167 (pilot day 1).** The update learned almost nothing yet, as expected after six days of stories and
+  few new polls.
+  - The dials sit just under 1: switching 0.90-0.93, turnout 0.96-0.99, with posterior spreads equal to the prior's.
+  - The GLM lean offset stayed at 0.078, not negative, so no flag.
+  - The fade half-life stayed at 5.44 days.
+  - One surprise flag: a single Idaho poll, z -2.6. One flag in 29 races at p < 0.01 is what chance gives, so no
+    action.
+- **Fixed:** `polls_alone` printed unidentified noise (e.g. a switching dial of 13 for Ohio) for units whose polls
+  carry no information yet. It now reports None until a dial's standard error is under 5 (bea8e32).
+- **Starting lines checked.** In all five pilot races the blend is exactly w x polls + (1 - w) x fundamentals, with
+  w = 0.69-0.71 five weeks out, and the win chances follow from it. The market sits more Democratic than us in Ohio and
+  Texas, where the fundamentals lean R and the polls lean D, and more Republican in Maine (Collins's record). That's
+  the designed difference: polls cap at about 80% by election day, and the market is never an input.
+
 ## 2026-09-30 (Statistics session): House seats' news uncertainty
 
 - **The House seats now carry news uncertainty like the Senate races** (`simlab/statsday.py`, `simlab/montecarlo.py`;

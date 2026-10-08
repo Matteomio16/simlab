@@ -298,7 +298,71 @@ def futures(t: Theme, r: dict = RACE) -> Slide:
     return s
 
 
-def stamped(t: Theme, r: dict = RACE) -> Slide:
+def hero_block(s: Slide, r: dict, x: float, top: float, w: float, style: str = "number"):
+    """The race's chance beside the map, in one of the styles under review (Matteo, 7 Oct: a bare 58 doesn't say
+    what it is). number: the original; split: 58 | 42 in party colours; bar: one split bar with the numbers inside;
+    labelled: "DEMOCRAT WINS" over a blue 58; versus: 58-42 in the two colours."""
+    t = s.t
+    left = round(r["p"] * 100)
+    right = 100 - left
+    lab_l = {"D": "DEM", "I": "IND", "O": "OTHER"}[r.get("left_party", "D")]
+    col_l, col_r = t.dem, t.rep
+    big_l = left >= right
+    if style == "number":
+        num = f"{left}"
+        s._put(x, top - 10, num, "hero", t.hero_weight, 150, t.ink, va="top")
+        s._put(x + s.pil("hero", t.hero_weight, 150).getlength(num) + 18, top + 16, "ON 3 NOV", "mono", 600, 24, t.ai,
+               va="top")
+        s._put(x, top + 150, "of 100 simulations", "sans", 400, 30, t.ink2, va="top")
+        s._put(x, top + 188, f"won by {who(r)}", "sans", 400, 30, t.ink2, va="top")
+    elif style == "split":
+        half = w / 2
+        for i, (n, lab, col, big) in enumerate(((left, lab_l, col_l, big_l), (right, "REP", col_r, not big_l))):
+            px = 120 if big else 84
+            xx = x + i * half
+            s._put(xx, top - 4, f"{lab} WINS", "sans", 700, 24, col, va="top")
+            s._put(xx, top + 30 + (120 - px) * 0.9, f"{n}", "hero", t.hero_weight, px, col, va="top")
+        y = top + 168
+        s.ax.add_patch(plt.Rectangle((x, y), w * left / 100, 16, color=col_l, lw=0))
+        s.ax.add_patch(plt.Rectangle((x + w * left / 100, y), w * right / 100, 16, color=col_r, lw=0))
+        s._put(x, y + 30, "of 100 simulations, 3 Nov", "sans", 400, 26, t.ink2, va="top")
+    elif style == "bar":
+        s._put(x, top - 4, f"{lab_l} WINS", "sans", 700, 24, col_l, va="top")
+        s._put(x + w, top - 4, "REP WINS", "sans", 700, 24, col_r, ha="right", va="top")
+        y, h = top + 36, 110
+        wl = w * left / 100
+        s.ax.add_patch(plt.Rectangle((x, y), wl, h, color=col_l, lw=0))
+        s.ax.add_patch(plt.Rectangle((x + wl, y), w - wl, h, color=col_r, lw=0))
+        s._put(x + 16, y + h / 2, f"{left}", "hero", t.hero_weight, 80, t.paper, va="center")
+        s._put(x + w - 16, y + h / 2, f"{right}", "hero", t.hero_weight, 80, t.paper, ha="right", va="center")
+        s._put(x, y + h + 14, "of 100 simulations, 3 Nov", "sans", 400, 26, t.ink2, va="top")
+    elif style == "labelled":
+        win_lab, win_n, win_col = (("DEMOCRAT" if lab_l == "DEM" else lab_l, left, col_l) if big_l
+                                   else ("REPUBLICAN", right, col_r))
+        lose_lab, lose_n, lose_col = (("Republican", right, col_r) if big_l
+                                      else ("Democrat" if lab_l == "DEM" else lab_l.title(), left, col_l))
+        s._put(x, top - 4, f"{win_lab} WINS", "sans", 700, 26, win_col, va="top")
+        s._put(x, top + 26, f"{win_n}", "hero", t.hero_weight, 140, win_col, va="top")
+        nx = x + s.pil("hero", t.hero_weight, 140).getlength(f"{win_n}") + 22
+        s._put(nx, top + 70, "in 100", "sans", 600, 30, t.ink2, va="top")
+        s._put(nx, top + 110, f"{lose_lab} {lose_n}", "sans", 600, 30, lose_col, va="top")
+        s._put(x, top + 196, "simulated elections, on 3 Nov", "sans", 400, 26, t.ink2, va="top")
+    elif style == "versus":
+        px = 112
+        a_txt, b_txt = f"{left}", f"{right}"
+        wa = s.pil("hero", t.hero_weight, px).getlength(a_txt)
+        dash = s.pil("hero", t.hero_weight, px).getlength("–")
+        s._put(x, top + 4, a_txt, "hero", t.hero_weight, px, col_l, va="top")
+        s._put(x + wa, top + 4, "–", "hero", t.hero_weight, px, t.muted, va="top")
+        s._put(x + wa + dash, top + 4, b_txt, "hero", t.hero_weight, px, col_r, va="top")
+        s._put(x, top + 4 + px * 1.05, lab_l, "sans", 700, 26, col_l, va="top")
+        s._put(x + wa + dash, top + 4 + px * 1.05, "REP", "sans", 700, 26, col_r, va="top")
+        s._put(x, top + 4 + px * 1.05 + 40, "wins in 100 simulations, 3 Nov", "sans", 400, 26, t.ink2, va="top")
+    else:
+        raise ValueError(style)
+
+
+def stamped(t: Theme, r: dict = RACE, hero: str = "split") -> Slide:  # split chosen by Matteo, 8 Oct
     """The Stamp: the state as a masthead, its simulated voters, the verdict stamped beside the number, a ledger."""
     s = slide(t, r)
     t = s.t
@@ -310,12 +374,7 @@ def stamped(t: Theme, r: dict = RACE) -> Slide:
     top = s.y
     charts.state_voters(s, r["usps"], r["code"], r["p"], MARGIN, top, 480, n=520, box_h=230)
     rx, rw = MARGIN + 540, s.width - 540
-    num = f"{r['p'] * 100:.0f}"
-    s._put(rx, top - 10, num, "hero", t.hero_weight, 150, t.ink, va="top")
-    s._put(rx + s.pil("hero", t.hero_weight, 150).getlength(num) + 18, top + 16, "ON 3 NOV", "mono", 600, 24, t.ai,
-           va="top")
-    s._put(rx, top + 150, "of 100 simulations", "sans", 400, 30, t.ink2, va="top")
-    s._put(rx, top + 188, f"won by {who(r)}", "sans", 400, 30, t.ink2, va="top")
+    hero_block(s, r, rx, top, rw, hero)
     label = verdict(r["p"], lean(r)).upper()
     spx = 48
     while spx > 26 and s.pil("hero", t.hero_weight, spx).getlength(label) + spx * 1.4 > rw - 20:
