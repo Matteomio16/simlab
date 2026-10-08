@@ -45,9 +45,10 @@ Pilot day 4 of 7.
 - **Spend:** the key stands at about $3.63 of the $19 after 8 Oct. 8 Oct's reactions cost $0.21 against $0.08 on 6 Oct
   for the same 1,288 rows; worth watching.
 - **House: broken since 5 Oct.** Every run since then, and the 7 Oct rehearsal, logs `House story effects don't add up
-  across their parts (gap 2.23)`, so `forecast.json` has `house: null`. 1-4 Oct worked. It started the day the first
-  weekly update set the state news dials (empty until 4 Oct); `house.py` and `statsday.py` are unchanged since 4 Oct.
-  The Senate forecast is unaffected. A fix session started 8 Oct. Fallback if it isn't fixed by Fri 9 Oct: the 40 House
+  across their parts (gap 2.23)`, so `forecast.json` has `house: null`. 1-4 Oct worked. Cause found 8 Oct: one seat,
+  NY-21, crossed the 15-point close line in the headline but not in the news parts (not the dials; CHANGELOG 8 Oct).
+  Fixed in `house.py` and checked on 5-8 Oct and the rehearsal; waiting for Matteo's yes to push before the 9 Oct run.
+  The Senate forecast is unaffected. Fallback if it isn't live by Fri 9 Oct: the 40 House
   seats launch on 12 Oct from statistics only (see Checkpoints).
 - **7 Oct full-scale rehearsal: passed except the House** (Matteo, 8 Oct). 23 minutes, $0.32, 6,440 reactions with
   none failed, post kit 0 problems. Once the House fix lands, the statistics step is re-run on the rehearsal copy only

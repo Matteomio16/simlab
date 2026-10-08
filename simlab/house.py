@@ -294,7 +294,9 @@ def build(base: dict, levels_json: dict, paths: dict | None = None, election: da
     relative to the national path; margin = n_now + r_t + the story effect left on election day; poll_margin adds
     today's. The fundamentals are anchored to this call's `levels_json` national E_hat. Cheap (no parsing): statsday
     calls it for the twin, the headline, the news parts and the "if the election were today" view (election=day).
-    `sd` excludes the national variance, which the Monte Carlo adds."""
+    A seat's prior width (close or safe) is set once a day by the first call, prepare's stats-only twin, so the news
+    can't move a seat across the close line in one call and not another (NY-21, 5-8 Oct): every call's margins stay
+    linear in the news. `sd` excludes the national variance, which the Monte Carlo adds."""
     s, hp, t, day, params = base["seats"], base["polls"], base["t"], base["day"], base["params"]
     paths = paths or {}
     path = lambda r: paths.get(r, paths.get("US", []))
@@ -320,10 +322,11 @@ def build(base: dict, levels_json: dict, paths: dict | None = None, election: da
                      * np.where(rows.partisan.isin(["DEM", "REP"]), 2.0, 1.0) * levels._flooding(rows))
     E = levels_json["national"]["E_hat"]
     fund, c = anchor(s, E)
+    close = base.setdefault("close", (fund.abs() < CLOSE).to_dict())
     tier = base.get("tier", {})
     races = {}
     for rid in s.index:
-        sd_f = SD_CLOSE if abs(fund[rid]) < CLOSE else SD_SAFE
+        sd_f = SD_CLOSE if close[rid] else SD_SAFE
         row = {"margin": float(fund[rid]), "sd": sd_f, "w_polls": 0.0, "poll_margin": None,
                "story_effect": 0.0, "story_effect_3nov": 0.0, "fundamentals": float(fund[rid]),
                "n_polls": 0, "last_poll": None}

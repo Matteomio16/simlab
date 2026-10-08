@@ -134,6 +134,25 @@ class Build(unittest.TestCase):
         self.assertEqual(head["OH-4"]["story_effect"], 0.0)
         self.assertEqual(twin["OH-1"]["sd"], house.SD_CLOSE if abs(twin["OH-1"]["fundamentals"]) < house.CLOSE else house.SD_SAFE)
 
+    def test_news_across_the_close_line(self):
+        """NY-21, 5-8 Oct: the headline's national vote moved its fundamentals across the close line (-15.2 to -14.9)
+        but no single news part did, so its margin jumped 2.2 points off the sum of the parts and statsday dropped
+        the House. The seat keeps the twin's prior width, and its margin moves linearly with the national vote."""
+        from datetime import date, timedelta
+        day = date(2026, 9, 29)
+        base = fake_base(day)
+        base["polls"] = pd.DataFrame([{"race_id": "OH-1", "pollster": "P", "start": day - timedelta(days=9),
+                                       "end": day - timedelta(days=7), "population": "lv", "partisan": "",
+                                       "left": 47.0, "right": 45.0, "n": 600, "margin": 100 * 2 / 92}])
+        lv = lambda e: {"national": {"E_hat": e, "var": 16.0}}
+        fund = lambda e: house.build(dict(base), lv(e))["races"]["OH-1"]["fundamentals"]
+        e0 = (-house.CLOSE - 0.15 - fund(0.0)) / (fund(1.0) - fund(0.0))
+        twin, part, head = (house.build(base, lv(e0 + x))["races"]["OH-1"] for x in (0.0, 0.15, 0.3))
+        self.assertLess(twin["fundamentals"], -house.CLOSE)
+        self.assertGreater(head["fundamentals"], -house.CLOSE)
+        self.assertEqual(head["sd"], twin["sd"])
+        self.assertAlmostEqual(head["margin"] - twin["margin"], 2 * (part["margin"] - twin["margin"]), places=9)
+
 
 if __name__ == "__main__":
     unittest.main()

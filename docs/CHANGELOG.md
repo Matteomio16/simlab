@@ -2,6 +2,25 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-08 (House fix session): the House is back; the cause was one seat at the close line, not the dials
+
+- **Cause: NY-21.** A House seat's fundamentals get a 5.5-point range when within 15 points of even and 9 points
+  otherwise. NY-21 sits at -15.2 in the stats-only twin. On 5 Oct the first generic-ballot poll fielded after the
+  national stories began came in (YouGov/CBS, 30 Sep-2 Oct). Netting the news out of it moves the headline's national
+  House vote 0.26 points toward Democrats, and NY-21 to -14.9, in the headline only: no single news part moves it that
+  far. So its range narrows in the headline alone, its poll weight falls from 0.55 to 0.31 and its margin lands 2.2
+  points off the sum of the parts. Its two August polls and its fundamentals barely move day to day, hence 2.23 every
+  day. The other 412 contested seats add up to within 0.0001.
+- **Not the dials.** The weekly update's state dials arrived the same day by coincidence. `news["unit"]` does cover
+  House seats with stories of their own; on 5-8 Oct no House seat had any, so their own parts were zero.
+- **Fix** (`simlab/house.py`): a seat's range (close or safe) is set once a day by the stats-only twin, the first
+  `house.build` in `house.prepare`, and kept for the headline, the news parts and "if the election were today". Only a
+  seat whose twin and headline sit on opposite sides of the 15-point line changes: NY-21 keeps the twin's 9 points.
+  Test: `tests/test_house.py`, `test_news_across_the_close_line`.
+- **Checked** by re-running the statistics step on scratch copies of the data repo as each daily run left it: 5-8 Oct
+  and the 7 Oct rehearsal give the House again (435 seats, about 40 simulated), with Senate numbers unchanged; 4 Oct's
+  forecast is identical with and without the fix. The saved records in simlab-data are untouched.
+
 ## 2026-10-08 (status session): pilot days 1-4, House failure found, rehearsal graded, site race chance approved
 
 - **Pilot 5-8 Oct:** every daily run passed by itself; details in roadmap "Where we are (8 Oct)".
