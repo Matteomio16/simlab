@@ -610,7 +610,8 @@ def ep09(theme: Theme = LAB) -> Post:
     a.source("Our daily race card, with invented numbers.")
 
     b = new().headline("How to read it.", px=96)
-    points = ["58 in 100: the Democrat wins 58 of every 100 simulated elections. About 6 in 10, not a vote share.",
+    points = ["58 | 42: the Democrat wins 58 of every 100 simulated elections, the Republican 42. A chance of "
+              "winning, not a vote share.",
               "Anywhere from 35 to 65 in 100, we call the race a toss-up.",
               "Beside our number: the poll average, the prediction markets and Cook.",
               "Today and 3 November can differ: most news fades before election day."]
