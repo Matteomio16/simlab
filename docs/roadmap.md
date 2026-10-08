@@ -34,6 +34,34 @@ Checkpoints and fallbacks:
   voters join a week later.
 - **Sun 11 Oct:** pilot review (criteria below), then go or no-go for the public launch.
 
+## Where we are (8 Oct)
+
+Pilot day 4 of 7.
+
+- **Daily run: on track.** 5-8 Oct all passed by themselves (8-20 minutes; news, reactions, statistics and post kit
+  ok; post kit 0 problems every day; no orphaned events). Reactions 785-1,456 a day, none failed, one unreadable in
+  total. 7 of 348 news runs failed (5 Oct evening: GitHub's runner shut down; 7 Oct: GitHub refused a push); the next
+  runs caught up.
+- **Spend:** the key stands at about $3.63 of the $19 after 8 Oct. 8 Oct's reactions cost $0.21 against $0.08 on 6 Oct
+  for the same 1,288 rows; worth watching.
+- **House: broken since 5 Oct.** Every run since then, and the 7 Oct rehearsal, logs `House story effects don't add up
+  across their parts (gap 2.23)`, so `forecast.json` has `house: null`. 1-4 Oct worked. It started the day the first
+  weekly update set the state news dials (empty until 4 Oct); `house.py` and `statsday.py` are unchanged since 4 Oct.
+  The Senate forecast is unaffected. A fix session started 8 Oct. Fallback if it isn't fixed by Fri 9 Oct: the 40 House
+  seats launch on 12 Oct from statistics only (see Checkpoints).
+- **7 Oct full-scale rehearsal: passed except the House** (Matteo, 8 Oct). 23 minutes, $0.32, 6,440 reactions with
+  none failed, post kit 0 problems. Once the House fix lands, the statistics step is re-run on the rehearsal copy only
+  (no paid calls); no full re-run.
+- **Pilot go criteria so far:** 4 of 4 days without hand fixes; spend within budget; every move traces to a poll or
+  event; post kit ready every day. The House is the open item.
+- **Posts and site:** Lab notes 04-09 and Reading the polls #2-#3 approved. The site's race chance as on the post cards
+  (DEM WINS 58 | REP WINS 42, split bar; 2322ae3) approved by Matteo on 8 Oct; it shows once the site switches to
+  forecast mode on 11 Oct. Waiting for Matteo: Reading the polls 8 Oct (Florida, Mason-Dixon Moody +10).
+- **Smaller:** more than half of event cards fail each day (34 failed, 25 written on 8 Oct), the same rate as before
+  the pilot.
+- **Next dates:** Fri 9 Oct House check and the labs.scaliastudio.dev redirect; Sat 10 Oct publishing and ethics
+  review, OSF yes or no; Sun 11 Oct go or no-go, then the three `SITE_*` variables; Mon 12 Oct public launch.
+
 ## Where we are (2 Oct)
 
 Matteo is away Fri 2 and Sat 3 Oct, back Sun 4 Oct, and checks in from his phone.
@@ -92,7 +120,7 @@ Matteo is away Fri 2 and Sat 3 Oct, back Sun 4 Oct, and checks in from his phone
 | A9 | Scoring | Weekly scores against the poll average, the markets, Cook and the stats-only forecast | Kev | first on Mon 19 Oct | test metrics exist |
 | A10 | Rehearsals | Two full dry runs on GitHub Actions | all, led by Engine | Sat 3 – Sun 4 Oct | done 3–4 Oct, hands-off: both daily runs passed every check (4 Oct: 12.5 min, $0.098, all pilot races had stories); drills weekly-filter, kev-down, no-news and budget passed; the same-day replay check was too strict about a by-design retry and is fixed (09477cf) |
 | A11 | House seats | Voter groups re-weighted to each district on the new 2026 maps; district baselines and polls; the other ~395 seats from the fundamentals map | Kev (moved from Statistics 28 Sep, Matteo's call); starts once A2's House maps and 2024 results by district land, ~Wed 30 Sep | Fri 9 Oct | fundamentals for all 435 seats done 29 Sep (`simlab/house.py`, 1a7520d), wired into statsday and the Monte Carlo (413ed7d, 8e686b0); runs daily from 30 Sep; House news (A13) built d1fce9d, from the 1 Oct run; per-seat news uncertainty before 12 Oct |
-| A13 | Scale-up of news and reactions | News queries for all 35 Senate races and ~40 House seats (from `races.json`); a reaction budget that fits the day: national stories asked once with state-neutral personas, fewer groups for safe races, a minimum attention, OpenRouter's batch API if needed (GLM manages ~200 prompts a minute) | Engine | Fri 9 Oct | built 29 Sep (`simlab/newsraces.py`; selection by the previous day's tier: simulate 5 race + 3 national stories, watch its 2 biggest, statistics none; about 13,500 prompts and 50 minutes on a busy day). House seats built 29 Sep (Matteo's yes): the simulated seats come from the daily `races.json`, one GDELT query per state every 12 hours, each story gated for every seat in its state, national-story reactions cached per state. Still to do: the full-scale rehearsal (Senate and House) on Wed 7 Oct (Matteo's yes; `docs/rehearsal.md`); the query numbers checked against a full day of the news job |
+| A13 | Scale-up of news and reactions | News queries for all 35 Senate races and ~40 House seats (from `races.json`); a reaction budget that fits the day: national stories asked once with state-neutral personas, fewer groups for safe races, a minimum attention, OpenRouter's batch API if needed (GLM manages ~200 prompts a minute) | Engine | Fri 9 Oct | built 29 Sep (`simlab/newsraces.py`; selection by the previous day's tier: simulate 5 race + 3 national stories, watch its 2 biggest, statistics none; about 13,500 prompts and 50 minutes on a busy day). House seats built 29 Sep (Matteo's yes): the simulated seats come from the daily `races.json`, one GDELT query per state every 12 hours, each story gated for every seat in its state, national-story reactions cached per state. Full-scale rehearsal done 7 Oct: passed except the House (Matteo, 8 Oct; `docs/rehearsal.md`). Still to do: the query numbers checked against a full day of the news job |
 | A12 | Early-vote data | NC absentee files now; NC in-person from 15 Oct; Texas from ~19 Oct; Ohio as published | Kev (it owns the snapshots); moves to Engine only if B2 slips | from Mon 5 Oct | live: NC (every 30 min, counts only), ME (counts only, raw file never stored), IA and TX switched on (publish from ~14 and ~19 Oct); Ohio skipped for the pilot (bot check; manual link route on record) |
 | A14 | Pre-freeze code review | An independent review of the daily chain before the 12 Oct freeze | a new review session | Sat 10 – Sun 11 Oct | — |
 

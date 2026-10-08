@@ -9,7 +9,7 @@ before any spend beyond the budget below.
 Matteo sometimes asks from his phone, in a cloud session (claude.ai/code or the Claude app). A cloud session sees one
 repo and none of the laptop: no `.env`, no local memory notes, no other sessions, and maybe no `gh`. What you need:
 
-- **Where things stand:** `docs/roadmap.md`, section "Where we are (2 Oct)" first, then the task tables and "What only
+- **Where things stand:** `docs/roadmap.md`, section "Where we are (8 Oct)" first, then the task tables and "What only
   Matteo can do"; the newest entries of `docs/CHANGELOG.md`. Voice and copy rules: `docs/communication.md` and
   `docs/publishing.md`.
 - **How today's run went:** the run outputs are in the private repo `Matteomio16/simlab-data`, not here. Start a cloud

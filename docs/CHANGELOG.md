@@ -2,6 +2,18 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-08 (status session): pilot days 1-4, House failure found, rehearsal graded, site race chance approved
+
+- **Pilot 5-8 Oct:** every daily run passed by itself; details in roadmap "Where we are (8 Oct)".
+- **House out of the forecast since 5 Oct.** The statistics step catches `House story effects don't add up across their
+  parts (gap 2.23)` every day, so `forecast.json` has `house: null`. Not noticed until 8 Oct. It began with the first
+  weekly update's state dials; the House code is unchanged since 4 Oct. A fix session is on it (Matteo's yes).
+- **7 Oct full-scale rehearsal: passed except the House** (Matteo, 8 Oct). After the fix, only the statistics step is
+  re-run on `rehearsal/2026-10-07-all/`.
+- **Site race chance approved** (Matteo, 8 Oct): DEM WINS 58 | REP WINS 42 with a split bar on race pages and the home's
+  race cards (2322ae3). It shows when the site switches to forecast mode on 11 Oct.
+- CLAUDE.md section 0 now points to "Where we are (8 Oct)".
+
 ## 2026-10-06 (Statistics session): poll-weight test extended to 2014 and 2016 (Matteo's yes, via the roadmap session)
 
 - **Only election eve can be tested for 2014 and 2016.** The local full-cycle Senate poll files start in 2018. For 2014
