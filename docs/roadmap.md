@@ -37,7 +37,8 @@ Checkpoints and fallbacks:
 ## Where we are (11 Oct)
 
 Pilot day 7 of 7. **Go or no-go today by 13:30 Paris** (Matteo, 11 Oct): Lab notes 09 goes out at 14:00 saying the
-forecast starts tomorrow; on a no-go, pull it from Buffer before then.
+forecast starts tomorrow; on a no-go, pull it from Buffer before then. Matteo's call (11 Oct): go, if the publishing
+and ethics review and the code review find nothing that must be fixed before launch.
 
 - **Daily run: all four go criteria met.** 5-10 Oct passed by itself every day (8-20 minutes; post kit 0 problems; no
   orphaned events). 8,402 reactions, none failed, 8 unreadable. Since 8 Oct midday every background run passed; over
@@ -46,8 +47,8 @@ forecast starts tomorrow; on a no-go, pull it from Buffer before then.
 - **House: fixed and pushed** 11 Oct 00:05 UTC (3976b08, Matteo's yes), so 11 Oct's run is the first with it live. The
   cause was a seat sitting on the 15-point close line (NY-21 on 5-9 Oct, TX-15 on 10 Oct). Re-runs of 5-10 Oct and the
   7 Oct rehearsal give the House back with the Senate unchanged. The saved records for 5-10 Oct keep the House missing.
-- **House alarm:** built 11 Oct, waiting for Matteo's yes to push before the 12 Oct freeze. The daily pass check fails,
-  naming the seat, when the House drops out, so GitHub emails Matteo (it went missing quietly for 6 days).
+- **House alarm: pushed** 11 Oct (d853203, Matteo's yes), live from the 11 Oct run. The daily pass check fails, naming
+  the seat, when the House drops out, so GitHub emails Matteo (it went missing quietly for 6 days).
 - **Posts:** Lab notes 06-08 went out 8-10 Oct at 14:00 on Instagram, Threads and X; Lab notes 09 is queued for 11 Oct
   14:00. No Reading the polls since 7 Oct: the 8 Oct evening-approval run hung on its first command until it was
   stopped on 11 Oct (Matteo's yes), so the 9 and 10 Oct runs never started. The Florida post (08-reading-polls-04) is
