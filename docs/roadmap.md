@@ -34,6 +34,33 @@ Checkpoints and fallbacks:
   voters join a week later.
 - **Sun 11 Oct:** pilot review (criteria below), then go or no-go for the public launch.
 
+## Where we are (11 Oct)
+
+Pilot day 7 of 7. **Go or no-go today by 13:30 Paris** (Matteo, 11 Oct): Lab notes 09 goes out at 14:00 saying the
+forecast starts tomorrow; on a no-go, pull it from Buffer before then.
+
+- **Daily run: all four go criteria met.** 5-10 Oct passed by itself every day (8-20 minutes; post kit 0 problems; no
+  orphaned events). 8,402 reactions, none failed, 8 unreadable. Since 8 Oct midday every background run passed; over
+  the pilot 7 of about 590 news runs failed on GitHub's side and the next runs caught up.
+- **Spend:** about $3.90 of the $19 after 10 Oct (pilot days $0.07-0.24); about $13-14 projected by 3 Nov.
+- **House: fixed and pushed** 11 Oct 00:05 UTC (3976b08, Matteo's yes), so 11 Oct's run is the first with it live. The
+  cause was a seat sitting on the 15-point close line (NY-21 on 5-9 Oct, TX-15 on 10 Oct). Re-runs of 5-10 Oct and the
+  7 Oct rehearsal give the House back with the Senate unchanged. The saved records for 5-10 Oct keep the House missing.
+- **House alarm:** built 11 Oct, waiting for Matteo's yes to push before the 12 Oct freeze. The daily pass check fails,
+  naming the seat, when the House drops out, so GitHub emails Matteo (it went missing quietly for 6 days).
+- **Posts:** Lab notes 06-08 went out 8-10 Oct at 14:00 on Instagram, Threads and X; Lab notes 09 is queued for 11 Oct
+  14:00. No Reading the polls since 7 Oct: the 8 Oct evening-approval run hung on its first command until it was
+  stopped on 11 Oct (Matteo's yes), so the 9 and 10 Oct runs never started. The Florida post (08-reading-polls-04) is
+  dropped. The task runs again tonight at 19:00 Paris and prepares the launch-post layout.
+- **Still to do today:** publishing and ethics review with the OSF yes or no (C7), and the pre-freeze code review of the
+  daily chain (A14), each in a fresh session (Matteo's yes, 11 Oct). The labs.scaliastudio.dev redirect is skipped.
+- **After a go:** set `SITE_PUBLISH=on`, `SITE_MODE=forecast` and `SITE_DATA=live` together (now `SITE_MODE` is
+  prelaunch and the other two are unset).
+- **Mon 12 Oct:** run from 09:47 UTC, forecast about 12:05-12:45 Paris, the site switches by itself, Matteo approves the
+  launch post with the real numbers; code freeze; the weekly filter runs inside Monday's statistics step.
+- **After launch:** more than half of event cards fail each day (the same since before the pilot); the Bluesky poster
+  waits for the account and app password; weekly scoring from Mon 19 Oct.
+
 ## Where we are (8 Oct)
 
 Pilot day 4 of 7.
@@ -216,7 +243,7 @@ once use up the Claude plan's limits faster. If the limits bite, pause Content &
 | Wed 30 Sep | Pick the content formats and the project name |
 | Thu 1 Oct | Done 29 Sep: Census key, Kev serving key, OpenRouter GitHub secret, Cloudflare timer (ops/cron). Dropped: FEC, FRED, EIA (not used yet) and Redistricting Data Hub (not needed). Media Cloud stuck at email verification; news runs on GDELT and RSS without it |
 | Fri 2 Oct | Create the accounts (kits/launch/ has everything to paste); launch page live on notapoll.org and Email Routing on (done 30 Sep) |
-| Fri 9 Oct | Cloudflare: redirect labs.scaliastudio.dev/midterms to notapoll.org, the site's home (steps in `site/README.md`) |
+| Fri 9 Oct | Skipped (Matteo, 11 Oct): Cloudflare redirect of labs.scaliastudio.dev/midterms to notapoll.org (that subdomain doesn't exist; steps in `site/README.md` if needed later) |
 | Sat 10 Oct | Publishing and ethics review; OSF yes or no. OpenRouter: the cap stays at $20 (Matteo, 30 Sep; the test key stays, `SIMLAB_BUDGET_USD` 19). The daily job switches to economy at $17 and to polls alone at $19 by itself; the projection is in `docs/rehearsal.md` |
 | Sun 11 Oct, after the go | Set the repository variables `SITE_PUBLISH` to `on`, `SITE_MODE` to `forecast` and `SITE_DATA` to `live`, together. The site switches by itself when the 12 Oct run's forecast lands (about 10:05-10:45 UTC). After that, switch `SITE_PUBLISH` off before any test run of the daily job |
 | from 12 Oct | About 30 minutes a day approving posts |

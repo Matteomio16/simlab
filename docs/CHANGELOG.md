@@ -2,6 +2,20 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-11 (status session): House fix pushed, approval task unstuck, launch-day decisions
+
+Matteo's answers to the 10 Oct status email:
+- **House fix pushed** (3976b08) at 00:05 UTC, before the 11 Oct run. It was checked again on copies of the data as the
+  9 and 10 Oct runs left them. Without the fix, 10 Oct fails with a larger gap (4.75), from a second seat at the close
+  line, TX-15. With the fix, both days give the House (435 seats) and the Senate forecast is identical.
+- **The 8 Oct evening-approval run stopped.** It had hung on its first command since 8 Oct 17:16 UTC, so the 9 and 10 Oct
+  runs never started. The Florida Reading the polls post (08-reading-polls-04) is dropped.
+- **The House alarm** is built; it waits for Matteo's yes to push.
+- **Fresh sessions** for the publishing and ethics review with the OSF decision (C7), and for the pre-freeze code review
+  of the daily chain (A14).
+- **Go or no-go by 13:30 Paris on 11 Oct**, before Lab notes 09 goes out at 14:00.
+- **labs.scaliastudio.dev redirect: skipped.**
+
 ## 2026-10-08 (House fix session): the House is back; the cause was one seat at the close line, not the dials
 
 - **Cause: NY-21.** A House seat's fundamentals get a 5.5-point range when within 15 points of even and 9 points
