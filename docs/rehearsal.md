@@ -32,7 +32,7 @@ The Worker starts `daily.yml` at 09:47 UTC with `scheduled=true`. Nobody starts 
 | News | ok; over 200 articles; each pilot race has at least one selected story; no label errors | 517 articles, 248 stories; selected OH-S 5, NC 5, TX 6, IA 3, ME 3, US 3; 26 cards; 47 s |
 | Reactions | ok; `failed` 0; parse errors under 1% of rows; rows = 28 × the selected pairs not asked before | 700 rows, 0 failed, 1 parse error; 10.5 min |
 | Kev shadow (if `KEV_URL` is set) | rows with `model: kev, shadow: true`, `failed` 0; the job passes even if Kev is down | tested locally: 28 rows in 13 s after a 51 s wake-up |
-| Statistics | ok; `orphaned_events` 0; `deselected_pairs` 0; `ungrouped_races` 0 (reactions for a House seat without voter groups); 35 races | 25 stories, 35 races; 13 s |
+| Statistics | ok; `orphaned_events` 0; `deselected_pairs` 0; `ungrouped_races` 0 (reactions for a House seat without voter groups); 35 races; the House in the forecast (seats, no error; a failure names the seat, from 11 Oct) | 25 stories, 35 races; 13 s |
 | Post kit | ok; `problems` 0; the five pilot races featured | 35 races, 0 problems; 14 s |
 | Whole job | under 45 minutes; spend under $0.50 (`run.json` → `spend`) | 12 min, $0.07 |
 | Push | a "Daily run <day>" commit in simlab-data with `derived/<day>/run.json` | done |

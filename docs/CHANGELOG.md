@@ -2,6 +2,17 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-11 (status session): the House alarm (Matteo's yes)
+
+- **The daily pass check fails when the House drops out** (`simlab/rehearsal.py`, check "House"). It fails if the
+  statistics summary has no House seats or carries an error. statsday still catches the error so the Senate publishes;
+  the failed check then fails the run after the outputs are saved and the site step has run, so GitHub emails Matteo.
+  From 5 to 10 Oct the House was missing and nothing failed.
+- **The error names the seat** (`simlab/statsday.py`): "... (gap 4.75e+00 at TX-15)". The same goes for the Senate's
+  check.
+- **Checked:** 304 tests pass (1 new). On saved records, 4 Oct passes ("435 seats") and 10 Oct fails. On a copy of
+  10 Oct with the old House code, the error names TX-15.
+
 ## 2026-10-11 (status session): House fix pushed, approval task unstuck, launch-day decisions
 
 Matteo's answers to the 10 Oct status email:

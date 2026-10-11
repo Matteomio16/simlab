@@ -44,6 +44,7 @@ def day_checks(rec: dict) -> list[tuple[str, bool, str]]:
     minutes, max_minutes = round(rec.get("seconds", 0) / 60, 1), 180 if full else 45
     rows = react.get("rows") or 0
     mode = (rec.get("budget") or {}).get("mode", "full")
+    house = stats.get("house") or {}
     return [
         ("steps", all(s["status"] == "ok" for s in rec["steps"]),
          ", ".join(f"{s['name']} {s['status']}" for s in rec["steps"])),
@@ -56,6 +57,10 @@ def day_checks(rec: dict) -> list[tuple[str, bool, str]]:
          f"{rows} rows, {react.get('failed')} failed, {react.get('parse_errors')} parse errors"),
         ("statistics", all(stats.get(k, 1) == 0 for k in ("orphaned_events", "deselected_pairs", "ungrouped_races")),
          ", ".join(f"{k} {stats.get(k)}" for k in ("orphaned_events", "deselected_pairs", "ungrouped_races"))),
+        # statsday catches a House failure so the Senate still publishes; without this the House went missing
+        # quietly on 5-10 Oct
+        ("House", house.get("seats", 0) > 0 and "error" not in house,
+         house.get("error") or f"{house.get('seats', 0)} seats"),
         ("post kit", kit.get("problems", 1) == 0, f"{kit.get('problems')} problems"),
         ("spend", spend < limit, f"${spend} (under ${limit})"),
         ("time", minutes < max_minutes, f"{minutes} min (under {max_minutes})"),

@@ -180,14 +180,14 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict, ele
     dials = mp.get("dials", {})
     k = lambda unit, x: dials.get(unit, dials.get("default", {})).get(f"k_{x}", 1.0)
     margins = lambda lv: {r: x["margin"] for r, x in lv["races"].items() if not x.get("fixed")}
-    miss = lambda hd, tw: max((abs(hd[r] - tw[r]
-                                   - sum(k(news["unit"].get(r), x) * news[name][r]
-                                         for x, name in (("s", "switching"), ("t", "turnout")))
-                                   - sum(k("US", x) * news[name][r]
-                                         for x, name in (("s", "switching_us"), ("t", "turnout_us")))) for r in tw),
-                              default=0.0)
-    if (gap := miss(margins(head), margins(twin))) > 1e-3:  # parts are rounded to 4 decimals: a clipped or broken dial
-        raise ValueError(f"story effects don't add up across their parts (gap {gap:.2e})")
+    miss = lambda hd, tw: max(((abs(hd[r] - tw[r]
+                                    - sum(k(news["unit"].get(r), x) * news[name][r]
+                                          for x, name in (("s", "switching"), ("t", "turnout")))
+                                    - sum(k("US", x) * news[name][r]
+                                          for x, name in (("s", "switching_us"), ("t", "turnout_us")))), r) for r in tw),
+                              default=(0.0, None))
+    if (gap := miss(margins(head), margins(twin)))[0] > 1e-3:  # parts are rounded to 4 decimals: a clipped or broken dial
+        raise ValueError(f"story effects don't add up across their parts (gap {gap[0]:.2e} at {gap[1]})")
     house = None
     if hb:
         try:  # the House (Kev session, house.build) must not stop the Senate forecast
@@ -196,8 +196,8 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict, ele
             hp, htw = {name: margins(house_build(hb, full[name], p, election)) for name, p in specs.items()}, margins(h["twin"])
             for key, name in (("switching", "own_s"), ("turnout", "own_t"), ("switching_us", "us_s"), ("turnout_us", "us_t")):
                 news[key] |= {r: hp[name][r] - htw[r] for r in htw}
-            if (gap := miss(margins(h["levels"]), htw)) > 1e-3:
-                raise ValueError(f"House story effects don't add up across their parts (gap {gap:.2e})")
+            if (gap := miss(margins(h["levels"]), htw))[0] > 1e-3:
+                raise ValueError(f"House story effects don't add up across their parts (gap {gap[0]:.2e} at {gap[1]})")
             house = h
         except Exception as e:
             house = {"error": f"{type(e).__name__}: {e}"[:120]}

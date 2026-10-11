@@ -10,7 +10,8 @@ def record(**over):
            "steps": [{"name": "news", "status": "ok", "summary": news},
                      {"name": "reactions", "status": "ok", "summary": {"rows": 1596, "failed": 0, "parse_errors": 6}},
                      {"name": "statistics", "status": "ok",
-                      "summary": {"orphaned_events": 0, "deselected_pairs": 0, "ungrouped_races": 0}},
+                      "summary": {"orphaned_events": 0, "deselected_pairs": 0, "ungrouped_races": 0,
+                                  "house": {"seats": 435, "uncontested": 22}}},
                      {"name": "post kit", "status": "ok", "summary": {"problems": 0}}]}
     for k, v in over.items():
         if k in news:
@@ -32,6 +33,16 @@ class DayChecks(unittest.TestCase):
     def test_missing_news_and_a_pilot_race_without_a_story_fail(self):
         rec = record(label_errors=40, selected={"OH-S": 0, "NC": 6, "TX": 6, "IA": 4, "ME": 7, "US": 3})
         self.assertEqual(failed(rec), ["news", "every pilot race has a story"])
+
+    def test_a_house_dropped_from_the_forecast_fails_and_names_the_seat(self):
+        rec = record()
+        err = "ValueError: House story effects don't add up across their parts (gap 2.23e+00 at NY-21)"
+        rec["steps"][2]["summary"]["house"] = {"error": err}
+        checks = {name: (ok, detail) for name, ok, detail in rehearsal.day_checks(rec)}
+        self.assertEqual(failed(rec), ["House"])
+        self.assertIn("NY-21", checks["House"][1])
+        rec["steps"][2]["summary"]["house"] = None
+        self.assertEqual(failed(rec), ["House"])
 
     def test_the_budget_safeguard_kicking_in_is_reported(self):
         self.assertEqual(failed(record(budget={"mode": "economy", "key_spent_before": 17.2})), ["budget mode"])
