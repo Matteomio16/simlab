@@ -87,7 +87,7 @@ export default function Methods() {
         <h1 className="mt-6 max-w-4xl text-[2.3rem] font-extrabold leading-[1.06] tracking-[-0.022em] sm:text-[3rem]">
           How the forecast works
         </h1>
-        <div className="mt-5 max-w-3xl text-[1.15rem] leading-relaxed text-ink-2 [&_strong]:font-semibold [&_strong]:text-ink" dangerouslySetInnerHTML={html(lede)} />
+        <div className="mt-5 max-w-3xl text-[1.15rem] leading-relaxed text-ink-2 [&_p+p]:mt-4 [&_strong]:font-semibold [&_strong]:text-ink" dangerouslySetInnerHTML={html(lede)} />
         <nav aria-label="On this page" className="mt-8 flex flex-wrap gap-x-6 gap-y-2 border-y-2 border-rule-strong py-3 text-[0.9rem] font-semibold">
           {sections.map((s) => (
             <a key={s.id} href={`#${s.id}`} className="text-ink-2 hover:text-ink hover:underline">{s.title}</a>

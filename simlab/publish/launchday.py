@@ -105,8 +105,9 @@ def build(day: date, data: Path, preview: bool = False, theme=LAB) -> tuple[Path
         "The races to watch today:",
         *[f"{line(r)}. Poll average {r['poll']}, {market(r)}, Cook {r['cook']}." for r in feat],
         "",
-        "Our number always sits beside the poll average, the prediction markets and Cook. From 19 October we'll score "
-        "ourselves against them every Monday, misses first.",
+        "Our number always sits beside the poll average, the prediction markets and Cook. From 19 October, every "
+        "Monday, we'll check our calls against the next week's polls, put the markets and Cook through the same test, "
+        "and publish the misses first.",
         "",
         "Which race are you watching most?",
         "",

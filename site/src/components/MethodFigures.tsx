@@ -158,8 +158,6 @@ const MODELS: [string, string, string][] = [
   ["Writes the short, neutral summary of each story", "DeepSeek V4.1 Flash", "Neutral, short summaries at the lowest cost."],
   ["Gives each persona's reaction", "GLM-5.3 Flash", "Ranked 19 real events best of all models tested, with the right direction on every one that moved opinion."],
   ["Sets each voter group's party split", "Kev, fine-tuned by us", "Trained on real survey answers, so its numbers mean shares of people, not confidence."],
-  ["Explains, every Monday, why a state surprised us", "MiMo-V2.6-Pro", "Writes the weekly audit. Never changes a number."],
-  ["Spot-checks reactions and labels", "GPT-6 Luna", "An independent second reader."],
 ];
 
 function Table({ head, rows, boldFirst = true }: { head: string[]; rows: ReactNode[][]; boldFirst?: boolean }) {

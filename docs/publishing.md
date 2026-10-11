@@ -179,10 +179,14 @@ Tests: `python -m unittest tests.test_kit`.
 
 - **Rhythm:** 14:00 Paris a Lab note (the daily forecast from 12 Oct), 18:00 Paris Reading the polls
   (`pollread.py`: one real poll, why it may overstate, why it may be right, one hypothesis; alternate which party the
-  featured poll favours). Approval: since 11 Oct, in the Content & site thread, with no scheduled routine. Matteo
-  disabled `notapoll-evening-approval` because it waited for his yes on every command. When he opens the thread, it
-  shows the posts that are ready and he approves there, typed by him, never through another session. The routine's
-  SKILL.md (`~/.claude/scheduled-tasks/notapoll-evening-approval/`) still has the step-by-step procedure.
+  featured poll favours). Every hypothesis goes in `docs/hypotheses.md` and gets the report-back it promises.
+- **Approval (Matteo, 11 Oct evening): one "Publishing approval" thread** for everything public, posts and the site
+  alike, typed by him there, never through another session; no scheduled routine (`notapoll-evening-approval` stays
+  disabled; its SKILL.md in `~/.claude/scheduled-tasks/notapoll-evening-approval/` keeps the step-by-step procedure).
+  Each day the thread shows the site update (numbers and story summaries) and the daily forecast post once the run
+  lands, and the next day's Reading the polls. `SITE_PUBLISH` stays off, so the daily job never updates the site by
+  itself; after Matteo's yes the thread publishes the day (how is open on 11 Oct: a Publish workflow, not yet
+  added, or `site/scripts/publish-day.mjs` run locally and pushed).
   Approved folders go in `kits/daily/APPROVED.json`; images to `site/public/social/<folder>/`; then
   `python -m simlab.publish.buffer queue-daily FOLDER "YYYY-MM-DD HH:MM"`.
 - **Every platform gets its own text** (research 7 Oct: Mosseri on Instagram signals; X's open-source ranker; Threads
@@ -193,9 +197,9 @@ Tests: `python -m unittest tests.test_kit`.
   - **Threads:** conversational, shorter than the caption, ends with one genuine question people can answer from their
     own view (never bait); one topic tag in `meta.json` (`threads_topic`, e.g. "2026 Midterms"); images on every post.
     Early replies drive reach: reply to every comment in the first hour.
-  - **Instagram:** the first line carries the searchable words (state, race, "Senate poll", "2026 midterms"); 3-5
-    hashtags at the end; an optional first comment (`instagram_first_comment`) with the question or the sources.
-    Sends (DM shares) and saves are the strongest signals: one clear chart people want to send.
+  - **Instagram:** the first line carries the searchable words (state, race, "2026 midterms"; "Senate poll" only in a
+    Reading the polls post, about a real poll, never for our forecast: review 11 Oct); 3-5 hashtags at the end; an
+    optional first comment (`instagram_first_comment`) with the question or the sources. Sends (DM shares) and saves are the strongest signals: one clear chart people want to send.
   - **Bluesky:** link-friendly; the full disclaimer with the link when it fits.
 - Fields: `pollread.STORIES[day]` and `labnotes.Post.platform` take optional `x`, `threads`, `topic`,
   `first_comment`; the builders write `single-post.md` and `meta.json`, which `buffer.py` reads.

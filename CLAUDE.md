@@ -195,6 +195,14 @@ Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructu
 - Daily Claude check at 11:30 UK: desktop scheduled task `midterm-daily-check` (runs while the app is open); emails
   Matteo a digest, and drafts posts once forecasts exist. Dropped 2 Oct (Matteo: not needed).
 
+Decided by Matteo, 11 Oct (publishing and ethics review, C7; details in `docs/CHANGELOG.md`):
+- **One "Publishing approval" thread** approves everything public each day, posts and the site alike (numbers and
+  story summaries); nothing is published until his yes there. The daily job doesn't update the site by itself.
+- The code freeze (12 Oct) covers how the forecast is made; the site, posts and publishing tools keep changing,
+  with reader-visible method changes dated in the public changelog.
+- No OSF pre-registration for now; don't call the forecast "pre-registered" in public. OpenTimestamps proofs and
+  Internet Archive captures of each published day are to be built.
+
 Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.md` §8 and `docs/CHANGELOG.md`):
 - Partisan polls are those sponsored by a party, campaign or partisan group, not Wikipedia's "(R)"/"(D)" pollster tags.
   They get half weight and a shift against the sponsor, estimated alongside the pollster house effects (about 2.5

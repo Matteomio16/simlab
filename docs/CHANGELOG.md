@@ -28,6 +28,30 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
   that leaves loses its news and fails the pass check for 60 days. A logged change, both versions scored.
 - **Checked:** 310 tests pass (6 new).
 
+## 2026-10-11 (publishing and ethics review, C7): fixes and a single approval thread (Matteo's yes)
+
+- **Review result:** no poll-like wording on the site, posts or templates; fair to both parties and to pollsters; no
+  images of candidates; no FEC issue (no ads, boosts, coordination, express advocacy or money). Three must-fix items,
+  all fixed on the methods page:
+  - the models table listed two jobs that never ran (MiMo's weekly audit, GPT-6 Luna's spot-check): removed;
+  - the site never said plainly that a language model produces the reactions (AAPOR's May 2026 guidance requires it,
+    with the number of real people behind the data and who checks the output): a short paragraph in the lede;
+  - the story summaries on the site are written by a language model from headlines and went out with no person
+    checking them: now Matteo approves them (next point).
+- **One "Publishing approval" thread** (Matteo): everything public, posts and the site alike, is shown there each day
+  and published only after his yes there. It replaces the evening routine and the Content & site thread as the place
+  of approval; Content & site keeps building layouts and code. Consequence: the daily job should not update the site
+  by itself (`SITE_PUBLISH` off; Matteo's switch).
+- **Changelog and track record pages approved** for the public site. The code freeze from 12 Oct covers how the
+  forecast is made; the site, the posts and the publishing tools keep changing as needed, with reader-visible method
+  changes dated in `site/content/changelog.md`.
+- **Reading the polls promises** are kept in `docs/hypotheses.md` (three open: AK, TX, OH).
+- **"Senate poll"** as an Instagram search word only in posts about a real poll; the launch post's scoring line says
+  we check our calls against the next week's polls, with the markets and Cook put through the same test.
+- **OSF pre-registration: not now** (Matteo; nothing requires it). The scoring rules stay in the methods and track
+  record pages. Don't call the forecast "pre-registered" in public text.
+- **To build:** OpenTimestamps proofs and Internet Archive captures of each published day (Matteo's yes).
+
 ## 2026-10-11 (status session): the House alarm (Matteo's yes)
 
 - **The daily pass check fails when the House drops out** (`simlab/rehearsal.py`, check "House"). It fails if the

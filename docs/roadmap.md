@@ -55,8 +55,12 @@ and ethics review and the code review find nothing that must be fixed before lau
   dropped. Lab notes 09 went out at 14:00. The routine is disabled (Matteo, 11 Oct): its second run hung the same way.
   Daily posts are now prepared and approved in the Content & site thread, which builds the launch post (Matteo
   approves the real one on 12 Oct after the forecast lands).
-- **Still to do today:** publishing and ethics review with the OSF yes or no (C7), and the pre-freeze code review of the
-  daily chain (A14), each in a fresh session (Matteo's yes, 11 Oct). The labs.scaliastudio.dev redirect is skipped.
+- **Publishing and ethics review (C7): done** 11 Oct evening. Three must-fix items, two fixed on the methods page
+  (two model jobs that never ran removed; a plain paragraph that the personas are language models, with the real
+  people behind them); the third, story summaries going on the site unchecked, is solved by Matteo's approval of
+  everything public in one new "Publishing approval" thread. With that, `SITE_PUBLISH` should be off (his switch),
+  so the site waits for his yes. Changelog and track record pages approved. OSF: not now. Details in
+  `docs/CHANGELOG.md`. The labs.scaliastudio.dev redirect is skipped.
 - **Site switches on** (11 Oct, 20:11 UTC, Matteo's yes): `SITE_PUBLISH=on`, `SITE_MODE=forecast`, `SITE_DATA=live`.
   The site serves prelaunch until the 12 Oct publish adds `site/data/live/forecast.json`. Switch `SITE_PUBLISH` off
   before any test run of the daily job. The reviews were still running at the switch; if one finds a must-fix item,
@@ -192,7 +196,7 @@ Matteo is away Fri 2 and Sat 3 Oct, back Sun 4 Oct, and checks in from his phone
 | C4 | Making-of posts, starting with the test-bench findings | Content & site drafts, Matteo approves and posts | from Sat 3 Oct | Lab notes 1–3 drafted, shown to Matteo 28 Sep |
 | C5 | Chart factory and daily post kit: slides (1080×1350), a 9:16 video, captions, alt text, an X thread | Content & site | Sun 4 Oct (the pilot makes internal kits daily) | daily kit command built (`python -m simlab.publish.kit`), layouts picked; 5 special editions drafted; 9:16 video built (`reel.py`, kit `--reel`) |
 | C6 | Site at notapoll.org (labs.scaliastudio.dev/midterms redirects there): 3 Oct home, methods, Lab notes, About with no numbers; 12 Oct Senate overview, map, simulator and race pages; week of 19 Oct track record, changelog, archive; election-night page by 3 Nov | Website session; Matteo sets up Cloudflare (`site/README.md`) | 3 Oct, then 12 Oct | built 29 Sep in `site/` (Next.js static export, newsroom design approved by Matteo, sample data); methods text drafted for Matteo's review |
-| C7 | Publishing and ethics review (Field Guide checklist); OSF pre-registration yes or no | Matteo with a new review session (not Content & site, which made the posts) | Sat 10 Oct | open task |
+| C7 | Publishing and ethics review (Field Guide checklist); OSF pre-registration yes or no | Matteo with a new review session (not Content & site, which made the posts) | Sat 10 Oct | done 11 Oct: three must-fix items handled; OSF not now (`docs/CHANGELOG.md`) |
 | C8 | Posting by hand: Meta Business Suite for Instagram, x.com's scheduler | Matteo | making-of from 3 Oct, forecasts from 12 Oct | — |
 | C9 | Automated posting behind an approval flag: Buffer's free plan for Instagram, X and Threads (one queued thread at a time, 10 posts per channel), and a small Bluesky poster (free API, app password; images with alt text) | Content & site; Matteo creates the Buffer API key and the Bluesky app password | 12–18 Oct | launch pack has single-post versions and a UK-time schedule (1 Oct); Bluesky poster proposed |
 

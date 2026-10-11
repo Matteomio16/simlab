@@ -2,6 +2,6 @@
   "methods": true,
   "labNotes": true,
   "about": true,
-  "trackRecord": false,
-  "changelog": false
+  "trackRecord": true,
+  "changelog": true
 }

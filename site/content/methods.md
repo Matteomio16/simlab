@@ -4,6 +4,11 @@ Statistics set where each race starts. **Voter personas**, built from real surve
 into every race. Then each race is played out 40,000 times. It is a social simulation, not a poll: we don't ask
 people what they think today, we model how they react. Each step below takes a few lines; open **In detail** for the full method.
 
+Each voter persona is a language model given one group's profile, so its reactions are the model's estimates, not
+anyone's real opinion. The profiles come from real people: about 60,000 who answered each of the 2018, 2022 and 2024
+Cooperative Election Studies, and the Census Current Population Survey for turnout. The models and their jobs are
+listed below. We read every post, story summary and daily update before it is published.
+
 ## How a forecast is made
 
 ### Statistics set the starting line
