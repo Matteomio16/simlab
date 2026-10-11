@@ -407,7 +407,10 @@ CARD_SYSTEM = (
     "If the headlines do not report a specific news event (for example a news round-up, a TV listing, a schedule, "
     "nothing beyond the race itself, or analysis and commentary about who is winning, losing, helped or hurt), reply "
     '{"card": "", "event": false}. Otherwise reply with JSON only: {"card": "...", "event": true}')
-FORBIDDEN = re.compile(r"\b(poll|polls|polling|pollsters?|surveys?)\b", re.I)
+# Also the words the site's copy check bans (site/scripts/check-copy.mjs): cards show on the site, and one of them
+# would stop its build (11 Oct review).
+FORBIDDEN = re.compile(r"\b(poll|polls|polling|pollsters?|surveys?|surveyed|respondents|synthetic|reactionary|hungar\w*|"
+                       r"voters say|ai voters|social interactions?)\b|% of voters", re.I)
 META = re.compile(r"\b(headlines?|the reporting)\b", re.I)  # 29 Sep: "..., according to the headline."
 # A story whose main headline is about a poll is a poll story whatever Jev says (29 Sep: an approval-rating story typed
 # as national news; 2 of the 9 spot-check headlines naming a poll typed as something else).
@@ -633,8 +636,9 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         new += k is None
         if k:
             carried.add(s["event_id"])
-        labels = fresh_labels.get(s["event_id"]) or (no_labels(unlabeled=True) if s["event_id"] in skipped
-                                                     else {f: k[f] for f in LABEL_FIELDS})
+        # a story left unlabeled keeps its known type, which sets how its effect fades (polls mode skips every story)
+        labels = fresh_labels.get(s["event_id"]) or (no_labels(unlabeled=True, **({"type": k["type"]} if k else {}))
+                                                     if s["event_id"] in skipped else {f: k[f] for f in LABEL_FIELDS})
         if POLLISH.search(s["title"]) or POLLISH.search(s["titles"][0]):
             labels = {**labels, "type": "poll"}
         national = s["race_id"] == "US"

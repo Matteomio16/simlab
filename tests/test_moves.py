@@ -271,6 +271,30 @@ class NationTest(unittest.TestCase):
         p = moves.paths(self.m(), with_nation=False)
         self.assertEqual(([x[2] for x in p["GA"]], sorted(x[2] for x in p["OH-S"])), ([2.0], [3.0, 4.0]))
 
+    def test_a_race_keeps_the_nations_stories_it_was_never_asked_about(self):
+        # from 12 Oct a race that joins the simulation keeps the national news it had through the nation
+        m = self.m()
+        m["US"]["events"]["n2"] = self.ev("national", 5.0)
+        m["OH-S"]["nation_unasked"] = ["n2"]
+        p = moves.paths(m)
+        self.assertEqual(sorted(x[2] for x in p["OH-S"]), [3.0, 4.0, 5.0])
+        self.assertEqual(sorted(x[2] for x in p["GA"]), [1.0, 2.0, 5.0])
+        self.assertEqual(moves.nation_paths(m)["OH-S"], [p["OH-S"][-1]])
+
+    def test_build_lists_the_nations_stories_a_race_was_never_gated_for(self):
+        groups = {r: {A: {"n": 0.5, "t": 0.5, "d": 0.8, "pi": 0.1, "mu": 0.2},
+                      B: {"n": 0.5, "t": 0.5, "d": -0.8, "pi": 0.1, "mu": 0.2}} for r in ("OH-S", "US")}
+        params = {"c_s": 0.5, "c_t": 0.0, "dials": {}, "half_life_days": {"default": 10}}
+        nat = lambda eid, gate: event(eid, "2026-10-01T08:00:00+00:00", 1.0, races=("OH-S", "US")) | {
+            "scope": "national", "gate": gate}
+        with tempfile.TemporaryDirectory() as d:
+            write_day(Path(d), "2026-10-01", [nat("n1", {"OH-S": 0.8, "US": 0.9}), nat("n2", {"US": 0.9})],
+                      [reaction("n1", A, 1.0, 0.0), reaction("n1", A, 1.0, 0.0, race="US"),
+                       reaction("n2", A, 1.0, 0.0, race="US")])
+            m = moves.build(date(2026, 10, 1), Path(d), groups, params, "run-1")
+        self.assertEqual(m["OH-S"]["nation_unasked"], ["n2"])
+        self.assertEqual(len(moves.paths(m)["OH-S"]), 2)
+
 
 class ReadTest(unittest.TestCase):
     ev = lambda first, last, full, eday, card: {"first_seen": first, "last_seen": last, "age_half_life": 5.5,

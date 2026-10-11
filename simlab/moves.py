@@ -87,11 +87,12 @@ def _jsonl(path: Path) -> list[dict]:
     return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()] if path.exists() else []
 
 
-def _history(day: date, derived: Path) -> tuple[dict, dict, set]:
+def _history(day: date, derived: Path) -> tuple[dict, dict, set, dict]:
     """Reactions asked in the last LOOKBACK days, earliest answer per (model, race, event, group), with the day asked;
-    the latest record of every event up to `day`; and the (race, event) pairs left out because that day's news no
-    longer selects them (a news re-run after the harness). Files without selections count in full."""
-    reactions, events, dropped = {}, {}, set()
+    the latest record of every event up to `day`; the (race, event) pairs left out because that day's news no
+    longer selects them (a news re-run after the harness), files without selections counting in full; and the races
+    each event was ever gated for (events whose records carry no gate are left out)."""
+    reactions, events, dropped, gated = {}, {}, set(), {}
     for k in range(LOOKBACK, -1, -1):
         d = day - timedelta(days=k)
         folder = derived / d.isoformat()
@@ -104,7 +105,10 @@ def _history(day: date, derived: Path) -> tuple[dict, dict, set]:
                 reactions.setdefault((r["model"], bool(r.get("shadow")), r["race_id"], r["event_id"], r["group"]),
                                      (r, d))
         events.update(todays)
-    return reactions, events, dropped
+        for eid, e in todays.items():
+            if "gate" in e:
+                gated.setdefault(eid, set()).update(e["gate"] or {})
+    return reactions, events, dropped, gated
 
 
 def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: date) -> dict:
@@ -166,8 +170,10 @@ def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> 
     """moves.json (engine-design §7) for every race in groups.json (and US), GLM's rows in the main block and shadow
     rows (Kev) under "shadow". Reactions to stories no longer in any events.jsonl (a news re-run that changed the
     story ids) can't be placed in time; they are left out and listed under "orphaned_events". Races with reactions but
-    no voter groups (a House seat that isn't simulated that day) are listed under "ungrouped_races"."""
-    reactions, events, dropped = _history(day, derived)
+    no voter groups (a House seat that isn't simulated that day) are listed under "ungrouped_races". A race with
+    stories lists under "nation_unasked" the nation's stories it was never asked about (gated before it was
+    simulated), which it takes from the nation (nation_paths)."""
+    reactions, events, dropped, gated = _history(day, derived)
     races = [k for k in groups if isinstance(groups[k], dict) and k not in ("units",)]
     out = {"date": day.isoformat(), "run_id": run_id, "schema": SCHEMA, "units": UNITS,
            "params": {k: params[k] for k in ("c_s", "c_t")}, "shadow": {},
@@ -185,6 +191,11 @@ def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> 
                 continue
             dest[race] = _race(race, by_race.get(race, {}), events, groups[race],
                                params | {"support_offset": 0.0} if shadow else params, day)
+    us = out.get("US", {}).get("events", {})
+    for race in races:
+        if race != "US" and out[race]["events"]:
+            out[race]["nation_unasked"] = [e for e in us if e in gated and race not in gated[e]
+                                           and e not in out[race]["events"]]
     return out
 
 
@@ -208,17 +219,30 @@ def paths(m: dict, part: str = "all", with_nation: bool = True) -> dict:
     """{race_id or "US": [(first_seen, last_seen, full effect, age half-life, after-news half-life)]} from moves.json's
     main block, for levels.build: the whole effect, or only its switching ("s") or turnout ("t") part, at the state's
     dials or at dial 1 ("s_base", "t_base"), or the switching effect of one unit of support offset ("s_unit", for the
-    weekly filter). A race whose own reactions include no national stories (the watch tier
-    from 12 Oct) also gets the nation's national stories, unless `with_nation` is False; a simulated race gets them
-    through its own rows, so they aren't added twice. Races without stories are left out, so levels.build gives them
-    the nation's."""
+    weekly filter). Each race also gets the nation's stories it takes (nation_paths), unless `with_nation` is False.
+    Races without stories are left out, so levels.build gives them the nation's."""
+    own, nation = _split(m, part)
+    return {r: items + (nation.get(r, []) if with_nation else []) for r, items in own.items()}
+
+
+def nation_paths(m: dict, part: str = "all") -> dict:
+    """{race_id: the nation's stories it takes on top of its own}, as paths' items: all of them for a race whose own
+    stories include no national ones (the watch tier), else those it was never asked about, labeled before it was
+    simulated, so a race that joins the simulation keeps the national news it already had (11 Oct review). A national
+    story a race was asked about counts only through its own rows, so nothing is added twice."""
+    return _split(m, part)[1]
+
+
+def _split(m: dict, part: str) -> tuple[dict, dict]:
     key = {"all": "full", "s": "full_s", "t": "full_t", "s_base": "full_s_base", "t_base": "full_t_base",
            "s_unit": "full_s_unit"}[part]
     item = lambda v: (v["first_seen"], v["last_seen"], v[key], v["age_half_life"], v["after_news_half_life"])
-    nation = [item(v) for v in m.get("US", {}).get("events", {}).values()] if with_nation else []
-    extra = takes_nation(m)
-    return {r: [item(v) for v in x["events"].values()] + (nation if r in extra else [])
-            for r, x in m.items() if r != "shadow" and isinstance(x, dict) and x.get("events")}
+    races = {r: x for r, x in m.items() if r != "shadow" and isinstance(x, dict) and x.get("events")}
+    us, extra = m.get("US", {}).get("events", {}), takes_nation(m)
+    own = {r: [item(v) for v in x["events"].values()] for r, x in races.items()}
+    take = {r: us.keys() if r in extra else set(x.get("nation_unasked", ())) for r, x in races.items() if r != "US"}
+    nation = {r: [item(v) for e, v in us.items() if e in t] for r, t in take.items()}
+    return own, nation
 
 
 def takes_nation(m: dict) -> set:

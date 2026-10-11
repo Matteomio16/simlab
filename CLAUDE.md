@@ -251,6 +251,7 @@ Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork
   move Alaska). House seats keep the shared national, regional and state errors without the floor.
 - **Fat tails keep the fitted spread**, and extremes also follow the simulated dynamics.
 - **News moves every race by its full effect, polls or not.** Polls correct the statistical level underneath.
+  A race that joins the simulation keeps the national news it already had through the nation (Matteo, 11 Oct).
 - **How long news lasts (Matteo, 29 Sep): news fades fast.**
   - Every story fades from the day it is first seen, with a 5.5-day half-life: about 40% left after a week, 17% after
     two, 7% after three.

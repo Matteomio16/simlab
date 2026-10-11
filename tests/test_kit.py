@@ -63,6 +63,30 @@ class KitTest(unittest.TestCase):
             self.assertIn("Up 8 points this week", caption)  # NC moved 0.50 -> 0.58
             self.assertIn("No meaningful change", caption)
 
+    def test_launch_week_ignores_pilot_forecasts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            data = Path(tmp)
+            example_inputs(data, "2026-10-12")
+            pilot = data / "derived" / "2026-10-05"
+            pilot.mkdir()
+            f = json.loads((data / "derived" / "2026-10-12" / "forecast.json").read_text())
+            f["races"]["NC"]["p_dem_win"] = 0.40
+            (pilot / "forecast.json").write_text(json.dumps(f))
+            r = self.run_kit(data, "2026-10-12")
+            self.assertEqual(r.returncode, 0, r.stderr[-2000:])
+            caption = (data / "derived" / "2026-10-12" / "post-kit" / "caption_instagram.txt").read_text(encoding="utf-8")
+            self.assertNotIn("this week", caption)
+            self.assertIn("First week", caption)
+
+    def test_featured_without_week_ago_numbers_takes_the_closest(self):
+        from datetime import date
+        from simlab.publish.kit import featured
+        rs = [{"rid": r, "p": p, "prev": None}
+              for r, p in (("AL", 0.0), ("AK", 0.46), ("TX", 0.58), ("IA", 0.41), ("OH-S", 0.6), ("KS", 0.33))]
+        self.assertEqual([r["rid"] for r in featured(rs, date(2026, 10, 12))], ["AK", "TX", "IA", "OH-S"])
+        rs[-1]["prev"], rs[1]["prev"] = 0.20, 0.45
+        self.assertEqual([r["rid"] for r in featured(rs, date(2026, 10, 19))], ["AK", "TX", "IA", "KS"])
+
     def test_missing_forecast_fails(self):
         with tempfile.TemporaryDirectory() as tmp:
             r = self.run_kit(Path(tmp), "2026-10-05")

@@ -58,9 +58,10 @@ def featured(rs: list[dict], day: date, only: list[str] | None = None) -> list[d
         return [r for r in rs if r["rid"] in only]
     if day < LAUNCH:
         return [r for rid in PILOT for r in rs if r["rid"] == rid] or rs[:FEATURED]
-    close = sorted(rs, key=lambda r: abs(r["p"] - 0.5))[:FEATURED - 1]
-    moved = sorted((r for r in rs if r not in close), key=lambda r: -abs(r["p"] - (r["prev"] or r["p"])))
-    return close + moved[:1]
+    close = sorted(rs, key=lambda r: abs(r["p"] - 0.5))
+    # without week-ago numbers (the first public week, or a missed day) the last place goes to the next closest race
+    moved = sorted((r for r in close[FEATURED - 1:] if r["prev"] is not None), key=lambda r: -abs(r["p"] - r["prev"]))
+    return close[:FEATURED - 1] + (moved[:1] or close[FEATURED - 1:FEATURED])
 
 
 def poll_txt(x, left: str = "D") -> str:
@@ -122,7 +123,10 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
     if f is None:
         raise FileNotFoundError(f"no forecast.json in {d}")
     draws = load(d / "draws.json")
-    prev = load(data / "derived" / (day - timedelta(days=7)).isoformat() / "forecast.json") or {"races": {}}
+    week_ago = day - timedelta(days=7)
+    # the pilot's forecasts were never published: no "this week" against them in public posts (12-18 Oct)
+    prev = (load(data / "derived" / week_ago.isoformat() / "forecast.json")
+            if day < LAUNCH or week_ago >= LAUNCH else None) or {"races": {}}
     races = load(d / "races.json") or load(data / "races.json") or {}
     run = str(f.get("run_id", "unknown")).rsplit("-", 1)[-1][:7]  # "2026-09-28-bf145e8" -> "bf145e8"
     pilot = day < LAUNCH

@@ -127,7 +127,9 @@ national-scope reactions (§5).
 As stats-groundwork §5.6–5.8:
 - **Daily update** (Matteo, 28 Sep evening: news moves every race, polls or not):
   - the statistical level is estimated from polls less the story effects in force on their dates;
-  - each race's story effects go on top in full; a race without its own stories takes the nation's.
+  - each race's story effects go on top in full; a race without its own stories takes the nation's. A race with
+    stories also takes the nation's stories it was never asked about (labeled before it was simulated), so a race
+    that joins the simulation, as every race did on 12 Oct, keeps the national news it already had (11 Oct review).
 
   `Δ` already includes the dials (§3.2), so they are not applied twice. `moves.json` also carries `delta_margin_base`
   (dials = 1) for the weekly re-tuning.

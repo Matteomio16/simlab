@@ -98,14 +98,15 @@ def state_dial(post: dict, state: str, prior: dict) -> dict:
     return {"mean": nat["mean"], "cov": (np.array(nat["cov"]) + np.diag(np.array(prior["tau"], float) ** 2)).tolist()}
 
 
-def _paths(m: dict, part: str, h_age: float | None = None, offset: float = 0.0) -> dict:
+def _paths(m: dict, part: str, h_age: float | None = None, offset: float = 0.0, nation: bool = False) -> dict:
     """Each race's own effect paths at dial 1 for one part ("s" or "t"), and the nation's under "US", with the age
     half-life replaced by `h_age` if given, and the switching part's support offset moved by `offset` from the one
-    moves.json was built with."""
-    unit = moves.paths(m, "s_unit", with_nation=False) if part == "s" and offset else {}
+    moves.json was built with. With `nation`, the nation's stories each race takes instead (moves.nation_paths)."""
+    get = moves.nation_paths if nation else (lambda mm, p: moves.paths(mm, p, with_nation=False))
+    unit = get(m, "s_unit") if part == "s" and offset else {}
     return {r: [(f, l, x + offset * (unit[r][i][2] if unit else 0.0), h_age or ha, hf)
                 for i, (f, l, x, ha, hf) in enumerate(items)]
-            for r, items in moves.paths(m, f"{part}_base", with_nation=False).items()}
+            for r, items in get(m, f"{part}_base").items()}
 
 
 def units(p, m: dict, params: dict, d: int, election=ELECTION, dials_us=(1.0, 1.0), h_age: float | None = None,
@@ -122,7 +123,7 @@ def units(p, m: dict, params: dict, d: int, election=ELECTION, dials_us=(1.0, 1.
     if np.any(su) or np.any(tu):
         out["US"] = quadratic(lambda k: loglik(tg, yg - k[0] * su - k[1] * tu, vg, q_n)[0])
     grid, nx, npv = local_level(tg, yg - dials_us[0] * su - dials_us[1] * tu, vg, q_n, -d)
-    takes = moves.takes_nation(m)
+    ns, nt = _paths(m, "s", h_age, offset, nation=True), _paths(m, "t", h_age, nation=True)
     for race in sorted(r for r in ps if r != "US"):
         rp = p[p.race == race]
         t = rp.t.values.astype(float)
@@ -130,8 +131,8 @@ def units(p, m: dict, params: dict, d: int, election=ELECTION, dials_us=(1.0, 1.
         if not len(rp) or not (np.any(s) or np.any(u)):
             continue
         y0, v = rp.adj.values - np.interp(t, grid, nx), rp.v.values + np.interp(t, grid, npv)
-        if race in takes:
-            y0 = y0 - dials_us[0] * effect(t, ps.get("US", []), election) - dials_us[1] * effect(t, pt.get("US", []),
+        if ns.get(race) or nt.get(race):  # the nation's stories it takes, at the national dials
+            y0 = y0 - dials_us[0] * effect(t, ns.get(race, []), election) - dials_us[1] * effect(t, nt.get(race, []),
                                                                                                   election)
         a, b, c = quadratic(lambda k: loglik(t, y0 - k[0] * s - k[1] * u, v, q_r)[0])
         st = race.split("-")[0]
@@ -189,15 +190,16 @@ def surprises(p, m: dict, params: dict, d: int, dials: dict, election=ELECTION, 
     yg = g.adj.values - ku[0] * effect(tg, ps.get("US", []), election) - ku[1] * effect(tg, pt.get("US", []), election)
     out = {"US": _flag(tg, loglik(tg, yg, g.v.values, q_n)[1], d, days, alpha)}
     grid, nx, npv = local_level(tg, yg, g.v.values, q_n, -d)
-    takes = moves.takes_nation(m)
+    ns, nt = _paths(m, "s", h_age, offset, nation=True), _paths(m, "t", h_age, nation=True)
     for race in sorted(set(p.race) - {"US"}):
         rp = p[p.race == race]
         t = rp.t.values.astype(float)
-        nat = [effect(t, x.get("US", []), election) for x in (ps, pt)]
+        # a race without stories of its own takes all the nation's, one with stories those it takes
+        nat = [effect(t, x.get("US", []) if race not in ps else n.get(race, []), election)
+               for x, n in ((ps, ns), (pt, nt))]
         own = [effect(t, x[race], election) for x in (ps, pt)] if race in ps else [0.0, 0.0]
         k = dials.get(race.split("-")[0], ku)
-        with_nat = race not in ps or race in takes
-        y = (rp.adj.values - k[0] * own[0] - k[1] * own[1] - (ku[0] * nat[0] + ku[1] * nat[1]) * with_nat
+        y = (rp.adj.values - k[0] * own[0] - k[1] * own[1] - (ku[0] * nat[0] + ku[1] * nat[1])
              - np.interp(t, grid, nx))
         out[race] = _flag(t, loglik(t, y, rp.v.values + np.interp(t, grid, npv), q_r)[1], d, days, alpha)
     return out

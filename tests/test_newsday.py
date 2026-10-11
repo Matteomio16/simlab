@@ -430,6 +430,28 @@ class Run(unittest.TestCase):
         self.assertEqual((fake.states, chat.calls), ([], 0))
         self.assertEqual((sum(summary["selected"].values()), summary["unlabeled"]), (0, summary["stories"]))
 
+    def test_in_polls_mode_a_carried_story_keeps_its_type(self):
+        # its type sets how fast its effect fades once it leaves the news (lasting topics don't)
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
+            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO_NEXT_DAY})
+            chat = FakeChat(['{"card": "%s"}' % GOOD] * 10)
+            newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [chat])
+            day1 = {e["event_id"]: e["type"] for e in newsday._jsonl(derived / "2026-09-28" / "events.jsonl")}
+            fake = FakeAsker()
+            newsday.run(date(2026, 9, 29), snap, derived, "d2", fake, [chat], mode="polls")
+            day2 = newsday._jsonl(derived / "2026-09-29" / "events.jsonl")
+        self.assertEqual(fake.states, [])
+        self.assertNotIn("other", day1.values())
+        self.assertEqual({e["event_id"]: e["type"] for e in day2}, day1)
+        self.assertTrue(all(e["unlabeled"] and e["gate"] == {} for e in day2))
+
+    def test_a_card_never_uses_a_word_the_site_bans(self):
+        for card in ("Police seized synthetic opioids at the border.", "The court ordered the respondents to pay.",
+                     "He called the plan reactionary.", "The senator met Hungary's foreign minister."):
+            self.assertFalse(newsday.card_ok(card, []), card)
+
     def test_a_story_whose_headline_is_about_a_poll_is_a_poll_story(self):
         # 29 Sep: Jev typed "Trump's approval rating falls to record low" as national news, and 2 of the 9 spot-check
         # headlines that name a poll as something else; poll stories must never get reactions

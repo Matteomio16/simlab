@@ -2,6 +2,32 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-11 (code review session, A14): pre-freeze review of the daily chain and its fixes (Matteo's yes)
+
+- **Review:** one must-fix, in the post kit; the forecast numbers held up. Checked on scratch copies, no paid calls:
+  the statistics step with the Monday weekly filter on the 7 Oct full-scale rehearsal (House 435 seats, parts add up),
+  the post kit dated 12 Oct, the site built in forecast mode on 11 Oct's files, and the tests.
+- **No "this week" against the pilot** (`simlab/publish/kit.py`). Public posts compared each race with the forecast 7
+  days earlier, an unpublished pilot forecast until 18 Oct: 12 Oct would have said "Iowa ... Down 5 points this week"
+  and "Kansas ... Up 7", with Kansas featured for it. Now the first public week says "First week". Without week-ago
+  numbers the fourth featured race is the next closest; before, it was the first race alphabetically (Alabama, whose
+  "100" broke the slide). The launch post (`launchday.py`) uses the same pick.
+- **A race that joins the simulation keeps the national news it already had** (`simlab/moves.py`, `statsday.py`,
+  `weekly.py`; Matteo: every race starts from its most up-to-date data). A race that began reacting to national
+  stories on 12 Oct used to drop the older ones it had through the nation (rehearsal: Florida special 0.33 to 0.10
+  points of news effect, New Hampshire 0.27 to 0.11, Michigan 0.16 to 0.11). It now also takes the nation's stories
+  it was never asked about (`nation_unasked` in moves.json): 0.37, 0.30, 0.19. The pilot races are unchanged; 11 Oct's
+  forecast is identical with and without the change.
+- **Card rules** (`simlab/newsday.py`): cards also avoid the words the site's copy check bans (synthetic,
+  respondents, surveyed, reactionary, Hungary...), since one of them would stop the site's build. None of the 336 cards
+  so far had one.
+- **Polls-only mode** (past $19 of spend): a story still in the news keeps its type, so a lasting topic doesn't start
+  fading early.
+- **After launch (Matteo's yes):** the 40 simulated House seats have been the same since 30 Sep, because seats kept from
+  the last 6 days fill every place. Unlocking needs voter groups for every seat with reactions first; otherwise a seat
+  that leaves loses its news and fails the pass check for 60 days. A logged change, both versions scored.
+- **Checked:** 310 tests pass (6 new).
+
 ## 2026-10-11 (status session): the House alarm (Matteo's yes)
 
 - **The daily pass check fails when the House drops out** (`simlab/rehearsal.py`, check "House"). It fails if the

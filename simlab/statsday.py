@@ -140,9 +140,9 @@ def apply_weekly(mp: dict, wk: dict | None) -> dict:
 
 def _stories(mv: dict, when: str) -> dict:
     """{race_id: {story: effect}}: each story's effect on each race at its dials, on 3 Nov ("election_day") or today,
-    for the story-strength draws. A race without its own stories takes the nation's, and a race whose own stories
-    include no national ones adds the nation's (moves.paths' rule). The effects leave out the offset that polls read
-    net of the news give them, so the draws err on the wide side."""
+    for the story-strength draws. A race without its own stories takes the nation's, and a race with stories adds the
+    nation's it takes (moves.nation_paths' rule). The effects leave out the offset that polls read net of the news
+    give them, so the draws err on the wide side."""
     us, takes = mv.get("US", {}), moves.takes_nation(mv)
     value = (lambda x, e, v: v["election_day"]) if when == "election_day" else (
         lambda x, e, v: x.get("by_event_effect", {}).get(e, 0.0))
@@ -151,8 +151,8 @@ def _stories(mv: dict, when: str) -> dict:
         if r in ("US", "shadow") or not isinstance(x, dict) or "events" not in x:
             continue
         src = [(x, e, v) for e, v in x["events"].items()]
-        if not src or r in takes:
-            src += [(us, e, v) for e, v in us.get("events", {}).items()]
+        taken = set(x.get("nation_unasked", ())) if src and r not in takes else None
+        src += [(us, e, v) for e, v in us.get("events", {}).items() if taken is None or e in taken]
         out[r] = {e: round(float(value(xx, e, v)), 4) for xx, e, v in src}
     return out
 
@@ -167,9 +167,10 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict, ele
     run = lambda mv_paths: levels.compute(t, day, run_id, moves=mv_paths, inp=inp, election=election)
     twin, head = levels.compute(t, day, run_id, inp=inp, election=election), run(moves.paths(mv))
     own = {k: {r: x for r, x in moves.paths(mv, f"{k}_base", with_nation=False).items() if r != "US"} for k in "st"}
-    nation, takes = {k: moves.paths(mv, f"{k}_base").get("US", []) for k in "st"}, moves.takes_nation(mv)
+    nation = {k: moves.paths(mv, f"{k}_base").get("US", []) for k in "st"}
+    taken = {k: moves.nation_paths(mv, f"{k}_base") for k in "st"}
     specs = {f"own_{k}": own[k] | {"US": []} for k in "st"} | {
-        f"us_{k}": {"US": nation[k]} | {r: nation[k] if r in takes else [] for r in own[k]} for k in "st"}
+        f"us_{k}": {"US": nation[k]} | {r: taken[k].get(r, []) for r in own[k]} for k in "st"}
     full = {name: run(p) for name, p in specs.items()}
     runs = {name: f["races"] for name, f in full.items()}
     part = lambda name: {r: runs[name][r]["margin"] - twin["races"][r]["margin"] for r in twin["races"]}

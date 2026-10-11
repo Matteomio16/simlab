@@ -61,6 +61,10 @@ and ethics review and the code review find nothing that must be fixed before lau
   The site serves prelaunch until the 12 Oct publish adds `site/data/live/forecast.json`. Switch `SITE_PUBLISH` off
   before any test run of the daily job. The reviews were still running at the switch; if one finds a must-fix item,
   turning `SITE_PUBLISH` off holds the site back.
+- **Code review (A14): done, fixes pushed** before the 12 Oct run (Matteo's yes). The must-fix: public posts no longer
+  compare with the unpublished pilot forecasts (the launch post's fourth race would have been Alabama). Also: a race
+  that joins the simulation keeps the national news it already had; card words the site bans; polls-only mode keeps
+  story types. After launch: unlock the 40 simulated House seats (CHANGELOG 11 Oct).
 - **Mon 12 Oct:** run from 09:47 UTC, forecast about 12:05-12:45 Paris, the site switches by itself, Matteo approves the
   launch post with the real numbers; code freeze; the weekly filter runs inside Monday's statistics step.
 - **After launch:** more than half of event cards fail each day (the same since before the pilot); the Bluesky poster
@@ -155,7 +159,7 @@ Matteo is away Fri 2 and Sat 3 Oct, back Sun 4 Oct, and checks in from his phone
 | A11 | House seats | Voter groups re-weighted to each district on the new 2026 maps; district baselines and polls; the other ~395 seats from the fundamentals map | Kev (moved from Statistics 28 Sep, Matteo's call); starts once A2's House maps and 2024 results by district land, ~Wed 30 Sep | Fri 9 Oct | fundamentals for all 435 seats done 29 Sep (`simlab/house.py`, 1a7520d), wired into statsday and the Monte Carlo (413ed7d, 8e686b0); runs daily from 30 Sep; House news (A13) built d1fce9d, from the 1 Oct run; per-seat news uncertainty before 12 Oct |
 | A13 | Scale-up of news and reactions | News queries for all 35 Senate races and ~40 House seats (from `races.json`); a reaction budget that fits the day: national stories asked once with state-neutral personas, fewer groups for safe races, a minimum attention, OpenRouter's batch API if needed (GLM manages ~200 prompts a minute) | Engine | Fri 9 Oct | built 29 Sep (`simlab/newsraces.py`; selection by the previous day's tier: simulate 5 race + 3 national stories, watch its 2 biggest, statistics none; about 13,500 prompts and 50 minutes on a busy day). House seats built 29 Sep (Matteo's yes): the simulated seats come from the daily `races.json`, one GDELT query per state every 12 hours, each story gated for every seat in its state, national-story reactions cached per state. Full-scale rehearsal done 7 Oct: passed except the House (Matteo, 8 Oct; `docs/rehearsal.md`). Still to do: the query numbers checked against a full day of the news job |
 | A12 | Early-vote data | NC absentee files now; NC in-person from 15 Oct; Texas from ~19 Oct; Ohio as published | Kev (it owns the snapshots); moves to Engine only if B2 slips | from Mon 5 Oct | live: NC (every 30 min, counts only), ME (counts only, raw file never stored), IA and TX switched on (publish from ~14 and ~19 Oct); Ohio skipped for the pilot (bot check; manual link route on record) |
-| A14 | Pre-freeze code review | An independent review of the daily chain before the 12 Oct freeze | a new review session | Sat 10 – Sun 11 Oct | — |
+| A14 | Pre-freeze code review | An independent review of the daily chain before the 12 Oct freeze | a new review session | Sat 10 – Sun 11 Oct | done 11 Oct: one must-fix (posts' "this week" against pilot forecasts) and three smaller fixes pushed; the House seat set unlocks after launch (CHANGELOG 11 Oct) |
 
 ## Track B: the models (who does which job)
 
