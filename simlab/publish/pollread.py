@@ -29,7 +29,7 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Alaska Survey Research": "Alaska Survey Res.", "Rasmussen Reports": "Rasmussen",
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
-         "Stratus Intelligence": "Stratus", "Marist University": "Marist",
+         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "Emerson College": "Emerson",
          "Bowling Green State University/YouGov": "BGSU/YouGov", "Suffolk University": "Suffolk"}
 
 STORIES = {
@@ -169,6 +169,44 @@ STORIES = {
         "first_comment": "If you live in Florida, does this Senate race feel close where you are?",
         "alt1": ("Dot chart of six Florida Senate polls since mid-September, Nixon minus Moody. They run from a tie "
                  "to Moody +11; the newest Mason-Dixon poll, ringed, has Moody +10."),
+    },
+    "2026-10-12": {
+        "race": "IA", "since": "2026-09-14", "focus": "SSRS", "folder": "12-reading-polls-05",
+        "left": "Turek", "right": "Hinson",
+        "headline": "A new Iowa poll has Hinson up 2. The ten others average Turek +1.",
+        "dek": "Eleven Senate polls since mid-September: Turek (D) minus Hinson (R).",
+        "source": "Polls ending 16 Sep – 6 Oct 2026. Data: VoteHub (CC BY 4.0) and Wikipedia (CC BY-SA 4.0).",
+        "title2": "Shift, or noise?",
+        "against": ["801 voters: the gap can swing about 7 points either way.",
+                    "Suffolk, polling the same week, had Turek up 4.",
+                    "The ten polls since mid-September average Turek +1."],
+        "for": "In its few past races SSRS leaned toward Democrats, if anything, and Emerson also found Hinson up 2 "
+               "the same week.",
+        "hypothesis": "Our hypothesis: closer to even than Hinson +2. We’ll check it against the next three polls.",
+        "caption": (
+            "Iowa Senate poll: a new SSRS survey has Ashley Hinson ahead of Josh Turek by 2 points, 45 to 43. The ten "
+            "other polls since mid-September average about Turek +1, anywhere from Hinson +4.5 to Turek +8.\n\n"
+            "Read it carefully. With 801 voters, the gap can move about 7 points either way, and Suffolk, in the "
+            "field the same week, had Turek up 4.\n\n"
+            "But don't dismiss it. In the few races we have on record, SSRS has leaned toward Democrats rather than "
+            "Republicans, and Emerson also found Hinson up 2 that week. Two polls in a row is worth watching.\n\n"
+            "Our hypothesis: Iowa is closer to even than Hinson +2. We'll check it against the next three polls and "
+            "report back.\n\n"
+            "#midterms2026 #Iowa #IowaSenate #elections"),
+        "short": ("A new Iowa poll, SSRS, has Hinson up 2 on Turek. The ten others since mid-September average "
+                  "about Turek +1. Small sample, and Suffolk had Turek +4 the same week, but Emerson also found "
+                  "Hinson +2. Our hypothesis: closer to even."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("Iowa: SSRS has Hinson up 2. Emerson, same week: Hinson +2. Suffolk, same week: Turek +4. The ten polls "
+              "since mid-September average Turek +1. Our hypothesis: closer to even than either side's best poll."),
+        "threads": ("Three Iowa Senate polls in one week: SSRS and Emerson have Ashley Hinson up 2, Suffolk has Josh "
+                    "Turek up 4. Since mid-September the average sits around Turek +1. We think it's closer to even "
+                    "than any single poll suggests, and we'll check it against the next three. If you're in Iowa, "
+                    "does it feel this close?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you're in Iowa, does this Senate race feel as close as the polls say?",
+        "alt1": ("Dot chart of eleven Iowa Senate polls since mid-September, Turek minus Hinson. The ten other polls "
+                 "range from Hinson +4.5 to Turek +8, averaging about Turek +1; the new SSRS poll has Hinson up 2."),
     },
 }
 
