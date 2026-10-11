@@ -179,8 +179,10 @@ Tests: `python -m unittest tests.test_kit`.
 
 - **Rhythm:** 14:00 Paris a Lab note (the daily forecast from 12 Oct), 18:00 Paris Reading the polls
   (`pollread.py`: one real poll, why it may overstate, why it may be right, one hypothesis; alternate which party the
-  featured poll favours). Approval: the scheduled task `notapoll-evening-approval` (19:00 Paris) drafts the next day's
-  posts in its own window and Matteo approves there or in the Content & site session, never through another session.
+  featured poll favours). Approval: since 11 Oct, in the Content & site thread, with no scheduled routine. Matteo
+  disabled `notapoll-evening-approval` because it waited for his yes on every command. When he opens the thread, it
+  shows the posts that are ready and he approves there, typed by him, never through another session. The routine's
+  SKILL.md (`~/.claude/scheduled-tasks/notapoll-evening-approval/`) still has the step-by-step procedure.
   Approved folders go in `kits/daily/APPROVED.json`; images to `site/public/social/<folder>/`; then
   `python -m simlab.publish.buffer queue-daily FOLDER "YYYY-MM-DD HH:MM"`.
 - **Every platform gets its own text** (research 7 Oct: Mosseri on Instagram signals; X's open-source ranker; Threads

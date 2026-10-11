@@ -52,11 +52,15 @@ and ethics review and the code review find nothing that must be fixed before lau
 - **Posts:** Lab notes 06-08 went out 8-10 Oct at 14:00 on Instagram, Threads and X; Lab notes 09 is queued for 11 Oct
   14:00. No Reading the polls since 7 Oct: the 8 Oct evening-approval run hung on its first command until it was
   stopped on 11 Oct (Matteo's yes), so the 9 and 10 Oct runs never started. The Florida post (08-reading-polls-04) is
-  dropped. The task runs again tonight at 19:00 Paris and prepares the launch-post layout.
+  dropped. Lab notes 09 went out at 14:00. The routine is disabled (Matteo, 11 Oct): its second run hung the same way.
+  Daily posts are now prepared and approved in the Content & site thread, which builds the launch post (Matteo
+  approves the real one on 12 Oct after the forecast lands).
 - **Still to do today:** publishing and ethics review with the OSF yes or no (C7), and the pre-freeze code review of the
   daily chain (A14), each in a fresh session (Matteo's yes, 11 Oct). The labs.scaliastudio.dev redirect is skipped.
-- **After a go:** set `SITE_PUBLISH=on`, `SITE_MODE=forecast` and `SITE_DATA=live` together (now `SITE_MODE` is
-  prelaunch and the other two are unset).
+- **Site switches on** (11 Oct, 20:11 UTC, Matteo's yes): `SITE_PUBLISH=on`, `SITE_MODE=forecast`, `SITE_DATA=live`.
+  The site serves prelaunch until the 12 Oct publish adds `site/data/live/forecast.json`. Switch `SITE_PUBLISH` off
+  before any test run of the daily job. The reviews were still running at the switch; if one finds a must-fix item,
+  turning `SITE_PUBLISH` off holds the site back.
 - **Mon 12 Oct:** run from 09:47 UTC, forecast about 12:05-12:45 Paris, the site switches by itself, Matteo approves the
   launch post with the real numbers; code freeze; the weekly filter runs inside Monday's statistics step.
 - **After launch:** more than half of event cards fail each day (the same since before the pilot); the Bluesky poster
