@@ -173,16 +173,21 @@ def main_event(r: dict = NC, t=FIGHT) -> Slide:
 
 
 def chamber(t=CHAMBER, up: dict = UP, holdover: dict = HOLDOVER, p_r: float = 0.64, market: float | None = 0.71,
-            day: date = DAY, run: str = "a3f9c1e", kicker: str = KICKER, src: str | None = None) -> Slide:
+            day: date = DAY, run: str = "a3f9c1e", kicker: str = KICKER, src: str | None = None,
+            p_d: float | None = None, ind: set | None = None, series: str | None = None,
+            p_ind: float | None = None) -> Slide:
     """The Chamber: all 100 seats in a half circle. Seats not up this year are pale; the 35 races are coloured by how
     the simulations lean, toss-ups in purple. The line marks 50 seats, which is control for Republicans."""
-    s = Slide(day, kicker, t, run=run)
+    s = Slide(day, kicker, t, run=run, series=series)
     s.headline("Who holds the Senate?", px=80)
-    s.dek("All 100 seats; the 35 on the ballot by how the simulations lean.", px=32)
+    ind = ind or set()
+    col = lambda k: (t.ai if 0.35 <= up[k] <= 0.65 else (t.ind if k in ind else t.dem) if up[k] > 0.5 else t.rep)
+    if p_d is None:
+        s.dek("All 100 seats; the 35 on the ballot by how the simulations lean.", px=32)
     order = sorted(up, key=lambda k: -up[k])
-    seats = ([(t.dem, False, None)] * holdover["D"] + [(t.ai if 0.35 <= up[k] <= 0.65 else t.dem if up[k] > 0.5 else t.rep, True, k) for k in order]
+    seats = ([(t.dem, False, None)] * holdover["D"] + [(col(k), True, k) for k in order]
              + [(t.rep, False, None)] * holdover["R"])
-    cx, cy, R = s.w / 2, s.y + 470, 420
+    cx, cy, R = (s.w / 2, s.y + 470, 420) if p_d is None else (s.w / 2, s.y + 395, 360)
     rows, pos = 6, []
     radii = np.linspace(R * 0.42, R, rows)
     counts = np.round(100 * radii / radii.sum()).astype(int)
@@ -201,11 +206,23 @@ def chamber(t=CHAMBER, up: dict = UP, holdover: dict = HOLDOVER, p_r: float = 0.
     s.ax.plot([cx, cx], [cy - R - 34, cy - 130], color=t.ink, lw=pt(3), zorder=4, dashes=(3, 2))
     s._put(cx, cy - R - 42, "50", "mono", 600, 26, t.ink, ha="center", va="bottom")
     tos = sum(1 for p in up.values() if 0.35 <= p <= 0.65)
-    s._put(cx, cy - 118, f"{p_r * 100:.0f}", "hero", 600, 120, t.ink, ha="center", va="top")
-    s._put(cx, cy + 36, "in 100: Republicans hold 50+", "sans", 500, 30, t.ink2, ha="center", va="top")
-    s.y = cy + 96
+    if p_d is None:
+        s._put(cx, cy - 118, f"{p_r * 100:.0f}", "hero", 600, 120, t.ink, ha="center", va="top")
+        s._put(cx, cy + 36, "in 100: Republicans hold 50+", "sans", 500, 30, t.ink2, ha="center", va="top")
+    else:  # the split, as on the race cards (Matteo, 8 Oct): both sides in their colours, the leader larger
+        r_n, d_n = round(p_r * 100), round(p_d * 100)
+        for side, n, lab, c in ((-1, r_n, "REP HOLD 50+", t.rep), (1, d_n, "DEM REACH 51", t.dem)):
+            px = 110 if n >= (d_n if side < 0 else r_n) else 80
+            x = cx + side * 150
+            s._put(x, cy + 30, lab, "sans", 700, 24, c, ha="center", va="top")  # below the arc, clear of the seats
+            s._put(x, cy + 60 + (110 - px) * 0.9, f"{n}", "hero", t.hero_weight, px, c, ha="center", va="top")
+        tail = f". In {round(p_ind * 100)}, independents decide" if p_ind is not None and round(p_ind * 100) else ""
+        s._put(cx, cy + 178, f"of 100 simulations, 3 Nov{tail}", "sans", 500, 28, t.ink2, ha="center", va="top")
+    s.y = cy + 96 if p_d is None else cy + 226
     items = [("D favoured", [t.dem]), ("Toss-up", [t.ai]), ("R favoured", [t.rep]),
              ("Not up this year", [mix(t.dem, t.paper, 0.25), mix(t.rep, t.paper, 0.25)])]
+    if any(up[k] > 0.65 for k in ind):
+        items.insert(2, ("Independent favoured", [t.ind]))
     x = MARGIN
     for label, cols in items:
         for j, col in enumerate(cols):
