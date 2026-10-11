@@ -129,7 +129,7 @@ export function SeatHistogram({ dist, w = 640 }: { dist: Record<string, number>;
   );
 }
 
-// Chance over time; the toss-up zone (35–65%) is shaded.
+// Chance over time; the toss-up zone (45–55%) is shaded.
 export function HistoryLine({ points, label, w = 640 }: { points: { date: string; p: number }[]; label: string; w?: number }) {
   if (points.length < 2) return null;
   const W = w, H = w < 480 ? 160 : 180, pad = { l: 34, r: 40, t: 12, b: 26 };
@@ -141,7 +141,7 @@ export function HistoryLine({ points, label, w = 640 }: { points: { date: string
   const fmt = (iso: string) => `${Number(iso.slice(8, 10))} ${MON[Number(iso.slice(5, 7)) - 1]}`;
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={`${label}, from ${fmt(points[0].date)} to ${fmt(last.date)}`}>
-      <rect x={pad.l} y={y(0.65)} width={W - pad.l - pad.r} height={y(0.35) - y(0.65)} fill="var(--tossup)" />
+      <rect x={pad.l} y={y(0.55)} width={W - pad.l - pad.r} height={y(0.45) - y(0.55)} fill="var(--tossup)" />
       {[0, 0.5, 1].map((p) => (
         <g key={p}>
           <line x1={pad.l} x2={W - pad.r} y1={y(p)} y2={y(p)} stroke={p === 0.5 ? "var(--axis)" : "var(--rule)"} />

@@ -112,8 +112,9 @@ simulated turnout.
 ### Then each race is played out 40,000 times
 
 Each simulated election draws its own errors, at four levels, so a bad night for one party in similar states happens
-together, as it does in real elections. A candidate's chance is the share of simulated elections they win. Between 35
-and 65 in 100 is a toss-up.
+together, as it does in real elections. A candidate's chance is the share of simulated elections they win. Between 45
+and 55 in 100 we call the race a toss-up; from 55 to 65 it leans to the leader, from 65 to 85 it is likely theirs,
+and above 85 safe.
 
 {{fig:layers}}
 

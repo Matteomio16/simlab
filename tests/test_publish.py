@@ -117,9 +117,9 @@ class TextCheckTest(unittest.TestCase):
         self.assertEqual(rc.who(base, cap=True), "The Democrat")
         o = base | {"left_party": "O", "candidates": {"left": "Jane Smith", "right": "Tom Roe"}}
         self.assertEqual(rc.who(o), "Smith")
-        self.assertEqual(rc.verdict(o["p"], rc.lean(o)), "Leans Smith")
+        self.assertEqual(rc.verdict(o["p"], rc.lean(o)), "Likely Smith")
         self.assertEqual(rc.who(base | {"left_party": "O"}), "the other candidate")
-        self.assertEqual(rc.verdict(0.9, rc.lean(base | {"left_party": "O"})), "Likely Other candidate")
+        self.assertEqual(rc.verdict(0.9, rc.lean(base | {"left_party": "O"})), "Safe Other candidate")
         for r in (o, base | {"left_party": "O"}, base | {"left_party": "I"}):
             for name in ("4-stamp", "2-ladder", "3-futures"):
                 self.assertEqual(rc.LAYOUTS[name](LAB, r).layout_problems(), [], (name, r.get("candidates")))

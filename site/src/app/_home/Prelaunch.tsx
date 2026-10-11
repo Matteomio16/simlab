@@ -30,7 +30,7 @@ const STEPS = [
   {
     k: "3 · Who wins, and how often",
     t: "40,000 simulated elections",
-    b: "Each race is played out 40,000 times a day. The share a candidate wins is their chance: between 35 and 65 in 100 is a toss-up.",
+    b: "Each race is played out 40,000 times a day. The share a candidate wins is their chance: between 45 and 55 in 100 is a toss-up.",
     c: "var(--rep)",
   },
 ];

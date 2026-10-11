@@ -5,13 +5,13 @@ export const in100 = (p: number) => Math.round(p * 100);
 export const partyVar = (p: Party) => (p === "D" ? "var(--dem)" : p === "R" ? "var(--rep)" : "var(--ind)");
 export const partyName = (p: Party) => (p === "D" ? "Democrat" : p === "R" ? "Republican" : "the independent");
 
-// 35–65% is a toss-up (publishing.md). Lean, likely and safe cut points follow the usual 65/80/95 convention.
+// Matteo, 11 Oct: toss-up 45–55%, lean to 65, likely to 85, safe above (posts: racecards.verdict).
 export type Rating = "Toss-up" | "Lean" | "Likely" | "Safe";
 export function rating(p: number): Rating {
   const q = Math.max(p, 1 - p);
-  if (q <= 0.65) return "Toss-up";
-  if (q <= 0.8) return "Lean";
-  if (q <= 0.95) return "Likely";
+  if (q <= 0.55) return "Toss-up";
+  if (q <= 0.65) return "Lean";
+  if (q <= 0.85) return "Likely";
   return "Safe";
 }
 

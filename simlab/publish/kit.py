@@ -199,7 +199,7 @@ def build(day: date, data: Path, theme=LAB, only: list[str] | None = None, video
             lines.append(f"What moved it: {top[0]['card']}")
         lines.append("")
     lines += ["How to read it: voter personas react to each day's news, and each simulated election plays the race "
-              "out once. Anything from 35% to 65% is a toss-up.", "", "#midterms2026 #elections", "", DISCLAIMER]
+              "out once. Anything from 45% to 55% is a toss-up.", "", "#midterms2026 #elections", "", DISCLAIMER]
     caption = "\n".join(lines)
     thread = [f"Where the races stand, in 40,000 simulated elections each: on 3 Nov, and if the election were "
               f"today. {LABEL}."]

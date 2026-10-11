@@ -167,7 +167,7 @@ export default function Overview() {
           <MapPanel
             legend={TIER_LEGEND}
             views={[
-              { key: "sim", label: "Our simulation", tiles: simTiles, note: "Toss-up: 35 to 65 in 100." },
+              { key: "sim", label: "Our simulation", tiles: simTiles, note: "Toss-up: 45 to 55 in 100." },
               { key: "cook", label: "Cook Political Report", tiles: cookTiles, note: "Cook's published ratings, for comparison." },
               { key: "market", label: "Prediction markets", tiles: marketTiles, note: "Kalshi and Polymarket prices, for comparison; never an input." },
             ]}

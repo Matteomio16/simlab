@@ -13,7 +13,7 @@ import numpy as np
 from matplotlib.patches import Ellipse, FancyBboxPatch
 
 from .frame import MARGIN, Slide, pt, typeset
-from .racecards import DAY, RACE, benchmarks, chip, fit, margin_txt, pct_txt, strip, verdict
+from .racecards import DAY, RACE, TOSS_UP, benchmarks, chip, fit, margin_txt, pct_txt, strip, verdict
 from .themes import BALLOT, CHAMBER, FIGHT, MAP, SEISMO
 
 ELECTION = date(2026, 11, 3)
@@ -58,10 +58,10 @@ def light_of(t) -> str:
 
 
 def rating_color(t, p: float) -> str:
-    if 0.35 <= p <= 0.65:
+    if TOSS_UP[0] <= p <= TOSS_UP[1]:
         return t.ai
     c = t.dem if p > 0.5 else t.rep
-    return c if max(p, 1 - p) >= 0.8 else mix(c, light_of(t), 0.55)
+    return c if max(p, 1 - p) > 0.65 else mix(c, light_of(t), 0.55)
 
 
 def surname(name: str) -> str:
@@ -181,7 +181,7 @@ def chamber(t=CHAMBER, up: dict = UP, holdover: dict = HOLDOVER, p_r: float = 0.
     s = Slide(day, kicker, t, run=run, series=series)
     s.headline("Who holds the Senate?", px=80)
     ind = ind or set()
-    col = lambda k: (t.ai if 0.35 <= up[k] <= 0.65 else (t.ind if k in ind else t.dem) if up[k] > 0.5 else t.rep)
+    col = lambda k: (t.ai if TOSS_UP[0] <= up[k] <= TOSS_UP[1] else (t.ind if k in ind else t.dem) if up[k] > 0.5 else t.rep)
     if p_d is None:
         s.dek("All 100 seats; the 35 on the ballot by how the simulations lean.", px=32)
     order = sorted(up, key=lambda k: -up[k])
@@ -205,7 +205,7 @@ def chamber(t=CHAMBER, up: dict = UP, holdover: dict = HOLDOVER, p_r: float = 0.
             s.ax.add_patch(plt.Circle((x, y), dot / 2, color=mix(col, t.paper, 0.25), lw=0, zorder=3))
     s.ax.plot([cx, cx], [cy - R - 34, cy - 130], color=t.ink, lw=pt(3), zorder=4, dashes=(3, 2))
     s._put(cx, cy - R - 42, "50", "mono", 600, 26, t.ink, ha="center", va="bottom")
-    tos = sum(1 for p in up.values() if 0.35 <= p <= 0.65)
+    tos = sum(1 for p in up.values() if TOSS_UP[0] <= p <= TOSS_UP[1])
     if p_d is None:
         s._put(cx, cy - 118, f"{p_r * 100:.0f}", "hero", 600, 120, t.ink, ha="center", va="top")
         s._put(cx, cy + 36, "in 100: Republicans hold 50+", "sans", 500, 30, t.ink2, ha="center", va="top")
@@ -221,7 +221,7 @@ def chamber(t=CHAMBER, up: dict = UP, holdover: dict = HOLDOVER, p_r: float = 0.
     s.y = cy + 96 if p_d is None else cy + 226
     items = [("D favoured", [t.dem]), ("Toss-up", [t.ai]), ("R favoured", [t.rep]),
              ("Not up this year", [mix(t.dem, t.paper, 0.25), mix(t.rep, t.paper, 0.25)])]
-    if any(up[k] > 0.65 for k in ind):
+    if any(up[k] > TOSS_UP[1] for k in ind):
         items.insert(2, ("Independent favoured", [t.ind]))
     x = MARGIN
     for label, cols in items:
@@ -249,7 +249,7 @@ def seismograph(r: dict = NC, t=SEISMO, history: list | None = None, events: lis
     x0, x1 = MARGIN, s.w - MARGIN
     top, h = s.y + 6, 360
     lo_p, hi_p = max(0, min(history) - 0.08), min(1, max(history) + 0.08)
-    lo_p, hi_p = min(lo_p, 0.62), max(hi_p, 0.38)  # always show at least the edge of the toss-up zone
+    lo_p, hi_p = min(lo_p, TOSS_UP[1] - 0.03), max(hi_p, TOSS_UP[0] + 0.03)  # always show at least the edge of the toss-up zone
     if hi_p - lo_p < 0.3:
         mid = (hi_p + lo_p) / 2
         lo_p, hi_p = max(0, mid - 0.15), min(1, mid + 0.15)
@@ -260,14 +260,15 @@ def seismograph(r: dict = NC, t=SEISMO, history: list | None = None, events: lis
         s.ax.plot([gx, gx], [top, top + h], color=t.hairline, lw=pt(1.4 if (gx - cx0) % 90 == 0 else 0.7), zorder=0)
     for gy in np.arange(top, top + h + 1, 18):
         s.ax.plot([cx0, x1], [gy, gy], color=t.hairline, lw=pt(1.4 if (gy - top) % 90 == 0 else 0.7), zorder=0)
-    band = Y(min(0.65, hi_p)), Y(max(0.35, lo_p))
+    band = Y(min(TOSS_UP[1], hi_p)), Y(max(TOSS_UP[0], lo_p))
     if band[1] > band[0]:
         s.ax.add_patch(plt.Rectangle((cx0, band[0]), x1 - cx0, band[1] - band[0], color=t.tossup, alpha=0.8, lw=0,
                                      zorder=0))
     if lo_p < 0.5 < hi_p:
         s.ax.plot([cx0, x1], [Y(0.5)] * 2, color=t.baseline, lw=pt(1.5), zorder=1)
-    for p, col in ((0.65, t.ai), (0.5, t.ink2), (0.35, t.ai), (lo_p, t.ink2), (hi_p, t.ink2)):
-        if lo_p <= p <= hi_p and (p in (0.35, 0.5, 0.65) or min(abs(p - q) for q in (0.35, 0.5, 0.65)) > 0.06):
+    marks = (TOSS_UP[0], 0.5, TOSS_UP[1])
+    for p, col in ((TOSS_UP[1], t.ai), (0.5, t.ink2), (TOSS_UP[0], t.ai), (lo_p, t.ink2), (hi_p, t.ink2)):
+        if lo_p <= p <= hi_p and (p in marks or min(abs(p - q) for q in marks) > 0.06):
             s._put(cx0 - 12, Y(p), f"{p:.0%}", "mono", 500, 20, col, ha="right", va="center")
     xs = np.array([X(i) for i in range(len(history))])
     ys = np.array([Y(p) for p in history])
@@ -313,8 +314,8 @@ def tile_map(t=MAP, up: dict = UP, cook: dict = COOK, day: date = DAY, run: str 
     """The Map: one square per state. The 35 races are coloured by how the simulations lean; a ring marks each race
     where Cook's rating differs from ours."""
     s = Slide(day, kicker, t, run=run)
-    tos = sum(1 for p in up.values() if 0.35 <= p <= 0.65)
-    s.headline(f"35 races. {tos} toss-ups.", px=88)
+    tos = sum(1 for p in up.values() if TOSS_UP[0] <= p <= TOSS_UP[1])
+    s.headline(f"35 races. {tos} toss-up{'' if tos == 1 else 's'}.", px=88)
     s.dek("The Democrat's chance in each state's simulated elections.", px=34)
     size, gap = 72, 6
     x0 = MARGIN + (s.width - 12 * (size + gap) + gap) / 2
@@ -336,8 +337,8 @@ def tile_map(t=MAP, up: dict = UP, cook: dict = COOK, day: date = DAY, run: str 
                                           ec=t.baseline, lw=pt(1.5), zorder=2))
             s._put(x + size / 2, y + size / 2, k, "sans", 400, 20, t.muted, ha="center", va="center", zorder=4)
     s.y = top + 8 * (size + gap) + 20
-    items = [("Likely D", t.dem), ("Leans D", rating_color(t, 0.7)), ("Toss-up", t.ai),
-             ("Leans R", rating_color(t, 0.3)), ("Likely R", t.rep)]
+    items = [("Likely/safe D", t.dem), ("Leans D", rating_color(t, 0.6)), ("Toss-up", t.ai),
+             ("Leans R", rating_color(t, 0.4)), ("Likely/safe R", t.rep)]
     x = MARGIN
     for label, col in items:
         s.ax.add_patch(plt.Rectangle((x, s.y + 4), 26, 26, color=col, lw=0))

@@ -85,7 +85,7 @@ class Theme:
     header: str = "rule"  # "rule", "bar" (filled top bar) or "chip" (kicker in an accent box)
     highlight: str | None = None  # colour drawn behind hero numbers
     overprint: str | None = None  # second ink offset behind hero numbers (riso)
-    tossup: str | None = None  # fill for the 35–65% toss-up zone; hairline when None
+    tossup: str | None = None  # fill for the 45–55% toss-up zone; hairline when None
     swing_band: bool = False  # blue, purple, red band along the top of the label strip
     note: str = "#F6DD6E"  # post-it yellow for highlights: a note, a flag, "what changed" (communication.md)
 

@@ -127,8 +127,8 @@ The site should read as the same brand as the posts. Shared pieces, all in `siml
 - **Logo:** H1 and the wordmark as above; use the SVG masters in `brand/final/` (text outlined, no font dependency).
 - **Signature details:** the blue, purple, red swing band; the label "Social simulation, not a poll" on every view that
   shows a number; the state outline filled with simulated voters (`charts.state_voters`, outlines in `states.json`).
-- **Rules that apply on the site too:** our number always beside the poll average, the market and Cook; 35–65% is a
-  toss-up; "the independent" where `left_party` is "I"; only event `card` text, never `news_private.jsonl`; no "poll",
+- **Rules that apply on the site too:** our number always beside the poll average, the market and Cook; 45–55% is a
+  toss-up, then leans to 65%, likely to 85%, safe above (Matteo, 11 Oct; was 35–65% toss-up); "the independent" where `left_party` is "I"; only event `card` text, never `news_private.jsonl`; no "poll",
   "survey" or "voters say" for our outputs (`text.check` can lint page copy).
 
 ## The daily kit (due Sun 4 Oct)
@@ -171,7 +171,7 @@ Tests: `python -m unittest tests.test_kit`.
 - **Output:** `kits/<date>/`: slides, `reel.mp4` when useful, `caption_instagram.txt`, `alt_text.json`, `thread.txt`,
   `note.md` (what changed and why, rule checks first), `manifest.json` (input and file hashes). `kits/` is gitignored:
   kits stay internal during the pilot.
-- **Checks on top of `text.py`:** every forecast number beside the poll average, market and Cook; 35–65% called a
+- **Checks on top of `text.py`:** every forecast number beside the poll average, market and Cook; 45–55% called a
   toss-up; "no meaningful change" when the 7-day change is small; character limits (Instagram 2,200, thread posts
   280). A failed check will block the approval flag once posting is automated.
 

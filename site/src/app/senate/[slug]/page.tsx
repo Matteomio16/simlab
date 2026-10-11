@@ -156,7 +156,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
         <div className="section-rule">
           <p className="label">Over time</p>
           <h2 className="mt-2 text-xl font-bold">{`${leftShort}'s chance in 100`}</h2>
-          <p className="note mt-1">The shaded band is the toss-up zone, 35 to 65.</p>
+          <p className="note mt-1">The shaded band is the toss-up zone, 45 to 55.</p>
           <div className="mt-4">
             {hist.length > 1 ? (
               <Responsive desktop={500} render={(w) => <HistoryLine w={w} points={hist} label={`${leftShort}'s chance`} />} />

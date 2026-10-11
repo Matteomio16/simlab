@@ -48,16 +48,19 @@ def abbr(r: dict) -> str:
     return LEFT[r.get("left_party", "D")][1]
 
 
+TOSS_UP = (0.45, 0.55)  # Matteo, 11 Oct: toss-up 45-55, leans to 65, likely to 85, safe above (site: lib/format.ts)
+
+
 def verdict(p: float, left: str = "D") -> str:
-    if 0.35 <= p <= 0.65:
+    if TOSS_UP[0] <= p <= TOSS_UP[1]:
         return "Toss-up"
     word = LEFT[left][0].capitalize() if left in LEFT else left
-    lean = word if p > 0.5 else "Republican"
-    return f"Likely {lean}" if max(p, 1 - p) >= 0.8 else f"Leans {lean}"
+    lean, q = word if p > 0.5 else "Republican", max(p, 1 - p)
+    return f"Safe {lean}" if q > 0.85 else f"Likely {lean}" if q > 0.65 else f"Leans {lean}"
 
 
 def verdict_color(t: Theme, p: float) -> str:
-    return t.ai if 0.35 <= p <= 0.65 else t.dem if p > 0.65 else t.rep
+    return t.ai if TOSS_UP[0] <= p <= TOSS_UP[1] else t.dem if p > 0.5 else t.rep
 
 
 def margin_txt(x: float, left: str = "D") -> str:
@@ -178,7 +181,7 @@ def split(t: Theme, r: dict = RACE) -> Slide:
     x0, w, h = MARGIN, s.width, 96
     cut = x0 + w * r["p"]
     y = s.y + 70
-    lo, hi = x0 + w * 0.35, x0 + w * 0.65
+    lo, hi = x0 + w * TOSS_UP[0], x0 + w * TOSS_UP[1]
     s.ax.plot([lo, lo, hi, hi], [y - 14, y - 36, y - 36, y - 14], color=t.ink2, lw=pt(2))
     s._put((lo + hi) / 2, y - 46, "TOSS-UP ZONE", "mono", 500, 22, t.ink2, ha="center", va="bottom")
     s.ax.add_patch(plt.Rectangle((x0, y), cut - x0 - 3, h, color=t.dem, lw=0, zorder=2))
@@ -206,17 +209,15 @@ def ladder(t: Theme, r: dict = RACE) -> Slide:
     x0, w = MARGIN + 20, s.width - 40
     X = lambda p: x0 + w * p
     y = y0 + 330
-    s.ax.add_patch(plt.Rectangle((X(0.35), y - 34), X(0.65) - X(0.35), 68, color=t.tossup or t.hairline, lw=0,
-                                 zorder=1))
+    s.ax.add_patch(plt.Rectangle((X(TOSS_UP[0]), y - 34), X(TOSS_UP[1]) - X(TOSS_UP[0]), 68, color=t.tossup or t.hairline,
+                                 lw=0, zorder=1))
     s.ax.add_patch(FancyBboxPatch((X(0), y - 5), w, 10, boxstyle="round,pad=0,rounding_size=5", color=t.baseline,
                                   lw=0, zorder=2))
     near = lambda a, b: b is not None and abs(a - b) < 0.05
-    for p, col in ((0, t.ink2), (0.35, t.ai), (0.65, t.ai), (1, t.ink2)):
+    for p, col in ((0, t.ink2), (TOSS_UP[0], t.ai), (TOSS_UP[1], t.ai), (1, t.ink2)):
         if not near(p, r["market"]):
             s._put(X(p), y + 48, f"{p:.0%}", "mono", 500, 22, col, va="top",
-                   ha={0: "left", 1: "right"}.get(p, "center"))
-    if not near(0.5, r["market"]):
-        s._put(X(0.5), y + 48, "TOSS-UP", "mono", 600, 22, t.ai, ha="center", va="top")
+                   ha={0: "left", 1: "right", TOSS_UP[0]: "right", TOSS_UP[1]: "left"}.get(p, "center"))
 
     def label(x: float, lines: list[tuple[str, str, int, int, str]], top: float):
         wmax = max(s.pil(role, wt, px).getlength(typeset(txt)) for txt, role, wt, px, _ in lines)

@@ -96,3 +96,13 @@ class KitTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class VerdictTest(unittest.TestCase):
+    def test_labels_follow_the_11_oct_bands(self):
+        # Matteo, 11 Oct: toss-up 45-55, leans to 65, likely to 85, safe above; the site's lib/format.ts matches
+        from simlab.publish.racecards import verdict
+        cases = {0.5: "Toss-up", 0.55: "Toss-up", 0.45: "Toss-up", 0.56: "Leans Democrat", 0.65: "Leans Democrat",
+                 0.66: "Likely Democrat", 0.85: "Likely Democrat", 0.86: "Safe Democrat", 0.41: "Leans Republican",
+                 0.33: "Likely Republican", 0.1: "Safe Republican"}
+        self.assertEqual({p: verdict(p) for p in cases}, cases)
