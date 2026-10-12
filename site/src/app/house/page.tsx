@@ -72,6 +72,9 @@ export default function House() {
             {[
               ["If the election were today", h.today ? `Democrats ${in100(h.today.p_d_majority)} in 100` : "–"],
               ["Statistics only, no simulation", h.stats_only ? `Democrats ${in100(h.stats_only.p_d_majority)} in 100` : "–"],
+              // The market benchmark is the Republican price for control (simlab/montecarlo.py control_market); shown on
+              // the Democratic side, next to our number.
+              ["Prediction markets", h.benchmarks?.market == null ? "–" : `Democrats ${100 - in100(h.benchmarks.market)}%`],
             ].map(([k, v]) => (
               <div key={k} className="flex items-baseline justify-between gap-3 border-b border-rule py-2">
                 <dt className="text-ink-2">{k}</dt>
