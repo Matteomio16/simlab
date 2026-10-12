@@ -34,7 +34,8 @@ def races(f: dict, day: date, kicker: str, source: str) -> list[dict]:
         b = x.get("benchmarks") or {}
         m = race_meta(rid, {})
         m["left_party"] = x.get("left_party", m.get("left_party", "D"))
-        out.append(m | {"rid": rid, "run": run, "day": day, "kicker": kicker, "p": float(x["p_dem_win"]),
+        out.append(m | {"rid": rid, "run": None, "day": day,  # no run code on slides (Matteo, 12 Oct)
+                        "kicker": kicker, "p": float(x["p_dem_win"]),
                         "prev": None, "today": (x.get("today") or {}).get("p_dem_win"),
                         "lo": x["margin"]["p10"], "mid": x["margin"]["p50"], "hi": x["margin"]["p90"],
                         "poll": poll_txt(b.get("poll_avg"), m["left_party"]), "market": b.get("market"),
@@ -68,7 +69,7 @@ def build(day: date, data: Path, preview: bool = False, theme=LAB) -> tuple[Path
     run = str(f.get("run_id", "unknown")).rsplit("-", 1)[-1][:7]
     kicker = "PREVIEW · NOT FOR POSTING" if preview else ""
     src = (f"Preview on pilot numbers ({day:%d %b}), not a public forecast." if preview else
-           f"NotAPoll run {run}: 40,000 simulated elections per race. Poll average, market and Cook as of the run.")
+           "40,000 simulated elections per race. Poll average, market and Cook as of this morning.")
     rs = races(f, day, kicker, src)
     feat = featured(rs, max(day, date(2026, 10, 12)))
     sen = f["senate"]
@@ -76,7 +77,7 @@ def build(day: date, data: Path, preview: bool = False, theme=LAB) -> tuple[Path
     ind = {r["usps"] for r in rs if r["left_party"] in ("I", "O")}
     hold = sen.get("not_up", {"D": 32, "R": 31, "I": 2})
     cover = specials.chamber(theme, up, {"D": hold.get("D", 0) + hold.get("I", 0), "R": hold.get("R", 0)},
-                             sen["p_r_50plus"], (sen.get("benchmarks") or {}).get("market"), day, run, kicker,
+                             sen["p_r_50plus"], (sen.get("benchmarks") or {}).get("market"), day, None, kicker,
                              src + " Independents who caucus with Democrats count as D.", p_d=sen["p_d_caucus_51"],
                              ind=ind, series=SERIES, p_ind=sen.get("p_independents_decide"))
     slides = [cover] + [rc.stamped(theme, r) for r in feat]
