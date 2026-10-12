@@ -16,5 +16,7 @@ what we read wrong.
 | 05-reading-polls-01 | 5 Oct 18:00 Paris | Alaska Senate | NYT/Siena, Peltola +7 (504 LV) | Peltola +2 | | open | |
 | 06-reading-polls-02 | 6 Oct 20:30 Paris | Texas Senate | Pulse Decision Science, Paxton +3 (800) | Talarico +3 | | open | |
 | 07-reading-polls-03 | 7 Oct 18:00 Paris | Ohio Senate (special) | Marist, Brown +8 (RV) | Brown +3 | | open | |
+| 12-reading-polls-06 | 12 Oct 18:00 Paris | Ohio Senate (special) | co/efficient, Husted +1 (925 LV) | Brown +3 | | open | |
 
-Not posted, so no promise: 08-reading-polls-04 (Florida, dropped 11 Oct).
+Not posted, so no promise: 08-reading-polls-04 (Florida, dropped 11 Oct); 12-reading-polls-05 (Iowa, dropped 12 Oct:
+the SSRS poll sat in the middle of the pack).
