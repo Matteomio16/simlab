@@ -29,7 +29,7 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Alaska Survey Research": "Alaska Survey Res.", "Rasmussen Reports": "Rasmussen",
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
-         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "Emerson College": "Emerson",
+         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
          "Bowling Green State University/YouGov": "BGSU/YouGov", "Suffolk University": "Suffolk"}
 
 STORIES = {
@@ -211,6 +211,47 @@ STORIES = {
         "alt1": ("Dot chart of eleven Ohio Senate polls since mid-September, Brown minus Husted. Ten have Brown "
                  "ahead, from half a point to 8, with the likely-voter polls in the middle at Brown +3; the new "
                  "co/efficient poll, ringed, has Husted up 1."),
+    },
+    "2026-10-13": {
+        "race": "TX", "since": "2026-09-20", "focus": "YouGov", "folder": "13-reading-polls-07",
+        "left": "Talarico", "right": "Paxton",
+        "exclude": ["Slingshot Strategies", "University of Massachusetts Lowell Center for Public Opinion/YouGov"],
+        "headline": "Texas’s largest recent poll has Talarico up 6. The rest sit around +2.",
+        "dek": "Twelve Senate polls since 20 September: Talarico (D) minus Paxton (R).",
+        "source": "Polls ending 20 Sep – 8 Oct 2026. Data: VoteHub (CC BY 4.0) and Wikipedia (CC BY-SA 4.0).",
+        "title2": "Big sample, big gap?",
+        "against": ["YouGov has leaned about 1 point toward Democrats against the average pollster, 2018–24.",
+                    "Trafalgar, polling right after, had Talarico up 3.",
+                    "The other likely-voter polls since 20 September sit around Talarico +2."],
+        "for": "3,625 voters is a huge sample: the gap can only swing about 3 points either way. And NYT/Siena also "
+               "had Talarico up 6.",
+        "hypothesis": "Our hypothesis: Talarico ahead, nearer +3 than +6. We’ll check it against the next three polls.",
+        "caption": (
+            "Texas Senate poll: a new YouGov survey of 3,625 likely voters, the largest Texas poll in weeks, has James "
+            "Talarico ahead of Ken Paxton by 6 points, 50 to 44. The other polls since 20 September sit around "
+            "Talarico +2.\n\n"
+            "Read it carefully. YouGov has leaned about a point toward Democrats compared with the average pollster in "
+            "2018 to 2024, and Trafalgar, in the field right after, had Talarico up 3.\n\n"
+            "But a sample this size is hard to wave away: the gap can only move about 3 points either way, and "
+            "NYT/Siena found the same +6 at the end of September.\n\n"
+            "Our hypothesis: Talarico is ahead, but nearer +3 than +6. It's the number we gave on 6 October for a "
+            "poll that had Paxton up 3. We'll check it against the next three polls and report back.\n\n"
+            "#midterms2026 #Texas #TexasSenate #elections"),
+        "short": ("A new Texas poll, YouGov with 3,625 voters, has Talarico up 6 on Paxton. The others since 20 "
+                  "September sit around +2. YouGov leans slightly toward Democrats, but the sample is huge. Our "
+                  "hypothesis: nearer +3."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("Texas: YouGov, 3,625 voters, has Talarico up 6. The others since 20 Sep sit around +2. On 6 Oct "
+              "a poll had Paxton up 3 and we said nearer Talarico +3. Same answer from the other side."),
+        "threads": ("The biggest Texas Senate poll in weeks, YouGov with 3,625 voters, has James Talarico up 6 on Ken "
+                    "Paxton. The others since 20 September sit around +2. On 6 October a poll had Paxton up "
+                    "3 and we said the race was nearer Talarico +3. We're saying the same now, from the other side. If "
+                    "you're in Texas, does it feel close where you are?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you live in Texas, does this Senate race feel close where you are?",
+        "alt1": ("Dot chart of twelve Texas Senate polls since 20 September, Talarico minus Paxton. The others "
+                 "range from Paxton +3 to Talarico +6, with the middle around Talarico +2; the new YouGov poll, the largest, "
+                 "has Talarico up 6."),
     },
 }
 
