@@ -100,10 +100,15 @@ def posts_for(folder: str, base: str, pack: Path = PACK) -> list[dict]:
         head, tail = caption.split("\n\n#", 1)                       # goes in the caption, before the hashtags
         caption = f"{head}\n\n{meta['instagram_first_comment']}\n\n#{tail}"
     reel = meta.get("reel") and (d / "reel.mp4").exists()  # Instagram Reel and X video; Threads keeps the slides
-    video = [{"video": {"url": f"{base}/{folder}/reel.mp4", "thumbnailUrl": f"{base}/{folder}/reel-cover.jpg"}}]
+    # Buffer refuses a custom cover image (12 Oct): Instagram takes a frame offset (the last frame, the cover we drew),
+    # X picks its own frame
+    video = [{"video": {"url": f"{base}/{folder}/reel.mp4"}}]
     if reel:
         ig["type"] = "reel"
-    out = [{"service": "instagram", "text": caption, "assets": video if reel else imgs, "metadata": {"instagram": ig}}]
+        import imageio_ffmpeg
+        secs = imageio_ffmpeg.count_frames_and_secs(str(d / "reel.mp4"))[1]
+        cover = [{"video": video[0]["video"] | {"metadata": {"thumbnailOffset": max(0, int(secs * 1000) - 100)}}}]
+    out = [{"service": "instagram", "text": caption, "assets": cover if reel else imgs, "metadata": {"instagram": ig}}]
     if reel:
         out.append({"service": "twitter", "text": section(single, "X"), "assets": video})
     elif folder == "01-intro":  # the one Buffer thread (Buffer Free queues one at a time)
@@ -180,11 +185,14 @@ def main(argv: list[str]) -> int:
                 print(f"skip {folder}: not approved")
                 continue
             send(folder, posts_for(folder, base), utc(local), chs)
-    elif cmd == "queue-daily":
+    elif cmd == "queue-daily":  # queue-daily FOLDER "YYYY-MM-DD HH:MM" [instagram,twitter]: only those services
         folder, local = argv[1], argv[2]
         if folder not in approved(DAILY / "APPROVED.json"):
             raise SystemExit(f"{folder}: not in kits/daily/APPROVED.json")
-        send(folder, posts_for(folder, base, DAILY), utc(local, PARIS), channels())
+        posts = posts_for(folder, base, DAILY)
+        if len(argv) > 3:
+            posts = [p for p in posts if p["service"] in argv[3].split(",")]
+        send(folder, posts, utc(local, PARIS), channels())
     elif cmd == "queued":
         for n in queued():
             due = datetime.fromisoformat(n["dueAt"].replace("Z", "+00:00")).astimezone(PARIS)
