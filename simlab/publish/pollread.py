@@ -180,7 +180,7 @@ STORIES = {
         "against": ["801 voters: the gap can swing about 7 points either way.",
                     "Suffolk, polling the same week, had Turek up 4.",
                     "The ten polls since mid-September average Turek +1."],
-        "for": "In its few past races SSRS leaned toward Democrats, if anything, and Emerson also found Hinson up 2 "
+        "for": "SSRS, CNN's pollster, has leaned toward Democrats in past cycles, and Emerson also found Hinson up 2 "
                "the same week.",
         "hypothesis": "Our hypothesis: closer to even than Hinson +2. We’ll check it against the next three polls.",
         "caption": (
@@ -188,21 +188,21 @@ STORIES = {
             "other polls since mid-September average about Turek +1, anywhere from Hinson +4.5 to Turek +8.\n\n"
             "Read it carefully. With 801 voters, the gap can move about 7 points either way, and Suffolk, in the "
             "field the same week, had Turek up 4.\n\n"
-            "But don't dismiss it. In the few races we have on record, SSRS has leaned toward Democrats rather than "
-            "Republicans, and Emerson also found Hinson up 2 that week. Two polls in a row is worth watching.\n\n"
+            "But don't dismiss it. SSRS, which runs CNN's polls, has leaned slightly toward Democrats in past "
+            "cycles, and Emerson also found Hinson up 2 that week. Two polls in a row is worth watching.\n\n"
             "Our hypothesis: Iowa is closer to even than Hinson +2. We'll check it against the next three polls and "
             "report back.\n\n"
             "#midterms2026 #Iowa #IowaSenate #elections"),
         "short": ("A new Iowa poll, SSRS, has Hinson up 2 on Turek. The ten others since mid-September average "
                   "about Turek +1. Small sample, and Suffolk had Turek +4 the same week, but Emerson also found "
-                  "Hinson +2. Our hypothesis: closer to even."),
+                  "Hinson +2. Our hypothesis: closer to even than Hinson +2."),
         "more": " We'll check it against the next three polls. Reading the polls.",
         "x": ("Iowa: SSRS has Hinson up 2. Emerson, same week: Hinson +2. Suffolk, same week: Turek +4. The ten polls "
-              "since mid-September average Turek +1. Our hypothesis: closer to even than either side's best poll."),
+              "since mid-September average Turek +1. Our hypothesis: closer to even than Hinson +2."),
         "threads": ("Three Iowa Senate polls in one week: SSRS and Emerson have Ashley Hinson up 2, Suffolk has Josh "
                     "Turek up 4. Since mid-September the average sits around Turek +1. We think it's closer to even "
-                    "than any single poll suggests, and we'll check it against the next three. If you're in Iowa, "
-                    "does it feel this close?"),
+                    "than Hinson +2, and we'll check it against the next three polls. If you're in Iowa, does it "
+                    "feel this close?"),
         "topic": "2026 Midterms",
         "first_comment": "If you're in Iowa, does this Senate race feel as close as the polls say?",
         "alt1": ("Dot chart of eleven Iowa Senate polls since mid-September, Turek minus Hinson. The ten other polls "
