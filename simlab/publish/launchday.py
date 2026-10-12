@@ -119,7 +119,7 @@ def side(r: dict) -> tuple[str, int]:
 
 def line(r: dict) -> str:
     who, n = side(r)
-    return f"{r['state']}: {who} win {n} of every 100 simulated elections"
+    return f"{r['state']}: {who} win {n} of every 100 simulated elections (expected vote {rc.expected_vote(r)})"
 
 
 def market(r: dict) -> str:
