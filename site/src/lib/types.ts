@@ -72,4 +72,5 @@ export type Draws = { races: Record<string, number[]> };
 export type History = {
   races: Record<string, { date: string; p_dem_win: number; p50: number }[]>;
   senate: { date: string; p_r_50plus: number }[];
+  house?: { date: string; p_d_majority: number }[];
 };

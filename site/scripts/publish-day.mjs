@@ -31,6 +31,13 @@ for (const [id, r] of Object.entries(forecast.races)) {
   history.races[id] = put(history.races[id] ?? [], { date: forecast.date, p_dem_win: r.p_dem_win, p50: r.margin.p50 });
 }
 history.senate = put(history.senate, { date: forecast.date, p_r_50plus: forecast.senate.p_r_50plus });
+// The House from 12 Oct (Matteo: a "this week" trend on each chamber, and seat histories later).
+if (forecast.house) {
+  history.house = put(history.house ?? [], { date: forecast.date, p_d_majority: forecast.house.p_d_majority });
+  for (const [id, r] of Object.entries(forecast.house.races ?? {})) {
+    history.races[id] = put(history.races[id] ?? [], { date: forecast.date, p_dem_win: r.p_dem_win, p50: r.margin.p50 });
+  }
+}
 history.date = forecast.date;
 writeFileSync(hp, JSON.stringify(history));
 

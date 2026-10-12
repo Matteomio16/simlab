@@ -10,6 +10,7 @@ import { HistoryLine, Responsive, SeatHistogram } from "@/components/charts";
 import { SimLabel } from "@/components/Brand";
 import ChamberSwitch from "@/components/ChamberSwitch";
 import Dateline from "@/components/Dateline";
+import Trend from "@/components/Trend";
 import { SHOW } from "@/lib/site";
 import type { Tile } from "@/components/TileMap";
 import { IS_SAMPLE, load, raceTitle, senateRaces } from "@/lib/data";
@@ -102,6 +103,7 @@ export default function Overview() {
               header={
                 <h1 className="text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">
                   {headline(s.p_r_50plus, s.p_d_caucus_51)}
+                  <Trend points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} up="Republicans" down="Democrats" />
                 </h1>
               }
               mapClass="mx-auto max-w-[720px]"

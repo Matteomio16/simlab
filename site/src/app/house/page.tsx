@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ChamberSwitch from "@/components/ChamberSwitch";
 import Dateline from "@/components/Dateline";
+import Trend from "@/components/Trend";
 import HouseMap from "@/components/HouseMap";
 import Reveal from "@/components/Reveal";
 import SplitChance from "@/components/SplitChance";
@@ -32,7 +33,7 @@ function headline(pD: number) {
 // The House home (Matteo, 12 Oct): the state of the House first, the map of every seat straight after.
 export default function House() {
   if (!HAS_FORECAST || !SHOW.chamberHome) notFound();
-  const { forecast } = load();
+  const { forecast, history } = load();
   const h = forecast.house;
   if (!h) notFound();
   const districts = houseDistricts();
@@ -49,7 +50,9 @@ export default function House() {
       <div className="pt-3"><ChamberSwitch active="house" /></div>
       <section className="rise pt-3">
         <Dateline left="The state of the House" right={`Updated ${longDate(forecast.date)} · ${daysTo(forecast.date)} days to go`} />
-        <h1 className="mt-3 border-b border-rule pb-4 text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">{headline(h.p_d_majority)}</h1>
+        <h1 className="mt-3 border-b border-rule pb-4 text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">{headline(h.p_d_majority)}
+          <Trend points={(history.house ?? []).map((x) => ({ date: x.date, p: x.p_d_majority }))} up="Democrats" down="Republicans" />
+        </h1>
         <div className="mx-auto mt-4 max-w-[720px]">
           <HouseMap seats={districts.map(seatOf)} clickable={SHOW.houseSeats} />
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">

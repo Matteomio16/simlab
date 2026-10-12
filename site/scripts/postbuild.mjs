@@ -44,6 +44,8 @@ const headers = [
   "  Content-Type: image/png",
   "/senate/:slug/opengraph-image",
   "  Content-Type: image/png",
+  "/house/:slug/opengraph-image",
+  "  Content-Type: image/png",
   "",
 ].join("\n");
 writeFileSync(path.join(OUT, "_headers"), headers);
