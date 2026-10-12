@@ -1,0 +1,101 @@
+name: timestamp
+
+# Proof of timing for each published day (docs/infrastructure.md §6.5; Matteo's yes, 11 Oct): an OpenTimestamps proof
+# of the day's public forecast file, committed beside it with its SHA-256 (notapoll.org/data/<day>/forecast.json.ots
+# and SHA256SUMS), then Internet Archive captures of that file and the home page. Runs after every daily run (most find
+# the newest day already stamped and stop) and by hand. It never touches a forecast, and a failure here can't hold
+# the site back.
+#
+#   gh workflow run timestamp.yml -f day=YYYY-MM-DD
+#
+# A new proof is pending until a Bitcoin block confirms it (a few hours): `ots upgrade forecast.json.ots` completes it,
+# `ots verify forecast.json.ots` checks it against the file.
+
+on:
+  workflow_run:
+    workflows: [daily]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      day:
+        description: "Published day to stamp (YYYY-MM-DD; default the newest in site/public/data)"
+        required: false
+
+concurrency:
+  group: timestamp
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  stamp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Which day
+        id: day
+        env:
+          INPUT_DAY: ${{ inputs.day }}
+        run: |
+          day="$INPUT_DAY"
+          [ -z "$day" ] && day=$(ls site/public/data 2>/dev/null | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' | sort | tail -1)
+          if [ -z "$day" ]; then echo "nothing published yet"; exit 0; fi
+          [[ "$day" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || { echo "day must be YYYY-MM-DD"; exit 1; }
+          dir="site/public/data/${day}"
+          [ -f "${dir}/forecast.json" ] || { echo "${day} is not published"; exit 1; }
+          if [ -f "${dir}/forecast.json.ots" ] && (cd "$dir" && sha256sum --status -c SHA256SUMS 2>/dev/null); then
+            echo "${day} is already stamped"; exit 0
+          fi
+          echo "day=${day}" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        if: steps.day.outputs.day
+        with:
+          python-version: "3.12"
+      - name: Stamp
+        if: steps.day.outputs.day
+        working-directory: site/public/data/${{ steps.day.outputs.day }}
+        run: |
+          pip install --quiet opentimestamps-client
+          sha256sum forecast.json > SHA256SUMS
+          rm -f forecast.json.ots
+          ots stamp forecast.json
+          cat SHA256SUMS
+      - name: Commit and deploy
+        if: steps.day.outputs.day
+        env:
+          DAY: ${{ steps.day.outputs.day }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "site/public/data/${DAY}/forecast.json.ots" "site/public/data/${DAY}/SHA256SUMS"
+          git commit --quiet -m "Timestamp ${DAY}" || exit 0
+          for i in 1 2 3; do
+            # a push made with this job's token starts no workflow, so the Site workflow is started here
+            git pull --quiet --rebase && git push --quiet && gh workflow run site.yml --ref main && exit 0
+            sleep 15
+          done
+          exit 1
+      - name: Internet Archive captures
+        if: steps.day.outputs.day
+        continue-on-error: true
+        timeout-minutes: 15
+        env:
+          DAY: ${{ steps.day.outputs.day }}
+        run: |
+          proof="https://notapoll.org/data/${DAY}/forecast.json.ots"
+          for i in $(seq 1 40); do
+            [ "$(curl -s -o /dev/null -w '%{http_code}' "$proof")" = 200 ] && break
+            sleep 15
+          done
+          for u in "https://notapoll.org/data/${DAY}/forecast.json" "https://notapoll.org/"; do
+            echo "capture ${u}: $(curl -s -o /dev/null -w '%{http_code}' --max-time 120 "https://web.archive.org/save/${u}")"
+            sleep 10
+          done
