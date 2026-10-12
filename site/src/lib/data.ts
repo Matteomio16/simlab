@@ -90,7 +90,7 @@ export function houseDistricts(): District[] {
     const fixed = !f && parties.length === 1 ? (parties[0] === "R" ? "R" : "D") : null;
     const name = (k: string) => m.candidates?.[k]?.[0] ?? null;
     out.push({
-      id, slug: `${(STATES[m.state] ?? m.state).toLowerCase().replace(/\s+/g, "-")}-${m.district ?? "at-large"}`, state: m.state, district: m.district ?? null,
+      id, slug: `${(STATES[m.state] ?? m.state).toLowerCase().replace(/\s+/g, "-")}-${m.district || "at-large"}`, state: m.state, district: m.district || null,
       title: `${STATES[m.state] ?? m.state} ${m.district ? m.district : "at-large"}`,
       tier: f?.tier ?? null, p: f ? f.p_dem_win : null, left: m.left_party === "I" ? "I" : "D", fixed,
       dName: name(m.left_party === "I" ? "I" : "D"), rName: name("R"),
