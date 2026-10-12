@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from . import racecards as rc
@@ -25,23 +25,89 @@ SERIES = "Daily forecast"
 ALLOW = ("poll", "polls")
 
 
-def races(f: dict, day: date, kicker: str, source: str) -> list[dict]:
-    run = str(f.get("run_id", "unknown")).rsplit("-", 1)[-1][:7]
+LAUNCH = date(2026, 10, 12)
+MOVE = 0.03  # a smaller change in a race's chance since the last published day is "no change"
+ASK = ["Which race are you watching this week?", "Which of these would you call differently?",
+       "Which race do you think we're getting wrong?", "Where do you think the news is moving voters most?",
+       "Which race should we look at more closely?", "What would change your mind about one of these races?",
+       "Which race are you most unsure about?"]  # one per weekday, Monday first
+
+
+def last_published(data: Path, day: date) -> tuple[date, dict] | None:
+    """The previous published forecast (from the launch on), never the unpublished pilot days (review A14)."""
+    d = day
+    while (d := d - timedelta(days=1)) >= LAUNCH:
+        p = data / "derived" / d.isoformat() / "forecast.json"
+        if p.exists():
+            return d, json.loads(p.read_text(encoding="utf-8"))
+    return None
+
+
+def change(p: float, prev: float | None, since: date | None) -> str:
+    if prev is None:
+        return "First public forecast"
+    d = p - prev
+    if abs(d) < MOVE:
+        return f"No change since {since.day} {since:%b}"
+    return f"{'Up' if d > 0 else 'Down'} {abs(d) * 100:.0f} since {since.day} {since:%b}"
+
+
+def races(f: dict, day: date, kicker: str, source: str, prev: tuple[date, dict] | None = None) -> list[dict]:
     out = []
+    since, pf = prev if prev else (None, {"races": {}})
     for rid, x in f["races"].items():
         if rid.startswith("US"):
             continue
         b = x.get("benchmarks") or {}
         m = race_meta(rid, {})
         m["left_party"] = x.get("left_party", m.get("left_party", "D"))
+        before = (pf["races"].get(rid) or {}).get("p_dem_win")
         out.append(m | {"rid": rid, "run": None, "day": day,  # no run code on slides (Matteo, 12 Oct)
                         "kicker": kicker, "p": float(x["p_dem_win"]),
-                        "prev": None, "today": (x.get("today") or {}).get("p_dem_win"),
+                        "prev": before, "today": (x.get("today") or {}).get("p_dem_win"),
                         "lo": x["margin"]["p10"], "mid": x["margin"]["p50"], "hi": x["margin"]["p90"],
                         "poll": poll_txt(b.get("poll_avg"), m["left_party"]), "market": b.get("market"),
-                        "cook": COOK.get(b.get("cook"), b.get("cook")) or "n/a", "change": "First public forecast",
-                        "benchmarks": b, "source": source})
+                        "cook": COOK.get(b.get("cook"), b.get("cook")) or "n/a",
+                        "change": change(float(x["p_dem_win"]), before, since), "benchmarks": b, "source": source})
     return out
+
+
+def daily_texts(day: date, sen: dict, psen: dict | None, since: date | None, feat: list[dict]) -> dict:
+    """The everyday caption and posts (from 13 Oct): where the Senate stands, what moved since the last published
+    day, the races to watch, a question that changes with the weekday; the Monday scoring line on Mondays only."""
+    r_n, d_n = round(sen["p_r_50plus"] * 100), round(sen["p_d_caucus_51"] * 100)
+    move = ""
+    if psen and since:
+        dr = r_n - round(psen["p_r_50plus"] * 100)
+        move = (f" That's {'up' if dr > 0 else 'down'} {abs(dr)} for Republicans since {since.day} {since:%B}."
+                if abs(dr) >= 3 else f" Little change since {since.day} {since:%B}.")
+    tight = sorted(feat, key=lambda r: abs(r["p"] - 0.5))[0]
+    moved = [r for r in feat if r["prev"] is not None and abs(r["p"] - r["prev"]) >= MOVE]
+    big = max(moved, key=lambda r: abs(r["p"] - r["prev"])) if moved else None
+    who, n = side(tight)
+    ask = ASK[day.weekday()]
+    lines = [f"Where the Senate stands, {day.day} {day:%B}: Republicans hold 50 or more seats in {r_n} of every 100 "
+             f"simulated elections, Democrats reach 51 in {d_n}.{move}", ""]
+    if big:
+        bw, bn = side(big)
+        lines += [f"Biggest move: {big['state']}, now {bw} {bn} in 100 ({big['change'].lower()}).", ""]
+    lines += ["The races to watch today:",
+              *[f"{line(r)}. Poll average {r['poll']}, {market(r)}, Cook {r['cook']}." for r in feat], ""]
+    if day.weekday() == 0:
+        lines += ["Every Monday we check our calls against the next week's polls, put the markets and Cook through the "
+                  "same test, and publish the misses first.", ""]
+    lines += [ask, "", "Every race, every day: notapoll.org", "", "#midterms2026 #Senate #elections", "", DISCLAIMER]
+    x = (f"Senate, {day.day} {day:%b}: Republicans hold 50+ seats in {r_n} of 100 simulated elections, Democrats reach "
+         f"51 in {d_n}. Closest race: {tight['state']}, {who} {n} in 100."
+         + (f" Biggest move: {big['state']}." if big else "") + f" {LABEL}.")
+    threads = (f"Where the Senate stands today: Republicans hold 50+ seats in {r_n} of every 100 simulated elections, "
+               f"Democrats reach 51 in {d_n}. The tightest race is {tight['state']}, where {who} win {n} in 100."
+               + (f" The biggest move is in {big['state']}." if big else "") + f" {ask}")
+    threads = f"{threads} {DISCLAIMER}" if len(threads) + 1 + len(DISCLAIMER) <= LIMIT["threads"] else f"{threads} {LABEL}."
+    bluesky = (f"Senate, {day.day} {day:%b}: Republicans 50+ in {r_n} of 100 simulated elections, Democrats 51 in "
+               f"{d_n}. Closest: {tight['state']}. Every race: notapoll.org.")
+    bluesky = f"{bluesky} {LABEL}." if len(bluesky) + len(LABEL) + 2 <= LIMIT["bluesky"] else bluesky
+    return {"caption": "\n".join(lines), "x": x, "threads": threads, "bluesky": bluesky}
 
 
 def side(r: dict) -> tuple[str, int]:
@@ -70,7 +136,8 @@ def build(day: date, data: Path, preview: bool = False, theme=LAB) -> tuple[Path
     kicker = "PREVIEW · NOT FOR POSTING" if preview else ""
     src = (f"Preview on pilot numbers ({day:%d %b}), not a public forecast." if preview else
            "40,000 simulated elections per race. Poll average, market and Cook as of this morning.")
-    rs = races(f, day, kicker, src)
+    prev = None if day <= LAUNCH else last_published(data, day)
+    rs = races(f, day, kicker, src, prev)
     feat = featured(rs, max(day, date(2026, 10, 12)))
     sen = f["senate"]
     up = {r["usps"]: r["p"] for r in rs}
@@ -129,6 +196,9 @@ def build(day: date, data: Path, preview: bool = False, theme=LAB) -> tuple[Path
                f"Democrats reach 51 in {d_n}. Closest: {tight['state']}. Every race: notapoll.org.")
     bluesky = f"{bluesky} {LABEL}." if len(bluesky) + len(LABEL) + 2 <= LIMIT["bluesky"] else bluesky
     posts = {"x": x, "threads": threads, "bluesky": bluesky}
+    if day > LAUNCH:  # the everyday texts; the launch wording above is for 12 Oct only
+        t = daily_texts(day, sen, prev[1]["senate"] if prev else None, prev[0] if prev else None, feat)
+        caption, posts = t.pop("caption"), t
     alts = [f"The Chamber: all 100 Senate seats in a half circle, the 35 on the ballot coloured by how the simulations "
             f"lean. Republicans hold 50 or more seats in {r_n} of 100 simulations, Democrats reach 51 in {d_n}."]
     alts += [f"Race card, {r['state']} {r['office']}: {rc.verdict(r['p'], rc.lean(r))}. {line(r)} on 3 Nov. Poll "
