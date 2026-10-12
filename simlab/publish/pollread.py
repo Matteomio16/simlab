@@ -256,44 +256,48 @@ STORIES = {
     "2026-10-13-kansas": {
         "day": "2026-10-13", "race": "KS", "since": "2026-09-08", "focus": "InsiderAdvantage",
         "folder": "13-reading-polls-08", "left": "Hamilton", "right": "Marshall",
-        "headline": "A new Kansas poll has Hamilton up 1. Is this race really open?",
-        "dek": "Nine Senate polls since September: Hamilton (D) minus Marshall (R), likely voters.",
+        "headline": "Kansas polls lean Hamilton. Our simulation leans Marshall.",
+        "dek": "Nine Senate polls since September, and our expected result. Hamilton (D) minus Marshall (R).",
         "source": "Polls ending 10 Sep – 10 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 12 Oct.",
-        "title2": "Open, but not even.",
-        "against": ["1,200 voters: the gap can swing about 6 points either way.",
-                    "Two of the polls with Hamilton ahead come from Democratic firms.",
-                    "Kansas voted for Trump by 16 points in 2024."],
-        "for": "InsiderAdvantage has usually leaned about 3 points toward Republicans, and most Kansas polls since "
-               "mid-September have Hamilton slightly ahead.",
-        "hypothesis": "Our simulation: Marshall wins 65 in 100 on 3 November; 56 if the election were today.",
+        "title2": "Two numbers, two meanings.",
+        "ours": {"margin": -1.92, "leans": "Marshall",
+                 "vote": "51–49", "vote_label": "expected vote, Marshall first",
+                 "chance": "65 in 100", "chance_label": "Marshall's chance to win",
+                 "range": "Close, with a favourite: across 40,000 simulated elections the result runs from Marshall "
+                          "+9 to Hamilton +5.",
+                 "why": "We blend the polls with Kansas's record (Trump +16 in 2024), and some of Hamilton's lift "
+                        "comes from news we expect to fade.",
+                 "wrong": "Six of eight polls since mid-September have Hamilton ahead, this one from a pollster that "
+                          "leans Republican."},
+        "hypothesis": "Our forecast: Marshall 51–49. He wins 65 in 100 simulated elections.",
         "caption": (
-            "Kansas Senate poll: a new InsiderAdvantage survey has Adam Hamilton ahead of Roger Marshall by 1 point, "
-            "48 to 47. In a state Trump won by 16 points, that raises a fair question: is this race really open?\n\n"
-            "The polls say yes. Most Kansas polls since mid-September have Hamilton slightly ahead, and this one comes "
-            "from a pollster that has usually leaned about 3 points toward Republicans. Read single polls carefully, "
-            "though: with 1,200 voters the gap can move about 6 points either way, and two of the polls with Hamilton "
-            "ahead come from Democratic firms.\n\n"
-            "Our simulation leans the other way. On 3 November, Marshall wins 65 of every 100 simulated elections. "
-            "We blend the polls with Kansas's long voting record, and part of Hamilton's recent lift comes from news "
-            "our model expects to fade: if the election were today, Marshall would win 56 in 100.\n\n"
-            "So yes, Kansas is open, but not even. We'll keep checking our number against new polls.\n\n"
+            "Kansas Senate poll: a new InsiderAdvantage survey has Adam Hamilton ahead of Roger Marshall, 48 to 47. "
+            "It isn't an outlier: six of the eight Kansas polls since mid-September have Hamilton slightly ahead.\n\n"
+            "Our simulation leans the other way, and it's worth being precise about how. Our expected vote is Marshall "
+            "about 51, Hamilton about 49: a close race. Across 40,000 simulated elections, Marshall wins 65 in every "
+            "100. That 65 is a chance of winning, not a share of the vote.\n\n"
+            "Why we lean Marshall when the polls don't: we blend the polls with Kansas's long voting record (Trump "
+            "won it by 16 points in 2024), and part of Hamilton's recent lift comes from news our model expects to "
+            "fade before 3 November.\n\n"
+            "Why we might be wrong: the polls agree with each other, and this one comes from a pollster that has "
+            "usually leaned about 3 points toward Republicans. We'll keep checking our number against new polls.\n\n"
             "#midterms2026 #Kansas #KansasSenate #elections"),
-        "short": ("A new Kansas poll has Hamilton up 1 on Marshall, and most polls since mid-September have him "
-                  "slightly ahead. Our simulation still gives Marshall 65 in 100 on 3 November, 56 if the election "
-                  "were today. Open, but not even."),
+        "short": ("Kansas polls lean Hamilton: six of eight since mid-September have him ahead. Our simulation leans "
+                  "Marshall: expected vote about 51-49, and he wins 65 of 100 simulated elections. A chance of winning, "
+                  "not a vote share."),
         "more": " Reading the polls.",
-        "x": ("Kansas: InsiderAdvantage has Hamilton up 1, and most polls since mid-September have him slightly "
-              "ahead. Our simulation still gives Marshall 65 in 100 on 3 Nov, 56 if the election were today. Open, "
-              "but not even."),
-        "threads": ("Is the Kansas Senate race really open? A new InsiderAdvantage poll has Adam Hamilton up 1 on "
-                    "Roger Marshall, and most polls since mid-September agree he's slightly ahead. Our simulation "
-                    "leans the other way: Marshall wins 65 of every 100 simulated elections on 3 November, partly "
-                    "because Hamilton's recent lift comes from news we expect to fade. Open, but not even. Would you "
-                    "call Kansas a toss-up?"),
+        "x": ("Kansas: six of eight polls since mid-Sep have Hamilton ahead. Our simulation leans Marshall: expected "
+              "vote about 51-49, and he wins 65 of 100 simulated elections. That's a chance of winning, not a vote "
+              "share."),
+        "threads": ("Kansas is a rare case where the polls and our simulation disagree. Six of the eight polls since "
+                    "mid-September have Adam Hamilton ahead. We expect Roger Marshall to win about 51 to 49, and he "
+                    "wins 65 of every 100 simulated elections: a chance of winning, not a share of the vote. Who do "
+                    "you think is reading Kansas right?"),
         "topic": "2026 Midterms",
-        "first_comment": "Would you call Kansas a toss-up? Tell us why or why not.",
-        "alt1": ("Dot chart of nine Kansas Senate polls since September, Hamilton minus Marshall. Most sit between "
-                 "Marshall +1 and Hamilton +5; the new InsiderAdvantage poll has Hamilton up 1."),
+        "first_comment": "Who do you think is reading Kansas right, the polls or the simulation?",
+        "alt1": ("Dot chart of nine Kansas Senate polls since September, Hamilton minus Marshall, with the polls' middle "
+                 "at Hamilton +2 and a purple line for our expected result, Marshall +2. The new InsiderAdvantage poll "
+                 "has Hamilton up 1."),
     },
 }
 
@@ -334,7 +338,7 @@ def candidates(polls: Path, days: int = 7) -> pd.DataFrame:
 
 
 def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, lim: float | None = None,
-                row: float | None = None) -> dict:
+                row: float | None = None, ours: float | None = None) -> dict:
     """One row per poll, oldest at the top: a dot at the gap (left minus right), the featured poll ringed, and a
     dashed line at the middle (median) of the other likely-voter polls, its value written on it. Returns the artists,
     so the reel can reveal them one by one."""
@@ -359,8 +363,19 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
     others = ref.gap.median()
     lead = f"{left} +{others:.0f}" if round(others) > 0 else f"{right} +{-others:.0f}" if round(others) < 0 else "even"
     avg = ax.axvline(others, color=t.ink2, lw=pt(2), ls=(0, (3, 3)), zorder=1)
-    mark = ax.annotate(typeset(f"middle: {lead}"), (others, -0.5), xytext=(0, 8), textcoords="offset pixels",
-                       ha="center", va="bottom", color=t.ink2, fontproperties=s.font("sans", 600, 26))
+    # with our expected result on the chart too, the two labels sit on either side of their lines
+    side = None if ours is None else ("left" if others >= ours else "right")
+    mark = ax.annotate(typeset(f"polls: {lead}" if side else f"middle: {lead}"), (others, -0.5),
+                       xytext=({"left": -6, "right": 6, None: 0}[side] * -1 if side else 0, 8),
+                       textcoords="offset pixels", ha={"left": "left", "right": "right", None: "center"}[side],
+                       va="bottom", color=t.ink2, fontproperties=s.font("sans", 600, 26))
+    extra = []
+    if ours is not None:  # the simulation's expected margin, in the simulation colour (Matteo, 12 Oct: show both)
+        us = f"{left} +{ours:.0f}" if round(ours) > 0 else f"{right} +{-ours:.0f}" if round(ours) < 0 else "even"
+        extra.append(ax.axvline(ours, color=t.ai, lw=pt(4), zorder=2))
+        extra.append(ax.annotate(typeset(f"our forecast: {us}"), (ours, -0.5), xytext=(6 if side == "left" else -6, 8),
+                                 textcoords="offset pixels", ha="right" if side == "left" else "left", va="bottom",
+                                 color=t.ai, fontproperties=s.font("sans", 700, 26)))
     rows = []
     for i, row in enumerate(p.itertuples()):
         c = t.dem if row.gap > 0 else t.rep if row.gap < 0 else t.data
@@ -391,8 +406,12 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
     kind = " likely-voter" if 0 < len(lv) < len(rest) else ""
     avg_text = s._put(x0, s.y, f"- - -  middle of the other {len(ref)}{kind} polls", "sans", 400, 26, t.ink2,
                       va="top")
-    s.y += 50
-    return {"rows": rows, "avg": [avg, mark, avg_text], "others": others}
+    s.y += 40
+    if ours is not None:
+        extra.append(s._put(x0, s.y, "——  our expected result on 3 Nov", "sans", 600, 26, t.ai, va="top"))
+        s.y += 40
+    s.y += 10
+    return {"rows": rows, "avg": [avg, mark, avg_text] + extra, "others": others}
 
 
 def end(t: str, limit: int, link: int = 0) -> str:
@@ -407,21 +426,32 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
     a = Slide(d, "", theme, series=SERIES)
     a.headline(st["headline"], px=64)
     a.dek(st["dek"], px=34)
-    strip_chart(a, p, st["focus"], st["left"], st["right"])
+    strip_chart(a, p, st["focus"], st["left"], st["right"], ours=(st.get("ours") or {}).get("margin"))
     a.source(st["source"])
 
     b = Slide(d, "", theme, series=SERIES)
-    b.headline(st["title2"], px=88)
-    b.text("Why it may be too high", "sans", 600, 30, theme.ink2, after=0.5)
-    for n, line in enumerate(st["against"], 1):
-        top = b.y
-        b._put(MARGIN, top - 6, str(n), "hero", theme.hero_weight, 64, theme.ai, va="top")
-        b.text(line, "serif", 600, 38, x=MARGIN + 76, width=b.width - 76, after=0.7)
-    b.y += 10
-    b.text("Why it may be right", "sans", 600, 30, theme.ink2, after=0.5)
-    b.text(st["for"], "serif", 600, 38, after=0.9)
-    b.note(st["hypothesis"], width=760)
-    b.source(st["source"])
+    if st.get("ours"):  # polls agree with each other but not with us: show both of our numbers, clearly named
+        o = st["ours"]
+        b.headline(st["title2"], px=80)
+        from . import charts
+        charts.stats(b, [(o["vote"], o["vote_label"]), (o["chance"], o["chance_label"])], px=110, rule=True)
+        b.text(o["range"], px=32, color=theme.ink2, after=1.0)
+        for head, body in (("Why we lean " + o["leans"], o["why"]), ("Why we might be wrong", o["wrong"])):
+            b.text(head, "sans", 600, 30, theme.ink2, after=0.4)
+            b.text(body, "serif", 600, 36, after=0.8)
+        b.source(st["source"])
+    else:
+        b.headline(st["title2"], px=88)
+        b.text("Why it may be too high", "sans", 600, 30, theme.ink2, after=0.5)
+        for n, line in enumerate(st["against"], 1):
+            top = b.y
+            b._put(MARGIN, top - 6, str(n), "hero", theme.hero_weight, 64, theme.ai, va="top")
+            b.text(line, "serif", 600, 38, x=MARGIN + 76, width=b.width - 76, after=0.7)
+        b.y += 10
+        b.text("Why it may be right", "sans", 600, 30, theme.ink2, after=0.5)
+        b.text(st["for"], "serif", 600, 38, after=0.9)
+        b.note(st["hypothesis"], width=760)
+        b.source(st["source"])
 
     out = KITS / "daily" / st["folder"]
     out.mkdir(parents=True, exist_ok=True)
@@ -440,8 +470,13 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
     if meta.get("instagram_first_comment"):
         problems += [f"first comment: {x}" for x in text.check(meta["instagram_first_comment"], caption=False,
                                                                 allow=ALLOW)]
-    alt2 = " ".join([st["title2"], "Why it may be too high:", *st["against"], "Why it may be right:", st["for"],
-                     st["hypothesis"]])
+    if st.get("ours"):
+        o = st["ours"]
+        alt2 = " ".join([st["title2"], f"{o['vote']}: {o['vote_label']}.", f"{o['chance']}: {o['chance_label']}.",
+                         o["range"], f"Why we lean {o['leans']}: {o['why']}", f"Why we might be wrong: {o['wrong']}"])
+    else:
+        alt2 = " ".join([st["title2"], "Why it may be too high:", *st["against"], "Why it may be right:", st["for"],
+                         st["hypothesis"]])
     (out / "caption.txt").write_text(caption, encoding="utf-8")
     (out / "alt-text.txt").write_text(f"slide-1.jpg: {st['alt1']}\nslide-2.jpg: {alt2}\n", encoding="utf-8")
     lines = ["# Single posts (X and Threads through Buffer; Bluesky by hand)", ""]
@@ -472,7 +507,8 @@ def reel(day: str, polls: Path, theme=LAB) -> dict:
     s = Slide(d, "", theme, size=(w, h), series=SERIES)
     s.headline(st["headline"], px=64)  # no dek: the axis labels say what the dots are
     s.y += 10
-    art = strip_chart(s, p, st["focus"], st["left"], st["right"], row=min(48, 420 / len(p)))
+    art = strip_chart(s, p, st["focus"], st["left"], st["right"], row=min(48, 420 / len(p)),
+                      ours=(st.get("ours") or {}).get("margin"))
     s.source(st["source"])
     n_patches, n_texts = len(s.ax.patches), len(s.ax.texts)
     s.note(st["hypothesis"], width=900, px=34)
