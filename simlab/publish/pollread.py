@@ -171,71 +171,94 @@ STORIES = {
                  "to Moody +11; the newest Mason-Dixon poll, ringed, has Moody +10."),
     },
     "2026-10-12": {
-        "race": "IA", "since": "2026-09-14", "focus": "SSRS", "folder": "12-reading-polls-05",
-        "left": "Turek", "right": "Hinson",
-        "headline": "A new Iowa poll has Hinson up 2. The ten others average Turek +1.",
-        "dek": "Eleven Senate polls since mid-September: Turek (D) minus Hinson (R).",
+        "race": "OH-S", "since": "2026-09-14", "focus": "co/efficient", "folder": "12-reading-polls-06",
+        "left": "Brown", "right": "Husted",
+        "headline": "One Ohio poll has Husted up 1. The ten others all have Brown ahead.",
+        "dek": "Eleven Senate polls since mid-September: Brown (D) minus Husted (R).",
         "source": "Polls ending 16 Sep – 6 Oct 2026. Data: VoteHub (CC BY 4.0) and Wikipedia (CC BY-SA 4.0).",
         "title2": "Shift, or noise?",
-        "against": ["801 voters: the gap can swing about 7 points either way.",
-                    "Suffolk, polling the same week, had Turek up 4.",
-                    "The ten polls since mid-September average Turek +1."],
-        "for": "SSRS, CNN's pollster, has leaned toward Democrats in past cycles, and Emerson also found Hinson up 2 "
-               "the same week.",
-        "hypothesis": "Our hypothesis: closer to even than Hinson +2. We’ll check it against the next three polls.",
+        "against": ["In 2018–24, co/efficient leaned about 3 points toward Republicans.",
+                    "SSRS, polling the same week, had Brown up 6.",
+                    "Every other poll since mid-September has Brown ahead."],
+        "for": "InsiderAdvantage and Quantus also had Brown up by a point or less in late September, and Trump won "
+               "Ohio by 11 in 2024.",
+        "hypothesis": "Our hypothesis: nearer Brown +3. We’ll check it against the next three polls.",
         "caption": (
-            "Iowa Senate poll: a new SSRS survey has Ashley Hinson ahead of Josh Turek by 2 points, 45 to 43. The ten "
-            "other polls since mid-September average about Turek +1, anywhere from Hinson +4.5 to Turek +8.\n\n"
-            "Read it carefully. With 801 voters, the gap can move about 7 points either way, and Suffolk, in the "
-            "field the same week, had Turek up 4.\n\n"
-            "But don't dismiss it. SSRS, which runs CNN's polls, has leaned slightly toward Democrats in past "
-            "cycles, and Emerson also found Hinson up 2 that week. Two polls in a row is worth watching.\n\n"
-            "Our hypothesis: Iowa is closer to even than Hinson +2. We'll check it against the next three polls and "
-            "report back.\n\n"
-            "#midterms2026 #Iowa #IowaSenate #elections"),
-        "short": ("A new Iowa poll, SSRS, has Hinson up 2 on Turek. The ten others since mid-September average "
-                  "about Turek +1. Small sample, and Suffolk had Turek +4 the same week, but Emerson also found "
-                  "Hinson +2. Our hypothesis: closer to even than Hinson +2."),
+            "Ohio Senate poll: a new co/efficient survey has Jon Husted ahead of Sherrod Brown by 1 point, 45 to 44. "
+            "It's the only Husted lead in eleven polls since mid-September; the other ten all have Brown ahead, most "
+            "by 3 or 4 points.\n\n"
+            "Read it carefully. With 925 voters, the gap can move about 6 points either way. The pollster, "
+            "co/efficient, has leaned about 3 points toward Republicans compared with the average pollster in 2018 "
+            "to 2024, and SSRS, in the field the same week, had Brown up 6.\n\n"
+            "But don't dismiss it. InsiderAdvantage and Quantus also found Brown ahead by a point or less in late "
+            "September, and Trump won Ohio by 11 points in 2024.\n\n"
+            "Our hypothesis: Brown is still ahead, nearer +3. It's the same number we gave last week for a Marist "
+            "poll that had him up 8. We'll check it against the next three polls and report back.\n\n"
+            "#midterms2026 #Ohio #OhioSenate #elections"),
+        "short": ("A new Ohio poll, co/efficient, has Husted up 1 on Brown, the only Husted lead in eleven polls since "
+                  "mid-September. It has leaned about 3 points toward Republicans, and SSRS had Brown +6 the same "
+                  "week. Our hypothesis: nearer Brown +3."),
         "more": " We'll check it against the next three polls. Reading the polls.",
-        "x": ("Iowa: SSRS has Hinson up 2. Emerson, same week: Hinson +2. Suffolk, same week: Turek +4. The ten polls "
-              "since mid-September average Turek +1. Our hypothesis: closer to even than Hinson +2."),
-        "threads": ("Three Iowa Senate polls in one week: SSRS and Emerson have Ashley Hinson up 2, Suffolk has Josh "
-                    "Turek up 4. Since mid-September the average sits around Turek +1. We think it's closer to even "
-                    "than Hinson +2, and we'll check it against the next three polls. If you're in Iowa, does it "
-                    "feel this close?"),
+        "x": ("Ohio: co/efficient has Husted up 1, the only Husted lead in eleven polls since mid-September. SSRS, "
+              "same week: Brown +6. Last week we read Marist's Brown +8 as nearer +3. Same hypothesis from the "
+              "other side: nearer Brown +3."),
+        "threads": ("A new Ohio Senate poll from co/efficient has Jon Husted up 1 on Sherrod Brown, the only Husted "
+                    "lead since mid-September. Last week we looked at a Marist poll with Brown up 8 and said the race "
+                    "was nearer Brown +3. We're saying the same now, from the other side, and we'll check it against the next "
+                    "three polls. If you're in Ohio, does it feel this close?"),
         "topic": "2026 Midterms",
-        "first_comment": "If you're in Iowa, does this Senate race feel as close as the polls say?",
-        "alt1": ("Dot chart of eleven Iowa Senate polls since mid-September, Turek minus Hinson. The ten other polls "
-                 "range from Hinson +4.5 to Turek +8, averaging about Turek +1; the new SSRS poll has Hinson up 2."),
+        "first_comment": "If you're in Ohio, does the Brown-Husted race feel close where you are?",
+        "alt1": ("Dot chart of eleven Ohio Senate polls since mid-September, Brown minus Husted. Ten have Brown "
+                 "ahead, from half a point to 8, with the likely-voter polls in the middle at Brown +3; the new "
+                 "co/efficient poll, ringed, has Husted up 1."),
     },
 }
 
 
 def load(polls: Path, race: str, since: str, exclude=()) -> pd.DataFrame:
     s = pd.read_csv(polls / "senate.csv", parse_dates=["start", "end"])
-    s = s[(s.race_id == race) & (s.end >= since) & ~s.pollster.isin(exclude)].sort_values("end").copy()
+    s = s[(s.race_id == race) & (s.end >= since) & ~s.pollster.isin(exclude)]
+    s = once(s).sort_values("end").copy()
     s["gap"] = s.left - s.right
     return s
 
 
+def once(s: pd.DataFrame) -> pd.DataFrame:
+    """One poll listed twice under the same pollster (two sources): keep the version-averaged row."""
+    return s.sort_values("versions", ascending=False).drop_duplicates(["race_id", "pollster", "end", "n"])
+
+
 def candidates(polls: Path, days: int = 7) -> pd.DataFrame:
-    """Recent polls furthest from their race's three-week average (two-party margin), newest first."""
-    s = pd.read_csv(polls / "senate.csv", parse_dates=["start", "end"])
+    """Recent polls furthest from the median of their race's likely-voter polls over three weeks (two-party margin).
+    `past` counts the other polls that far out or further on the same side: feature a poll only when few are
+    (Matteo, 12 Oct: one wide poll drags a plain average, so a poll in the middle of the pack can look like an
+    outlier)."""
+    s = once(pd.read_csv(polls / "senate.csv", parse_dates=["start", "end"]))
     last = s.end.max()
-    avg = s[s.end >= last - pd.Timedelta(days=21)].groupby("race_id").margin.agg(["mean", "count"])
-    r = s[s.end >= last - pd.Timedelta(days=days)].join(avg, on="race_id")
-    r["dev"] = r.margin - r["mean"]
+    w = s[s.end >= last - pd.Timedelta(days=21)]
+    mid = w[w.population == "lv"].groupby("race_id").margin.agg(["median", "count"])
+    r = s[s.end >= last - pd.Timedelta(days=days)].join(mid, on="race_id")
+    r["dev"] = r.margin - r["median"]
+
+    def past(i, x) -> int:
+        o = w[(w.race_id == x.race_id) & (w.index != i)].margin - x["median"]
+        return int((o * (1 if x.dev > 0 else -1) >= abs(x.dev)).sum())
+
+    r["past"] = [past(i, x) for i, x in r.iterrows()]
     return r.reindex(r.dev.abs().sort_values(ascending=False).index)[
-        ["race_id", "pollster", "end", "population", "left", "right", "n", "tag", "margin", "mean", "count", "dev"]]
+        ["race_id", "pollster", "end", "population", "left", "right", "n", "tag", "margin", "median", "count", "dev",
+         "past"]]
 
 
 def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, lim: float | None = None,
                 row: float | None = None) -> dict:
-    """One row per poll, oldest at the top: a dot at the gap (left minus right), the featured poll ringed. Returns
-    the artists, so the reel can reveal them one by one."""
+    """One row per poll, oldest at the top: a dot at the gap (left minus right), the featured poll ringed, and a
+    dashed line at the middle (median) of the other likely-voter polls, its value written on it. Returns the artists,
+    so the reel can reveal them one by one."""
     t = s.t
     lim = lim or (10 if p.gap.abs().max() <= 8 else 20)
-    ax = s.chart((row or min(54, 480 / len(p))) * len(p), left=340, right=40)
+    s.y += 40  # room for the value on the dashed line
+    ax = s.chart((row or min(54, 440 / len(p))) * len(p), left=340, right=40)
     ax.set_xlim(-lim, lim)
     ax.set_ylim(len(p) - 0.5, -0.5)
     ax.set_yticks([])
@@ -243,12 +266,18 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
     ax.set_xticks(ticks, [typeset(f"+{abs(x):.0f}" if x else "Even") for x in ticks])
     for lab in ax.get_xticklabels():
         lab.set_fontproperties(s.font("sans", 400, 28))
-    ax.axvline(0, color=t.baseline, lw=pt(2), zorder=1)
+    ax.axvline(0, color=t.ink, lw=pt(3), zorder=1)
     for x in ticks:
         if x:
             ax.axvline(x, color=t.hairline, lw=pt(1), zorder=0)
-    others = p[p.pollster != focus].gap.mean()
+    rest = p[p.pollster != focus]
+    lv = rest[rest.population == "lv"]
+    ref = lv if len(lv) else rest
+    others = ref.gap.median()
+    lead = f"{left} +{others:.0f}" if round(others) > 0 else f"{right} +{-others:.0f}" if round(others) < 0 else "even"
     avg = ax.axvline(others, color=t.ink2, lw=pt(2), ls=(0, (3, 3)), zorder=1)
+    mark = ax.annotate(typeset(f"middle: {lead}"), (others, -0.5), xytext=(0, 8), textcoords="offset pixels",
+                       ha="center", va="bottom", color=t.ink2, fontproperties=s.font("sans", 600, 26))
     rows = []
     for i, row in enumerate(p.itertuples()):
         c = t.dem if row.gap > 0 else t.rep if row.gap < 0 else t.data
@@ -262,7 +291,8 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
         if hot:
             who = left if row.gap > 0 else right
             tag = ax.text(row.gap, i - 0.62, typeset(f"{who} +{abs(row.gap):.0f}"), va="bottom", ha="center",
-                          color=t.ink, fontproperties=s.font("sans", 600, 28))
+                          color=t.ink, fontproperties=s.font("sans", 600, 28), zorder=2,  # over the lines, under dots
+                          bbox={"facecolor": t.paper, "edgecolor": "none", "pad": 1})
         rows.append({"dot": dot, "label": label, "tag": tag, "hot": hot})
     s.y += 50
     x0, x1 = MARGIN + 340, s.w - MARGIN
@@ -272,11 +302,11 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
     s._put(x1, s.y, " →", "mono", 400, 26, t.ink2, ha="right", va="top")
     s._put(x1 - arrow, s.y, f"{left} ahead", "sans", 400, 26, t.ink2, ha="right", va="top")
     s.y += 44
-    lead = f"{left} +{others:.0f}" if round(others) > 0 else f"{right} +{-others:.0f}" if round(others) < 0 else "even"
-    avg_text = s._put(x0, s.y, f"- - -  average of the other {len(p) - 1}: {lead}", "sans", 400, 26, t.ink2,
+    kind = " likely-voter" if 0 < len(lv) < len(rest) else ""
+    avg_text = s._put(x0, s.y, f"- - -  middle of the other {len(ref)}{kind} polls", "sans", 400, 26, t.ink2,
                       va="top")
     s.y += 50
-    return {"rows": rows, "avg": [avg, avg_text], "others": others}
+    return {"rows": rows, "avg": [avg, mark, avg_text], "others": others}
 
 
 def end(t: str, limit: int, link: int = 0) -> str:
@@ -341,7 +371,7 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
 
 
 def reel(day: str, polls: Path, theme=LAB) -> dict:
-    """The 9:16 Reel of the day's story (Instagram Reel, X video): each poll lands in date order, then the average
+    """The 9:16 Reel of the day's story (Instagram Reel, X video): each poll lands in date order, then the middle
     line, then the featured poll, then the hypothesis. 30 fps, H.264, no sound; the cover is the last frame."""
     import imageio_ffmpeg
     import matplotlib.pyplot as plt
@@ -354,7 +384,7 @@ def reel(day: str, polls: Path, theme=LAB) -> dict:
     s = Slide(d, "", theme, size=(w, h), series=SERIES)
     s.headline(st["headline"], px=64)  # no dek: the axis labels say what the dots are
     s.y += 10
-    art = strip_chart(s, p, st["focus"], st["left"], st["right"], row=min(48, 460 / len(p)))
+    art = strip_chart(s, p, st["focus"], st["left"], st["right"], row=min(48, 420 / len(p)))
     s.source(st["source"])
     n_patches, n_texts = len(s.ax.patches), len(s.ax.texts)
     s.note(st["hypothesis"], width=900, px=34)
