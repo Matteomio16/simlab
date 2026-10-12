@@ -11,6 +11,8 @@ import { SimLabel } from "@/components/Brand";
 import { HAS_FORECAST, IS_SAMPLE, houseDistricts, load } from "@/lib/data";
 import { TIER_LEGEND, daysTo, in100, longDate } from "@/lib/format";
 import { SHOW } from "@/lib/site";
+import { seatOf } from "@/lib/house";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "House forecast",
@@ -49,10 +51,10 @@ export default function House() {
         <Dateline left="The state of the House" right={`Updated ${longDate(forecast.date)} · ${daysTo(forecast.date)} days to go`} />
         <h1 className="mt-3 border-b border-rule pb-4 text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">{headline(h.p_d_majority)}</h1>
         <div className="mx-auto mt-4 max-w-[720px]">
-          <HouseMap districts={districts} />
+          <HouseMap seats={districts.map(seatOf)} clickable={SHOW.houseSeats} />
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <Legend items={TIER_LEGEND.filter((t) => t.label !== "Independent")} />
-            <p className="note sm:max-w-xs sm:text-right">One square per seat. Hover a square for its race.</p>
+            <p className="note sm:max-w-xs sm:text-right">{SHOW.houseSeats ? "One square per seat. Select a square for its race." : "One square per seat. Hover a square for its race."}</p>
           </div>
         </div>
       </section>
@@ -96,7 +98,11 @@ export default function House() {
         <ul className="mt-4 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
           {closest.map((d) => (
             <li key={d.id} className="border-b border-rule py-4">
-              <p className="text-[0.95rem] font-bold">{d.title}</p>
+              {SHOW.houseSeats ? (
+                <Link href={`/house/${d.slug}`} prefetch={false} className="text-[0.95rem] font-bold hover:underline">{d.title}</Link>
+              ) : (
+                <p className="text-[0.95rem] font-bold">{d.title}</p>
+              )}
               <p className="mt-0.5 text-[0.8rem] text-ink-2">{`${d.dName ?? "Democrat"} (D) vs. ${d.rName ?? "Republican"} (R)`}</p>
               <div className="mt-3"><SplitChance p={d.p!} left={d.left} size="sm" /></div>
             </li>

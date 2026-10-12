@@ -67,8 +67,10 @@ export const senateRacesSafe = () => (HAS_FORECAST ? senateRaces() : []);
 // House districts (from 12 Oct): 413 contested seats with a forecast, plus uncontested seats whose party is settled.
 // House metadata lists candidates by party ({D: [...], R: [...]}), not left/right as the Senate's does.
 export type District = {
-  id: string; state: string; district: number | null; title: string; tier: string | null;
+  id: string; slug: string; state: string; district: number | null; title: string; tier: string | null;
   p: number | null; left: "D" | "I"; fixed: "D" | "R" | null; dName: string | null; rName: string | null;
+  margin: { p10: number; p50: number; p90: number } | null; statsP: number | null; consensus: number | null;
+  incumbent: string | null; incumbentParty: string | null; open: boolean;
 };
 
 export function houseDistricts(): District[] {
@@ -78,17 +80,22 @@ export function houseDistricts(): District[] {
   const file = read<Record<string, unknown>>("races");
   const out: District[] = [];
   for (const [id, v] of Object.entries(file)) {
-    const m = v as { office?: string; state: string; district?: number | null; left_party?: "D" | "I"; status?: string; candidates?: Record<string, string[]> };
+    const m = v as {
+      office?: string; state: string; district?: number | null; left_party?: "D" | "I"; status?: string; candidates?: Record<string, string[]>;
+      p_dem_stats?: number; ratings_consensus?: number; incumbent?: string; incumbent_party?: string; incumbent_running?: string | null;
+    };
     if (!m || typeof m !== "object" || m.office !== "house") continue;
-    const f = h.races?.[id];
+    const f = h.races?.[id] as { p_dem_win: number; tier?: string; margin?: { p10: number; p50: number; p90: number } } | undefined;
     const parties = Object.keys(m.candidates ?? {});
     const fixed = !f && parties.length === 1 ? (parties[0] === "R" ? "R" : "D") : null;
     const name = (k: string) => m.candidates?.[k]?.[0] ?? null;
     out.push({
-      id, state: m.state, district: m.district ?? null,
+      id, slug: `${(STATES[m.state] ?? m.state).toLowerCase().replace(/\s+/g, "-")}-${m.district ?? "at-large"}`, state: m.state, district: m.district ?? null,
       title: `${STATES[m.state] ?? m.state} ${m.district ? m.district : "at-large"}`,
       tier: f?.tier ?? null, p: f ? f.p_dem_win : null, left: m.left_party === "I" ? "I" : "D", fixed,
       dName: name(m.left_party === "I" ? "I" : "D"), rName: name("R"),
+      margin: f?.margin ?? null, statsP: m.p_dem_stats ?? null, consensus: m.ratings_consensus ?? null,
+      incumbent: m.incumbent ?? null, incumbentParty: m.incumbent_party ?? null, open: m.incumbent_running == null,
     });
   }
   return out.sort((a, b) => a.state.localeCompare(b.state) || (a.district ?? 0) - (b.district ?? 0));

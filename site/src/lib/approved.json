@@ -4,5 +4,6 @@
   "about": true,
   "trackRecord": true,
   "changelog": true,
-  "chamberHome": true
+  "chamberHome": true,
+  "houseSeats": false
 }

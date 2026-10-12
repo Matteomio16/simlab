@@ -13,6 +13,7 @@ const drop = (p) => existsSync(path.join(OUT, p)) && rmSync(path.join(OUT, p), {
 if (!forecast)
   ["senate", "senate.html", "senate.txt", "archive", "archive.html", "archive.txt"].forEach(drop);
 ["lab-notes/00.html", "lab-notes/00.txt", "lab-notes/00"].forEach(drop);
+["house/none.html", "house/none.txt", "house/none"].forEach(drop);
 // Pages Matteo hasn't approved (src/lib/approved.json) stay off the public site.
 const route = (r) => [r, `${r}.html`, `${r}.txt`];
 const unapproved = {
@@ -22,6 +23,7 @@ const unapproved = {
   trackRecord: route("track-record"),
   changelog: route("changelog"),
   chamberHome: route("house"),
+  // houseSeats: the seat pages are simply not generated until approved (src/app/house/[slug]).
 };
 const approved = JSON.parse(readFileSync(path.join(OUT, "..", "src", "lib", "approved.json"), "utf8"));
 if (!preview) for (const [k, paths] of Object.entries(unapproved)) if (!approved[k]) paths.forEach(drop);
