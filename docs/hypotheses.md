@@ -5,10 +5,11 @@ report back" (review 11 Oct, Matteo's yes). This file keeps the promise. The Pub
 post's row on the day it is approved, checks the open rows each day, and drafts the report-back post for Matteo's yes
 once three new polls are in.
 
-Rule (proposed 11 Oct, open to Matteo's change before the first check): the next three polls of the race whose field
-dates end after the post went out, each version counted once, partisan polls included as published. The hypothesis
-holds if their average margin is closer to our number than to the featured poll's margin. The report-back says so
-plainly either way, with the three polls named.
+Rule (Matteo, 11 Oct): the next three polls of the race whose field dates end after the post went out, each version
+counted once, partisan polls included as published. The hypothesis holds if their average margin is closer to our
+number than to the featured poll's margin. If it doesn't hold, the report-back says so plainly, with the three polls
+named: a small miss (our number within 2 points of margin of their average) keeps our reading; a bigger one says
+what we read wrong.
 
 | Post | Went out | Race | Featured poll | Our hypothesis | Next three polls | Result | Report-back |
 | --- | --- | --- | --- | --- | --- | --- | --- |

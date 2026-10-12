@@ -197,11 +197,18 @@ Decided by Matteo, 27 Sep evening (infrastructure; details in `docs/infrastructu
 
 Decided by Matteo, 11 Oct (publishing and ethics review, C7; details in `docs/CHANGELOG.md`):
 - **One "Publishing approval" thread** approves everything public each day, posts and the site alike (numbers and
-  story summaries); nothing is published until his yes there. The daily job doesn't update the site by itself.
+  story summaries). Posts wait for his yes there. The site: `SITE_PUBLISH` stays on for now (Matteo, 11 Oct night: few
+  visitors yet, a short imperfection is acceptable), so the daily job updates it after the run and the thread reviews
+  it the same day; turning `SITE_PUBLISH` off makes the site wait for his yes too.
 - The code freeze (12 Oct) covers how the forecast is made; the site, posts and publishing tools keep changing,
   with reader-visible method changes dated in the public changelog.
 - No OSF pre-registration for now; don't call the forecast "pre-registered" in public. OpenTimestamps proofs and
   Internet Archive captures of each published day are to be built.
+- **Weekly trend check** (from 19 Oct, in Monday's weekly step): in a state with 3 or more new polls that week, if our
+  forecast's margin moved the opposite way to the week's poll average, a gap of more than 4 points is flagged and more
+  than 6 is analysed for what went wrong in the simulation. No automatic rollback at 7.5 or above: fix only what the
+  analysis finds wrong (a bug, a bad story summary, a story on the wrong race), as a logged change with both versions
+  scored.
 
 Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.md` §8 and `docs/CHANGELOG.md`):
 - Partisan polls are those sponsored by a party, campaign or partisan group, not Wikipedia's "(R)"/"(D)" pollster tags.

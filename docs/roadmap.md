@@ -58,8 +58,9 @@ and ethics review and the code review find nothing that must be fixed before lau
 - **Publishing and ethics review (C7): done** 11 Oct evening. Three must-fix items, two fixed on the methods page
   (two model jobs that never ran removed; a plain paragraph that the personas are language models, with the real
   people behind them); the third, story summaries going on the site unchecked, is solved by Matteo's approval of
-  everything public in one new "Publishing approval" thread. With that, `SITE_PUBLISH` should be off (his switch),
-  so the site waits for his yes. Changelog and track record pages approved. OSF: not now. Details in
+  everything public in one new "Publishing approval" thread. `SITE_PUBLISH` stays on for now (Matteo, 11 Oct night):
+  the site updates itself and the thread reviews it the same day. Changelog and track record pages approved, pushed
+  (1ca9991). OSF: not now. Details in
   `docs/CHANGELOG.md`. The labs.scaliastudio.dev redirect is skipped.
 - **Site switches on** (11 Oct, 20:11 UTC, Matteo's yes): `SITE_PUBLISH=on`, `SITE_MODE=forecast`, `SITE_DATA=live`.
   The site serves prelaunch until the 12 Oct publish adds `site/data/live/forecast.json`. Switch `SITE_PUBLISH` off
@@ -164,6 +165,7 @@ Matteo is away Fri 2 and Sat 3 Oct, back Sun 4 Oct, and checks in from his phone
 | A13 | Scale-up of news and reactions | News queries for all 35 Senate races and ~40 House seats (from `races.json`); a reaction budget that fits the day: national stories asked once with state-neutral personas, fewer groups for safe races, a minimum attention, OpenRouter's batch API if needed (GLM manages ~200 prompts a minute) | Engine | Fri 9 Oct | built 29 Sep (`simlab/newsraces.py`; selection by the previous day's tier: simulate 5 race + 3 national stories, watch its 2 biggest, statistics none; about 13,500 prompts and 50 minutes on a busy day). House seats built 29 Sep (Matteo's yes): the simulated seats come from the daily `races.json`, one GDELT query per state every 12 hours, each story gated for every seat in its state, national-story reactions cached per state. Full-scale rehearsal done 7 Oct: passed except the House (Matteo, 8 Oct; `docs/rehearsal.md`). Still to do: the query numbers checked against a full day of the news job |
 | A12 | Early-vote data | NC absentee files now; NC in-person from 15 Oct; Texas from ~19 Oct; Ohio as published | Kev (it owns the snapshots); moves to Engine only if B2 slips | from Mon 5 Oct | live: NC (every 30 min, counts only), ME (counts only, raw file never stored), IA and TX switched on (publish from ~14 and ~19 Oct); Ohio skipped for the pilot (bot check; manual link route on record) |
 | A14 | Pre-freeze code review | An independent review of the daily chain before the 12 Oct freeze | a new review session | Sat 10 – Sun 11 Oct | done 11 Oct: one must-fix (posts' "this week" against pilot forecasts) and three smaller fixes pushed; the House seat set unlocks after launch (CHANGELOG 11 Oct) |
+| A15 | Weekly trend check | In Monday's weekly step: for each state with 3 or more new polls that week, compare the week's change in our margin with the change in the poll average; opposite directions with a gap over 4 points are flagged, over 6 analysed (no automatic rollback; fixes are logged changes, both versions scored). Shown in the Publishing approval thread and the weekly notes | Statistics | Mon 19 Oct | Matteo's yes 11 Oct (C7 session); CLAUDE.md §5 |
 
 ## Track B: the models (who does which job)
 

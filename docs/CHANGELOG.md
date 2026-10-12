@@ -40,8 +40,8 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
     checking them: now Matteo approves them (next point).
 - **One "Publishing approval" thread** (Matteo): everything public, posts and the site alike, is shown there each day
   and published only after his yes there. It replaces the evening routine and the Content & site thread as the place
-  of approval; Content & site keeps building layouts and code. Consequence: the daily job should not update the site
-  by itself (`SITE_PUBLISH` off; Matteo's switch).
+  of approval; Content & site keeps building layouts and code. The site: `SITE_PUBLISH` stays on for now (Matteo, 11
+  Oct night: few visitors yet), so the daily job publishes it and the thread reviews it the same day.
 - **Changelog and track record pages approved** for the public site. The code freeze from 12 Oct covers how the
   forecast is made; the site, the posts and the publishing tools keep changing as needed, with reader-visible method
   changes dated in `site/content/changelog.md`.
@@ -51,6 +51,15 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 - **OSF pre-registration: not now** (Matteo; nothing requires it). The scoring rules stay in the methods and track
   record pages. Don't call the forecast "pre-registered" in public text.
 - **To build:** OpenTimestamps proofs and Internet Archive captures of each published day (Matteo's yes).
+- **Weekly trend check** (Matteo, 11 Oct night; build for 19 Oct in the Statistics session): in a state with 3 or more
+  new polls that week, our margin moving the opposite way to the week's poll average by more than 4 points is flagged,
+  by more than 6 analysed. Matteo first proposed a rollback to the week before above 7.5; agreed instead: no automatic
+  rollback, because it would make the simulation follow the polls and erase the divergence calls. Only what the
+  analysis finds wrong is fixed, as a logged change with both versions scored.
+- **Reading the polls report-backs:** a hypothesis holds if the next three polls average closer to our number than
+  to the featured poll; a miss within 2 points of margin keeps our reading (`docs/hypotheses.md`).
+- **Methods sentence** after keeping `SITE_PUBLISH` on: "We read every post before it goes out, and check each day's
+  site update, story summaries included, the same day."
 
 ## 2026-10-11 (status session): the House alarm (Matteo's yes)
 

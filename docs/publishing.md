@@ -184,9 +184,11 @@ Tests: `python -m unittest tests.test_kit`.
   alike, typed by him there, never through another session; no scheduled routine (`notapoll-evening-approval` stays
   disabled; its SKILL.md in `~/.claude/scheduled-tasks/notapoll-evening-approval/` keeps the step-by-step procedure).
   Each day the thread shows the site update (numbers and story summaries) and the daily forecast post once the run
-  lands, and the next day's Reading the polls. `SITE_PUBLISH` stays off, so the daily job never updates the site by
-  itself; after Matteo's yes the thread publishes the day (how is open on 11 Oct: a Publish workflow, not yet
-  added, or `site/scripts/publish-day.mjs` run locally and pushed).
+  lands, and the next day's Reading the polls. The site: `SITE_PUBLISH` stays on for now (Matteo, 11 Oct night), so
+  the daily job publishes it after the run and the thread reviews it the same day; a held day is fixed or rolled back
+  with Matteo. If he turns `SITE_PUBLISH` off, the thread publishes after his yes with
+  `node site/scripts/publish-day.mjs --from ../simlab-data/derived/<day>`, committing only `site/data/live` and
+  `site/public/data/<day>`.
   Approved folders go in `kits/daily/APPROVED.json`; images to `site/public/social/<folder>/`; then
   `python -m simlab.publish.buffer queue-daily FOLDER "YYYY-MM-DD HH:MM"`.
 - **Every platform gets its own text** (research 7 Oct: Mosseri on Instagram signals; X's open-source ranker; Threads
