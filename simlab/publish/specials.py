@@ -211,8 +211,9 @@ def chamber(t=CHAMBER, up: dict = UP, holdover: dict = HOLDOVER, p_r: float = 0.
         s._put(cx, cy + 36, "in 100: Republicans hold 50+", "sans", 500, 30, t.ink2, ha="center", va="top")
     else:  # the split, as on the race cards (Matteo, 8 Oct): both sides in their colours, the leader larger
         r_n, d_n = round(p_r * 100), round(p_d * 100)
-        for side, n, lab, c in ((-1, r_n, "REP HOLD 50+", t.rep), (1, d_n, "DEM REACH 51", t.dem)):
-            px = 110 if n >= (d_n if side < 0 else r_n) else 80
+        # Democrats on the left, Republicans on the right, like the seats (Matteo, 12 Oct)
+        for side, n, lab, c in ((-1, d_n, "DEM REACH 51", t.dem), (1, r_n, "REP HOLD 50+", t.rep)):
+            px = 110 if n >= (r_n if side < 0 else d_n) else 80
             x = cx + side * 150
             s._put(x, cy + 30, lab, "sans", 700, 24, c, ha="center", va="top")  # below the arc, clear of the seats
             s._put(x, cy + 60 + (110 - px) * 0.9, f"{n}", "hero", t.hero_weight, px, c, ha="center", va="top")
