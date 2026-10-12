@@ -29,7 +29,7 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Alaska Survey Research": "Alaska Survey Res.", "Rasmussen Reports": "Rasmussen",
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
-         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
+         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
          "Bowling Green State University/YouGov": "BGSU/YouGov", "Suffolk University": "Suffolk"}
 
 STORIES = {
@@ -253,6 +253,48 @@ STORIES = {
                  "range from Paxton +3 to Talarico +6, with the middle around Talarico +2; the new YouGov poll, the largest, "
                  "has Talarico up 6."),
     },
+    "2026-10-13-kansas": {
+        "day": "2026-10-13", "race": "KS", "since": "2026-09-08", "focus": "InsiderAdvantage",
+        "folder": "13-reading-polls-08", "left": "Hamilton", "right": "Marshall",
+        "headline": "A new Kansas poll has Hamilton up 1. Is this race really open?",
+        "dek": "Nine Senate polls since September: Hamilton (D) minus Marshall (R), likely voters.",
+        "source": "Polls ending 10 Sep – 10 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 12 Oct.",
+        "title2": "Open, but not even.",
+        "against": ["1,200 voters: the gap can swing about 6 points either way.",
+                    "Two of the polls with Hamilton ahead come from Democratic firms.",
+                    "Kansas voted for Trump by 16 points in 2024."],
+        "for": "InsiderAdvantage has usually leaned about 3 points toward Republicans, and most Kansas polls since "
+               "mid-September have Hamilton slightly ahead.",
+        "hypothesis": "Our simulation: Marshall wins 65 in 100 on 3 November; 56 if the election were today.",
+        "caption": (
+            "Kansas Senate poll: a new InsiderAdvantage survey has Adam Hamilton ahead of Roger Marshall by 1 point, "
+            "48 to 47. In a state Trump won by 16 points, that raises a fair question: is this race really open?\n\n"
+            "The polls say yes. Most Kansas polls since mid-September have Hamilton slightly ahead, and this one comes "
+            "from a pollster that has usually leaned about 3 points toward Republicans. Read single polls carefully, "
+            "though: with 1,200 voters the gap can move about 6 points either way, and two of the polls with Hamilton "
+            "ahead come from Democratic firms.\n\n"
+            "Our simulation leans the other way. On 3 November, Marshall wins 65 of every 100 simulated elections. "
+            "We blend the polls with Kansas's long voting record, and part of Hamilton's recent lift comes from news "
+            "our model expects to fade: if the election were today, Marshall would win 56 in 100.\n\n"
+            "So yes, Kansas is open, but not even. We'll keep checking our number against new polls.\n\n"
+            "#midterms2026 #Kansas #KansasSenate #elections"),
+        "short": ("A new Kansas poll has Hamilton up 1 on Marshall, and most polls since mid-September have him "
+                  "slightly ahead. Our simulation still gives Marshall 65 in 100 on 3 November, 56 if the election "
+                  "were today. Open, but not even."),
+        "more": " Reading the polls.",
+        "x": ("Kansas: InsiderAdvantage has Hamilton up 1, and most polls since mid-September have him slightly "
+              "ahead. Our simulation still gives Marshall 65 in 100 on 3 Nov, 56 if the election were today. Open, "
+              "but not even."),
+        "threads": ("Is the Kansas Senate race really open? A new InsiderAdvantage poll has Adam Hamilton up 1 on "
+                    "Roger Marshall, and most polls since mid-September agree he's slightly ahead. Our simulation "
+                    "leans the other way: Marshall wins 65 of every 100 simulated elections on 3 November, partly "
+                    "because Hamilton's recent lift comes from news we expect to fade. Open, but not even. Would you "
+                    "call Kansas a toss-up?"),
+        "topic": "2026 Midterms",
+        "first_comment": "Would you call Kansas a toss-up? Tell us why or why not.",
+        "alt1": ("Dot chart of nine Kansas Senate polls since September, Hamilton minus Marshall. Most sit between "
+                 "Marshall +1 and Hamilton +5; the new InsiderAdvantage poll has Hamilton up 1."),
+    },
 }
 
 
@@ -331,8 +373,11 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
         tag = None
         if hot:
             who = left if row.gap > 0 else right
-            tag = ax.text(row.gap, i - 0.62, typeset(f"{who} +{abs(row.gap):.0f}"), va="bottom", ha="center",
-                          color=t.ink, fontproperties=s.font("sans", 600, 28), zorder=2,  # over the lines, under dots
+            # beside its own dot, on the side with more room, so it never sits on the row above (Kansas, 12 Oct)
+            right_side = row.gap <= lim * 0.35
+            tag = ax.text(row.gap + (lim * 0.09 if right_side else -lim * 0.09), i, typeset(f"{who} +{abs(row.gap):.0f}"),
+                          va="center", ha="left" if right_side else "right", color=t.ink,
+                          fontproperties=s.font("sans", 600, 28), zorder=2,  # over the lines, under dots
                           bbox={"facecolor": t.paper, "edgecolor": "none", "pad": 1})
         rows.append({"dot": dot, "label": label, "tag": tag, "hot": hot})
     s.y += 50
@@ -356,7 +401,8 @@ def end(t: str, limit: int, link: int = 0) -> str:
 
 
 def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
-    st, d = STORIES[day], date.fromisoformat(day)
+    st = STORIES[day]
+    d = date.fromisoformat(st.get("day", day))  # a second story on one day has its own key
     p = load(polls, st["race"], st["since"], st.get("exclude", ()))
     a = Slide(d, "", theme, series=SERIES)
     a.headline(st["headline"], px=64)
@@ -419,7 +465,8 @@ def reel(day: str, polls: Path, theme=LAB) -> dict:
     import numpy as np
     from PIL import Image
 
-    st, d = STORIES[day], date.fromisoformat(day)
+    st = STORIES[day]
+    d = date.fromisoformat(st.get("day", day))  # a second story on one day has its own key
     p = load(polls, st["race"], st["since"], st.get("exclude", ()))
     w, h, fps = 1080, 1920, 30
     s = Slide(d, "", theme, size=(w, h), series=SERIES)
