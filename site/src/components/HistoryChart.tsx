@@ -9,9 +9,11 @@ const TEXT = { fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: 600, le
 // A chance over time, one point per published day (Matteo, 12 Oct: race histories). The toss-up band is shaded, the
 // line takes the colour of whoever leads today, and hovering (or tapping) shows that day's value.
 export default function HistoryChart({
-  points, label, color = "var(--sim)", w = 640, who,
+  points, label, color = "var(--sim)", w = 640, who, today,
 }: {
   points: { date: string; p: number }[];
+  // "If the election were today" by date, drawn as a lighter dashed line (Matteo, 12 Oct).
+  today?: Record<string, number>;
   label: string;
   color?: string;
   w?: number;
@@ -23,12 +25,16 @@ export default function HistoryChart({
   const x = (i: number) => pad.l + (i / (points.length - 1)) * (W - pad.l - pad.r);
   const y = (p: number) => pad.t + (1 - p) * (H - pad.t - pad.b);
   const d = points.map((pt, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(pt.p).toFixed(1)}`).join("");
+  const td = today
+    ? points.map((pt, i) => [i, today[pt.date]] as const).filter(([, v]) => v != null).map(([i, v], k) => `${k ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("")
+    : "";
   const last = points.length - 1;
   const at = hover ?? last;
   const step = Math.max(1, Math.ceil(points.length / (w < 480 ? 3 : 6)));
   const ticks = points.map((_, i) => i).filter((i) => i % step === 0 || i === last);
   const n = Math.round(points[at].p * 100);
-  const tip = `${fmt(points[at].date)} · ${who} ${n}`;
+  const tv = today?.[points[at].date];
+  const tip = `${fmt(points[at].date)} · ${who} ${n}${tv != null ? ` · today ${Math.round(tv * 100)}` : ""}`;
   const tw = Math.max(92, tip.length * 6.6 + 16);
   const tipX = Math.min(Math.max(x(at), pad.l + tw / 2), W - pad.r - tw / 2);
 
@@ -52,6 +58,7 @@ export default function HistoryChart({
           {fmt(points[i].date)}
         </text>
       ))}
+      {td && <path d={td} fill="none" stroke={color} strokeWidth={1.6} strokeDasharray="4 3" opacity={0.55} strokeLinejoin="round" />}
       <path d={d} fill="none" stroke={color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
       {points.map((pt, i) => (
         <circle key={pt.date} cx={x(i)} cy={y(pt.p)} r={points.length > 30 ? 0 : 2.5} fill={color} />

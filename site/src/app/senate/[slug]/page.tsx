@@ -51,6 +51,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
   const ratingWords = tier.name === "Toss-up" ? "a toss-up" : tier.name.replace(/ D$/, " Democratic").replace(/ R$/, " Republican").replace(/ I$/, " independent").replace(/^\w+/, (w) => w.toLowerCase());
   const sample = (draws.races[id] ?? []).filter((_, i) => i % 10 === 0);
   const hist = (history.races[id] ?? []).map((h) => ({ date: h.date, p: h.p_dem_win }));
+  const histToday = Object.fromEntries((history.races[id] ?? []).filter((h) => h.today != null).map((h) => [h.date, h.today!]));
   const leftShort = surname(meta.candidates.left);
   const rightShort = surname(meta.candidates.right);
   const b = f.benchmarks;
@@ -158,9 +159,13 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
           <p className="label">Over time</p>
           <h2 className="mt-2 text-xl font-bold">{`${leftShort}'s chance in 100`}</h2>
           <p className="note mt-1">The shaded band is the toss-up zone, 45 to 55.</p>
-          <div className="mt-4">
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[0.78rem] font-semibold text-ink-2">
+            <span className="flex items-center gap-2"><span className="inline-block h-[2px] w-5" style={{ background: f.p_dem_win >= 0.5 ? partyVar(L) : "var(--rep)" }} />The 3 Nov forecast</span>
+            <span className="flex items-center gap-2"><span className="inline-block w-5 border-t-2 border-dashed opacity-60" style={{ borderColor: f.p_dem_win >= 0.5 ? partyVar(L) : "var(--rep)" }} />If the election were today</span>
+          </div>
+          <div className="mt-3">
             {hist.length > 1 ? (
-              <Responsive desktop={500} render={(w) => <HistoryChart w={w} points={hist} label={`${leftShort}'s chance`} who={leftShort} color={f.p_dem_win >= 0.5 ? partyVar(L) : "var(--rep)"} />} />
+              <Responsive desktop={500} render={(w) => <HistoryChart w={w} points={hist} today={histToday} label={`${leftShort}'s chance`} who={leftShort} color={f.p_dem_win >= 0.5 ? partyVar(L) : "var(--rep)"} />} />
             ) : (
               <p className="text-ink-2">The line starts after a few daily runs.</p>
             )}
