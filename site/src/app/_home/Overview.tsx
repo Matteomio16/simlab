@@ -85,36 +85,30 @@ export default function Overview() {
     leftName: surname(meta.candidates.left), rightName: surname(meta.candidates.right), p50: f.margin.p50,
   }));
 
-  const week = history.senate.length > 1 ? history.senate[Math.max(0, history.senate.length - 8)] : null;
-  const trend = week ? Math.round((s.p_r_50plus - week.p_r_50plus) * 100) : 0;
-  const mapPanel = (
-      <MapPanel
-            legend={TIER_LEGEND}
-            views={[
-              { key: "sim", label: "Our simulation", tiles: simTiles, note: "Toss-up: 45 to 55 in 100." },
-              { key: "cook", label: "Cook Political Report", tiles: cookTiles, note: "Cook's published ratings, for comparison." },
-              { key: "market", label: "Prediction markets", tiles: marketTiles, note: "Kalshi and Polymarket prices, for comparison; never an input." },
-            ]}
-          />
-  );
+  const mapViews = [
+    { key: "sim", label: "Our simulation", tiles: simTiles, note: "Toss-up: 45 to 55 in 100. Select a state for its race." },
+    { key: "cook", label: "Cook Political Report", tiles: cookTiles, note: "Cook's published ratings, for comparison." },
+    { key: "market", label: "Prediction markets", tiles: marketTiles, note: "Kalshi and Polymarket prices, for comparison; never an input." },
+  ];
 
   if (SHOW.chamberHome)
     return (
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
-        <div className="pt-4"><ChamberSwitch active="senate" /></div>
-        <section className="rise pt-6">
+        <div className="pt-3"><ChamberSwitch active="senate" /></div>
+        <section className="rise pt-3">
           <Dateline left="The state of the Senate" right={`Updated ${longDate(forecast.date)} · ${daysTo(forecast.date)} days to go`} />
-          <h1 className="mt-6 max-w-4xl text-[2.3rem] font-extrabold leading-[1.05] tracking-[-0.022em] sm:text-[3.2rem]">
-            {headline(s.p_r_50plus, s.p_d_caucus_51)}
-          </h1>
-          <p className="mt-3 max-w-3xl text-[0.95rem] leading-relaxed text-ink-2">
-            {`Today's ${forecast.draws.toLocaleString("en-US")} simulated elections: Republicans keep 50 or more seats in ${nR} of 100, Democrats reach 51 in ${nD}, and the independents decide it in ${nI}.`}
-            {week && trend !== 0 && (
-              <span className="ml-1 font-semibold text-ink">{` This week: ${trend > 0 ? "+" : "−"}${Math.abs(trend)} for Republicans.`}</span>
-            )}
-          </p>
-          <div className="mt-8 max-w-[900px]">{mapPanel}</div>
-          <p className="note mt-3">Select a state for its race: what the simulation says, and why.</p>
+          <div className="mt-3">
+            <MapPanel
+              header={
+                <h1 className="text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">
+                  {headline(s.p_r_50plus, s.p_d_caucus_51)}
+                </h1>
+              }
+              mapClass="mx-auto max-w-[720px]"
+              legend={TIER_LEGEND}
+              views={mapViews}
+            />
+          </div>
         </section>
 
         <section className="mt-14">
@@ -306,14 +300,7 @@ export default function Overview() {
           chance in 100. Select a state for its race. A dot marks a special election.
         </p>
         <div className="mt-6 max-w-[860px]">
-          <MapPanel
-            legend={TIER_LEGEND}
-            views={[
-              { key: "sim", label: "Our simulation", tiles: simTiles, note: "Toss-up: 45 to 55 in 100." },
-              { key: "cook", label: "Cook Political Report", tiles: cookTiles, note: "Cook's published ratings, for comparison." },
-              { key: "market", label: "Prediction markets", tiles: marketTiles, note: "Kalshi and Polymarket prices, for comparison; never an input." },
-            ]}
-          />
+          <MapPanel legend={TIER_LEGEND} views={mapViews} />
         </div>
       </Reveal>
 

@@ -4,5 +4,5 @@
   "about": true,
   "trackRecord": true,
   "changelog": true,
-  "chamberHome": false
+  "chamberHome": true
 }

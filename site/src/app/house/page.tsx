@@ -44,14 +44,11 @@ export default function House() {
 
   return (
     <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
-      <div className="pt-4"><ChamberSwitch active="house" /></div>
-      <section className="rise pt-6">
+      <div className="pt-3"><ChamberSwitch active="house" /></div>
+      <section className="rise pt-3">
         <Dateline left="The state of the House" right={`Updated ${longDate(forecast.date)} · ${daysTo(forecast.date)} days to go`} />
-        <h1 className="mt-6 max-w-4xl text-[2.3rem] font-extrabold leading-[1.05] tracking-[-0.022em] sm:text-[3.2rem]">{headline(h.p_d_majority)}</h1>
-        <p className="mt-3 max-w-3xl text-[0.95rem] leading-relaxed text-ink-2">
-          {`Today's ${forecast.draws.toLocaleString("en-US")} simulated elections: Democrats win ${maj} or more seats in ${nD} of 100. The middle result is ${D.p50} Democratic seats, and 8 in 10 fall between ${D.p10} and ${D.p90}.`}
-        </p>
-        <div className="mt-8 max-w-[900px]">
+        <h1 className="mt-3 border-b border-rule pb-4 text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">{headline(h.p_d_majority)}</h1>
+        <div className="mx-auto mt-4 max-w-[720px]">
           <HouseMap districts={districts} />
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <Legend items={TIER_LEGEND.filter((t) => t.label !== "Independent")} />
@@ -66,6 +63,9 @@ export default function House() {
           <div className="mt-4">
             <SplitChance p={h.p_d_majority} left="D" />
           </div>
+          <p className="mt-4 text-[0.95rem] leading-relaxed text-ink-2">
+            {`Democrats win ${maj} or more seats in ${nD} of every 100 simulated elections. The middle result is ${D.p50} Democratic seats; 8 in 10 fall between ${D.p10} and ${D.p90}.`}
+          </p>
           <dl className="mt-6 text-[0.9rem]">
             {[
               ["If the election were today", h.today ? `Democrats ${in100(h.today.p_d_majority)} in 100` : "–"],
@@ -84,7 +84,7 @@ export default function House() {
             <Responsive
               desktop={560}
               render={(w) => (
-                <SeatHistogram dist={D.dist ?? {}} w={w} line={maj} above="var(--dem)" below="var(--rep)" span={20} every={w < 480 ? 20 : 10} label="Distribution of Democratic House seats across simulated elections" />
+                <SeatHistogram dist={D.dist ?? {}} w={w} line={maj} span={20} every={w < 480 ? 20 : 10} axis="Democratic seats" left={{ label: "Republicans keep control", color: "var(--rep)" }} right={{ label: "Democrats win control", color: "var(--dem)" }} label="Distribution of Democratic House seats across simulated elections" />
               )}
             />
           </div>

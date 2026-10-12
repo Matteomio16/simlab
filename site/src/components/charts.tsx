@@ -104,33 +104,44 @@ export function MarginRanges({ rows, left, w = 640 }: { rows: RangeRow[]; left: 
 }
 
 // Republican seat totals across the simulated elections; 50 or more (with the Vice President) keeps control.
-// Seats across simulated elections. Defaults are the Senate's (Republican seats, 50 for control); the House passes
-// Democratic seats and 218.
+// Seats across simulated elections (Matteo, 12 Oct: colouring the bars by party misread as Democratic seats). The bars
+// are neutral; the background says who controls the chamber on each side of the line. Defaults are the Senate's
+// (Republican seats, 50 for control); the House passes Democratic seats and 218.
 export function SeatHistogram({
-  dist, w = 640, line = 50, above = "var(--rep)", below = "var(--dem)", span = 8, every, label = "Distribution of Republican Senate seats across simulated elections",
+  dist, w = 640, line = 50, span = 8, every,
+  axis = "Republican seats", left = { label: "Democrats control", color: "var(--dem)" }, right = { label: "Republicans keep control", color: "var(--rep)" },
+  label = "Distribution of Republican Senate seats across simulated elections",
 }: {
-  dist: Record<string, number>; w?: number; line?: number; above?: string; below?: string; span?: number; every?: number; label?: string;
+  dist: Record<string, number>; w?: number; line?: number; span?: number; every?: number; axis?: string;
+  left?: { label: string; color: string }; right?: { label: string; color: string }; label?: string;
 }) {
   const entries = Object.entries(dist).map(([k, v]) => [Number(k), v] as const).filter(([, v]) => v > 0.0005);
   const lo = Math.min(line - span, ...entries.map(([k]) => k));
   const hi = Math.max(line + span, ...entries.map(([k]) => k));
-  const W = w, H = w < 480 ? 170 : 200, pad = { l: 8, r: 8, t: 22, b: 30 };
+  const W = w, H = w < 480 ? 196 : 226, pad = { l: 8, r: 8, t: 30, b: 48 };
   const n = hi - lo + 1;
   const bw = (W - pad.l - pad.r) / n;
   const max = Math.max(...entries.map(([, v]) => v));
   const y = (v: number) => (v / max) * (H - pad.t - pad.b);
   const x = (k: number) => pad.l + (k - lo) * bw;
+  const base = H - pad.b;
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={label}>
+      <rect x={pad.l} y={pad.t - 22} width={x(line) - pad.l} height={base - pad.t + 22} fill={left.color} opacity={0.07} />
+      <rect x={x(line)} y={pad.t - 22} width={W - pad.r - x(line)} height={base - pad.t + 22} fill={right.color} opacity={0.07} />
+      <text x={x(line) - 6} y={pad.t - 9} textAnchor="end" fill={left.color} style={{ ...MONO, fontWeight: 700 }}>{`← ${left.label}`}</text>
+      <text x={x(line) + 6} y={pad.t - 9} fill={right.color} style={{ ...MONO, fontWeight: 700 }}>{`${right.label} →`}</text>
       {entries.map(([k, v]) => (
-        <rect key={k} x={x(k) + (bw > 3 ? 1 : 0)} y={H - pad.b - y(v)} width={Math.max(0.6, bw - (bw > 3 ? 2 : 0.3))} height={y(v)} rx={bw > 3 ? 1.5 : 0} fill={k >= line ? above : below} opacity={0.85} />
+        <rect key={k} x={x(k) + (bw > 3 ? 1 : 0)} y={base - y(v)} width={Math.max(0.6, bw - (bw > 3 ? 2 : 0.3))} height={y(v)} rx={bw > 3 ? 1.5 : 0} fill="var(--ink-2)" opacity={0.8}>
+          <title>{`${k} ${axis.toLowerCase()}: ${(v * 100).toFixed(1)}% of simulated elections`}</title>
+        </rect>
       ))}
-      <line x1={x(line) - 0.5} x2={x(line) - 0.5} y1={pad.t - 12} y2={H - pad.b} stroke="var(--sim)" strokeWidth={1.5} />
-      <text x={x(line) + 4} y={pad.t - 4} fill="var(--sim)" style={MONO}>{`${line} SEATS`}</text>
-      <line x1={pad.l} x2={W - pad.r} y1={H - pad.b} y2={H - pad.b} stroke="var(--axis)" />
+      <line x1={x(line) - 0.5} x2={x(line) - 0.5} y1={pad.t - 22} y2={base} stroke="var(--sim)" strokeWidth={1.5} />
+      <line x1={pad.l} x2={W - pad.r} y1={base} y2={base} stroke="var(--axis)" />
       {Array.from({ length: n }, (_, i) => lo + i).filter((k) => k % (every ?? (W < 480 ? 4 : 2)) === 0).map((k) => (
-        <text key={k} x={x(k) + bw / 2} y={H - 12} textAnchor="middle" fill="var(--muted)" style={MONO}>{k}</text>
+        <text key={k} x={x(k) + bw / 2} y={base + 16} textAnchor="middle" fill={k === line ? "var(--sim)" : "var(--muted)"} style={{ ...MONO, fontWeight: k === line ? 700 : 400 }}>{k}</text>
       ))}
+      <text x={W / 2} y={H - 8} textAnchor="middle" fill="var(--ink-2)" style={{ ...MONO, fontWeight: 600 }}>{`${axis} (${line} for control)`}</text>
     </svg>
   );
 }

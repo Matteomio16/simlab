@@ -91,7 +91,9 @@ export default function Prelaunch({ today, live = false }: { today: string; live
             </h1>
             <p className="mt-5 max-w-xl text-[1.2rem] leading-relaxed text-ink-2">
               <strong className="mb-1.5 block font-bold leading-snug text-ink">Polls ask people. We simulate how people react.</strong>
-              {"Voter personas, built from real survey answers, react to each day’s news, and 40,000 simulated elections turn their reactions into chances for all 35 Senate races."}
+              {live
+                ? "Voter personas, built from real survey answers, react to each day’s news, and 40,000 simulated elections turn their reactions into chances for every Senate race and House seat."
+                : "Voter personas, built from real survey answers, react to each day’s news, and 40,000 simulated elections turn their reactions into chances for all 35 Senate races."}
             </p>
             <p className="mt-4 flex max-w-xl items-baseline gap-2 text-[1.05rem] font-semibold leading-snug">
               <span className="inline-block h-2 w-2 shrink-0 -translate-y-px bg-sim" aria-hidden="true" />
@@ -100,8 +102,8 @@ export default function Prelaunch({ today, live = false }: { today: string; live
             <dl className="mt-8 grid grid-cols-3 border-y-2 border-rule-strong">
               {[
                 ["Senate races", "35"],
-                ["Simulated elections a day", "40,000"],
-                live ? ["Updated", "Every day"] : ["First public forecast", "Oct 12"],
+                live ? ["House seats", "435"] : ["Simulated elections a day", "40,000"],
+                live ? ["Simulated elections a day", "40,000"] : ["First public forecast", "Oct 12"],
               ].map(([k, v], i) => (
                 <div key={k} className={`py-3 ${i ? "border-l border-rule pl-4" : ""}`}>
                   <dt className="text-[0.72rem] font-semibold leading-tight text-muted">{k}</dt>
