@@ -148,9 +148,6 @@ export default function Overview() {
         <div className="mt-6">
           <SimLabel date={longDate(forecast.date)} sample={IS_SAMPLE} />
         </div>
-          <div className="mt-6">
-            <SimLabel date={longDate(forecast.date)} sample={IS_SAMPLE} />
-          </div>
         </section>
 
       <Reveal as="section" className="mt-14">

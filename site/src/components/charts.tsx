@@ -104,8 +104,8 @@ export function MarginRanges({ rows, left, w = 640 }: { rows: RangeRow[]; left: 
 }
 
 // Republican seat totals across the simulated elections; 50 or more (with the Vice President) keeps control.
-// Seats across simulated elections (Matteo, 12 Oct: colouring the bars by party misread as Democratic seats). The bars
-// are neutral; the background says who controls the chamber on each side of the line. Defaults are the Senate's
+// Seats across simulated elections: each bar in the colour of the party that controls the chamber at that count, on
+// tinted zones that name it (Matteo, 12 Oct). Defaults are the Senate's
 // (Republican seats, 50 for control); the House passes Democratic seats and 218.
 export function SeatHistogram({
   dist, w = 640, line = 50, span = 8, every,
@@ -132,7 +132,7 @@ export function SeatHistogram({
       <text x={x(line) - 6} y={pad.t - 9} textAnchor="end" fill={left.color} style={{ ...MONO, fontWeight: 700 }}>{`← ${left.label}`}</text>
       <text x={x(line) + 6} y={pad.t - 9} fill={right.color} style={{ ...MONO, fontWeight: 700 }}>{`${right.label} →`}</text>
       {entries.map(([k, v]) => (
-        <rect key={k} x={x(k) + (bw > 3 ? 1 : 0)} y={base - y(v)} width={Math.max(0.6, bw - (bw > 3 ? 2 : 0.3))} height={y(v)} rx={bw > 3 ? 1.5 : 0} fill="var(--ink-2)" opacity={0.8}>
+        <rect key={k} x={x(k) + (bw > 3 ? 1 : 0)} y={base - y(v)} width={Math.max(0.6, bw - (bw > 3 ? 2 : 0.3))} height={y(v)} rx={bw > 3 ? 1.5 : 0} fill={k >= line ? right.color : left.color} opacity={0.85}>
           <title>{`${k} ${axis.toLowerCase()}: ${(v * 100).toFixed(1)}% of simulated elections`}</title>
         </rect>
       ))}
