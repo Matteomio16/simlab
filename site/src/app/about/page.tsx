@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { SITE } from "@/lib/site";
+import { SHOW, SITE } from "@/lib/site";
+import Prelaunch from "../_home/Prelaunch";
 import Dateline from "@/components/Dateline";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: SHOW.chamberHome ? "What we do" : "About",
   description: "NotAPoll.org is a live experiment in independent, transparent election forecasting, scored in public.",
 };
 
@@ -24,7 +25,19 @@ const PARTS = [
   },
 ];
 
+// With the Senate | House home (Matteo, 12 Oct), the launch page moves here as "What we do", above this page.
 export default function About() {
+  if (SHOW.chamberHome)
+    return (
+      <>
+        <Prelaunch today={new Date().toISOString().slice(0, 10)} live />
+        <div className="mt-20"><AboutBody /></div>
+      </>
+    );
+  return <AboutBody />;
+}
+
+function AboutBody() {
   return (
     <div className="mx-auto max-w-[1200px] px-4 pt-10 sm:px-6 sm:pt-12">
       <Dateline left="About" />

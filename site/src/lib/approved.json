@@ -3,5 +3,6 @@
   "labNotes": true,
   "about": true,
   "trackRecord": true,
-  "changelog": true
+  "changelog": true,
+  "chamberHome": false
 }

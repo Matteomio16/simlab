@@ -21,6 +21,7 @@ const unapproved = {
   about: route("about"),
   trackRecord: route("track-record"),
   changelog: route("changelog"),
+  chamberHome: route("house"),
 };
 const approved = JSON.parse(readFileSync(path.join(OUT, "..", "src", "lib", "approved.json"), "utf8"));
 if (!preview) for (const [k, paths] of Object.entries(unapproved)) if (!approved[k]) paths.forEach(drop);

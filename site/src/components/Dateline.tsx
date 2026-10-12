@@ -5,7 +5,7 @@ export default function Dateline({ left, right = "Democracy, rehearsed." }: { le
   return (
     <div className="flex items-baseline justify-between border-b border-rule pb-2 text-[0.72rem] font-bold uppercase tracking-[0.08em]">
       <span>{left}</span>
-      {right && <span className="text-muted">{right}</span>}
+      {right && <span className={`text-muted ${typeof right === "string" && right.length > 24 ? "hidden sm:inline" : ""}`}>{right}</span>}
     </div>
   );
 }

@@ -104,10 +104,16 @@ export function MarginRanges({ rows, left, w = 640 }: { rows: RangeRow[]; left: 
 }
 
 // Republican seat totals across the simulated elections; 50 or more (with the Vice President) keeps control.
-export function SeatHistogram({ dist, w = 640 }: { dist: Record<string, number>; w?: number }) {
+// Seats across simulated elections. Defaults are the Senate's (Republican seats, 50 for control); the House passes
+// Democratic seats and 218.
+export function SeatHistogram({
+  dist, w = 640, line = 50, above = "var(--rep)", below = "var(--dem)", span = 8, every, label = "Distribution of Republican Senate seats across simulated elections",
+}: {
+  dist: Record<string, number>; w?: number; line?: number; above?: string; below?: string; span?: number; every?: number; label?: string;
+}) {
   const entries = Object.entries(dist).map(([k, v]) => [Number(k), v] as const).filter(([, v]) => v > 0.0005);
-  const lo = Math.min(42, ...entries.map(([k]) => k));
-  const hi = Math.max(58, ...entries.map(([k]) => k));
+  const lo = Math.min(line - span, ...entries.map(([k]) => k));
+  const hi = Math.max(line + span, ...entries.map(([k]) => k));
   const W = w, H = w < 480 ? 170 : 200, pad = { l: 8, r: 8, t: 22, b: 30 };
   const n = hi - lo + 1;
   const bw = (W - pad.l - pad.r) / n;
@@ -115,14 +121,14 @@ export function SeatHistogram({ dist, w = 640 }: { dist: Record<string, number>;
   const y = (v: number) => (v / max) * (H - pad.t - pad.b);
   const x = (k: number) => pad.l + (k - lo) * bw;
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="Distribution of Republican Senate seats across simulated elections">
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={label}>
       {entries.map(([k, v]) => (
-        <rect key={k} x={x(k) + 1} y={H - pad.b - y(v)} width={bw - 2} height={y(v)} rx={1.5} fill={k >= 50 ? "var(--rep)" : "var(--dem)"} opacity={0.85} />
+        <rect key={k} x={x(k) + (bw > 3 ? 1 : 0)} y={H - pad.b - y(v)} width={Math.max(0.6, bw - (bw > 3 ? 2 : 0.3))} height={y(v)} rx={bw > 3 ? 1.5 : 0} fill={k >= line ? above : below} opacity={0.85} />
       ))}
-      <line x1={x(50) - 0.5} x2={x(50) - 0.5} y1={pad.t - 12} y2={H - pad.b} stroke="var(--sim)" strokeWidth={1.5} />
-      <text x={x(50) + 4} y={pad.t - 4} fill="var(--sim)" style={MONO}>50 SEATS</text>
+      <line x1={x(line) - 0.5} x2={x(line) - 0.5} y1={pad.t - 12} y2={H - pad.b} stroke="var(--sim)" strokeWidth={1.5} />
+      <text x={x(line) + 4} y={pad.t - 4} fill="var(--sim)" style={MONO}>{`${line} SEATS`}</text>
       <line x1={pad.l} x2={W - pad.r} y1={H - pad.b} y2={H - pad.b} stroke="var(--axis)" />
-      {Array.from({ length: n }, (_, i) => lo + i).filter((k) => k % (W < 480 ? 4 : 2) === 0).map((k) => (
+      {Array.from({ length: n }, (_, i) => lo + i).filter((k) => k % (every ?? (W < 480 ? 4 : 2)) === 0).map((k) => (
         <text key={k} x={x(k) + bw / 2} y={H - 12} textAnchor="middle" fill="var(--muted)" style={MONO}>{k}</text>
       ))}
     </svg>

@@ -53,7 +53,9 @@ const TIMELINE = [
 
 const PARTY = { D: "var(--dem)", R: "var(--rep)", I: "var(--ind)" } as const;
 
-export default function Prelaunch({ today }: { today: string }) {
+// live: the same page as "What we do" once the forecast is public (Matteo, 12 Oct): no countdown or seat map, and it
+// points to the forecast instead.
+export default function Prelaunch({ today, live = false }: { today: string; live?: boolean }) {
   const initialDays = Math.max(0, Math.round((Date.parse(LAUNCH) - Date.parse(today)) / 86400000));
   const meta = loadRaceMeta();
   const races = Object.keys(meta)
@@ -80,7 +82,7 @@ export default function Prelaunch({ today }: { today: string }) {
           <div className="rise">
             <div className="flex items-baseline justify-between border-b border-rule pb-2 text-[0.72rem] font-bold uppercase tracking-[0.08em]">
               <span>Democracy, rehearsed.</span>
-              <span className="text-muted">U.S. Senate · 2026</span>
+              <span className="text-muted">{live ? "What we do" : "U.S. Senate · 2026"}</span>
             </div>
             <h1 className="mt-6 text-[2.6rem] font-extrabold leading-[1.02] tracking-[-0.025em] sm:text-[3.6rem]">
               The 2026 midterms,
@@ -99,7 +101,7 @@ export default function Prelaunch({ today }: { today: string }) {
               {[
                 ["Senate races", "35"],
                 ["Simulated elections a day", "40,000"],
-                ["First public forecast", "Oct 12"],
+                live ? ["Updated", "Every day"] : ["First public forecast", "Oct 12"],
               ].map(([k, v], i) => (
                 <div key={k} className={`py-3 ${i ? "border-l border-rule pl-4" : ""}`}>
                   <dt className="text-[0.72rem] font-semibold leading-tight text-muted">{k}</dt>
@@ -107,14 +109,23 @@ export default function Prelaunch({ today }: { today: string }) {
                 </div>
               ))}
             </dl>
-            <div className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-2">
-              <span className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">Forecasts in</span>
-              <Countdown to={LAUNCH} initialDays={initialDays} />
-            </div>
+            {!live && (
+              <div className="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+                <span className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">Forecasts in</span>
+                <Countdown to={LAUNCH} initialDays={initialDays} />
+              </div>
+            )}
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.95rem] font-semibold">
-              <Link href={SHOW.methods ? "/methods" : "#how-it-works"} className="bg-ink px-4 py-2.5 text-white transition-colors hover:bg-sim">
-                How it works
-              </Link>
+              {live ? (
+                <>
+                  <Link href="/" className="bg-ink px-4 py-2.5 text-white transition-colors hover:bg-sim">See today&rsquo;s forecast</Link>
+                  <Link href="/methods" className="link">How it works</Link>
+                </>
+              ) : (
+                <Link href={SHOW.methods ? "/methods" : "#how-it-works"} className="bg-ink px-4 py-2.5 text-white transition-colors hover:bg-sim">
+                  How it works
+                </Link>
+              )}
               {SHOW.labNotes && first && (
                 <Link href={`/lab-notes/${first.n}`} className="link">Read the first Lab note</Link>
               )}
@@ -193,6 +204,8 @@ export default function Prelaunch({ today }: { today: string }) {
           </ol>
         </Reveal>
 
+        {!live && (
+          <>
         <Reveal as="section" className="mt-16 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1.15fr]">
           <div>
             <p className="label">The map</p>
@@ -249,6 +262,8 @@ export default function Prelaunch({ today }: { today: string }) {
             <p className="note mt-3">Candidates as nominated or expected; updated as primaries and appointments settle.</p>
           </details>
         </Reveal>
+          </>
+        )}
 
         {SHOW.labNotes && notes.length > 0 && (
           <Reveal as="section" className="mt-16 border-t-[3px] border-rule-strong pt-6">

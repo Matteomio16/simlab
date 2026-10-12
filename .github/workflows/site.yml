@@ -58,15 +58,17 @@ jobs:
           done
           exit 1
 
-      # The unlisted preview (forecast mode, sample data). Its failures are reported but never fail the run.
-      - name: Build preview (forecast mode, sample data)
+      # The unlisted preview, with the features waiting for Matteo's yes (src/lib/approved.json). Its failures are reported but never fail the run.
+      # Real data once it exists (12 Oct), so designs are reviewed on today's numbers; sample data before that.
+      - name: Build preview (forecast mode)
         id: preview_build
         continue-on-error: true
         env:
           SITE_MODE: forecast
-          SITE_DATA: sample
           SITE_PREVIEW: "1"
-        run: rm -rf out .next && npm run build && node scripts/check-copy.mjs
+        run: |
+          export SITE_DATA=$([ -f data/live/forecast.json ] && echo live || echo sample)
+          rm -rf out .next && npm run build && node scripts/check-copy.mjs
       - name: Deploy preview
         if: steps.preview_build.outcome == 'success' && env.CLOUDFLARE_API_TOKEN != ''
         continue-on-error: true
