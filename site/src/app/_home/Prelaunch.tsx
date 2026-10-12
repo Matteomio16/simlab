@@ -99,7 +99,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
               <span className="inline-block h-2 w-2 shrink-0 -translate-y-px bg-sim" aria-hidden="true" />
               A live experiment: an independent forecast built on how people actually react to the news, scored in public.
             </p>
-            <dl className="mt-8 grid grid-cols-3 border-y-2 border-rule-strong">
+            <dl className="mt-8 grid grid-cols-3 border-y border-rule">
               {[
                 ["Senate races", "35"],
                 live ? ["House seats", "435"] : ["Simulated elections a day", "40,000"],
@@ -120,16 +120,16 @@ export default function Prelaunch({ today, live = false }: { today: string; live
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.95rem] font-semibold">
               {live ? (
                 <>
-                  <Link href="/" className="bg-ink px-4 py-2.5 text-white transition-colors hover:bg-sim">See today&rsquo;s forecast</Link>
-                  <Link href="/methods" className="link">How it works</Link>
+                  <Link href="/" className="btn btn-primary">See today&rsquo;s forecast</Link>
+                  <Link href="/methods" className="btn btn-ghost">How it works</Link>
                 </>
               ) : (
-                <Link href={SHOW.methods ? "/methods" : "#how-it-works"} className="bg-ink px-4 py-2.5 text-white transition-colors hover:bg-sim">
+                <Link href={SHOW.methods ? "/methods" : "#how-it-works"} className="btn btn-primary">
                   How it works
                 </Link>
               )}
               {SHOW.labNotes && first && (
-                <Link href={`/lab-notes/${first.n}`} className="link">Read the first Lab note</Link>
+                <Link href={`/lab-notes/${first.n}`} className="btn btn-ghost">Read the first Lab note</Link>
               )}
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
           </div>
         </Reveal>
 
-        <Reveal as="section" className="mt-16 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1.1fr]">
+        <Reveal as="section" className="mt-16 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.1fr]">
           <div>
             <p className="label">Scored in public</p>
             <h2 className="mt-2 text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">Every number, beside the benchmarks.</h2>
@@ -165,11 +165,11 @@ export default function Prelaunch({ today, live = false }: { today: string; live
               rules. The misses get published too. Where states publish early-vote counts, the real counts check the
               simulated turnout.
             </p>
-            {SHOW.trackRecord && <Link href="/track-record" className="link mt-5 inline-block font-semibold">How scoring works →</Link>}
+            {SHOW.trackRecord && <Link href="/track-record" className="btn btn-ghost btn-sm mt-5">How scoring works →</Link>}
           </div>
           <table className="w-full self-start border-collapse text-[0.95rem]">
             <thead>
-              <tr className="border-y-2 border-rule-strong text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
+              <tr className="border-y border-rule text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
                 <th className="py-2 pr-4">Forecast</th>
                 <th className="py-2">What it is</th>
               </tr>
@@ -188,7 +188,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
           </table>
         </Reveal>
 
-        <Reveal as="section" className="mt-16 border-t-[3px] border-rule-strong pt-6">
+        <Reveal as="section" className="mt-16 section-rule pt-6">
           <p className="label">The road to November 3</p>
           <ol className="relative mt-8 grid gap-6 sm:grid-cols-5 sm:gap-4">
             <span className="absolute left-[5px] top-2 bottom-2 w-px bg-rule sm:left-0 sm:right-0 sm:top-[5px] sm:bottom-auto sm:h-px sm:w-auto" aria-hidden="true" />
@@ -208,7 +208,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
 
         {!live && (
           <>
-        <Reveal as="section" className="mt-16 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1.15fr]">
+        <Reveal as="section" className="mt-16 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.15fr]">
           <div>
             <p className="label">The map</p>
             <h2 className="mt-2 text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">35 Senate seats are up.</h2>
@@ -229,19 +229,19 @@ export default function Prelaunch({ today, live = false }: { today: string; live
           </div>
         </Reveal>
 
-        <Reveal as="section" className="mt-16 border-t-[3px] border-rule-strong pt-6">
+        <Reveal as="section" className="mt-16 section-rule pt-6">
           <details className="group">
             <summary className="flex cursor-pointer list-none items-baseline justify-between gap-4">
               <span>
                 <span className="label">The races</span>
                 <span className="mt-2 block text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">Who is running</span>
               </span>
-              <span className="shrink-0 text-sm font-semibold underline underline-offset-4 group-open:hidden">Show all 35</span>
-              <span className="hidden shrink-0 text-sm font-semibold underline underline-offset-4 group-open:inline">Hide</span>
+              <span className="btn btn-ghost btn-sm shrink-0 group-open:!hidden">Show all 35</span>
+              <span className="btn btn-ghost btn-sm shrink-0 !hidden group-open:!inline-flex">Hide</span>
             </summary>
             <table className="mt-5 w-full border-collapse text-[0.92rem]">
               <thead>
-                <tr className="border-y-2 border-rule-strong text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
+                <tr className="border-y border-rule text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
                   <th className="py-2 pr-3">State</th>
                   <th className="py-2 pr-3">Candidates</th>
                   <th className="hidden py-2 lg:table-cell">Status</th>
@@ -268,10 +268,10 @@ export default function Prelaunch({ today, live = false }: { today: string; live
         )}
 
         {SHOW.labNotes && notes.length > 0 && (
-          <Reveal as="section" className="mt-16 border-t-[3px] border-rule-strong pt-6">
+          <Reveal as="section" className="mt-16 section-rule pt-6">
             <div className="flex items-baseline justify-between gap-4">
               <p className="label">Lab notes</p>
-              <Link href="/lab-notes" className="text-sm font-semibold underline underline-offset-4">All notes</Link>
+              <Link href="/lab-notes" className="btn btn-ghost btn-sm">All notes</Link>
             </div>
             <ul className="mt-4">
               {notes.map((n) => (
@@ -286,7 +286,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
           </Reveal>
         )}
 
-        <Reveal as="section" className="mt-16 grid gap-6 border-t-[3px] border-rule-strong pt-6 md:grid-cols-[1fr_1fr]">
+        <Reveal as="section" className="mt-16 grid gap-6 section-rule pt-6 md:grid-cols-[1fr_1fr]">
           <div>
             <p className="label">Follow the build</p>
             <p className="mt-2 max-w-md text-[1.05rem] leading-relaxed text-ink-2">

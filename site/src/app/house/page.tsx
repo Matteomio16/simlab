@@ -63,7 +63,7 @@ export default function House() {
         </div>
       </section>
 
-      <Reveal as="section" className="mt-14 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1.25fr]">
+      <Reveal as="section" className="mt-14 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.25fr]">
         <div>
           <p className="label">Control</p>
           <div className="mt-4">

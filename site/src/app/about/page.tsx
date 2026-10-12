@@ -47,14 +47,14 @@ function AboutBody() {
 
       <ol className="mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
         {PARTS.map((p) => (
-          <li key={p.k} className="border-t-2 border-rule-strong pt-4">
+          <li key={p.k} className="border-t border-rule pt-4">
             <p className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">{p.k}</p>
             <p className="mt-2 text-[1.2rem] font-semibold leading-snug tracking-[-0.01em]">{p.t}</p>
           </li>
         ))}
       </ol>
 
-      <section className="mt-16 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1.4fr]">
+      <section className="mt-16 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.4fr]">
         <div>
           <p className="label">Fair to every side</p>
           <h2 className="mt-2 text-[1.6rem] font-extrabold leading-tight tracking-[-0.02em]">
@@ -70,7 +70,7 @@ function AboutBody() {
         </ul>
       </section>
 
-      <section className="mt-16 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1.4fr]">
+      <section className="mt-16 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.4fr]">
         <div>
           <p className="label">Who we are</p>
           <h2 className="mt-2 text-[1.6rem] font-extrabold leading-tight tracking-[-0.02em]">A small, independent lab.</h2>

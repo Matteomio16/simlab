@@ -19,7 +19,7 @@ export default function LabNotes() {
       <p className="mt-4 max-w-2xl text-[1.2rem] leading-relaxed text-ink-2">
         What we tested, what failed and what we changed. A short version of each runs on Instagram, Threads and X.
       </p>
-      <div className="mt-8 border-t-[3px] border-rule-strong">
+      <div className="mt-8 section-rule">
         {notes.length === 0 ? (
           <p className="pt-6 text-ink-2">The first note comes out on Saturday, October 3.</p>
         ) : (

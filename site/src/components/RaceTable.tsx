@@ -41,18 +41,19 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.85rem]">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.8rem]">
         <span className="label-muted">Sort</span>
-        {(Object.keys(SORTS) as (keyof typeof SORTS)[]).map((k) => (
-          <button key={k} onClick={() => setSort(k)} aria-pressed={sort === k}
-            className={`font-semibold ${sort === k ? "text-ink underline decoration-2 underline-offset-[6px]" : "text-muted hover:text-ink"}`}>
-            {SORTS[k].label}
-          </button>
-        ))}
+        <div className="seg seg-flat">
+          {(Object.keys(SORTS) as (keyof typeof SORTS)[]).map((k) => (
+            <button key={k} onClick={() => setSort(k)} aria-pressed={sort === k}>
+              {SORTS[k].label}
+            </button>
+          ))}
+        </div>
       </div>
       <table className="mt-4 w-full border-collapse text-[0.92rem]">
         <thead>
-          <tr className="border-y-2 border-rule-strong text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
+          <tr className="border-y border-rule text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
             <th className="py-2 pr-3">Race</th>
             <th className="py-2 pr-3">Chance of winning, Nov. 3</th>
             <th className="hidden py-2 pr-3 text-right md:table-cell">Today</th>
@@ -82,7 +83,7 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
                       <span className="font-bold" style={{ color: color(r.leader) }}>{n}</span>
                       <span className="text-muted"> in 100</span>
                     </span>
-                    <span className="whitespace-nowrap px-1.5 py-px text-[0.68rem] font-bold uppercase tracking-[0.05em]"
+                    <span className="whitespace-nowrap rounded-full px-2 py-px text-[0.68rem] font-bold uppercase tracking-[0.05em]"
                       style={{ background: r.tierFill, color: r.tierInk }}>
                       {r.rating}
                     </span>
@@ -108,7 +109,7 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
           candidate&rsquo;s price on the prediction markets Kalshi and Polymarket. Poll avg.: the margin. Markets and Cook are shown for comparison and never enter the forecast.
         </p>
         {rows.length > competitive.length && (
-          <button onClick={() => setAll(!all)} className="text-sm font-semibold underline underline-offset-4">
+          <button onClick={() => setAll(!all)} className="btn btn-ghost btn-sm shrink-0">
             {all ? "Show competitive races only" : `Show all ${rows.length} races`}
           </button>
         )}

@@ -88,9 +88,9 @@ export default function Overview() {
   }));
 
   const mapViews = [
-    { key: "sim", label: "Our simulation", tiles: simTiles, note: "Toss-up: 45 to 55 in 100. Select a state for its race." },
-    { key: "cook", label: "Cook Political Report", tiles: cookTiles, note: "Cook's published ratings, for comparison." },
-    { key: "market", label: "Prediction markets", tiles: marketTiles, note: "Kalshi and Polymarket prices, for comparison; never an input." },
+    { key: "sim", label: "Our simulation", short: "Ours", tiles: simTiles, note: "Toss-up: 45 to 55 in 100. Select a state for its race." },
+    { key: "cook", label: "Cook Political Report", short: "Cook", tiles: cookTiles, note: "Cook's published ratings, for comparison." },
+    { key: "market", label: "Prediction markets", short: "Markets", tiles: marketTiles, note: "Kalshi and Polymarket prices, for comparison; never an input." },
   ];
 
   if (SHOW.chamberHome)
@@ -115,7 +115,7 @@ export default function Overview() {
         </section>
 
         <section className="mt-14">
-        <Reveal className="grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1.25fr_1fr]">
+        <Reveal className="grid gap-10 section-rule pt-6 lg:grid-cols-[1.25fr_1fr]">
           <div>
             <div className="grid grid-cols-3 gap-4">
               <Figure n={nR} label="Republicans hold" color="var(--rep)" />
@@ -156,7 +156,7 @@ export default function Overview() {
       <Reveal as="section" className="mt-14">
         <div className="flex items-baseline justify-between gap-4">
           <p className="label">The closest races</p>
-          <a href="#races" className="text-sm font-semibold underline underline-offset-4">All 35 races</a>
+          <a href="#races" className="btn btn-ghost btn-sm">All 35 races</a>
         </div>
         <div className="mt-4">
           <RaceCards rows={[...rows].sort((a, b) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5)).slice(0, 4)} />
@@ -186,7 +186,7 @@ export default function Overview() {
         <Reveal as="section" className="mt-16 section-rule">
           <p className="label">What moved</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">The stories behind today&rsquo;s changes</h2>
-          <p className="mt-3 max-w-2xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
+          <p className="mt-3 max-w-2xl rounded-xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
             Each story&rsquo;s effect on the Nov. 3 margin, after the voter personas&rsquo; reactions and the fade with time.
             Stories are summarized neutrally, without outlet names.
           </p>
@@ -230,7 +230,7 @@ export default function Overview() {
           {`In ${forecast.draws.toLocaleString("en-US")} simulated elections, Republicans keep 50 or more seats, enough with the Vice President’s tie-break, in ${nR} of every 100. The simulation moves each race from its statistical starting line as voter personas react to the news.`}
         </p>
 
-        <Reveal className="mt-10 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1.25fr_1fr]">
+        <Reveal className="mt-10 grid gap-10 section-rule pt-6 lg:grid-cols-[1.25fr_1fr]">
           <div>
             <div className="grid grid-cols-3 gap-4">
               <Figure n={nR} label="Republicans hold" color="var(--rep)" />
@@ -272,7 +272,7 @@ export default function Overview() {
       <Reveal as="section" className="mt-14">
         <div className="flex items-baseline justify-between gap-4">
           <p className="label">The closest races</p>
-          <a href="#races" className="text-sm font-semibold underline underline-offset-4">All 35 races</a>
+          <a href="#races" className="btn btn-ghost btn-sm">All 35 races</a>
         </div>
         <div className="mt-4">
           <RaceCards rows={[...rows].sort((a, b) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5)).slice(0, 4)} />
@@ -328,7 +328,7 @@ export default function Overview() {
         <Reveal as="section" className="mt-16 section-rule">
           <p className="label">What moved</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">The stories behind today&rsquo;s changes</h2>
-          <p className="mt-3 max-w-2xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
+          <p className="mt-3 max-w-2xl rounded-xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
             Each story&rsquo;s effect on the Nov. 3 margin, after the voter personas&rsquo; reactions and the fade with time.
             Stories are summarized neutrally, without outlet names.
           </p>

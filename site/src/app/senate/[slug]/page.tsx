@@ -101,7 +101,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
         </div>
       </header>
 
-      <section className="rise mt-8 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1fr]">
+      <section className="rise mt-8 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1fr]">
         <div>
           <SplitChance p={f.p_dem_win} left={L} render={(v) => <CountUp value={v} />} />
           <p className="mt-3 text-[0.9rem] text-ink-2">
@@ -192,7 +192,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
             ))}
           </ul>
         )}
-        <p className="mt-5 max-w-3xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
+        <p className="mt-5 max-w-3xl rounded-xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
           <strong className="mr-2 font-bold">What the news is worth.</strong>
           {newsLine}
         </p>

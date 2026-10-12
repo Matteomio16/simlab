@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Lockup } from "./Brand";
 import NextUpdate from "./NextUpdate";
+import NavLinks from "./NavLinks";
 import { SHOW } from "@/lib/site";
 
 export default function Header({ forecast }: { forecast: boolean }) {
@@ -31,13 +32,7 @@ export default function Header({ forecast }: { forecast: boolean }) {
       <div className="border-b border-rule">
         <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:px-6">
           <Lockup />
-          <nav aria-label="Main" className="flex items-center gap-4 whitespace-nowrap text-[0.84rem] font-semibold sm:gap-7 sm:text-[0.9rem]">
-            {links.map((l, i) => (
-              <Link key={l.href} href={l.href} className={`text-ink-2 hover:text-ink ${i === 0 || (SHOW.chamberHome && i >= 4) ? "hidden sm:inline" : ""}`}>
-                {l.label}
-              </Link>
-            ))}
-          </nav>
+          {links.length > 0 && <NavLinks links={links} phoneHidden={SHOW.chamberHome ? [0, 3, 4] : [0]} />}
         </div>
       </div>
     </header>

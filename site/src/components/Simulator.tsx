@@ -76,7 +76,7 @@ export default function Simulator({ races }: { races: Race[] }) {
             {label(swing)}
           </span>
           {swing !== 0 && (
-            <button onClick={() => setSwing(0)} className="text-sm font-semibold text-ink-2 underline underline-offset-4 hover:text-ink">
+            <button onClick={() => setSwing(0)} className="btn btn-ghost btn-sm">
               Reset
             </button>
           )}

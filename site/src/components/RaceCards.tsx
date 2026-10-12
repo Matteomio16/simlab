@@ -15,7 +15,7 @@ export default function RaceCards({ rows }: { rows: Row[] }) {
             <Link href={`/senate/${r.slug}`} prefetch={false} className="card group flex h-full flex-col p-4">
               <div className="flex items-start justify-between gap-2">
                 <span className="text-[1.05rem] font-bold leading-tight">{r.title}</span>
-                <span className="whitespace-nowrap px-1.5 py-px text-[0.66rem] font-bold uppercase tracking-[0.05em]" style={{ background: r.tierFill, color: r.tierInk }}>
+                <span className="whitespace-nowrap rounded-full px-2 py-px text-[0.66rem] font-bold uppercase tracking-[0.05em]" style={{ background: r.tierFill, color: r.tierInk }}>
                   {r.rating}
                 </span>
               </div>

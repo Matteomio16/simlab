@@ -104,7 +104,7 @@ export default async function HouseSeat({ params }: { params: Promise<{ slug: st
       </header>
 
       {d.p != null && (
-        <section className="rise mt-8 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1fr]">
+        <section className="rise mt-8 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1fr]">
           <div>
             <SplitChance p={d.p} left={d.left} render={(v) => <CountUp value={v} />} />
             <p className="mt-3 text-[0.9rem] text-ink-2">
@@ -137,7 +137,7 @@ export default async function HouseSeat({ params }: { params: Promise<{ slug: st
                 </div>
               ))}
             </dl>
-            {d.tier && TIER[d.tier] && <p className="mt-4 bg-note px-4 py-3 text-[0.92rem] leading-relaxed text-ink">{TIER[d.tier]}</p>}
+            {d.tier && TIER[d.tier] && <p className="mt-4 rounded-xl bg-note px-4 py-3 text-[0.92rem] leading-relaxed text-ink">{TIER[d.tier]}</p>}
           </div>
         </section>
       )}
