@@ -1,3 +1,7 @@
+## October 12, 2026
+
+- Daily forecasts begin, every Senate race and the House, updated once a day.
+
 ## October 11, 2026
 
 - The methods page now says plainly that each voter persona is a language model, and how many real people's answers
