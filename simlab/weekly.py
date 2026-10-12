@@ -205,6 +205,47 @@ def surprises(p, m: dict, params: dict, d: int, dials: dict, election=ELECTION, 
     return out
 
 
+TREND = {"min_new_polls": 3, "flag_over": 4.0, "analyse_over": 6.0,
+         "rollback": "none: only what the analysis finds wrong is fixed, as a logged change with both versions scored"}
+
+
+def trend(now: dict, before: dict | None, polls, rules: dict = TREND) -> dict:
+    """The weekly trend check (Matteo, 11 Oct): in each state with `min_new_polls` or more polls first seen since the
+    forecast a week earlier (`before`; one row per poll in `polls`, polls.csv), the week's change in our 3 Nov margin
+    (p50) against the change in the poll average beside it in forecast.json. Moves in opposite directions more than
+    `flag_over` points apart are flagged, more than `analyse_over` analysed for a bug, a bad story summary or a story
+    on the wrong race. It only reports: nothing is rolled back."""
+    out = {"since": before and before.get("date"), "since_snapshot": before and before.get("snapshot"), "rules": rules,
+           "new_polls": {}, "races": {}, "flagged": [], "analyse": []}
+    if before is None:
+        return out | {"note": "no forecast a week ago: nothing to compare"}
+    new = polls[(polls.race_id != "US") & (polls.first_seen.astype(str) > str(before["snapshot"]))]
+    out["new_polls"] = {r: int(n) for r, n in sorted(new.race_id.value_counts().items())}
+    for r, n in out["new_polls"].items():
+        if n < rules["min_new_polls"] or r not in now["races"]:
+            continue
+        a, b = before["races"].get(r, {}), now["races"][r]
+        pa, pb = (x.get("benchmarks", {}).get("poll_avg") for x in (a, b))
+        if pa is None or pb is None:
+            out["races"][r] = {"new_polls": n, "level": f"no poll average {'a week ago' if pa is None else 'today'}"}
+            continue
+        fa, fb = a["margin"]["p50"], b["margin"]["p50"]
+        df, dp = round(fb - fa, 2), round(pb - pa, 2)
+        gap, opposite = round(abs(df - dp), 2), df * dp < 0
+        level = ("ok" if not opposite or gap <= rules["flag_over"] else
+                 "flag" if gap <= rules["analyse_over"] else "analyse")
+        news = lambda x: (x.get("news") or {}).get("effect", 0.0)
+        row = {"new_polls": n, "forecast": {"before": fa, "now": fb, "change": df},
+               "poll_avg": {"before": pa, "now": pb, "change": dp},
+               "stats_only_change": round(b["stats_only"]["margin"]["p50"] - a["stats_only"]["margin"]["p50"], 2),
+               "news_change": round(news(b) - news(a), 2), "opposite": opposite, "gap": gap, "level": level}
+        if level != "ok":
+            row["movers"] = b.get("movers", [])
+            out["flagged" if level == "flag" else "analyse"].append(r)
+        out["races"][r] = row
+    return out
+
+
 def _alone(a: np.ndarray, b: np.ndarray, most: float = 5.0) -> dict:
     """What a unit's polls say about its two dials on their own: the estimate and its standard error, or None for a dial
     the polls don't pin down yet (no information, or a standard error above `most`)."""

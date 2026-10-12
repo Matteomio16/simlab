@@ -205,6 +205,17 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict, ele
     return twin, head, news, house
 
 
+def week_trend(data: Path, day: date, forecast: dict, polls_csv: Path) -> dict:
+    """The weekly trend check (weekly.trend) against the forecast 7 days earlier. It only reports, so it never stops
+    the forecast."""
+    try:
+        prev = data / "derived" / (day - timedelta(days=7)).isoformat() / "forecast.json"
+        return weekly.trend(forecast, json.loads(prev.read_text(encoding="utf-8")) if prev.exists() else None,
+                            pd.read_csv(polls_csv, low_memory=False))
+    except Exception as e:
+        return {"error": f"{type(e).__name__}: {e}"[:120]}
+
+
 def _git_sha() -> str:
     return subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True,
                           cwd=Path(__file__).parent).stdout.strip()
@@ -245,6 +256,7 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     _write(out / "groups.json", grp)
     mp = apply_weekly(json.loads(moves.PARAMS.read_text(encoding="utf-8")), latest_weekly(data, day))
     mv = moves.build(day, data / "derived", grp, mp, run_id)
+    wk = None
     if weekly_update or (day.weekday() == 0 and day >= weekly.WEEKLY_FROM):
         wk = meta | weekly.run(day, t, mv, mp)
         sha["filter_weekly.json"] = _write(out / "filter_weekly.json", wk)
@@ -268,6 +280,9 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     forecast = montecarlo.attach_today(forecast, montecarlo.build(now_head, now_twin, left, params, day, run_id,
                                                                   news=now_news, house=now_house)[0],
                                        movers=moves.movers(mv, when="today"))
+    if wk:  # the weekly trend check reads the new forecast and only reports
+        wk["trend"] = week_trend(data, day, forecast, out / "polls.csv")
+        sha["filter_weekly.json"] = _write(out / "filter_weekly.json", wk)
     forecast |= {"snapshot": t["snapshot"], "inputs": sha}
     history = [json.loads(f.read_text(encoding="utf-8")) for k in range(1, 7)
                if (f := data / "derived" / (day - timedelta(days=k)).isoformat() / "races.json").exists()]
@@ -282,6 +297,7 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
             "tiers": {k: sum(r["tier"] == k for r in races.values()) for k in TIER_RANK},
             "orphaned_events": len(mv["orphaned_events"]), "deselected_pairs": len(mv["deselected_pairs"]),
             "ungrouped_races": len(mv["ungrouped_races"]), "weekly_update": mp.get("weekly_update"),
+            "trend": {k: v for k, v in wk["trend"].items() if k in ("flagged", "analyse", "note", "error")} if wk else None,
             "stories": sum(len(x["events"]) for k, x in mv.items() if k != "shadow" and isinstance(x, dict) and "events" in x),
             "house": house_note,
             "files": ["polls.csv", "races.json", "levels.json", "groups.json", "params.json", "moves.json",

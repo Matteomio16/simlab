@@ -2,6 +2,32 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-12 (Statistics session, A15): the weekly trend check is built (Matteo's yes, 12 Oct)
+
+- **Matteo's answers (12 Oct):** a logged addition under the freeze, not a method change; pushed after the 12 Oct run.
+  A new poll is one first seen in our data since the last Monday, even if fielded earlier. No minimum move: our margin
+  moving any amount the other way counts as opposite when the gap is over 4. Senate races only for now. No entry for
+  the check itself in the public changelog; one goes in only when an analysis leads to a fix.
+
+- **What it does** (`weekly.trend`, called from `statsday.run` on the weekly update's day): for each Senate race with 3
+  or more polls first seen since the forecast 7 days earlier (rows of polls.csv, where the versions of one poll are
+  already one row; the generic ballot isn't a state), it compares the week's change in our 3 Nov margin (p50 in
+  forecast.json) with the week's change in the poll average beside it (`benchmarks.poll_avg`). Opposite directions
+  more than 4 points apart are flagged; more than 6, marked for analysis. The flagged rows carry what the analysis
+  starts from: how much of our move came from the statistics (`stats_only_change`) and how much from the stories
+  (`news_change`), and the race's 3 Nov movers with their summaries.
+- **Where it goes:** a `trend` block in `filter_weekly.json` (engine-design §7), written once the day's forecast
+  exists; the flagged and analysed races also go in the statistics step's line in `run.json`, for the Monday pack in
+  the Publishing approval thread. An error in the check is written as `{error}` and never stops the forecast.
+- **It changes no number**, so it is a logged addition under the 12 Oct freeze, not a method change. Checked on
+  scratch copies of 11 Oct with the weekly update forced, old code against new: forecast.json, draws.json, moves.json,
+  levels.json, params.json, races.json, filter_state.json and filter_weekly.json are identical apart from the run id,
+  the input hashes and the new block. That dry run (against 4 Oct): 7 states had 3 or more new polls (FL-S, IA, ME,
+  MI, MN, OH-S, TX), all moved the same way as their poll averages, no flags; the largest gap was 1.3 points (Florida).
+- **No automatic rollback at any size.** What the analysis finds wrong (a bug, a bad story summary, a story on the
+  wrong race) is fixed as a logged change in `site/content/changelog.md`, both versions scored.
+- **Checked:** 321 tests pass (11 new); the one failure needs `imageio_ffmpeg`, which this laptop lacks (reel video).
+
 ## 2026-10-11 (code review session, A14): pre-freeze review of the daily chain and its fixes (Matteo's yes)
 
 - **Review:** one must-fix, in the post kit; the forecast numbers held up. Checked on scratch copies, no paid calls:

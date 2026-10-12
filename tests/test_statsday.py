@@ -156,6 +156,33 @@ class WeeklyTest(unittest.TestCase):
         self.assertEqual(statsday.apply_weekly(self.MP | {"support_offset": 0.08}, wk | {"offset": {"offset": 0.05}})
                          ["support_offset"], 0.05)
 
+    @staticmethod
+    def nc(p50, poll):
+        return {"margin": {"p50": p50}, "stats_only": {"margin": {"p50": p50}}, "benchmarks": {"poll_avg": poll}}
+
+    def test_trend_check_against_the_forecast_a_week_earlier(self):
+        with tempfile.TemporaryDirectory() as d:
+            prev = Path(d) / "derived" / "2026-10-12" / "forecast.json"
+            prev.parent.mkdir(parents=True)
+            prev.write_text(json.dumps({"date": "2026-10-12", "snapshot": "2026-10-12 09:07",
+                                        "races": {"NC": self.nc(5.0, 6.0)}}))
+            csv = Path(d) / "polls.csv"
+            pd.DataFrame({"race_id": ["NC"] * 4, "pollster": list("ABCD"),
+                          "first_seen": ["2026-10-12 09:07"] + ["2026-10-16 09:07"] * 3}).to_csv(csv, index=False)
+            out = statsday.week_trend(Path(d), date(2026, 10, 19), {"races": {"NC": self.nc(1.0, 9.0)}}, csv)
+            self.assertEqual((out["since"], out["new_polls"], out["analyse"]), ("2026-10-12", {"NC": 3}, ["NC"]))
+            self.assertIn("no forecast", statsday.week_trend(Path(d), date(2026, 10, 20), {"races": {}}, csv)["note"])
+
+    def test_a_broken_trend_check_never_stops_the_forecast(self):
+        with tempfile.TemporaryDirectory() as d:
+            prev = Path(d) / "derived" / "2026-10-12" / "forecast.json"
+            prev.parent.mkdir(parents=True)
+            prev.write_text("{}")
+            csv = Path(d) / "polls.csv"
+            pd.DataFrame({"race_id": ["NC"], "pollster": ["A"], "first_seen": ["2026-10-16 09:07"]}).to_csv(csv)
+            out = statsday.week_trend(Path(d), date(2026, 10, 19), {"races": {}}, csv)
+            self.assertTrue(out["error"].startswith("KeyError"))
+
 
 class BenchmarkTest(unittest.TestCase):
     def test_markets_and_cook_from_the_snapshot(self):

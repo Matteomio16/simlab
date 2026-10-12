@@ -150,5 +150,100 @@ class UnitsTest(unittest.TestCase):
         self.assertGreater(flags["OH-S"]["mean_z"], 0)
 
 
+def race(p50, poll, stats=None, effect=0.0, movers=()):
+    return {"margin": {"p10": p50 - 6, "p50": p50, "p90": p50 + 6},
+            "stats_only": {"margin": {"p50": p50 if stats is None else stats}}, "benchmarks": {"poll_avg": poll},
+            "news": {"effect": effect}, "movers": list(movers)}
+
+
+def polls_table(counts: dict, stamp="2026-10-15 09:07", old=2):
+    import pandas as pd
+    rows = [(r, f"P{i}", stamp) for r, n in counts.items() for i in range(n)]
+    rows += [(r, f"Old{i}", "2026-09-29 09:07") for r in counts for i in range(old)]
+    return pd.DataFrame(rows, columns=["race_id", "pollster", "first_seen"])
+
+
+class TrendTest(unittest.TestCase):
+    """The weekly trend check (Matteo, 11 Oct; roadmap A15)."""
+    BEFORE = {"date": "2026-10-12", "snapshot": "2026-10-12 09:07"}
+
+    def check(self, before: dict, now: dict, counts: dict, **kw):
+        return weekly.trend({"date": "2026-10-19", "snapshot": "2026-10-19 09:07", "races": now},
+                            self.BEFORE | {"races": before}, polls_table(counts), **kw)
+
+    def test_opposite_moves_over_4_are_flagged_and_over_6_analysed(self):
+        before = {"NC": race(5.0, 6.0), "TX": race(-2.0, -1.0), "OH-S": race(1.0, 0.0), "IA": race(0.0, 0.0)}
+        now = {"NC": race(3.0, 9.0), "TX": race(1.0, -2.0), "OH-S": race(-2.0, 2.5), "IA": race(-1.0, 3.0)}
+        out = self.check(before, now, {"NC": 3, "TX": 4, "OH-S": 3, "IA": 3})
+        r = out["races"]
+        self.assertEqual((r["NC"]["gap"], r["NC"]["level"]), (5.0, "flag"))  # -2 against +3
+        self.assertEqual((r["TX"]["gap"], r["TX"]["level"]), (4.0, "ok"))  # +3 against -1: not over 4
+        self.assertEqual((r["OH-S"]["gap"], r["OH-S"]["level"]), (5.5, "flag"))
+        self.assertEqual(r["IA"]["level"], "ok")  # -1 against +3: a gap of 4
+        self.assertEqual((out["flagged"], out["analyse"]), (["NC", "OH-S"], []))
+        now["NC"] = race(1.5, 9.0)
+        out = self.check(before, now, {"NC": 3})
+        self.assertEqual((out["races"]["NC"]["gap"], out["races"]["NC"]["level"]), (6.5, "analyse"))
+        self.assertEqual((out["flagged"], out["analyse"]), ([], ["NC"]))
+
+    def test_same_direction_is_never_flagged_however_far_apart(self):
+        out = self.check({"NC": race(5.0, 5.0)}, {"NC": race(5.5, 15.0)}, {"NC": 5})
+        self.assertFalse(out["races"]["NC"]["opposite"])
+        self.assertEqual((out["races"]["NC"]["gap"], out["races"]["NC"]["level"]), (9.5, "ok"))
+        out = self.check({"NC": race(5.0, 5.0)}, {"NC": race(5.0, 15.0)}, {"NC": 5})  # our margin didn't move
+        self.assertEqual(out["races"]["NC"]["level"], "ok")
+
+    def test_only_states_with_3_new_polls_since_last_monday(self):
+        before = {"NC": race(5.0, 6.0), "TX": race(-2.0, -1.0)}
+        now = {"NC": race(0.0, 12.0), "TX": race(4.0, -5.0)}
+        out = self.check(before, now, {"NC": 2, "TX": 3})
+        self.assertEqual(sorted(out["races"]), ["TX"])
+        self.assertEqual(out["new_polls"], {"NC": 2, "TX": 3})
+        self.assertEqual(out["races"]["TX"]["new_polls"], 3)
+
+    def test_polls_seen_by_last_mondays_run_are_not_new(self):
+        p = polls_table({"NC": 3}, stamp="2026-10-12 09:07")  # in last Monday's average already
+        out = weekly.trend({"date": "2026-10-19", "snapshot": "2026-10-19 09:07", "races": {"NC": race(0.0, 12.0)}},
+                           self.BEFORE | {"races": {"NC": race(5.0, 6.0)}}, p)
+        self.assertEqual((out["races"], out["new_polls"]), ({}, {}))
+
+    def test_the_generic_ballot_is_not_a_state(self):
+        p = polls_table({"US": 5, "NC": 3})
+        out = weekly.trend({"date": "2026-10-19", "races": {"NC": race(0.0, 12.0)}},
+                           self.BEFORE | {"races": {"NC": race(5.0, 6.0)}}, p)
+        self.assertEqual(sorted(out["races"]), ["NC"])
+        self.assertNotIn("US", out["new_polls"])
+
+    def test_flagged_rows_carry_what_the_analysis_starts_from(self):
+        mv = [{"event_id": "NC-1", "card": "A story.", "delta": -3.1}]
+        before = {"NC": race(5.0, 6.0, stats=5.2, effect=0.4)}
+        now = {"NC": race(1.0, 9.0, stats=7.0, effect=-3.2, movers=mv)}
+        r = self.check(before, now, {"NC": 3})["races"]["NC"]
+        self.assertEqual(r["forecast"], {"before": 5.0, "now": 1.0, "change": -4.0})
+        self.assertEqual(r["poll_avg"], {"before": 6.0, "now": 9.0, "change": 3.0})
+        self.assertEqual(r["stats_only_change"], 1.8)  # the statistics moved with the polls
+        self.assertEqual(r["news_change"], -3.6)  # the stories moved it the other way
+        self.assertEqual(r["movers"], mv)
+        ok = self.check(before, {"NC": race(6.0, 9.0, movers=mv)}, {"NC": 3})["races"]["NC"]
+        self.assertNotIn("movers", ok)
+
+    def test_no_forecast_a_week_ago(self):
+        out = weekly.trend({"date": "2026-10-19", "races": {"NC": race(0.0, 12.0)}}, None, polls_table({"NC": 3}))
+        self.assertEqual((out["races"], out["flagged"], out["analyse"]), ({}, [], []))
+        self.assertIn("no forecast", out["note"])
+
+    def test_a_race_without_a_poll_average_a_week_ago_is_skipped(self):
+        out = self.check({"NC": race(5.0, None)}, {"NC": race(0.0, 12.0)}, {"NC": 3})
+        self.assertEqual(out["races"]["NC"]["level"], "no poll average a week ago")
+        self.assertEqual(out["flagged"], [])
+
+    def test_the_rules_are_written_with_the_result(self):
+        out = self.check({}, {}, {})
+        self.assertEqual(out["rules"], {"min_new_polls": 3, "flag_over": 4.0, "analyse_over": 6.0,
+                                        "rollback": "none: only what the analysis finds wrong is fixed, as a logged "
+                                                    "change with both versions scored"})
+        self.assertEqual((out["since"], out["since_snapshot"]), ("2026-10-12", "2026-10-12 09:07"))
+
+
 if __name__ == "__main__":
     unittest.main()
