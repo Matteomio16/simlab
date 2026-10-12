@@ -146,34 +146,6 @@ export function SeatHistogram({
   );
 }
 
-// Chance over time; the toss-up zone (45–55%) is shaded.
-export function HistoryLine({ points, label, w = 640 }: { points: { date: string; p: number }[]; label: string; w?: number }) {
-  if (points.length < 2) return null;
-  const W = w, H = w < 480 ? 160 : 180, pad = { l: 34, r: 40, t: 12, b: 26 };
-  const x = (i: number) => pad.l + (i / (points.length - 1)) * (W - pad.l - pad.r);
-  const y = (p: number) => pad.t + (1 - p) * (H - pad.t - pad.b);
-  const d = points.map((pt, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(pt.p).toFixed(1)}`).join("");
-  const last = points[points.length - 1];
-  const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const fmt = (iso: string) => `${Number(iso.slice(8, 10))} ${MON[Number(iso.slice(5, 7)) - 1]}`;
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={`${label}, from ${fmt(points[0].date)} to ${fmt(last.date)}`}>
-      <rect x={pad.l} y={y(0.55)} width={W - pad.l - pad.r} height={y(0.45) - y(0.55)} fill="var(--tossup)" />
-      {[0, 0.5, 1].map((p) => (
-        <g key={p}>
-          <line x1={pad.l} x2={W - pad.r} y1={y(p)} y2={y(p)} stroke={p === 0.5 ? "var(--axis)" : "var(--rule)"} />
-          <text x={pad.l - 6} y={y(p) + 3} textAnchor="end" fill="var(--muted)" style={MONO}>{p * 100}</text>
-        </g>
-      ))}
-      <text x={W - pad.r + 4} y={y(0.5) + 3} fill="var(--muted)" style={MONO}>TOSS</text>
-      <path d={d} fill="none" stroke="var(--sim)" strokeWidth={2.2} strokeLinejoin="round" />
-      <circle cx={x(points.length - 1)} cy={y(last.p)} r={4} fill="var(--sim)" />
-      <text x={pad.l} y={H - 8} fill="var(--muted)" style={MONO}>{fmt(points[0].date).toUpperCase()}</text>
-      <text x={W - pad.r} y={H - 8} textAnchor="end" fill="var(--muted)" style={MONO}>{fmt(last.date).toUpperCase()}</text>
-    </svg>
-  );
-}
-
 // Charts are drawn twice, for phone and for wider screens, so text stays readable at both sizes.
 export function Responsive({ render, desktop = 640 }: { render: (w: number) => ReactNode; desktop?: number }) {
   return (

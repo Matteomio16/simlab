@@ -3,7 +3,8 @@ import Link from "next/link";
 import { SHOW } from "@/lib/site";
 import { notFound } from "next/navigation";
 import { SimLabel } from "@/components/Brand";
-import { DotPlot, HistoryLine, MarginRanges, Responsive } from "@/components/charts";
+import { DotPlot, MarginRanges, Responsive } from "@/components/charts";
+import HistoryChart from "@/components/HistoryChart";
 import { HAS_FORECAST, IS_SAMPLE, load, raceCode, raceTitle, senateRacesSafe } from "@/lib/data";
 import { in100, leader, longDate, margin, partyName, partyVar, surname, tierColor } from "@/lib/format";
 import { STATES } from "@/lib/states";
@@ -159,7 +160,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
           <p className="note mt-1">The shaded band is the toss-up zone, 45 to 55.</p>
           <div className="mt-4">
             {hist.length > 1 ? (
-              <Responsive desktop={500} render={(w) => <HistoryLine w={w} points={hist} label={`${leftShort}'s chance`} />} />
+              <Responsive desktop={500} render={(w) => <HistoryChart w={w} points={hist} label={`${leftShort}'s chance`} who={leftShort} color={f.p_dem_win >= 0.5 ? partyVar(L) : "var(--rep)"} />} />
             ) : (
               <p className="text-ink-2">The line starts after a few daily runs.</p>
             )}

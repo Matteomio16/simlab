@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ChamberSwitch from "@/components/ChamberSwitch";
 import Dateline from "@/components/Dateline";
+import HistoryChart from "@/components/HistoryChart";
 import Trend from "@/components/Trend";
 import HouseMap from "@/components/HouseMap";
 import Reveal from "@/components/Reveal";
@@ -114,6 +115,18 @@ export default function House() {
             </li>
           ))}
         </ul>
+      </Reveal>
+
+      <Reveal as="section" className="mt-16 section-rule">
+        <p className="label">Over time</p>
+        <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">Democratic chance of winning the House</h2>
+        <div className="mt-6 max-w-[860px]">
+          {(history.house ?? []).length > 1 ? (
+            <Responsive desktop={860} render={(w) => <HistoryChart w={w} label="Chance Democrats win the House" who="Democrats" color="var(--dem)" points={(history.house ?? []).map((x) => ({ date: x.date, p: x.p_d_majority }))} />} />
+          ) : (
+            <p className="text-ink-2">The line starts after a few daily runs.</p>
+          )}
+        </div>
       </Reveal>
 
       <div className="mt-10">

@@ -6,7 +6,8 @@ import Waffle from "@/components/Waffle";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import RaceCards from "@/components/RaceCards";
-import { HistoryLine, Responsive, SeatHistogram } from "@/components/charts";
+import { Responsive, SeatHistogram } from "@/components/charts";
+import HistoryChart from "@/components/HistoryChart";
 import { SimLabel } from "@/components/Brand";
 import ChamberSwitch from "@/components/ChamberSwitch";
 import Dateline from "@/components/Dateline";
@@ -210,7 +211,7 @@ export default function Overview() {
           <p className="label">Over time</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">Republican chance of keeping the Senate</h2>
           <div className="mt-6 max-w-[860px]">
-            <Responsive desktop={860} render={(w) => <HistoryLine w={w} label="Chance Republicans hold the Senate" points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} />} />
+            <Responsive desktop={860} render={(w) => <HistoryChart w={w} label="Chance Republicans hold the Senate" who="Republicans" color="var(--rep)" points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} />} />
           </div>
         </Reveal>
       )}
@@ -352,7 +353,7 @@ export default function Overview() {
           <p className="label">Over time</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">Republican chance of keeping the Senate</h2>
           <div className="mt-6 max-w-[860px]">
-            <Responsive desktop={860} render={(w) => <HistoryLine w={w} label="Chance Republicans hold the Senate" points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} />} />
+            <Responsive desktop={860} render={(w) => <HistoryChart w={w} label="Chance Republicans hold the Senate" who="Republicans" color="var(--rep)" points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} />} />
           </div>
         </Reveal>
       )}

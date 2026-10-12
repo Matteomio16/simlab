@@ -6,6 +6,8 @@ import HouseMap from "@/components/HouseMap";
 import Reveal from "@/components/Reveal";
 import SplitChance from "@/components/SplitChance";
 import CountUp from "@/components/CountUp";
+import HistoryChart from "@/components/HistoryChart";
+import { Responsive } from "@/components/charts";
 import { SimLabel } from "@/components/Brand";
 import { HAS_FORECAST, IS_SAMPLE, houseDistricts, load, type District } from "@/lib/data";
 import { in100, longDate, margin, partyVar, rating, surname } from "@/lib/format";
@@ -65,7 +67,8 @@ export default async function HouseSeat({ params }: { params: Promise<{ slug: st
   const all = districts();
   const d = all.find((x) => x.slug === slug);
   if (!d) notFound();
-  const { forecast } = load();
+  const { forecast, history } = load();
+  const hist = (history.races[d.id] ?? []).map((h) => ({ date: h.date, p: h.p_dem_win }));
   const state = STATES[d.state] ?? d.state;
   const seat = d.district ? `District ${d.district}` : "At-large district";
   const neighbours = all.filter((x) => x.state === d.state && x.id !== d.id && x.p != null).sort((a, b) => Math.abs(a.p! - 0.5) - Math.abs(b.p! - 0.5)).slice(0, 6);
@@ -137,6 +140,21 @@ export default async function HouseSeat({ params }: { params: Promise<{ slug: st
             {d.tier && TIER[d.tier] && <p className="mt-4 bg-note px-4 py-3 text-[0.92rem] leading-relaxed text-ink">{TIER[d.tier]}</p>}
           </div>
         </section>
+      )}
+
+      {d.p != null && (
+        <Reveal as="section" className="mt-14 section-rule">
+          <p className="label">Over time</p>
+          <h2 className="mt-2 text-xl font-bold">{`${surname(leftName)}'s chance in 100`}</h2>
+          <p className="note mt-1">The shaded band is the toss-up zone, 45 to 55.</p>
+          <div className="mt-4 max-w-[860px]">
+            {hist.length > 1 ? (
+              <Responsive desktop={860} render={(w) => <HistoryChart w={w} points={hist} label={`${surname(leftName)}'s chance`} who={surname(leftName)} color={d.p! >= 0.5 ? partyVar(d.left) : "var(--rep)"} />} />
+            ) : (
+              <p className="text-ink-2">The line starts after a few daily runs.</p>
+            )}
+          </div>
+        </Reveal>
       )}
 
       {neighbours.length > 0 && (
