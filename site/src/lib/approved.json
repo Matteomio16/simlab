@@ -5,5 +5,5 @@
   "trackRecord": true,
   "changelog": true,
   "chamberHome": true,
-  "houseSeats": false
+  "houseSeats": true
 }
