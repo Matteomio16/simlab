@@ -3,8 +3,8 @@
 //
 //   node scripts/publish-day.mjs --from <simlab-data/derived/YYYY-MM-DD>
 //
-// Only the public files leave the private repo (engine-design §7): forecast.json, draws.json, and races.json
-// (metadata the pages need). Never events.jsonl, news_private.jsonl or anything else.
+// Only the public files leave the private repo (engine-design §7): forecast.json (without today.movers), draws.json,
+// and races.json (metadata the pages need). Never events.jsonl, news_private.jsonl or anything else.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,6 +18,10 @@ mkdirSync(OUT, { recursive: true });
 
 const read = (f) => JSON.parse(readFileSync(path.join(src, f), "utf8"));
 const forecast = read("forecast.json");
+// Matteo, 12 Oct: no story text he hasn't reviewed goes public. The Publishing approval thread checks movers (the 3 Nov
+// stories) each day; today.movers is rendered by no page, so it stays in the data repo. A page that starts rendering it
+// must bring it into that daily review first.
+for (const r of Object.values(forecast.races)) if (r.today) delete r.today.movers;
 const races = read("races.json");
 for (const v of Object.values(races)) if (v && typeof v === "object") delete v.tier_reasons;
 writeFileSync(path.join(OUT, "forecast.json"), JSON.stringify(forecast));

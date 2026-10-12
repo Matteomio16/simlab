@@ -2,6 +2,21 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-12 (site publishing): the site's copies of forecast.json leave out today.movers (Matteo, 12 Oct)
+
+- **Matteo's decision (12 Oct, Publishing approval thread):** from 13 Oct, no story summary he hasn't reviewed goes out
+  in the public data files.
+- **What changed:** `site/scripts/publish-day.mjs` drops `races[rid].today.movers` (the "if the election were today"
+  stories) from the forecast.json it writes to `site/data/live/` and `site/public/data/<day>/`; `today.p_dem_win`,
+  `today.margin` and `today.stats_only` stay. The data repo's `derived/<day>/forecast.json` keeps them. `movers` (the
+  3 Nov stories) stays: the pages show them and the thread checks them daily. If a page ever shows `today.movers`, they
+  go through that daily review first.
+- **Why:** no page showed them and nobody reviewed them. On 12 Oct they held 57 cards in 13 races, including the Maine
+  card the thread flagged on 11 Oct for judging who a story hurts.
+- **Not changed:** the 12 Oct files already published still carry them, until Matteo decides.
+- **Checked** on a scratch copy against 12 Oct: the output equals the published file minus `today.movers`; the
+  forecast-mode build passes (35 Senate pages, copy check clean); home and Maine pages render with the same numbers.
+
 ## 2026-10-12 (Statistics session, A15): the weekly trend check is built (Matteo's yes, 12 Oct)
 
 - **Matteo's answers (12 Oct):** a logged addition under the freeze, not a method change; pushed after the 12 Oct run.
