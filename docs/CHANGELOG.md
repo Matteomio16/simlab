@@ -2,6 +2,98 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-13 (Statistics session): simulation only, built; sponsor footnotes read (waits for Matteo's yes)
+
+Method change after the 12 Oct freeze (`docs/simulation-only.md`, Matteo 13 Oct). Not pushed: it ships only with
+Matteo's direct yes, together with the start file in simlab-data.
+
+- **The start** (`simlab/start.py`, file `simlab-data/start/2026-10-12.json`): each race's level at the 12 Oct launch,
+  Senate and House, for every election day from 12 Oct to 3 Nov (the "if the election were today" view needs its own).
+  It is the launch forecast's statistical level: the 09:08 snapshot's poll average and fundamentals, each poll taken
+  less the story effects in force on its dates (12 Oct's moves.json). A day's headline is that level plus every
+  story's effect expected on election day, so a run dated 12 Oct gives back the published launch forecast (Senate
+  margins within 0.02 points; Republicans 50+ 40.9 against 41.0 in 100). Polls never re-anchor it.
+- **Why not levels.json as it stands:** the stats-only level already holds the stories in force on 12 Oct as far as
+  the polls caught them. Starting there and taking those stories as fully in the polls (kind `polls`, kept for
+  comparison) moves every race about 0.9 points toward the Republicans on day one (national stories then in force,
+  expected to fade), Republicans 50+ from 41 to 52 in 100. That is a jump from the method, not from polls.
+- **Daily path** (`statsday`, from 14 Oct, `start.FROM`): no poll correction and no re-fit. The dials stay at the
+  12 Oct weekly update; Monday's weekly filter no longer runs. News fades as before; a race without news doesn't move.
+  The stats-only twin still runs on the day's polls: it is the "polls alone" number (`stats_only` in forecast.json).
+  `forecast.json`, `filter_state.json` and run.json carry `rule`; filter_state rows add `start_margin` and
+  `moves_since_start`.
+- **What it means for the numbers:** stories fade within days, so their expected effect left on 3 Nov is small (all
+  37 national stories on 13 Oct add 0.007 points). The 3 Nov headline will barely move until the last week; the
+  "today" view moves more. Under the old rule almost all of the 3 Nov movement came from the polls.
+- **Weekly check** (`weekly.check`, `weekly_check.json`, Sundays after the daily run): per race and House seat, gap =
+  |our 3 Nov margin's change over the week − the poll average's change|; above 3 flag, above 5 severe, above 6.5
+  cancel. Severe and cancel need 3 new polls that week (one House poll moved NE-2's average 9.3 points in a day);
+  with 1-2 it stays a flag. No new polls: the markets' implied margin (win chance as a margin on our spread), flag
+  only. Rows carry both changes, the gap, our margin, the week's stories and the candidates' surnames. The first week
+  runs from 14 Oct (the rule's first day). Reports only: nothing is re-fitted.
+- **Cancelled weeks** (`simlab/cancelled_weeks.json`, empty): with Matteo's yes, an entry drops that race's stories
+  first seen in the week. Because stories are projected to 3 Nov, that takes the 3 Nov margin back to the Sunday
+  before.
+- **Old rule kept for scoring:** `python -m simlab.statsday --date D --rule poll-filter --out-root derived_poll-filter`
+  (its own Monday re-fits stay in that folder). Days before 14 Oct run the old rule by default.
+- **Sponsor footnotes** (Roadmap session, relaying Content & site's find and Matteo's yes, 13 Oct): `polls.py` read
+  partisan flags only from VoteHub, so Wikipedia's `{{efn-ua}}` sponsor notes were ignored (the Paxton campaign's
+  Pulse Decision Science poll counted as non-partisan). `polls.sponsor` now reads them: a nominee's campaign or a
+  group backing or opposing a nominee counts for that side; a primary candidate's campaign takes their primary's
+  party; otherwise party words. Media, universities and interest groups without a side stay non-partisan; the
+  "(R)/(D)" tag is still not used. On the 12 Oct snapshot 58 Senate and 104 House polls become partisan. The start
+  uses the fix; so does the daily "polls alone" twin.
+- **Start changes from the fix above 1 point:** Louisiana −1.44 (Davis' campaign polls, Hart and PPP), Idaho +1.05
+  (Risch's campaign polls, R+34 and R+49, and Achilles' three). House: GA-11 −2.7 (Harden's campaign), SD-AL −2.5
+  (Gronli's), SC-7 −2.4 (Vincent's), GA-7 −2.4 (Kozycki's), TX-10 −1.9 (Rourk's), IN-5 −1.7 (Ford's), CO-4 −1.6
+  (Invest in Tomorrow Coalition), OK-5 −1.6 (Nelson's), TN-5 −1.5 (Molder's two), TX-2 −1.4 (Finnie's), MD-1 −1.1
+  (Schwartz's), FL-9 −1.0 (Soto's).
+- **Before and after on 13 Oct** (3 Nov, scratch runs, old code reproduces the published Senate exactly): the rule
+  change alone moves no Senate race by more than 0.11 points (one day of polls since 12 Oct); with the fix,
+  Republicans hold 50+ 41.1 → 41.9 in 100, Democratic House majority 62.3 → 60.7.
+- **Workflows:** `daily.yml` and `drills.yml` check out `start/` from simlab-data.
+- **Checked:** 361 tests pass (26 new: `tests/test_start.py`, `CheckTest`, `SimulationOnlyTest`, `SponsorTest`); the
+  one failure needs `imageio_ffmpeg` (reel video).
+
+## 2026-10-12 (Statistics session): the trend check covers the House, and a level check (Matteo's yes; push waits)
+
+- **House seats** (Matteo, 12 Oct): the same rule as the Senate (3 or more new polls, opposite moves more than 4 points
+  apart flagged, more than 6 analysed), under `house` in the `trend` block. The poll average and stats-only margin come
+  from house_levels.json; a House poll is new when last Monday's house_polls.csv lacks it (the House table has no
+  first_seen). House rows have no story part or movers: forecast.json keeps no per-seat news.
+- **Level check** (Matteo, 12 Oct): `far_from_polls` lists any race or seat with 3 or more polls whose 3 Nov margin
+  sits more than 15 points from its poll average. A trend check compares moves, so it can't see a number that is
+  wrong but steady, as Alaska's was. On 12 Oct it lists only Alaska before its fix and nothing after; over 10 points it
+  would add Ohio 7th, South Dakota and Utah 2nd, ordinary gaps between polls and fundamentals.
+- **run.json** carries the flagged, analysed and far-from-polls lists of both chambers.
+- **Dry runs:** 11 Oct against 4 Oct: no Senate flags; in the House only Kentucky 6th had 3 new polls, moving with them;
+  the level check lists Alaska. 12 Oct against 5 Oct: no Senate flags; no House comparison (5 Oct had no House);
+  nothing far from its polls with the Alaska fix. The forecast files are identical with and without the checks.
+- **Checked:** 326 tests pass (16 new since this morning); the one failure needs `imageio_ffmpeg` (reel video).
+
+## 2026-10-12 (Statistics session): Alaska's House seat is Begich against Hill (Matteo's yes to fix; push waits)
+
+- **The error:** the House code pairs the Republican with the Democrat whenever one runs, so Alaska's at-large seat was
+  Nick Begich against Eric Hafner (D), who polls 5-15%. The challenger is the independent Bill Hill (34-45%). Hafner's
+  numbers made the seat's poll average R+73.6 and its forecast R+35.6, with Hill's chance counted nowhere. Found
+  while checking the House for the weekly trend check; no other seat has a candidate out-polling the Democrat.
+- **Fix** (`simlab/house.py`): `INDEPENDENT_CHALLENGER = {"AK-AL"}` and `challenger()`, used for the seat's polls
+  (`pair`) and its `left_party` in house_races.json (now "O", so a Hill win counts as an O seat). Every other seat is
+  paired as before. The polls are read by the existing rules: the ranked-choice table (the larger) with each poll's
+  rounds averaged as versions, and VoteHub's entries for Hill. Test: `tests/test_house.py`, `Challenger`.
+- **Both versions, 12 Oct** (the statistics step re-run on scratch copies with the 09:08 snapshot and the published
+  run id, old code against new): Alaska R+35.6 (Hill 0 in 100) becomes R+11.9 (Hill 2 in 100); poll average R+73.6 to
+  R+12.6, fundamentals R+12.3 unchanged. The House totals stay within simulation noise: Democratic majority 62.4 to
+  62.5 in 100, Democratic seats 222 in the middle simulation either way, O seats 0.00 to 0.02 on average. The Senate is
+  identical. Eight other seats' poll averages move by at most 0.01 (a missing sample size is filled with the median
+  of all House polls, and Alaska now has 11 rows instead of 6).
+- **Scoring both versions:** the old version is the commit before this one, re-run on the saved daily snapshots at
+  each scoring date.
+- **Found on the way:** the House draws are not reproducible across machines. The old code re-run on this laptop
+  matches the published 12 Oct moves, levels and race files exactly, and the Senate forecast, but not the House
+  draws (majority 62.4 against the published 62.3). `montecarlo` factors the House's covariance with `eigh`, whose
+  eigenvectors can differ between builds of the maths library; the Senate's Cholesky factor doesn't.
+
 ## 2026-10-12 (site publishing): the site's copies of forecast.json leave out today.movers (Matteo, 12 Oct)
 
 - **Matteo's decision (12 Oct, Publishing approval thread):** from 13 Oct, no story summary he hasn't reviewed goes out

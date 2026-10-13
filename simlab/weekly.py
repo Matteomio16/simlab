@@ -7,6 +7,10 @@ polls' likelihood is an exact quadratic in them: six Kalman runs per state recov
 national dial in closed form, so states with few polls borrow from it. The same evidence weighs a grid of fade
 speeds and flags states whose polls keep surprising the forecast.
 
+From 14 Oct (simulation only, docs/simulation-only.md) nothing here re-fits the forecast: the dials stay at the 12 Oct
+update, and the Sunday weekly check (check) compares each race's weekly move with the polls' or the markets'. The
+filter itself stays for the poll-filter rule, which is still run for scoring.
+
     python -m simlab.weekly --date YYYY-MM-DD --data <path to simlab-data>
 """
 from __future__ import annotations
@@ -18,7 +22,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 import numpy as np
-from scipy.stats import chi2
+from scipy.stats import chi2, norm
 
 from . import moves
 from .levels import ELECTION, effect, local_level
@@ -205,7 +209,7 @@ def surprises(p, m: dict, params: dict, d: int, dials: dict, election=ELECTION, 
     return out
 
 
-TREND = {"min_new_polls": 3, "flag_over": 4.0, "analyse_over": 6.0,
+TREND = {"min_new_polls": 3, "flag_over": 4.0, "analyse_over": 6.0, "far_over": 15.0, "far_min_polls": 3,
          "rollback": "none: only what the analysis finds wrong is fixed, as a logged change with both versions scored"}
 
 
@@ -235,15 +239,122 @@ def trend(now: dict, before: dict | None, polls, rules: dict = TREND) -> dict:
         level = ("ok" if not opposite or gap <= rules["flag_over"] else
                  "flag" if gap <= rules["analyse_over"] else "analyse")
         news = lambda x: (x.get("news") or {}).get("effect", 0.0)
-        row = {"new_polls": n, "forecast": {"before": fa, "now": fb, "change": df},
+        row = {"office": b.get("office", "senate"), "new_polls": n, "forecast": {"before": fa, "now": fb, "change": df},
                "poll_avg": {"before": pa, "now": pb, "change": dp},
                "stats_only_change": round(b["stats_only"]["margin"]["p50"] - a["stats_only"]["margin"]["p50"], 2),
-               "news_change": round(news(b) - news(a), 2), "opposite": opposite, "gap": gap, "level": level}
+               "news_change": round(news(b) - news(a), 2) if "news" in a or "news" in b else None,
+               "opposite": opposite, "gap": gap, "level": level}
         if level != "ok":
             row["movers"] = b.get("movers", [])
             out["flagged" if level == "flag" else "analyse"].append(r)
         out["races"][r] = row
     return out
+
+
+def far_from_polls(races: dict, polls: dict, rules: dict = TREND) -> dict:
+    """The level check (Matteo, 12 Oct): races (forecast.json rows, house_view's for House seats) with `far_min_polls`
+    or more polls in the table (`polls`: race id -> rows) whose 3 Nov margin sits more than `far_over` points from
+    their poll average. Reports only."""
+    out = {}
+    for r, x in sorted(races.items()):
+        pa = x.get("benchmarks", {}).get("poll_avg")
+        if pa is None or polls.get(r, 0) < rules["far_min_polls"]:
+            continue
+        if (gap := round(abs(x["margin"]["p50"] - pa), 2)) > rules["far_over"]:
+            out[r] = {"office": x.get("office", "senate"), "forecast": x["margin"]["p50"], "poll_avg": pa, "gap": gap,
+                      "polls": int(polls[r])}
+    return out
+
+
+def house_view(forecast: dict | None, levels: dict | None) -> dict:
+    """House seats in forecast.json's race shape for trend() and far_from_polls(): the 3 Nov margin from forecast.json's
+    House block, the stats-only margin and poll average from house_levels.json (the stats-only twin)."""
+    if not (forecast or {}).get("house") or not levels:
+        return {}
+    r2 = lambda v: None if v is None else round(v, 2)
+    lv = levels["races"]
+    return {r: {"office": "house", "margin": x["margin"], "stats_only": {"margin": {"p50": r2(lv[r]["margin"])}},
+                "benchmarks": {"poll_avg": r2(lv[r]["poll_margin"])}}
+            for r, x in forecast["house"]["races"].items() if r in lv}
+
+
+CHECK = {"flag_over": 3.0, "severe_over": 5.0, "cancel_over": 6.5, "min_new_polls": 1, "min_polls_severe": 3,
+         "gap": "|our 3 Nov margin's change over the week - the poll average's change|, points, any direction",
+         "no_polls": "the markets' implied margin instead (win chance as a margin on our spread), flag only",
+         "cancel": "only with Matteo's yes (cancelled_weeks.json): the race drops that week's stories"}
+
+
+def implied(p: float, x: dict) -> float:
+    """A market's win chance for the left candidate as a margin: its normal quantile times our forecast's spread."""
+    s = (x["margin"]["p90"] - x["margin"]["p10"]) / (2 * norm.ppf(0.9))
+    return float(norm.ppf(min(max(p, 0.01), 0.99)) * s)
+
+
+def _level(gap: float | None, basis: str | None, n: int, rules: dict) -> str:
+    """"", "flag", "severe" or "cancel"; severe and cancel need polls, `min_polls_severe` of them new that week."""
+    if gap is None:
+        return ""
+    strong = basis == "polls" and n >= rules["min_polls_severe"]
+    if strong and gap > rules["cancel_over"]:
+        return "cancel"
+    if strong and gap > rules["severe_over"]:
+        return "severe"
+    return "flag" if gap > rules["flag_over"] else ""
+
+
+def check(now: dict, before: dict, new_polls: dict, stories: dict, cancelled: set = frozenset(),
+          rules: dict = CHECK) -> dict:
+    """The weekly check (Matteo, 13 Oct): per race (forecast.json rows, house_view's for House seats, now and a week
+    before), our 3 Nov margin's change against the poll average's change when the week brought new polls
+    (`new_polls`: race -> count), else against the markets' implied margin (flag only). Gap above `flag_over` is a
+    flag, above `severe_over` severe, above `cancel_over` a week to cancel with Matteo's yes (both need
+    `min_polls_severe` new polls, else it stays a flag); a race in `cancelled`
+    (cancelled with his yes) says so. Rows carry the stories behind our move (`stories`, week_stories: a race's own,
+    or the nation's for a flagged race without its own), largest gap first. It only reports."""
+    rows = []
+    for r, b in now.items():
+        a = before.get(r)
+        if not a:
+            continue
+        ours = round(b["margin"]["p50"] - a["margin"]["p50"], 2)
+        n = int(new_polls.get(r, 0))
+        pa, pb = (x.get("benchmarks", {}).get("poll_avg") for x in (a, b))
+        ma, mb = (x.get("benchmarks", {}).get("market") for x in (a, b))
+        polls = round(pb - pa, 2) if pa is not None and pb is not None else None
+        markets = round(implied(mb, b) - implied(ma, a), 2) if ma is not None and mb is not None else None
+        basis = "polls" if n >= rules["min_new_polls"] and polls is not None else "markets" if markets is not None             else None
+        gap = round(abs(ours - (polls if basis == "polls" else markets)), 2) if basis else None
+        flag = "cancelled" if r in cancelled else _level(gap, basis, n, rules)
+        own = stories.get(r)
+        rows.append({"race": r, "state": r.split("-")[0], "office": b.get("office", "senate"), "ours": ours,
+                     "polls": polls, "markets": markets, "gap": gap, "flag": flag, "n_polls": n, "basis": basis,
+                     "margin": b["margin"]["p50"], "margin_before": a["margin"]["p50"],
+                     "stories": own if own is not None else (stories.get("US", []) if flag else []),
+                     "what_we_did": ""})
+    rows.sort(key=lambda x: (x["gap"] is None, -(x["gap"] or 0.0), x["race"]))
+    pick = lambda f: [x["race"] for x in rows if x["flag"] == f]
+    return {"rules": rules, "races": rows, "flagged": pick("flag"), "severe": pick("severe"), "cancel": pick("cancel"),
+            "cancelled": pick("cancelled"), "no_check": [x["race"] for x in rows if x["basis"] is None]}
+
+
+def week_stories(m: dict, since, top: int = 5) -> dict:
+    """{race_id or "US": the stories first seen after `since` with the largest expected effect on its 3 Nov margin}
+    from moves.json's main block: event id, summary card, first seen and effect in points."""
+    out = {}
+    for r, x in m.items():
+        if r == "shadow" or not isinstance(x, dict) or not x.get("events"):
+            continue
+        new = [(e, v) for e, v in x["events"].items() if v["first_seen"] > str(since)]
+        new.sort(key=lambda kv: -abs(kv[1]["election_day"]))
+        out[r] = [{"event_id": e, "card": v.get("card", ""), "first_seen": v["first_seen"],
+                   "delta": round(v["election_day"], 2)} for e, v in new[:top]]
+    return out
+
+
+def check_summary(res: dict) -> dict:
+    """The weekly check's line in run.json."""
+    return {k: res.get(k, []) for k in ("flagged", "severe", "cancel", "cancelled")} | {
+        "far_from_polls": sorted(res.get("far_from_polls", {}))} | ({"note": res["note"]} if "note" in res else {})
 
 
 def _alone(a: np.ndarray, b: np.ndarray, most: float = 5.0) -> dict:

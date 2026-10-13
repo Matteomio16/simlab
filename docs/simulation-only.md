@@ -45,6 +45,21 @@ $27 and $29). Estimated cost: about +$0.30 and +45 minutes a run.
   since then every move comes from how voter personas react to the news; polls are used only to check us. Wording goes
   to Matteo for his yes.
 
+## How Statistics built it (13 Oct, waits for Matteo's yes)
+
+- **The start** is the launch forecast's own level, not the stats-only number: polls and fundamentals with each poll
+  taken less the stories in force on its dates. A run dated 12 Oct under the new rule gives back the published launch
+  forecast. Starting from the stats-only number instead would move every race about 0.9 points toward the
+  Republicans on day one, from the method alone (CHANGELOG 13 Oct).
+- **The headline** is that start plus every story's effect expected on 3 Nov. Stories fade within days, so the 3 Nov
+  number will move little until the final week; the "today" view moves more.
+- **Severe and cancel need 3 new polls** that week; with 1 or 2 a gap stays a flag. **The first weekly check** (18 Oct)
+  covers 14-18 Oct, the rule's first days.
+- **A cancelled week** is an entry in `simlab/cancelled_weeks.json` (only with Matteo's yes): that race drops the
+  stories first seen in the week.
+- **The 12 Oct start reads Wikipedia's sponsor footnotes** (Matteo's yes, 13 Oct): campaign and party-group polls get
+  half weight and the sponsor shift, as decided on 28 Sep.
+
 ## Who does what
 
 - **Statistics:** freeze the levels at 12 Oct, take the poll correction out of the daily filter, keep the stats-only

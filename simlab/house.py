@@ -52,7 +52,7 @@ from scipy.stats import norm
 from . import levels
 from .calib import DIVISION
 from .groups import BASE, CELL_OF, GROUPS, KEV, PID_OF, PIMU, POS, race_groups, tilt
-from .polls import STATE_CODES, VERSION_COLUMNS, Race, merge, wiki_polls
+from .polls import STATE_CODES, VERSION_COLUMNS, Race, footnotes, merge, wiki_polls
 from .polls import _answer as answer, _vh_meta as vh_meta, build as build_polls
 from .snap import AT_LARGE, slug
 
@@ -62,6 +62,9 @@ B_LEAN, PSI, REDRAWN_PSI, UNCONTESTED_TURNOUT = 0.973, 4.45, 0.7, 0.71
 SD_CLOSE, SD_SAFE, CLOSE = 5.5, 9.0, 15.0
 NATIONAL_PRES24 = -1.68   # Harris minus Trump, two-party, summed over the 435 districts
 N_SIMULATE, KEEP_DAYS = 40, 6
+# Seats where the Republican's challenger is an independent although a Democrat runs too (Matteo, 12 Oct): in Alaska
+# Bill Hill polls 34-45%, the Democrat Eric Hafner 5-15%.
+INDEPENDENT_CHALLENGER = {"AK-AL"}
 RATING = {"safe": 3, "solid": 3, "likely": 2, "lean": 1, "tilt": 0.5, "tossup": 0, "toss-up": 0}
 
 
@@ -183,9 +186,9 @@ def wikipedia(snap: Path) -> dict:
                   for r in ("1–26", "27–52")] if st == "CA" else
                  [f"2026 United States House of Representatives elections in {name}"])
         for t in map(read, pages):
-            secs = re.split(r"\n==\s*District (\d+)\s*==", t)
+            secs, notes = re.split(r"\n==\s*District (\d+)\s*==", t), footnotes(t)
             for k in range(1, len(secs), 2):
-                out[f"{st}-{int(secs[k])}"] = district(secs[k + 1]) | {"level": 3}
+                out[f"{st}-{int(secs[k])}"] = district(secs[k + 1]) | {"level": 3, "notes": notes}
     return out
 
 
@@ -253,13 +256,20 @@ def tiers(s: pd.DataFrame, p: pd.Series, kept: set | None = None) -> tuple[pd.Se
 
 # --- district polls, the blend and the simulated seats' voter groups ------------------------------------------------
 
+def challenger(rid: str, noms: dict) -> str:
+    """The party letter of the Republican's challenger: "D", or "O" where no Democrat runs or the seat is in
+    INDEPENDENT_CHALLENGER."""
+    return "O" if not noms.get("D") or (rid in INDEPENDENT_CHALLENGER and noms.get("O")) else "D"
+
+
 def pair(s: pd.DataFrame, rid: str) -> Race | None:
-    """The seat's matchup as a polls.Race: the Republican nominee against the Democrat (or the independent)."""
+    """The seat's matchup as a polls.Race: the Republican nominee against the challenger (challenger())."""
     noms = s.nominees[rid]
-    left = (noms.get("D") or noms.get("O") or [None])[0]
+    letter = challenger(rid, noms)
+    left = (noms.get(letter) or [None])[0]
     if s.fixed[rid] in ("D", "R") or not noms.get("R") or not left:
         return None
-    return Race(s.state[rid], False, noms["R"][0], left, "D" if noms.get("D") else "O", "")
+    return Race(s.state[rid], False, noms["R"][0], left, letter, "")
 
 
 def district_polls(s: pd.DataFrame, wiki: dict, entries: list[dict]) -> pd.DataFrame:
@@ -270,7 +280,7 @@ def district_polls(s: pd.DataFrame, wiki: dict, entries: list[dict]) -> pd.DataF
     for rid in s.index:
         race, w = pair(s, rid), wiki.get(rid)
         if race and w:
-            frames.append(wiki_polls(w["text"], race, w["level"]).assign(race_id=rid))
+            frames.append(wiki_polls(w["text"], race, w["level"], w.get("notes")).assign(race_id=rid))
     for e in entries:
         m = re.fullmatch(r"2026 ([A-Z]{2})-(\d+)", e.get("subject") or "")
         if e.get("poll_type") != "us-representative" or not m:
@@ -415,7 +425,7 @@ def prepare(day: date, data: Path, levels_json: dict, snap: Path | None = None, 
     base["tier"] = tier.to_dict()
     for rid, r in twin["races"].items():
         r["tier"] = tier[rid]
-    left = lambda rid: "D" if s.nominees[rid].get("D") or not s.checked[rid] else "O"
+    left = lambda rid: challenger(rid, s.nominees[rid]) if s.checked[rid] else "D"
     base["races"] = {rid: {"state": s.state[rid], "office": "house", "district": int(s.district[rid]),
                            "special": False, "rcv": s.state[rid] in ("ME", "AK"), "candidates": s.nominees[rid],
                            "left_party": left(rid), "incumbent": s.incumbent[rid],

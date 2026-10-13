@@ -13,6 +13,7 @@ import json
 import re
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
+from difflib import SequenceMatcher
 from pathlib import Path
 
 import numpy as np
@@ -38,7 +39,8 @@ POLLSTER_STOP = {"university", "college", "the", "poll", "polls", "polling", "re
                  "llc", "associates", "strategies", "reports", "and", "of", "center", "school", "law", "survey",
                  "institute", "company", "co", "partners", "analytics"}
 SUFFIXES = {"jr", "jr.", "sr", "sr.", "ii", "iii", "iv"}
-VERSION_COLUMNS = ["pollster", "tag", "start", "end", "n", "population", "left", "right", "other", "undecided"]
+VERSION_COLUMNS = ["pollster", "tag", "start", "end", "n", "population", "left", "right", "other", "undecided",
+                   "wiki_sponsor", "wiki_partisan"]
 TEMPLATE_TEXT = {"nbsp": " ", "sdash": "–", "ndash": "–", "snd": "–", "mdash": "—"}
 TEMPLATE_FIRST_ARG = {"small", "nowrap", "abbr"}
 DASH = r"\s*[–—-]\s*"
@@ -102,6 +104,14 @@ def _split(text: str, sep: str) -> list[str]:
     return parts
 
 
+class Cell(str):
+    """A cleaned table cell that keeps its wikitext in `raw`, so footnotes (sponsors) can still be read."""
+    def __new__(cls, text: str, raw: str = ""):
+        out = super().__new__(cls, text)
+        out.raw = raw
+        return out
+
+
 def _cell(raw: str) -> tuple[str, int, int]:
     """Cell text -> (clean content, rowspan, colspan). Attributes sit before the first bare pipe; a prefix that is only
     templates (party shading) counts as attributes too."""
@@ -111,7 +121,82 @@ def _cell(raw: str) -> tuple[str, int, int]:
         attrs, content = "", raw
     rs = re.search(r'rowspan\s*=\s*"?(\d+)', attrs)
     cs = re.search(r'colspan\s*=\s*"?(\d+)', attrs)
-    return clean(content), int(rs.group(1)) if rs else 1, int(cs.group(1)) if cs else 1
+    return Cell(clean(content), content), int(rs.group(1)) if rs else 1, int(cs.group(1)) if cs else 1
+
+
+EFN = re.compile(r"\{\{\s*efn(?:-[a-z]{2})?\s*\|((?:[^{}]|\{\{[^{}]*\}\})*)\}\}", re.I)
+
+
+def _efn(body: str) -> tuple[str, str]:
+    """An {{efn}} footnote's (name, text); either may be empty."""
+    name, text = "", ""
+    for part in _split(body, "|"):
+        m = re.match(r"\s*(name|group)\s*=\s*\"?([^\"]*)\"?\s*$", part)
+        if m:
+            name = m.group(2).strip() if m.group(1) == "name" else name
+        elif not text:
+            text = clean(part)
+    return name, text
+
+
+def footnotes(page: str) -> dict:
+    """{name: text} of a page's named {{efn}} / {{efn-ua}} footnotes, so a reuse ({{efn-ua|name=X}}) can be read."""
+    out = {}
+    for body in EFN.findall(page):
+        name, text = _efn(body)
+        if name and text:
+            out.setdefault(name, text)
+    return out
+
+
+REP_WORDS = r"republican|\bgop\b|conservative|nrcc|nrsc|club for growth|leadership fund|supports? republicans"
+DEM_WORDS = (r"democrat|dccc|dscc|majority pac|progressive|liberal|working families|justice democrats|votevets|"
+             r"314 action|emily'?s list|latino victory")
+
+
+def primary_side(page: str, name: str) -> str | None:
+    """"DEM" or "REP" if `name` is mentioned more under the page's Democratic than its Republican primary headings (or
+    the reverse), else None: the party of a primary candidate whose campaign sponsored a general-election poll."""
+    count, stack = {"DEM": 0, "REP": 0}, []
+    pieces = re.split(r"(?m)^(=+)\s*(.*?)\s*=+\s*$", page)
+    for k in range(1, len(pieces) - 2, 3):
+        level, title, body = len(pieces[k]), pieces[k + 1].lower(), pieces[k + 2]
+        stack = [(lv, t) for lv, t in stack if lv < level] + [(level, title)]
+        ctx = next((t for _, t in reversed(stack) if "primary" in t), "")
+        side = "DEM" if "democratic" in ctx else "REP" if "republican" in ctx else None
+        if side:
+            count[side] += len(re.findall(rf"\b{re.escape(name)}\b", body, re.I))
+    return None if count["DEM"] == count["REP"] else max(count, key=count.get)
+
+
+def sponsor(raw: str, race: Race, notes: dict | None = None, page: str = "") -> tuple[str, str]:
+    """(sponsor footnote, "DEM", "REP" or "") from a poll-source cell's {{efn-ua}} footnotes (Matteo, 28 Sep: partisan
+    means sponsored by a party, campaign or partisan group). A nominee's campaign, or a group that supports or opposes
+    a nominee (surnames matched loosely, for Wikipedia's typos), counts for that side (left = "DEM", as the sponsor
+    shift is signed by side); a primary candidate's campaign or a "pro-" group counts for the candidate's party, read
+    from the `page`'s primary sections (primary_side); otherwise party words in the footnote decide. Media,
+    universities and interest groups without a side stay "". The "(R)"/"(D)" tag is not used."""
+    for body in EFN.findall(raw or ""):
+        name, text = _efn(body)
+        text = text or (notes or {}).get(name, "")
+        low = text.lower()
+        if not re.search(r"\b(sponsor|commission|conducted for|conducted by|internal)", low):
+            continue
+        names = {surname(race.left).lower(): "DEM", surname(race.right).lower(): "REP"}
+        side = lambda w: next((v for k, v in names.items() if SequenceMatcher(None, k, w).ratio() >= 0.85), None)
+        flip = {"DEM": "REP", "REP": "DEM"}
+        for m in re.finditer(r"([\w.' -]+?)(?:'s|’s|')\s+(?:\w+\s+)?campaign", low):
+            if (s := side(who := surname(m.group(1)).lower()) or primary_side(page, who)):
+                return text, s
+        for m in re.finditer(r"(supports?|pro-|opposes?|against)\s*([\w.'-]+)", low):
+            who = m.group(2).strip(".").lower()
+            if (s := side(who) or (primary_side(page, who) if m.group(1) == "pro-" else None)):
+                return text, flip[s] if m.group(1).startswith(("oppos", "against")) else s
+        rep, dem = re.search(REP_WORDS, low), re.search(DEM_WORDS, low)
+        if bool(rep) != bool(dem):
+            return text, "REP" if rep else "DEM"
+        return text, ""
+    return "", ""
 
 
 def parse_table(table: str) -> tuple[list[str], list[list[str]]]:
@@ -275,8 +360,10 @@ def nominee_table(tables, right: str, left: str):
     return max(hits, key=lambda t: len(t[1])) if hits else None
 
 
-def wiki_polls(page: str, race: Race, level: int = 2) -> pd.DataFrame:
-    """One row per poll version in the nominee table."""
+def wiki_polls(page: str, race: Race, level: int = 2, notes: dict | None = None) -> pd.DataFrame:
+    """One row per poll version in the nominee table, with its sponsor footnote and side (sponsor()); `notes` are the
+    named footnotes of the whole page when `page` is one section of it."""
+    notes = footnotes(page) if notes is None else notes
     found = nominee_table(poll_tables(page, level), surname(race.right), surname(race.left))
     if not found:
         return pd.DataFrame(columns=VERSION_COLUMNS)
@@ -296,10 +383,12 @@ def wiki_polls(page: str, race: Race, level: int = 2) -> pd.DataFrame:
             continue
         pollster, tag = pollster_tag(row[col["Poll source"]])
         n, population = sample(row[col["Sample"]])
+        note, side = sponsor(getattr(row[col["Poll source"]], "raw", ""), race, notes, page)
         others = [p for p in (pct(row[i]) for i in rest) if p is not None]
         out.append({"pollster": pollster, "tag": tag, "start": start, "end": end, "n": n, "population": population,
                     "left": pct(row[li]), "right": pct(row[ri]), "other": sum(others) if others else np.nan,
-                    "undecided": pct(row[und]) if und is not None else np.nan})
+                    "undecided": pct(row[und]) if und is not None else np.nan, "wiki_sponsor": note,
+                    "wiki_partisan": side})
     return pd.DataFrame(out, columns=VERSION_COLUMNS)
 
 
@@ -371,10 +460,12 @@ def merge(wiki: pd.DataFrame, vh: pd.DataFrame) -> pd.DataFrame:
     """One row per poll: Wikipedia versions averaged within a population (D7); VoteHub supplies sponsor, partisan and
     internal flags when it has the poll, and fills in polls Wikipedia lacks; the best population is kept."""
     keys = ["race_id", "pollster", "start", "end", "population"]
-    groups = (wiki.assign(population=wiki.population.fillna("v"))
+    side = {c: wiki[c].fillna("") if c in wiki else "" for c in ("wiki_sponsor", "wiki_partisan")}
+    groups = (wiki.assign(population=wiki.population.fillna("v"), **side)
               .groupby(keys, as_index=False, dropna=False)
               .agg(left=("left", "mean"), right=("right", "mean"), other=("other", "mean"),
-                   undecided=("undecided", "mean"), n=("n", "max"), tag=("tag", "first"), versions=("left", "size")))
+                   undecided=("undecided", "mean"), n=("n", "max"), tag=("tag", "first"), versions=("left", "size"),
+                   wiki_sponsor=("wiki_sponsor", "max"), wiki_partisan=("wiki_partisan", "max")))
     used, rows = set(), []
     for g in groups.itertuples(index=False):
         cand = vh[(vh.race_id == g.race_id) & (vh.population == g.population)] if len(vh) else vh
@@ -388,11 +479,12 @@ def merge(wiki: pd.DataFrame, vh: pd.DataFrame) -> pd.DataFrame:
                 continue
             if best is None or abs((c.end - g.end).days) < abs((best.end - g.end).days):
                 best = c
-        row = {**g._asdict(), "source": "wikipedia", "votehub_id": "", "sponsors": "", "partisan": "",
-               "internal": False, "url": "", "vh_margin": np.nan}
+        row = {**g._asdict(), "source": "wikipedia", "votehub_id": "", "sponsors": g.wiki_sponsor,
+               "partisan": g.wiki_partisan, "internal": False, "url": "", "vh_margin": np.nan}
         if best is not None:
             used.add(best.votehub_id)
-            row.update(source="both", votehub_id=best.votehub_id, sponsors=best.sponsors, partisan=best.partisan,
+            row.update(source="both", votehub_id=best.votehub_id, sponsors=best.sponsors or g.wiki_sponsor,
+                       partisan=best.partisan or g.wiki_partisan,
                        internal=best.internal, url=best.url, vh_margin=two_party(best.left, best.right))
         rows.append(row)
     for c in (vh[~vh.votehub_id.isin(used)] if len(vh) else vh).itertuples(index=False):

@@ -66,6 +66,7 @@ jobs:
             /README.md
             /derived/
             /house/
+            /start/
           sparse-checkout-cone-mode: false
       - name: Due?
         id: due

@@ -377,6 +377,92 @@ class MergeTest(unittest.TestCase):
         self.assertAlmostEqual(q.vh_margin, 100 * 4 / 92)
 
 
+SPONSOR_PAGE = """== Democratic primary ==
+=== Candidates ===
+* Angie Craig, U.S. Representative
+=== Polling ===
+Craig leads. Craig again.
+== General election ==
+=== Polling ===
+{| class="wikitable"
+! Poll source
+! Date(s) administered
+! Sample size
+! Jon Husted (R)
+! Sherrod Brown (D)
+|-
+|Pulse Decision Science (R)<ref>{{cite web|url=https://example.org}}</ref>{{Efn-ua|name=Husted|Poll sponsored by Husted's campaign}}
+|September 24–27, 2026
+|800 (LV)
+|47%
+|44%
+|-
+|Pulse Decision Science (R){{efn-ua|name=Husted}}
+|September 1–3, 2026
+|800 (LV)
+|46%
+|44%
+|-
+|GQR{{efn-ua|Poll sponsored by the Ohio Federation of Teachers, which supports Brown}}
+|August 1–3, 2026
+|600 (LV)
+|44%
+|47%
+|-
+|Impact Research{{efn-ua|Poll sponsored by Craig's campaign}}
+|July 1–3, 2026
+|600 (LV)
+|44%
+|46%
+|-
+|co/efficient{{efn-ua|Poll commissioned by the National Republican Senatorial Committee}}
+|June 1–3, 2026
+|600 (LV)
+|48%
+|44%
+|-
+|SSRS (D){{efn-ua|Poll conducted for [[CNN]]}}
+|May 1–3, 2026
+|600 (LV)
+|45%
+|45%
+|-
+|Hart Research{{efn-ua|Poll sponsored by Brownn's campaign}}
+|April 1–3, 2026
+|600 (LV)
+|43%
+|46%
+|}
+"""
+
+
+class SponsorTest(unittest.TestCase):
+    race = PageTest.race
+
+    def setUp(self):
+        self.w = polls.wiki_polls(SPONSOR_PAGE, self.race)
+
+    def test_campaign_footnote_and_its_named_reuse_mark_the_side(self):
+        self.assertEqual(list(self.w.wiki_partisan[:2]), ["REP", "REP"])
+        self.assertEqual(self.w.wiki_sponsor[1], "Poll sponsored by Husted's campaign")
+
+    def test_group_supporting_a_nominee_and_party_committee(self):
+        self.assertEqual((self.w.wiki_partisan[2], self.w.wiki_partisan[4]), ("DEM", "REP"))
+
+    def test_primary_candidates_campaign_takes_the_party_of_their_primary(self):
+        self.assertEqual(self.w.wiki_partisan[3], "DEM")
+
+    def test_media_sponsor_and_pollster_tag_stay_non_partisan(self):
+        self.assertEqual((self.w.wiki_sponsor[5], self.w.wiki_partisan[5]), ("Poll conducted for CNN", ""))
+
+    def test_misspelt_nominee_is_matched(self):
+        self.assertEqual(self.w.wiki_partisan[6], "DEM")
+
+    def test_merge_reads_wikipedia_side_when_votehub_has_none(self):
+        t = polls.merge(self.w.assign(race_id="OH-S"), polls.votehub_polls([], [self.race]))
+        self.assertEqual(sorted(t.partisan), ["", "DEM", "DEM", "DEM", "REP", "REP", "REP"])
+
+
 class NationalTest(unittest.TestCase):
     def test_generic_ballot_prefers_likely_voters(self):
         gb = polls.generic_ballot(VOTEHUB)

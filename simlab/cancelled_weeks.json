@@ -1,0 +1,4 @@
+{
+ "about": "Weeks Matteo cancelled after the Sunday weekly check (docs/simulation-only.md): the race drops the stories first seen in the 7 days up to week_ending. Add an entry only with his yes, e.g. {\"race\": \"TX\", \"week_ending\": \"2026-10-18\", \"approved\": \"Matteo, 18 Oct\"}.",
+ "weeks": []
+}
