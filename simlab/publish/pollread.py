@@ -258,24 +258,24 @@ STORIES = {
         "folder": "13-reading-polls-08", "left": "Hamilton", "right": "Marshall",
         "headline": "Kansas polls lean Hamilton. Our simulation leans Marshall.",
         "dek": "Nine Senate polls since September, and our expected result. Hamilton (D) minus Marshall (R).",
-        "source": "Polls ending 10 Sep – 10 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 12 Oct.",
+        "source": "Polls ending 10 Sep – 10 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 13 Oct.",
         "title2": "Two numbers, two meanings.",
         "ours": {"margin": -1.92, "leans": "Marshall",
                  "vote": "51–49", "vote_label": "expected vote, Marshall first",
-                 "chance": "65 in 100", "chance_label": "Marshall's chance to win",
+                 "chance": "66 in 100", "chance_label": "Marshall's chance to win",
                  "range": "Close, with a favourite: across 40,000 simulated elections the result runs from Marshall "
-                          "+9 to Hamilton +5.",
+                          "+8 to Hamilton +5.",
                  "why": "We blend the polls with Kansas's record (Trump +16 in 2024), and some of Hamilton's lift "
                         "comes from news we expect to fade.",
                  "wrong": "Six of eight polls since mid-September have Hamilton ahead, this one from a pollster that "
                           "leans Republican."},
-        "hypothesis": "Our forecast: Marshall 51–49. He wins 65 in 100 simulated elections.",
+        "hypothesis": "Our forecast: Marshall 51–49. He wins 66 in 100 simulated elections.",
         "caption": (
             "Kansas Senate poll: a new InsiderAdvantage survey has Adam Hamilton ahead of Roger Marshall, 48 to 47. "
             "It isn't an outlier: six of the eight Kansas polls since mid-September have Hamilton slightly ahead.\n\n"
             "Our simulation leans the other way, and it's worth being precise about how. Our expected vote is Marshall "
-            "about 51, Hamilton about 49: a close race. Across 40,000 simulated elections, Marshall wins 65 in every "
-            "100. That 65 is a chance of winning, not a share of the vote.\n\n"
+            "about 51, Hamilton about 49: a close race. Across 40,000 simulated elections, Marshall wins 66 in every "
+            "100. That 66 is a chance of winning, not a share of the vote.\n\n"
             "Why we lean Marshall when the polls don't: we blend the polls with Kansas's long voting record (Trump "
             "won it by 16 points in 2024), and part of Hamilton's recent lift comes from news our model expects to "
             "fade before 3 November.\n\n"
@@ -283,15 +283,15 @@ STORIES = {
             "usually leaned about 3 points toward Republicans. We'll keep checking our number against new polls.\n\n"
             "#midterms2026 #Kansas #KansasSenate #elections"),
         "short": ("Kansas polls lean Hamilton: six of eight since mid-September have him ahead. Our simulation leans "
-                  "Marshall: expected vote about 51-49, and he wins 65 of 100 simulated elections. A chance of winning, "
+                  "Marshall: expected vote about 51-49, and he wins 66 of 100 simulated elections. A chance of winning, "
                   "not a vote share."),
         "more": " Reading the polls.",
         "x": ("Kansas: six of eight polls since mid-Sep have Hamilton ahead. Our simulation leans Marshall: expected "
-              "vote about 51-49, and he wins 65 of 100 simulated elections. That's a chance of winning, not a vote "
+              "vote about 51-49, and he wins 66 of 100 simulated elections. That's a chance of winning, not a vote "
               "share."),
         "threads": ("Kansas is a rare case where the polls and our simulation disagree. Six of the eight polls since "
                     "mid-September have Adam Hamilton ahead. We expect Roger Marshall to win about 51 to 49, and he "
-                    "wins 65 of every 100 simulated elections: a chance of winning, not a share of the vote. Who do "
+                    "wins 66 of every 100 simulated elections: a chance of winning, not a share of the vote. Who do "
                     "you think is reading Kansas right?"),
         "topic": "2026 Midterms",
         "first_comment": "Who do you think is reading Kansas right, the polls or the simulation?",
