@@ -116,6 +116,17 @@ def combined(parts: dict[str, tuple[str, dict]], pause: float = 0.2):
 
 MEDIACLOUD = "https://search.mediacloud.org/api/search/story-list"
 MC_US_NATIONAL = 34412234  # Media Cloud's "United States - National" collection
+# Each state's "<State>, United States - State & Local" collection (29-1,283 outlets; read 13 Oct), for a House seat's
+# own query: the national collection carries almost no district news (13 Oct: 72 House articles for 40 seats).
+MC_STATE_LOCAL = {
+    "AK": 38381315, "AL": 38381313, "AR": 38381319, "AZ": 38381317, "CA": 38380550, "CO": 38381327, "CT": 38381331,
+    "DE": 38381336, "FL": 38379430, "GA": 38381345, "HI": 38381347, "IA": 38381362, "ID": 38381350, "IL": 38381334,
+    "IN": 38381358, "KS": 38381364, "KY": 38381360, "LA": 38381368, "MA": 38381372, "MD": 38381338, "ME": 38381370,
+    "MI": 38381374, "MN": 38379771, "MO": 38381321, "MS": 38381378, "MT": 38381380, "NC": 38381390, "ND": 38381376,
+    "NE": 38381329, "NH": 38381382, "NJ": 38381386, "NM": 38381388, "NV": 38381325, "NY": 38380053, "OH": 38381394,
+    "OK": 38381396, "OR": 38381398, "PA": 38381340, "RI": 38381400, "SC": 38381392, "SD": 38381402, "TN": 38381366,
+    "TX": 38381323, "UT": 38381406, "VA": 38381404, "VT": 38381384, "WA": 38381353, "WI": 38381356, "WV": 38381408,
+    "WY": 38381410}
 
 
 def _key(name: str) -> str:
@@ -136,11 +147,12 @@ LEGACY = {"OH-S": "ohio", "NC": "north-carolina", "TX": "texas", "US": "national
 MC_GAP_S = 31  # Media Cloud allows 2 requests a minute and 4,000 a week (its FAQ; 30 Sep: 6 quick ones, then 429)
 
 
-def mediacloud(run: "Run", key: str, queries: dict[str, str], budget_s: float) -> None:
-    """The last day's stories for each {file name: query}, in order, from Media Cloud's US national collection: one
-    request every 31 s, within the budget. A 429 or 5xx is retried once after 60 s; a second 429 skips the remaining
-    queries, and so does the end of the budget; each skipped one is recorded, for the next run. The key rides in a
-    header, so it never reaches the URL, the manifest or the logs."""
+def mediacloud(run: "Run", key: str, queries: dict[str, str], budget_s: float,
+               collections: dict[str, int] | None = None) -> None:
+    """The last day's stories for each {file name: query}, in order, from Media Cloud's US national collection (or the
+    file's own in `collections`): one request every 31 s, within the budget. A 429 or 5xx is retried once after 60 s;
+    a second 429 skips the remaining queries, and so does the end of the budget; each skipped one is recorded, for the
+    next run. The key rides in a header, so it never reaches the URL, the manifest or the logs."""
     end, stop, limited = run.when.date(), time.monotonic() + budget_s, False
     for i, (name, q) in enumerate(queries.items()):
         if limited or time.monotonic() + (MC_GAP_S if i else 0) >= stop:
@@ -150,7 +162,8 @@ def mediacloud(run: "Run", key: str, queries: dict[str, str], budget_s: float) -
         if i:
             time.sleep(MC_GAP_S)
         params = {"q": q, "start": f"{end - timedelta(days=1)}", "end": f"{end}",
-                  "platform": "onlinenews-mediacloud", "cs": MC_US_NATIONAL, "page_size": 1000}
+                  "platform": "onlinenews-mediacloud", "cs": (collections or {}).get(name, MC_US_NATIONAL),
+                  "page_size": 1000}
 
         def fetch(params=params):
             nonlocal limited

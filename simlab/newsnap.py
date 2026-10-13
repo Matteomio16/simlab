@@ -8,7 +8,8 @@ run asks only the most overdue queries within a short budget, retrying a refused
 saved in the last 6 hours isn't asked again, and one that failed is asked by the next run; every query covers 24 hours,
 so a later success fills the gap. Media Cloud (from 30 Sep, when its key is set) runs alongside at its own limits: 2
 requests a minute and 4,000 a week, so the contested races, the House groups and the nation every 3 hours and the rest
-every 12, about 340 requests a day. Nothing raw is printed.
+(with each simulated House seat in its state's local outlets, from 13 Oct) every 12, about 420 requests a day. Nothing
+raw is printed.
 
     python -m simlab.newsnap --out ../simlab-data/news [--budget 540] [--races <races.json>]
 """
@@ -44,12 +45,19 @@ def every_h(slug: str) -> float:
 def queries(races_json: Path | None = None, field: str = "query") -> dict[str, str]:
     """{file slug: GDELT query (field="mediacloud": Media Cloud's)} for every race in newsraces.json and the nation
     (pilot races keep their old names), plus one per state for the simulated House seats in the latest races.json
-    ("oh-h")."""
+    ("oh-h"). Media Cloud also asks each simulated seat with listed candidates on its own ("oh-9"), in its state's
+    local outlets (seat_collections; 13 Oct)."""
     races = json.loads(snap.NEWS_RACES.read_text(encoding="utf-8"))
     if races_json and races_json.exists():
-        races |= {g: c for g, c in newsraces.house(json.loads(races_json.read_text(encoding="utf-8"))).items()
-                  if c.get("seats")}
+        house = newsraces.house(json.loads(races_json.read_text(encoding="utf-8")))
+        races |= {r: c for r, c in house.items() if c.get("seats") or (field == "mediacloud" and c[field])}
     return {snap.LEGACY.get(rid, rid.lower()): c[field] for rid, c in races.items()}
+
+
+def seat_collections(slugs) -> dict[str, int]:
+    """{Media Cloud file name: its state's local collection} for the House seats among the slugs."""
+    return {f"mediacloud-{s}": snap.MC_STATE_LOCAL[s[:2].upper()] for s in slugs
+            if newsraces.is_house(s.upper()) and s[:2].upper() in snap.MC_STATE_LOCAL}
 
 
 def last_saved(root: Path, now: datetime, back: int = 2) -> dict[str, datetime]:
@@ -128,7 +136,8 @@ def main() -> None:
         mq = queries(a.races, "mediacloud")
         morder = due(list(mq), last, now, first, "mediacloud", lambda s: MC_EVERY_H if s in first else MC_EVERY_H_REST)
         mc = threading.Thread(target=snap.mediacloud,
-                              args=(run, key, {f"mediacloud-{s}": mq[s] for s in morder}, a.budget))
+                              args=(run, key, {f"mediacloud-{s}": mq[s] for s in morder}, a.budget,
+                                    seat_collections(morder)))
         mc.start()
     qs = queries(a.races)
     # with Media Cloud on, the races on statistics alone (no reactions) leave GDELT to the contested ones

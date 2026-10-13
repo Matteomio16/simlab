@@ -674,8 +674,8 @@ class House(unittest.TestCase):
         self.assertEqual(raw["date"], "2026-10-11")
 
     def test_a_group_story_is_selected_for_its_seats(self):
-        story = gdelt(("Kaptur and Merrin debate trade policy in Toledo", "20261012T070000Z", "toledoblade.com"))
-        card = '{"card": "Marcy Kaptur and Derek Merrin debated trade policy in Toledo."}'
+        story = gdelt(("Ohio House hopefuls debate trade policy in Toledo", "20261012T070000Z", "toledoblade.com"))
+        card = '{"card": "Ohio House candidates debated trade policy in Toledo."}'
         with tempfile.TemporaryDirectory() as tmp:
             snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
             (derived / "2026-10-11").mkdir(parents=True)
@@ -688,6 +688,58 @@ class House(unittest.TestCase):
         self.assertEqual((e["scope"], e["races"], sorted(e["gate"])), ("race", ["OH-1", "OH-9"], ["OH-1", "OH-9"]))
         self.assertEqual(e["selected"], {"OH-1": True, "OH-9": True})
         self.assertEqual(summary["selected"]["OH-9"], 1)
+
+    def test_with_district_news_on_a_story_naming_a_seat_is_that_seats_alone(self):
+        story = gdelt(("Kaptur and Merrin debate trade policy in Toledo", "20261012T070000Z", "toledoblade.com"))
+        card = '{"card": "Marcy Kaptur and Derek Merrin debated trade policy in Toledo."}'
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(newsday, "HOUSE_NEWS", True):
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            (derived / "2026-10-11").mkdir(parents=True)
+            (derived / "2026-10-11" / "races.json").write_text(json.dumps(house_races()), encoding="utf-8")
+            snapshot(snap, "2026-10-12", "0800", {"gdelt-oh-h": story})
+            summary = newsday.run(date(2026, 10, 12), snap, derived, "r", FakeAsker(), [FakeChat([card] * 5)],
+                                  scope="all")
+            events = newsday._jsonl(derived / "2026-10-12" / "events.jsonl")
+        e = next(e for e in events if e["event_id"].startswith("OH-9"))
+        self.assertEqual((e["races"], e["selected"]), (["OH-9"], {"OH-9": True}))
+        self.assertEqual((summary["selected"]["OH-9"], summary["selected"]["OH-1"]), (1, 0))
+
+    def test_a_group_headline_naming_one_seat_goes_to_that_seat(self):
+        # 13 Oct: no House seat had a story selected; only the groups' headlines that name a seat are district news
+        newsday.configure(house_races())
+        self.assertEqual(newsday.to_seat("OH-H", "Kaptur and Merrin debate trade policy in Toledo"), "OH-9")
+        self.assertEqual(newsday.to_seat("OH-H", "On the ground in Ohio's 9th District"), "OH-9")
+        self.assertEqual(newsday.to_seat("OH-H", "Trump rallies for Republican candidates in Ohio"), "OH-H")
+        self.assertEqual(newsday.to_seat("OH-S", "Kaptur endorses Brown"), "OH-S")
+
+    def test_a_media_cloud_file_for_a_seat_counts_for_that_seat(self):
+        raw = json.dumps({"stories": [{"title": "High prices are testing voters in a Toledo race for Congress",
+                                       "url": "https://toledoblade.com/a", "media_name": "toledoblade.com",
+                                       "media_url": "toledoblade.com", "indexed_date": "2026-10-12 07:00:00+00:00"}]})
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            (derived / "2026-10-11").mkdir(parents=True)
+            (derived / "2026-10-11" / "races.json").write_text(json.dumps(house_races()), encoding="utf-8")
+            snapshot(snap, "2026-10-12", "0800", {"mediacloud-oh-9": raw})
+            newsday.configure(house_races())
+            off = newsday.read_day(snap, date(2026, 10, 12))
+            with mock.patch.object(newsday, "HOUSE_NEWS", True):
+                on = newsday.read_day(snap, date(2026, 10, 12))
+        self.assertEqual([a["race_id"] for a in on], ["OH-9"])
+        self.assertEqual(off, [])
+
+    def test_a_house_seat_takes_at_most_two_of_its_own_stories_a_day(self):
+        tiers = {"OH-9": "simulate", "OH-S": "simulate"}
+        self.assertEqual(newsday.caps("OH-9", tiers), (5, 3))  # district news off: as before 13 Oct
+        with mock.patch.object(newsday, "HOUSE_NEWS", True):
+            self.assertEqual(newsday.caps("OH-9", tiers), (2, 3))
+            self.assertEqual(newsday.caps("OH-S", tiers), (5, 3))
+            with mock.patch.object(newsday, "MODE", "economy"):
+                self.assertEqual(newsday.caps("OH-9", tiers), (1, 2))
+
+    def test_an_effect_claim_next_to_a_house_candidate_is_rejected(self):
+        newsday.configure(house_races())
+        self.assertFalse(newsday.card_ok("The ruling helps Kaptur.", []))
 
 
 if __name__ == "__main__":

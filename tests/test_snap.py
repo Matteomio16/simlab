@@ -48,6 +48,16 @@ class MediaCloud(unittest.TestCase):
         self.assertEqual(asked, list(QUERIES.values()))
         self.assertEqual(sleeps, [31, 31])
 
+    def test_a_file_with_its_own_collection_is_asked_there(self):
+        run, cs = FakeRun(), []
+
+        def get(url, params=None, headers=None, timeout=None):
+            cs.append(params["cs"])
+            return reply(200)
+        with mock.patch.object(snap.requests, "get", get), mock.patch.object(snap.time, "sleep", lambda s: None):
+            snap.mediacloud(run, "key", QUERIES, budget_s=600, collections={"mediacloud-ga": snap.MC_STATE_LOCAL["GA"]})
+        self.assertEqual(cs, [snap.MC_US_NATIONAL, snap.MC_STATE_LOCAL["GA"], snap.MC_US_NATIONAL])
+
     def test_a_rate_limit_waits_a_minute_then_skips_the_rest(self):
         run, sleeps = FakeRun(), []
         with mock.patch.object(snap.requests, "get", lambda *a, **k: reply(429)), \

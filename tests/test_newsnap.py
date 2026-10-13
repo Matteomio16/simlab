@@ -144,6 +144,17 @@ class MediaCloud(unittest.TestCase):
         self.assertEqual(qs["oh-h"],
                          '("Marcy Kaptur" OR "Derek Merrin") AND (Congress OR House OR election OR campaign)')
 
+    def test_each_simulated_seat_is_asked_in_its_states_local_outlets(self):
+        # 13 Oct: the national collection brought 72 House articles for 40 seats, one naming a seat
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "races.json"
+            p.write_text(json.dumps(House.RACES), encoding="utf-8")
+            qs = newsnap.queries(p, "mediacloud")
+        self.assertEqual(qs["oh-9"], qs["oh-h"])
+        self.assertEqual(newsnap.seat_collections(["oh-9", "oh-h", "ohio", "national"]),
+                         {"mediacloud-oh-9": newsnap.snap.MC_STATE_LOCAL["OH"]})
+        self.assertEqual(len(newsnap.snap.MC_STATE_LOCAL), 50)
+
     def test_with_a_key_media_cloud_runs_beside_gdelt_the_pilot_first(self):
         class PilotWeek(datetime):
             @classmethod
@@ -151,7 +162,7 @@ class MediaCloud(unittest.TestCase):
                 return datetime(2026, 10, 6, 12, 0, tzinfo=timezone.utc)
         calls = {}
 
-        def mc(run, key, queries, budget_s):
+        def mc(run, key, queries, budget_s, collections=None):
             calls["mc"] = (key, list(queries)[:6], budget_s)
         with tempfile.TemporaryDirectory() as tmp, \
                 mock.patch.object(newsnap, "datetime", PilotWeek), \

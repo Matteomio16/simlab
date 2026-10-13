@@ -12,6 +12,7 @@ import gzip
 import hashlib
 import json
 import math
+import os
 import re
 import threading
 import xml.etree.ElementTree as ET
@@ -39,13 +40,16 @@ WATCH_MIN_A = 0.5  # a watch race reacts only to its biggest stories (engine-des
 def configure(races: dict | None = None) -> None:
     """The race tables: the Senate races and the nation (newsraces.json), plus the simulated House seats and their
     state groups in a races.json (GROUPS: group -> seats; a group's stories are gated for each of its seats)."""
-    global CONFIG, SNAP_RACES, RACE_TEXT, SURNAMES, GROUPS
+    global CONFIG, SNAP_RACES, RACE_TEXT, SURNAMES, GROUPS, CANDIDATE
     CONFIG = {**newsraces.load(), **newsraces.house(races or {})}
     SNAP_RACES = {**{rid.lower(): rid for rid in CONFIG}, **LEGACY}
     RACE_TEXT = {rid: c["text"] for rid, c in CONFIG.items()}
     SURNAMES = {rid: {n.split()[-1] for n in re.findall(r'"([^"]+)"', c["query"])} for rid, c in CONFIG.items()
                 if rid != "US"}
     GROUPS = {rid: c["seats"] for rid, c in CONFIG.items() if c.get("seats")}
+    # An effect word next to a candidate's name is also a claim (29 Sep: "The ruling helps Husted"); the simulated
+    # House seats' candidates too (13 Oct).
+    CANDIDATE = re.compile(r"\b(" + "|".join(sorted({n for names in SURNAMES.values() for n in names})) + r")\b")
 
 
 configure()
@@ -84,9 +88,20 @@ ECONOMY_CAPS = {"simulate": (3, 2), "watch": (0, 0), "statistics": (0, 0)}  # pa
 MODE = "full"  # set by run(): full, economy or polls
 
 
+# District news (13 Oct), switched on by SIMLAB_HOUSE_NEWS=1 in daily.yml: each simulated House seat's own Media Cloud
+# stories and the group headlines that name it, at most 2 a seat a day (1 in economy), so at most about +$0.35 and +55
+# minutes a run. Off, the day runs as before: seat files are ignored and group stories are gated for every seat.
+HOUSE_NEWS = os.environ.get("SIMLAB_HOUSE_NEWS") == "1"
+HOUSE_CAPS = {"full": 2, "economy": 1}
+
+
 def caps(race_id: str, tiers: dict | None) -> tuple[int, int]:
     table = ECONOMY_CAPS if MODE == "economy" else CAPS
-    return (0, 3) if race_id == "US" else table[(tiers or {}).get(race_id, "simulate")]
+    if race_id == "US":
+        return 0, 3
+    race, national = table[(tiers or {}).get(race_id, "simulate")]
+    house = HOUSE_NEWS and newsraces.is_house(race_id)
+    return (min(race, HOUSE_CAPS.get(MODE, 0)), national) if house else (race, national)
 
 
 def _iso(dt: datetime) -> str:
@@ -177,6 +192,18 @@ def runs_before(snap_root: Path, day: date, back: int = 2) -> list[tuple[datetim
     return sorted(r for r in out if r[0] < window(day)[1])
 
 
+def to_seat(race_id: str, title: str) -> str:
+    """A state House group's headline that names exactly one of its seats, by a candidate's surname or the district
+    ("9th District", "District 9", "OH-9"), belongs to that seat; any other stays with the group, gated for each seat
+    (13 Oct)."""
+    def names(s):
+        d, st = CONFIG[s]["district"], CONFIG[s]["state"]
+        return (any(re.search(rf"\b{re.escape(n)}\b", title) for n in SURNAMES.get(s, ())) or bool(d and re.search(
+            rf"\b({d}(st|nd|rd|th)[- ](congressional )?district|district {d}|{st}-0?{d})\b", title, re.I)))
+    hits = [s for s in GROUPS.get(race_id, []) if names(s)]
+    return hits[0] if len(hits) == 1 else race_id
+
+
 def read_day(snap_root: Path, day: date) -> list[dict]:
     """The day's news: every article first returned by a snapshot run that started in the day's window (09:30 UTC the
     day before to 09:30 UTC), once per race (earliest sighting kept), titles cleaned. Each run is read by one day's job
@@ -190,12 +217,14 @@ def read_day(snap_root: Path, day: date) -> list[dict]:
                 continue
             if kind == "rss" and slug in RSS_FEEDS:
                 arts = parse_rss(gzip.decompress((manifest.parent / f["file"]).read_bytes()), slug)
-            elif kind in PARSERS and slug in SNAP_RACES:
+            elif kind in PARSERS and slug in SNAP_RACES and (HOUSE_NEWS or not newsraces.is_house(SNAP_RACES[slug])):
                 arts = PARSERS[kind](gzip.decompress((manifest.parent / f["file"]).read_bytes()), SNAP_RACES[slug])
             else:
                 continue
             for a in arts:
                 a["title"] = _clean(a["title"])
+                if HOUSE_NEWS:
+                    a["race_id"] = to_seat(a["race_id"], a["title"])
                 key = (a["race_id"], a["url"] or f"{a['title'].lower()}|{a['domain']}")
                 first.setdefault(key, when)
                 if len(a["title"].split()) >= 4 and (key not in best or a["seen"] < best[key]["seen"]):
@@ -424,8 +453,6 @@ EFFECT = re.compile(r"\b(help(s|ed|ing)?|hurt(s|ing)?|boost(s|ed|ing)?|drag(s|ge
                     r"energiz(e|es|ed|ing)|galvaniz(e|es|ed|ing)|fire(s|d)? up)\b", re.I)
 ELECTORAL = re.compile(r"\b(republicans?|democrats?|gop|part(y|ies)|midterms?|elections?|chances|voters?|races?|"
                        r"electoral|campaigns?)\b", re.I)
-# An effect word next to a candidate's name is also a claim (29 Sep: "The ruling helps Husted").
-CANDIDATE = re.compile(r"\b(" + "|".join(sorted({n for names in SURNAMES.values() for n in names})) + r")\b")
 
 
 def card_problems(card: str, outlet_names: list[str]) -> list[str]:
