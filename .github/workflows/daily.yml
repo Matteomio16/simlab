@@ -66,6 +66,8 @@ jobs:
             /README.md
             /derived/
             /house/
+            /start/
+            /scoring/
           sparse-checkout-cone-mode: false
       - name: Due?
         id: due
@@ -126,7 +128,7 @@ jobs:
             git add --sparse rehearsal
             msg="Full-scale rehearsal ${DAY}"
           else
-            git add --sparse derived
+            git add --sparse derived scoring
             msg="Daily run ${DAY}"
           fi
           git commit --quiet -m "$msg" || exit 0

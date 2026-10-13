@@ -52,6 +52,30 @@ class Seats(unittest.TestCase):
         self.assertEqual((unknown.inc, unknown.fixed, unknown.checked), (-1, None, False))
 
 
+class Challenger(unittest.TestCase):
+    """The Republican's challenger: the Democrat, else an independent; in Alaska the independent Bill Hill though a
+    Democrat runs too (Matteo, 12 Oct)."""
+    @staticmethod
+    def frame(rid, noms, state):
+        inp = {"races": {rid: {"state": state, "district": 0, "new_map": False, "pres24": -13.7, "votes24": 338177,
+                               "incumbent": "Nick Begich", "incumbent_party": "R"}}}
+        return house.seats(inp, {rid: {"nominees": noms, "before": "", "ratings": []}})
+
+    def test_alaska_pairs_begich_with_hill(self):
+        noms = {"R": ["Nick Begich III"], "O": ["Bill Hill"], "D": ["Eric Hafner"]}
+        race = house.pair(self.frame("AK-AL", noms, "AK"), "AK-AL")
+        self.assertEqual((race.right, race.left, race.left_party), ("Nick Begich III", "Bill Hill", "O"))
+        self.assertEqual(house.challenger("AK-AL", noms), "O")
+
+    def test_elsewhere_the_democrat_comes_first(self):
+        noms = {"R": ["A Rep"], "O": ["An Ind"], "D": ["A Dem"]}
+        race = house.pair(self.frame("NE-2", noms, "NE"), "NE-2")
+        self.assertEqual((race.left, race.left_party), ("A Dem", "D"))
+        self.assertEqual(house.challenger("NE-2", noms), "D")
+        self.assertEqual(house.challenger("NE-2", {"R": ["A Rep"], "O": ["An Ind"]}), "O")
+        self.assertEqual(house.challenger("AK-AL", {"R": ["A Rep"], "D": ["A Dem"]}), "D")
+
+
 class Anchor(unittest.TestCase):
     def test_adds_up_to_national(self):
         s = pd.DataFrame({"pres24": [-20.0, 0.0, 15.0, 40.0], "inc": [-1, 0, 1, 1], "new_map": [False, True, False, False],

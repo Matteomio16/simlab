@@ -240,9 +240,95 @@ class TrendTest(unittest.TestCase):
     def test_the_rules_are_written_with_the_result(self):
         out = self.check({}, {}, {})
         self.assertEqual(out["rules"], {"min_new_polls": 3, "flag_over": 4.0, "analyse_over": 6.0,
+                                        "far_over": 15.0, "far_min_polls": 3,
                                         "rollback": "none: only what the analysis finds wrong is fixed, as a logged "
                                                     "change with both versions scored"})
         self.assertEqual((out["since"], out["since_snapshot"]), ("2026-10-12", "2026-10-12 09:07"))
+
+
+class FarFromPollsTest(unittest.TestCase):
+    """The level check (Matteo, 12 Oct): a 3 Nov margin more than 15 points from the poll average, 3+ polls."""
+    def test_races_far_from_their_poll_average(self):
+        races = {"NC": race(1.0, 17.0), "TX": race(0.0, 20.0), "OH-S": race(0.0, -15.0),
+                 "AK-AL": race(-35.56, -73.58) | {"office": "house"}, "IA": race(0.0, None)}
+        out = weekly.far_from_polls(races, {"NC": 3, "TX": 2, "OH-S": 9, "AK-AL": 6, "IA": 5})
+        self.assertEqual(sorted(out), ["AK-AL", "NC"])  # TX: 2 polls; OH-S: 15, not over; IA: no average
+        self.assertEqual(out["NC"], {"office": "senate", "forecast": 1.0, "poll_avg": 17.0, "gap": 16.0, "polls": 3})
+        self.assertEqual((out["AK-AL"]["office"], out["AK-AL"]["gap"]), ("house", 38.02))
+
+
+class HouseViewTest(unittest.TestCase):
+    def test_house_seats_in_the_forecasts_race_shape(self):
+        f = {"house": {"races": {"AK-AL": {"p_dem_win": 0.02, "margin": {"p10": -18.7, "p50": -11.89, "p90": -5.0}},
+                                 "NY-21": {"p_dem_win": 0.1, "margin": {"p50": -9.3}}}}}
+        lv = {"races": {"AK-AL": {"margin": -12.4441, "poll_margin": -12.6238}}}
+        v = weekly.house_view(f, lv)
+        self.assertEqual(v, {"AK-AL": {"office": "house", "margin": {"p10": -18.7, "p50": -11.89, "p90": -5.0},
+                                       "stats_only": {"margin": {"p50": -12.44}}, "benchmarks": {"poll_avg": -12.62}}})
+        lv["races"]["AK-AL"]["poll_margin"] = None
+        self.assertIsNone(weekly.house_view(f, lv)["AK-AL"]["benchmarks"]["poll_avg"])
+        self.assertEqual((weekly.house_view({"house": None}, lv), weekly.house_view(f, None)), ({}, {}))
+
+def row(p50: float, poll: float | None = None, market: float | None = None, spread: float = 12.8155) -> dict:
+    """A forecast.json race row; the default spread makes the market's implied margin 5 times its normal quantile."""
+    return {"margin": {"p10": p50 - spread / 2, "p50": p50, "p90": p50 + spread / 2},
+            "benchmarks": {"poll_avg": poll, "market": market}}
+
+
+class CheckTest(unittest.TestCase):
+    """The Sunday weekly check (Matteo, 13 Oct, docs/simulation-only.md)."""
+
+    def test_gap_in_any_direction_with_flag_severe_and_cancel(self):
+        before = {r: row(0.0, 0.0) for r in ("NC", "TX", "OH-S", "IA", "ME")}
+        now = {"NC": row(-2.0, 2.0), "TX": row(5.5, 0.5), "OH-S": row(0.5, 5.0), "IA": row(1.0, 4.0),
+               "ME": row(0.0, 7.0)}
+        out = weekly.check(now, before, {r: 3 for r in now}, {})
+        r = {x["race"]: x for x in out["races"]}
+        self.assertEqual((r["NC"]["gap"], r["NC"]["flag"]), (4.0, "flag"))  # opposite moves
+        self.assertEqual((r["TX"]["gap"], r["TX"]["flag"]), (5.0, "flag"))  # over-move: 5 is not above 5
+        self.assertEqual((r["OH-S"]["gap"], r["OH-S"]["flag"]), (4.5, "flag"))  # under-move
+        self.assertEqual((r["IA"]["gap"], r["IA"]["flag"]), (3.0, ""))  # 3 is not above 3
+        self.assertEqual((r["ME"]["gap"], r["ME"]["flag"]), (7.0, "cancel"))
+        now["TX"] = row(5.6, 0.5)
+        self.assertEqual(weekly.check(now, before, {r: 3 for r in now}, {})["severe"], ["TX"])
+        self.assertEqual([x["race"] for x in out["races"]][:2], ["ME", "TX"])  # largest gap first
+        self.assertEqual((out["flagged"], out["cancel"]), (["TX", "OH-S", "NC"], ["ME"]))
+
+    def test_one_or_two_new_polls_can_only_flag(self):
+        out = weekly.check({"ME": row(0.0, 9.0)}, {"ME": row(0.0, 0.0)}, {"ME": 2}, {})
+        self.assertEqual((out["races"][0]["gap"], out["races"][0]["flag"]), (9.0, "flag"))
+
+    def test_no_new_polls_compares_with_the_markets_and_only_flags(self):
+        out = weekly.check({"NC": row(0.0, 1.0, 0.9)}, {"NC": row(0.0, 1.0, 0.5)}, {}, {})
+        x = out["races"][0]
+        self.assertEqual((x["basis"], x["polls"], x["n_polls"], x["flag"]), ("markets", 0.0, 0, "flag"))
+        self.assertAlmostEqual(x["markets"], 6.41, places=2)  # 5 x the normal quantile of 0.9
+        self.assertAlmostEqual(weekly.implied(0.5, row(3.0)), 0.0)
+
+    def test_no_polls_and_no_market_is_not_checked(self):
+        out = weekly.check({"PA-7": row(1.0)}, {"PA-7": row(0.0)}, {}, {})
+        self.assertEqual((out["races"][0]["basis"], out["races"][0]["gap"], out["no_check"]), (None, None, ["PA-7"]))
+
+    def test_rows_carry_the_stories_and_a_cancelled_week(self):
+        stories = {"NC": [{"event_id": "e1"}], "US": [{"event_id": "n1"}]}
+        before, now = {r: row(0.0, 0.0) for r in ("NC", "TX", "IA")}, {"NC": row(-2.0, 2.0), "TX": row(4.0, 0.0),
+                                                                        "IA": row(0.0, 0.0)}
+        out = weekly.check(now, before, {r: 3 for r in now}, stories, cancelled={"TX"})
+        r = {x["race"]: x for x in out["races"]}
+        self.assertEqual((r["NC"]["stories"], r["TX"]["stories"], r["IA"]["stories"]),
+                         ([{"event_id": "e1"}], [{"event_id": "n1"}], []))  # the nation's only when flagged
+        self.assertEqual((r["TX"]["flag"], out["cancelled"], r["TX"]["what_we_did"]), ("cancelled", ["TX"], ""))
+        self.assertEqual(weekly.check_summary(out | {"far_from_polls": {"AK": {}}}),
+                         {"flagged": ["NC"], "severe": [], "cancel": [], "cancelled": ["TX"], "far_from_polls": ["AK"]})
+
+    def test_week_stories_are_the_weeks_largest(self):
+        ev = lambda first, eff: {"first_seen": first, "election_day": eff, "card": "c"}
+        m = {"NC": {"events": {"a": ev("2026-10-10", 3.0), "b": ev("2026-10-13", -0.2), "c": ev("2026-10-15", 0.5)}},
+             "shadow": {"NC": {"events": {"z": ev("2026-10-15", 9.0)}}}, "date": "2026-10-18"}
+        out = weekly.week_stories(m, "2026-10-11")
+        self.assertEqual([x["event_id"] for x in out["NC"]], ["c", "b"])
+        self.assertEqual(out["NC"][0], {"event_id": "c", "card": "c", "first_seen": "2026-10-15", "delta": 0.5})
+
 
 
 if __name__ == "__main__":

@@ -185,8 +185,9 @@ Tests: `python -m unittest tests.test_kit`.
   disabled; its SKILL.md in `~/.claude/scheduled-tasks/notapoll-evening-approval/` keeps the step-by-step procedure).
   Each day the thread shows the site update (numbers and story summaries) and the daily forecast post once the run
   lands, and the next day's Reading the polls. On Mondays from 19 Oct it also shows the weekly trend check (`trend` in
-  `derived/<day>/filter_weekly.json`; the `flagged` and `analyse` lists are also in run.json's statistics line): each
-  flagged race with our week's move, the poll average's, and its 3 Nov movers. The site: `SITE_PUBLISH` stays on for now (Matteo, 11 Oct night), so
+  `derived/<day>/filter_weekly.json`, House seats under `house`; the `flagged`, `analyse` and `far_from_polls` lists
+  are also in run.json's statistics line): each flagged race or seat with our week's move, the poll average's, and its
+  3 Nov movers, and any race whose forecast sits more than 15 points from its poll average. The site: `SITE_PUBLISH` stays on for now (Matteo, 11 Oct night), so
   the daily job publishes it after the run and the thread reviews it the same day; a held day is fixed or rolled back
   with Matteo. If he turns `SITE_PUBLISH` off, the thread publishes after his yes with
   `node site/scripts/publish-day.mjs --from ../simlab-data/derived/<day>`, committing only `site/data/live` and

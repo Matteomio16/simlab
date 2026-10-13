@@ -40,6 +40,9 @@ STEPS = [
      + (["--kev", o["kev"]] if o["kev"] else []) + _rid(o), ["news"]),
     ("statistics", "simlab.statsday", lambda d, data, o: ["--date", d, "--data", str(data)] + _rid(o), ["reactions"]),
     ("post kit", "simlab.publish.kit", lambda d, data, o: ["--date", d, "--data", str(data)], ["statistics"]),
+    # the old rule beside the published one, for scoring (Matteo, 13 Oct); it never fails the job
+    ("poll filter", "simlab.pollfilter", lambda d, data, o: ["--date", d, "--data", str(data)] + _rid(o),
+     ["statistics"]),
 ]
 
 

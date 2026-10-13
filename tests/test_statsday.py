@@ -160,28 +160,70 @@ class WeeklyTest(unittest.TestCase):
     def nc(p50, poll):
         return {"margin": {"p50": p50}, "stats_only": {"margin": {"p50": p50}}, "benchmarks": {"poll_avg": poll}}
 
+    @staticmethod
+    def day(d: str, forecast: dict, senate: list[str] | None = None, seen=None, house_levels=None,
+            house_polls: dict | None = None) -> Path:
+        """derived/<d> with forecast.json, polls.csv (NC polls by `senate` pollsters, first seen `seen`) and, given
+        them, house_levels.json and house_polls.csv ({seat: [pollsters]})."""
+        out = Path(d)
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "forecast.json").write_text(json.dumps(forecast))
+        senate = senate or []
+        pd.DataFrame({"race_id": ["NC"] * len(senate), "pollster": senate,
+                      "first_seen": seen or ["2026-10-01 09:07"] * len(senate)}).to_csv(out / "polls.csv", index=False)
+        if house_levels is not None:
+            (out / "house_levels.json").write_text(json.dumps({"races": house_levels}))
+        if house_polls is not None:
+            rows = [{"race_id": r, "pollster": p, "start": "2026-10-01", "end": "2026-10-03", "population": "lv"}
+                    for r, ps in house_polls.items() for p in ps]
+            pd.DataFrame(rows, columns=statsday.FIRST_SEEN_KEY).to_csv(out / "house_polls.csv", index=False)
+        return out
+
     def test_trend_check_against_the_forecast_a_week_earlier(self):
         with tempfile.TemporaryDirectory() as d:
-            prev = Path(d) / "derived" / "2026-10-12" / "forecast.json"
-            prev.parent.mkdir(parents=True)
-            prev.write_text(json.dumps({"date": "2026-10-12", "snapshot": "2026-10-12 09:07",
-                                        "races": {"NC": self.nc(5.0, 6.0)}}))
-            csv = Path(d) / "polls.csv"
-            pd.DataFrame({"race_id": ["NC"] * 4, "pollster": list("ABCD"),
-                          "first_seen": ["2026-10-12 09:07"] + ["2026-10-16 09:07"] * 3}).to_csv(csv, index=False)
-            out = statsday.week_trend(Path(d), date(2026, 10, 19), {"races": {"NC": self.nc(1.0, 9.0)}}, csv)
-            self.assertEqual((out["since"], out["new_polls"], out["analyse"]), ("2026-10-12", {"NC": 3}, ["NC"]))
-            self.assertIn("no forecast", statsday.week_trend(Path(d), date(2026, 10, 20), {"races": {}}, csv)["note"])
+            der = Path(d) / "derived"
+            self.day(der / "2026-10-12", {"date": "2026-10-12", "snapshot": "2026-10-12 09:07",
+                                          "races": {"NC": self.nc(5.0, 6.0)}, "house": None})
+            now = {"races": {"NC": self.nc(1.0, 9.0)}, "house": None}
+            out = self.day(der / "2026-10-19", now, list("ABCD"), ["2026-10-12 09:07"] + ["2026-10-16 09:07"] * 3)
+            res = statsday.week_trend(Path(d), date(2026, 10, 19), now, out)
+            self.assertEqual((res["since"], res["new_polls"], res["analyse"]), ("2026-10-12", {"NC": 3}, ["NC"]))
+            self.assertEqual((res["far_from_polls"], res["house"]), ({}, {"note": "no House forecast to compare"}))
+            later = self.day(der / "2026-10-20", now, list("ABC"))
+            self.assertIn("no forecast", statsday.week_trend(Path(d), date(2026, 10, 20), now, later)["note"])
+
+    def test_house_trend_from_last_mondays_house_poll_table(self):
+        seat = lambda p50: {"margin": {"p50": p50}}
+        with tempfile.TemporaryDirectory() as d:
+            der = Path(d) / "derived"
+            self.day(der / "2026-10-12", {"date": "2026-10-12", "snapshot": "2026-10-12 09:07", "races": {},
+                                          "house": {"races": {"AK-AL": seat(-11.0)}}},
+                     house_levels={"AK-AL": {"margin": -11.5, "poll_margin": -12.0}}, house_polls={"AK-AL": ["A", "B"]})
+            now = {"races": {}, "house": {"races": {"AK-AL": seat(-16.0), "NY-21": seat(-30.0)}}}
+            out = self.day(der / "2026-10-19", now,
+                           house_levels={"AK-AL": {"margin": -14.0, "poll_margin": -9.0},
+                                         "NY-21": {"margin": -29.0, "poll_margin": -5.0}},
+                           house_polls={"AK-AL": list("ABCDE"), "NY-21": list("XYZ")})
+            res = statsday.week_trend(Path(d), date(2026, 10, 19), now, out)
+            h = res["house"]
+            self.assertEqual((h["new_polls"], h["flagged"], h["analyse"]), ({"AK-AL": 3, "NY-21": 3}, [], ["AK-AL"]))
+            r = h["races"]["AK-AL"]  # ours -5 against the polls' +3
+            self.assertEqual((r["office"], r["gap"], r["stats_only_change"]), ("house", 8.0, -2.5))
+            self.assertEqual((r["news_change"], r["movers"]), (None, []))  # no per-seat news in forecast.json
+            self.assertEqual(h["races"]["NY-21"]["level"], "no poll average a week ago")
+            self.assertEqual(sorted(res["far_from_polls"]), ["NY-21"])  # 25 points from its 3 polls
+            self.assertEqual(statsday.trend_summary(res), {"flagged": [], "analyse": ["AK-AL"],
+                                                           "far_from_polls": ["NY-21"]})
 
     def test_a_broken_trend_check_never_stops_the_forecast(self):
         with tempfile.TemporaryDirectory() as d:
-            prev = Path(d) / "derived" / "2026-10-12" / "forecast.json"
-            prev.parent.mkdir(parents=True)
-            prev.write_text("{}")
-            csv = Path(d) / "polls.csv"
-            pd.DataFrame({"race_id": ["NC"], "pollster": ["A"], "first_seen": ["2026-10-16 09:07"]}).to_csv(csv)
-            out = statsday.week_trend(Path(d), date(2026, 10, 19), {"races": {}}, csv)
-            self.assertTrue(out["error"].startswith("KeyError"))
+            der = Path(d) / "derived"
+            (der / "2026-10-12").mkdir(parents=True)
+            (der / "2026-10-12" / "forecast.json").write_text("{}")
+            out = self.day(der / "2026-10-19", {"races": {}}, ["A"], ["2026-10-16 09:07"])
+            res = statsday.week_trend(Path(d), date(2026, 10, 19), {"races": {}}, out)
+            self.assertTrue(res["error"].startswith("KeyError"))
+            self.assertEqual(statsday.trend_summary(res), {"error": res["error"]})
 
 
 class BenchmarkTest(unittest.TestCase):
@@ -207,6 +249,52 @@ class BenchmarkTest(unittest.TestCase):
                 {"revisions": [{"revid": 1, "slots": {"main": {"content": PREDICTIONS}}}]})
             b = statsday.benchmarks(snap, [NC])
         self.assertEqual((b["NC"]["market"], b["NC"]["cook"]), (None, "Lean D"))
+
+class SimulationOnlyTest(unittest.TestCase):
+    """The simulation-only rule's daily pieces (Matteo, 13 Oct)."""
+
+    def test_dials_frozen_at_12_october_and_the_old_rules_own_updates(self):
+        with tempfile.TemporaryDirectory() as d:
+            for root, day in (("derived", "2026-10-12"), ("derived", "2026-10-19"), ("old", "2026-10-26")):
+                (Path(d) / root / day).mkdir(parents=True)
+                (Path(d) / root / day / "filter_weekly.json").write_text(json.dumps({"date": day}))
+            self.assertEqual(statsday.latest_weekly(Path(d), date(2026, 10, 12))["date"], "2026-10-12")
+            self.assertEqual(statsday.latest_weekly(Path(d), date(2026, 10, 30), ("derived", "old"))["date"],
+                             "2026-10-26")
+
+    def test_candidate_surnames_for_the_weekly_rows(self):
+        names = statsday.candidates(statsday.races_json([NC]), {"AK-AL": {"candidates": {"R": ["Nick Begich"],
+                                                                                         "D": ["Eric Hafner"],
+                                                                                         "O": ["Bill Hill"]},
+                                                                          "left_party": "O"}})
+        self.assertEqual(names, {"NC": {"left": "Cooper", "left_party": "D", "right": "Whatley"},
+                                 "AK-AL": {"left": "Hill", "left_party": "O", "right": "Begich"}})
+
+    def test_sunday_check_against_the_rules_first_week(self):
+        nc = lambda p50, poll: {"margin": {"p10": p50 - 6, "p50": p50, "p90": p50 + 6},
+                                "benchmarks": {"poll_avg": poll, "market": None}}
+        seat = lambda p50: {"margin": {"p10": p50 - 6, "p50": p50, "p90": p50 + 6}}
+        with tempfile.TemporaryDirectory() as d:
+            der = Path(d) / "derived"
+            WeeklyTest.day(der / "2026-10-14", {"date": "2026-10-14", "snapshot": "2026-10-14 09:07",
+                                                "races": {"NC": nc(5.0, 6.0)}, "house": {"races": {"AK-AL": seat(-12)}}},
+                           house_levels={"AK-AL": {"margin": -12.0, "poll_margin": -12.0}},
+                           house_polls={"AK-AL": ["A"]})
+            now = {"races": {"NC": nc(1.0, 9.0)}, "house": {"races": {"AK-AL": seat(-12)}}}
+            out = WeeklyTest.day(der / "2026-10-18", now, list("ABCD"), ["2026-10-14 09:07"] + ["2026-10-16 09:07"] * 3,
+                                 house_levels={"AK-AL": {"margin": -12.0, "poll_margin": -5.0}},
+                                 house_polls={"AK-AL": ["A", "B"]})
+            mv = {"NC": {"events": {"e1": {"first_seen": "2026-10-15", "election_day": -0.4, "card": "x"}}}}
+            names = {"NC": {"left": "Cooper", "left_party": "D", "right": "Whatley"}}
+            res = statsday.weekly_check_files(Path(d), date(2026, 10, 18), now, out, mv, names=names)
+            r = {x["race"]: x for x in res["races"]}
+            self.assertEqual((res["since"], r["NC"]["n_polls"], r["NC"]["gap"], r["NC"]["flag"]),
+                             ("2026-10-14", 3, 7.0, "cancel"))  # ours -4 against the polls' +3, 3 new polls
+            self.assertEqual((r["NC"]["left"], r["NC"]["stories"][0]["event_id"]), ("Cooper", "e1"))
+            self.assertEqual((r["AK-AL"]["n_polls"], r["AK-AL"]["gap"], r["AK-AL"]["flag"]), (1, 7.0, "flag"))
+            first = statsday.weekly_check_files(Path(d), date(2026, 10, 14), now, out, mv)
+            self.assertIn("nothing to compare", first["note"])
+
 
 
 if __name__ == "__main__":
