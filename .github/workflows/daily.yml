@@ -128,7 +128,8 @@ jobs:
             git add --sparse rehearsal
             msg="Full-scale rehearsal ${DAY}"
           else
-            git add --sparse derived scoring
+            git add --sparse derived
+            if [ -d scoring ]; then git add --sparse scoring; fi
             msg="Daily run ${DAY}"
           fi
           git commit --quiet -m "$msg" || exit 0
