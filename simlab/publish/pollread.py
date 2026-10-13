@@ -302,42 +302,43 @@ STORIES = {
     "2026-10-14": {
         "race": "MI", "since": "2026-09-24", "focus": "YouGov", "folder": "14-reading-polls-09",
         "left": "El-Sayed", "right": "Rogers",
-        "headline": "Michigan’s largest recent poll has El-Sayed up just 1. The rest sit around +4.",
-        "dek": "Eleven Senate polls since 24 September: El-Sayed (D) minus Rogers (R).",
+        "headline": "Michigan’s largest recent poll has El-Sayed up just 1. Most others put him 4 to 7 ahead.",
+        "dek": "Nine Senate polls since 24 September, El-Sayed (D) minus Rogers (R). Partisan polls left out.",
         "source": "Polls ending 24 Sep – 10 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 13 Oct.",
         "title2": "Tightening, or noise?",
         "against_head": "Why it may be too close",
-        "against": ["Six of the other ten polls since 24 September put El-Sayed 4 to 7 points ahead.",
-                    "The other close results come from Trafalgar and InsiderAdvantage, which usually lean Republican.",
-                    "It was in the field for almost two weeks, while the race kept moving."],
-        "for": "3,949 voters is a very large sample, and YouGov has, if anything, leaned slightly toward Democrats in "
-               "past cycles.",
+        "against": ["Five of the other eight polls since 24 September put El-Sayed 4 to 7 points ahead.",
+                    "It was in the field for almost two weeks, from 22 September, while the race kept moving.",
+                    "Of the three other close polls, InsiderAdvantage usually leans Republican."],
+        "for": "3,949 voters is a very large sample, YouGov has, if anything, leaned slightly toward Democrats in "
+               "past cycles, and Fox News's poll also has the race at 1.",
         "hypothesis": "Our hypothesis: El-Sayed ahead by about 4. In our simulation he wins 80 in 100.",
         "caption": (
             "Michigan Senate poll: a new YouGov survey of 3,949 likely voters, the largest Michigan poll in weeks, has "
-            "Abdul El-Sayed ahead of Mike Rogers by just 1 point, 49 to 48. Six of the other ten polls since 24 "
+            "Abdul El-Sayed ahead of Mike Rogers by just 1 point, 49 to 48. Five of the other eight polls since 24 "
             "September put El-Sayed 4 to 7 points ahead.\n\n"
-            "Read it carefully. The other close results come from Trafalgar and InsiderAdvantage, pollsters that "
-            "usually lean Republican, and YouGov was in the field for almost two weeks while the race kept moving.\n\n"
-            "But it's hard to dismiss: the sample is very large, and YouGov has, if anything, leaned slightly toward "
-            "Democrats in past cycles.\n\n"
+            "Read it carefully. YouGov was in the field for almost two weeks while the race kept moving, and of the "
+            "three other close polls, InsiderAdvantage usually leans Republican.\n\n"
+            "But it's hard to dismiss: the sample is very large, YouGov has, if anything, leaned slightly toward "
+            "Democrats in past cycles, and Fox News's poll also has the race at 1.\n\n"
             "Our hypothesis: El-Sayed is ahead by about 4. Our simulation agrees he's the favourite: he wins 80 of "
             "every 100 simulated elections, with an expected vote of 52–48. We'll check it against the next three "
             "polls.\n\n"
+            "We leave out polls paid for by a party, a campaign or a partisan group.\n\n"
             "#midterms2026 #Michigan #MichiganSenate #elections"),
-        "short": ("A new Michigan poll, YouGov with 3,949 voters, has El-Sayed up just 1 on Rogers. Six of the other "
-                  "ten since 24 Sep put him 4 to 7 ahead. Our hypothesis: about +4. Our simulation: he wins 80 in 100."),
+        "short": ("A new Michigan poll, YouGov with 3,949 voters, has El-Sayed up just 1 on Rogers. Five of the other "
+                  "eight since 24 Sep put him 4 to 7 ahead. Our hypothesis: about +4. Our simulation: he wins 80 in 100."),
         "more": " We'll check it against the next three polls. Reading the polls.",
-        "x": ("Michigan: YouGov, 3,949 voters, has El-Sayed up just 1. Six of the other ten polls since 24 Sep have "
-              "him 4 to 7 ahead. Our hypothesis: about +4. Our simulation: he wins 80 in 100, expected vote 52–48."),
+        "x": ("Michigan: YouGov, 3,949 voters, has El-Sayed up just 1. Five of the other eight polls since 24 Sep "
+              "have him 4 to 7 ahead. Our hypothesis: about +4. Our simulation: he wins 80 in 100, expected vote 52–48."),
         "threads": ("Michigan's Senate race looks tighter in a new YouGov poll: Abdul El-Sayed up just 1 on Mike "
-                    "Rogers, with nearly 4,000 voters. Most other recent polls have him 4 to 7 ahead, and the other "
-                    "close ones come from pollsters that usually lean Republican. We think he's ahead by about 4. If "
+                    "Rogers, with nearly 4,000 voters. Most other recent polls have him 4 to 7 ahead, though Fox News "
+                    "also has it at 1. We think he's ahead by about 4. If "
                     "you're in Michigan, does it feel this close?"),
         "topic": "2026 Midterms",
         "first_comment": "If you live in Michigan, does this Senate race feel close where you are?",
-        "alt1": ("Dot chart of eleven Michigan Senate polls since 24 September, El-Sayed minus Rogers. Most sit between "
-                 "El-Sayed +1 and +7, with the middle around +4; the new YouGov poll, the largest, has El-Sayed "
+        "alt1": ("Dot chart of nine Michigan Senate polls since 24 September, El-Sayed minus Rogers, leaving out "
+                 "partisan-sponsored polls. They sit between El-Sayed +1 and +7, with the middle around +4; the new YouGov poll, the largest, has El-Sayed "
                  "up 1."),
     },
 }
@@ -346,9 +347,16 @@ STORIES = {
 def load(polls: Path, race: str, since: str, exclude=()) -> pd.DataFrame:
     s = pd.read_csv(polls / "senate.csv", parse_dates=["start", "end"])
     s = s[(s.race_id == race) & (s.end >= since) & ~s.pollster.isin(exclude)]
+    s = s[~partisan(s)]  # Matteo, 13 Oct: polls paid for by a party, campaign or partisan group never go in
     s = once(s).sort_values("end").copy()
     s["gap"] = s.left - s.right
     return s
+
+
+def partisan(s: pd.DataFrame) -> pd.Series:
+    """Internal or partisan-sponsored polls (VoteHub's flags, or the sponsor footnote polls.py reads on Wikipedia)."""
+    flag = s.partisan.fillna("").astype(str).str.strip().ne("")
+    return flag | s.internal.fillna(False).astype(bool)
 
 
 def once(s: pd.DataFrame) -> pd.DataFrame:
@@ -361,7 +369,8 @@ def candidates(polls: Path, days: int = 7) -> pd.DataFrame:
     `past` counts the other polls that far out or further on the same side: feature a poll only when few are
     (Matteo, 12 Oct: one wide poll drags a plain average, so a poll in the middle of the pack can look like an
     outlier)."""
-    s = once(pd.read_csv(polls / "senate.csv", parse_dates=["start", "end"]))
+    s = pd.read_csv(polls / "senate.csv", parse_dates=["start", "end"])
+    s = once(s[~partisan(s)])
     last = s.end.max()
     w = s[s.end >= last - pd.Timedelta(days=21)]
     mid = w[w.population == "lv"].groupby("race_id").margin.agg(["median", "count"])
