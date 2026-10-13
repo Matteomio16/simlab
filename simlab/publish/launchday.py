@@ -72,6 +72,15 @@ def races(f: dict, day: date, kicker: str, source: str, prev: tuple[date, dict] 
     return out
 
 
+def pick(rs: list[dict], n: int = 4) -> list[dict]:
+    """The races a post shows: the closest races, and the biggest mover in the last slot only when it moved 3+ points
+    since the last published day (13 Oct: a 1-point mover in a safe race had pushed out a closer one)."""
+    close = sorted(rs, key=lambda r: abs(r["p"] - 0.5))
+    moved = [r for r in close[n - 1:] if r["prev"] is not None and abs(r["p"] - r["prev"]) >= MOVE]
+    last = max(moved, key=lambda r: abs(r["p"] - r["prev"])) if moved else close[n - 1]
+    return close[:n - 1] + [last]
+
+
 def daily_texts(day: date, sen: dict, psen: dict | None, since: date | None, feat: list[dict]) -> dict:
     """The everyday caption and posts (from 13 Oct): where the Senate stands, what moved since the last published
     day, the races to watch, a question that changes with the weekday; the Monday scoring line on Mondays only."""
@@ -138,7 +147,7 @@ def build(day: date, data: Path, preview: bool = False, theme=LAB) -> tuple[Path
            "40,000 simulated elections per race. Poll average, market and Cook as of this morning.")
     prev = None if day <= LAUNCH else last_published(data, day)
     rs = races(f, day, kicker, src, prev)
-    feat = featured(rs, max(day, date(2026, 10, 12)))
+    feat = pick(rs)
     sen = f["senate"]
     up = {r["usps"]: r["p"] for r in rs}
     ind = {r["usps"] for r in rs if r["left_party"] in ("I", "O")}
