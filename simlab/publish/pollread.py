@@ -29,7 +29,7 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Alaska Survey Research": "Alaska Survey Res.", "Rasmussen Reports": "Rasmussen",
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
-         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
+         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "Z to A Research": "Z to A", "Mitchell Research & Communications": "Mitchell", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
          "Bowling Green State University/YouGov": "BGSU/YouGov", "Suffolk University": "Suffolk"}
 
 STORIES = {
@@ -299,6 +299,47 @@ STORIES = {
                  "at Hamilton +2 and a purple line for our expected result, Marshall +2. The new InsiderAdvantage poll "
                  "has Hamilton up 1."),
     },
+    "2026-10-14": {
+        "race": "MI", "since": "2026-09-24", "focus": "YouGov", "folder": "14-reading-polls-09",
+        "left": "El-Sayed", "right": "Rogers",
+        "headline": "Michigan’s largest recent poll has El-Sayed up just 1. The rest sit around +4.",
+        "dek": "Eleven Senate polls since 24 September: El-Sayed (D) minus Rogers (R).",
+        "source": "Polls ending 24 Sep – 10 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 13 Oct.",
+        "title2": "Tightening, or noise?",
+        "against_head": "Why it may be too close",
+        "against": ["Six of the other ten polls since 24 September put El-Sayed 4 to 7 points ahead.",
+                    "The other close results come from Trafalgar and InsiderAdvantage, which usually lean Republican.",
+                    "It was in the field for almost two weeks, while the race kept moving."],
+        "for": "3,949 voters is a very large sample, and YouGov has, if anything, leaned slightly toward Democrats in "
+               "past cycles.",
+        "hypothesis": "Our hypothesis: El-Sayed ahead by about 4. In our simulation he wins 80 in 100.",
+        "caption": (
+            "Michigan Senate poll: a new YouGov survey of 3,949 likely voters, the largest Michigan poll in weeks, has "
+            "Abdul El-Sayed ahead of Mike Rogers by just 1 point, 49 to 48. Six of the other ten polls since 24 "
+            "September put El-Sayed 4 to 7 points ahead.\n\n"
+            "Read it carefully. The other close results come from Trafalgar and InsiderAdvantage, pollsters that "
+            "usually lean Republican, and YouGov was in the field for almost two weeks while the race kept moving.\n\n"
+            "But it's hard to dismiss: the sample is very large, and YouGov has, if anything, leaned slightly toward "
+            "Democrats in past cycles.\n\n"
+            "Our hypothesis: El-Sayed is ahead by about 4. Our simulation agrees he's the favourite: he wins 80 of "
+            "every 100 simulated elections, with an expected vote of 52–48. We'll check it against the next three "
+            "polls.\n\n"
+            "#midterms2026 #Michigan #MichiganSenate #elections"),
+        "short": ("A new Michigan poll, YouGov with 3,949 voters, has El-Sayed up just 1 on Rogers. Six of the other "
+                  "ten since 24 Sep put him 4 to 7 ahead. Our hypothesis: about +4. Our simulation: he wins 80 in 100."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("Michigan: YouGov, 3,949 voters, has El-Sayed up just 1. Six of the other ten polls since 24 Sep have "
+              "him 4 to 7 ahead. Our hypothesis: about +4. Our simulation: he wins 80 in 100, expected vote 52–48."),
+        "threads": ("Michigan's Senate race looks tighter in a new YouGov poll: Abdul El-Sayed up just 1 on Mike "
+                    "Rogers, with nearly 4,000 voters. Most other recent polls have him 4 to 7 ahead, and the other "
+                    "close ones come from pollsters that usually lean Republican. We think he's ahead by about 4. If "
+                    "you're in Michigan, does it feel this close?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you live in Michigan, does this Senate race feel close where you are?",
+        "alt1": ("Dot chart of eleven Michigan Senate polls since 24 September, El-Sayed minus Rogers. Most sit between "
+                 "El-Sayed +1 and +7, with the middle around +4; the new YouGov poll, the largest, has El-Sayed "
+                 "up 1."),
+    },
 }
 
 
@@ -442,13 +483,13 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
         b.source(st["source"])
     else:
         b.headline(st["title2"], px=88)
-        b.text("Why it may be too high", "sans", 600, 30, theme.ink2, after=0.5)
+        b.text(st.get("against_head", "Why it may be too high"), "sans", 600, 30, theme.ink2, after=0.5)
         for n, line in enumerate(st["against"], 1):
             top = b.y
             b._put(MARGIN, top - 6, str(n), "hero", theme.hero_weight, 64, theme.ai, va="top")
             b.text(line, "serif", 600, 38, x=MARGIN + 76, width=b.width - 76, after=0.7)
         b.y += 10
-        b.text("Why it may be right", "sans", 600, 30, theme.ink2, after=0.5)
+        b.text(st.get("for_head", "Why it may be right"), "sans", 600, 30, theme.ink2, after=0.5)
         b.text(st["for"], "serif", 600, 38, after=0.9)
         b.note(st["hypothesis"], width=760)
         b.source(st["source"])
@@ -475,7 +516,8 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
         alt2 = " ".join([st["title2"], f"{o['vote']}: {o['vote_label']}.", f"{o['chance']}: {o['chance_label']}.",
                          o["range"], f"Why we lean {o['leans']}: {o['why']}", f"Why we might be wrong: {o['wrong']}"])
     else:
-        alt2 = " ".join([st["title2"], "Why it may be too high:", *st["against"], "Why it may be right:", st["for"],
+        alt2 = " ".join([st["title2"], st.get("against_head", "Why it may be too high") + ":", *st["against"],
+                         st.get("for_head", "Why it may be right") + ":", st["for"],
                          st["hypothesis"]])
     (out / "caption.txt").write_text(caption, encoding="utf-8")
     (out / "alt-text.txt").write_text(f"slide-1.jpg: {st['alt1']}\nslide-2.jpg: {alt2}\n", encoding="utf-8")
