@@ -90,7 +90,7 @@ MODE = "full"  # set by run(): full, economy or polls
 
 # District news (13 Oct), switched on by SIMLAB_HOUSE_NEWS=1 in daily.yml: each simulated House seat's own Media Cloud
 # stories and the group headlines that name it, at most 2 a seat a day (1 in economy), so at most about +$0.35 and +55
-# minutes a run. Off, the day runs as before: seat files are ignored and group stories are gated for every seat.
+# minutes a run. Off, the day runs as before: seat files are ignored and no seat takes a story of its own.
 HOUSE_NEWS = os.environ.get("SIMLAB_HOUSE_NEWS") == "1"
 HOUSE_CAPS = {"full": 2, "economy": 1}
 
@@ -100,8 +100,11 @@ def caps(race_id: str, tiers: dict | None) -> tuple[int, int]:
     if race_id == "US":
         return 0, 3
     race, national = table[(tiers or {}).get(race_id, "simulate")]
-    house = HOUSE_NEWS and newsraces.is_house(race_id)
-    return (min(race, HOUSE_CAPS.get(MODE, 0)), national) if house else (race, national)
+    # A House seat takes the nation's stories through the nation (moves.nation_paths), never as its own: with the gate
+    # asked about the House race (13 Oct) they would pass, adding about 60 reactions a day.
+    if newsraces.is_house(race_id):
+        return (min(race, HOUSE_CAPS.get(MODE, 0)) if HOUSE_NEWS else 0), 0
+    return race, national
 
 
 def _iso(dt: datetime) -> str:
@@ -331,6 +334,10 @@ LABEL_QS = {
     "salience": NEWS_QUESTIONS["salience"],
 }
 GATE_Q = {"relevant": NEWS_QUESTIONS["relevant"]}
+# A House seat is asked about its House race (13 Oct: asked about "this Senate race", Jev put every House story, a
+# district's own included, at 0.05-0.17, so no seat was ever selected).
+HOUSE_GATE_Q = {"relevant": {**GATE_Q["relevant"], "instructions": GATE_Q["relevant"]["instructions"].replace(
+    "this Senate race", "this U.S. House race")}}
 LABEL_FIELDS = ("gate", "type", "helps_face", "fires_up", "puts_off", "salience")
 # A national story is gated for every simulated race (about 55 from 12 Oct) and a race takes at most 3 a day, while
 # Media Cloud and GDELT bring 300-400 a day (30 Sep): only the best-covered new ones are labeled. A story left out is
@@ -370,7 +377,8 @@ def label(story: dict, asker, national_races: list[str] = PILOT) -> dict:
     (type, who it helps on its face, whose voters it fires up or puts off, salience)."""
     rid = story["race_id"]
     races = GROUPS.get(rid) or ([rid] if rid != "US" else list(national_races) + ["US"])
-    gate = {r: round(asker.ask_many(story_text(story, r), GATE_Q, "newsday:gate")["relevant"].get("true", 0.0), 3)
+    gate = {r: round(asker.ask_many(story_text(story, r), HOUSE_GATE_Q if newsraces.is_house(r) else GATE_Q,
+                                    "newsday:gate")["relevant"].get("true", 0.0), 3)
             for r in races}
     a = asker.ask_many(story_text(story, story["race_id"]), LABEL_QS, "newsday:labels")
     return {"gate": gate, "type": _top(a["type"]), "helps_face": _top(a["helps_face"]),

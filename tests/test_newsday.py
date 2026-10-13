@@ -676,7 +676,7 @@ class House(unittest.TestCase):
     def test_a_group_story_is_selected_for_its_seats(self):
         story = gdelt(("Ohio House hopefuls debate trade policy in Toledo", "20261012T070000Z", "toledoblade.com"))
         card = '{"card": "Ohio House candidates debated trade policy in Toledo."}'
-        with tempfile.TemporaryDirectory() as tmp:
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(newsday, "HOUSE_NEWS", True):
             snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
             (derived / "2026-10-11").mkdir(parents=True)
             (derived / "2026-10-11" / "races.json").write_text(json.dumps(house_races()), encoding="utf-8")
@@ -730,12 +730,24 @@ class House(unittest.TestCase):
 
     def test_a_house_seat_takes_at_most_two_of_its_own_stories_a_day(self):
         tiers = {"OH-9": "simulate", "OH-S": "simulate"}
-        self.assertEqual(newsday.caps("OH-9", tiers), (5, 3))  # district news off: as before 13 Oct
+        self.assertEqual(newsday.caps("OH-9", tiers), (0, 0))  # district news off: as before 13 Oct
         with mock.patch.object(newsday, "HOUSE_NEWS", True):
-            self.assertEqual(newsday.caps("OH-9", tiers), (2, 3))
+            self.assertEqual(newsday.caps("OH-9", tiers), (2, 0))  # the nation's stories reach it through the nation
             self.assertEqual(newsday.caps("OH-S", tiers), (5, 3))
             with mock.patch.object(newsday, "MODE", "economy"):
-                self.assertEqual(newsday.caps("OH-9", tiers), (1, 2))
+                self.assertEqual(newsday.caps("OH-9", tiers), (1, 0))
+
+    def test_a_house_seat_is_asked_about_its_house_race(self):
+        # 13 Oct: asked about "this Senate race", Jev put every House story at 0.05-0.17
+        class Asker(FakeAsker):
+            def ask_many(self, state, questions, tag=""):
+                self.qs = getattr(self, "qs", []) + [q["instructions"] for q in questions.values() if "instructions" in q]
+                return super().ask_many(state, questions, tag)
+        newsday.configure(house_races())
+        fake = Asker()
+        newsday.label({"race_id": "OH-9", "titles": ["Kaptur holds a town hall"], "outlet_names": []}, fake)
+        self.assertIn("Is this news relevant to how people might vote in this U.S. House race?", fake.qs)
+        self.assertNotIn("Is this news relevant to how people might vote in this Senate race?", fake.qs)
 
     def test_an_effect_claim_next_to_a_house_candidate_is_rejected(self):
         newsday.configure(house_races())
