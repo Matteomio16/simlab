@@ -6,8 +6,13 @@ import Waffle from "@/components/Waffle";
 import Reveal from "@/components/Reveal";
 import CountUp from "@/components/CountUp";
 import RaceCards from "@/components/RaceCards";
-import { HistoryLine, Responsive, SeatHistogram } from "@/components/charts";
+import { Responsive, SeatHistogram } from "@/components/charts";
+import HistoryChart from "@/components/HistoryChart";
 import { SimLabel } from "@/components/Brand";
+import ChamberSwitch from "@/components/ChamberSwitch";
+import Dateline from "@/components/Dateline";
+import Trend from "@/components/Trend";
+import { SHOW } from "@/lib/site";
 import type { Tile } from "@/components/TileMap";
 import { IS_SAMPLE, load, raceTitle, senateRaces } from "@/lib/data";
 import { STATES } from "@/lib/states";
@@ -82,6 +87,137 @@ export default function Overview() {
     leftName: surname(meta.candidates.left), rightName: surname(meta.candidates.right), p50: f.margin.p50,
   }));
 
+  const mapViews = [
+    { key: "sim", label: "Our simulation", short: "Ours", tiles: simTiles, note: "Toss-up: 45 to 55 in 100. Select a state for its race." },
+    { key: "cook", label: "Cook Political Report", short: "Cook", tiles: cookTiles, note: "Cook's published ratings, for comparison." },
+    { key: "market", label: "Prediction markets", short: "Markets", tiles: marketTiles, note: "Kalshi and Polymarket prices, for comparison; never an input." },
+  ];
+
+  if (SHOW.chamberHome)
+    return (
+      <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
+        <div className="pt-3"><ChamberSwitch active="senate" /></div>
+        <section className="rise pt-3">
+          <Dateline left="The state of the Senate" right={`Updated ${longDate(forecast.date)} · ${daysTo(forecast.date)} days to go`} />
+          <div className="mt-3">
+            <MapPanel
+              header={
+                <h1 className="text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">
+                  {headline(s.p_r_50plus, s.p_d_caucus_51)}
+                  <Trend points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} up="Republicans" down="Democrats" />
+                </h1>
+              }
+              mapClass="mx-auto max-w-[720px]"
+              legend={TIER_LEGEND}
+              views={mapViews}
+            />
+          </div>
+        </section>
+
+        <section className="mt-14">
+        <Reveal className="grid gap-10 section-rule pt-6 lg:grid-cols-[1.25fr_1fr]">
+          <div>
+            <div className="grid grid-cols-3 gap-4">
+              <Figure n={nR} label="Republicans hold" color="var(--rep)" />
+              <Figure n={nD} label="Democrats reach 51" color="var(--dem)" />
+              <Figure n={nI} label="Independents decide" color="var(--ind)" />
+            </div>
+            <div className="mt-6">
+              <Waffle r={nR} d={nD} i={nI} />
+            </div>
+            <p className="note mt-2">Each square is one simulated election in a hundred. Democrats include King and Sanders.</p>
+          </div>
+          <div className="border-t border-rule pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
+            <p className="label">Republican seats</p>
+            <div className="mt-3">
+              <Responsive desktop={460} render={(w) => <SeatHistogram dist={s.seats.R.dist} w={w} />} />
+            </div>
+            <dl className="mt-4 text-[0.9rem]">
+              {[
+                ["If the election were today", s.today ? `${in100(s.today.p_r_50plus)} in 100` : "–"],
+                ["Statistics only, no simulation", `${in100(s.stats_only.p_r_50plus)} in 100`],
+                ["Prediction markets", s.benchmarks.market == null ? "–" : `${in100(s.benchmarks.market)}%`],
+                ["If news matters less / more", `${in100(s.news.if_weaker)} / ${in100(s.news.if_stronger)}`],
+              ].map(([k, v]) => (
+                <div key={k} className="flex items-baseline justify-between gap-3 border-b border-rule py-2">
+                  <dt className="text-ink-2">{k}</dt>
+                  <dd className="whitespace-nowrap font-semibold">{v}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="note mt-2">All figures are Republican control; the prediction markets show the Republican price.</p>
+          </div>
+        </Reveal>
+        <div className="mt-6">
+          <SimLabel date={longDate(forecast.date)} sample={IS_SAMPLE} />
+        </div>
+        </section>
+
+      <Reveal as="section" className="mt-14">
+        <div className="flex items-baseline justify-between gap-4">
+          <p className="label">The closest races</p>
+          <a href="#races" className="btn btn-ghost btn-sm">All 35 races</a>
+        </div>
+        <div className="mt-4">
+          <RaceCards rows={[...rows].sort((a, b) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5)).slice(0, 4)} />
+        </div>
+      </Reveal>
+      <Reveal as="section" className="mt-16 section-rule">
+        <p className="label">Simulator</p>
+        <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">What if the country shifts?</h2>
+        <p className="mt-2 max-w-2xl text-ink-2">
+          Polls can miss together, and late news can move every state at once. Drag the national swing to see how the
+          Senate changes across our simulated elections.
+        </p>
+        <div className="mt-8">
+          <Simulator races={simRaces} />
+        </div>
+      </Reveal>
+
+      <Reveal as="section" className="mt-16 section-rule">
+        <p className="label" id="races">Every race</p>
+        <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">Race by race</h2>
+        <div className="mt-6">
+          <RaceTable rows={rows} />
+        </div>
+      </Reveal>
+
+      {moved.length > 0 && (
+        <Reveal as="section" className="mt-16 section-rule">
+          <p className="label">What moved</p>
+          <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">The stories behind today&rsquo;s changes</h2>
+          <p className="mt-3 max-w-2xl rounded-xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
+            Each story&rsquo;s effect on the Nov. 3 margin, after the voter personas&rsquo; reactions and the fade with time.
+            Stories are summarized neutrally, without outlet names.
+          </p>
+          <ul className="mt-6 grid gap-x-10 md:grid-cols-2">
+            {moved.map((m) => (
+              <li key={m.event_id} className="flex gap-4 border-b border-rule py-4">
+                <span className="w-16 shrink-0 text-right font-bold" style={{ color: m.delta > 0 ? (m.left === "I" ? "var(--ind)" : "var(--dem)") : "var(--rep)" }}>
+                  {m.delta > 0 ? m.left : "R"}+{Math.abs(m.delta).toFixed(1)}
+                </span>
+                <span>
+                  <Link href={`/senate/${m.slug}`} prefetch={false} className="text-[0.8rem] font-bold uppercase tracking-[0.05em] hover:underline">{m.title}</Link>
+                  <span className="mt-1 block text-[1.02rem] leading-snug text-ink-2">{m.card}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+      )}
+
+      {history.senate.length > 1 && (
+        <Reveal as="section" className="mt-16 section-rule">
+          <p className="label">Over time</p>
+          <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">Republican chance of keeping the Senate</h2>
+          <div className="mt-6 max-w-[860px]">
+            <Responsive desktop={860} render={(w) => <HistoryChart w={w} label="Chance Republicans hold the Senate" who="Republicans" color="var(--rep)" points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} />} />
+          </div>
+        </Reveal>
+      )}
+      </div>
+    );
+
   return (
     <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
       <section className="rise pt-10 sm:pt-12">
@@ -94,7 +230,7 @@ export default function Overview() {
           {`In ${forecast.draws.toLocaleString("en-US")} simulated elections, Republicans keep 50 or more seats, enough with the Vice President’s tie-break, in ${nR} of every 100. The simulation moves each race from its statistical starting line as voter personas react to the news.`}
         </p>
 
-        <Reveal className="mt-10 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1.25fr_1fr]">
+        <Reveal className="mt-10 grid gap-10 section-rule pt-6 lg:grid-cols-[1.25fr_1fr]">
           <div>
             <div className="grid grid-cols-3 gap-4">
               <Figure n={nR} label="Republicans hold" color="var(--rep)" />
@@ -136,7 +272,7 @@ export default function Overview() {
       <Reveal as="section" className="mt-14">
         <div className="flex items-baseline justify-between gap-4">
           <p className="label">The closest races</p>
-          <a href="#races" className="text-sm font-semibold underline underline-offset-4">All 35 races</a>
+          <a href="#races" className="btn btn-ghost btn-sm">All 35 races</a>
         </div>
         <div className="mt-4">
           <RaceCards rows={[...rows].sort((a, b) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5)).slice(0, 4)} />
@@ -164,14 +300,7 @@ export default function Overview() {
           chance in 100. Select a state for its race. A dot marks a special election.
         </p>
         <div className="mt-6 max-w-[860px]">
-          <MapPanel
-            legend={TIER_LEGEND}
-            views={[
-              { key: "sim", label: "Our simulation", tiles: simTiles, note: "Toss-up: 45 to 55 in 100." },
-              { key: "cook", label: "Cook Political Report", tiles: cookTiles, note: "Cook's published ratings, for comparison." },
-              { key: "market", label: "Prediction markets", tiles: marketTiles, note: "Kalshi and Polymarket prices, for comparison; never an input." },
-            ]}
-          />
+          <MapPanel legend={TIER_LEGEND} views={mapViews} />
         </div>
       </Reveal>
 
@@ -199,7 +328,7 @@ export default function Overview() {
         <Reveal as="section" className="mt-16 section-rule">
           <p className="label">What moved</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">The stories behind today&rsquo;s changes</h2>
-          <p className="mt-3 max-w-2xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
+          <p className="mt-3 max-w-2xl rounded-xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
             Each story&rsquo;s effect on the Nov. 3 margin, after the voter personas&rsquo; reactions and the fade with time.
             Stories are summarized neutrally, without outlet names.
           </p>
@@ -224,7 +353,7 @@ export default function Overview() {
           <p className="label">Over time</p>
           <h2 className="mt-2 text-2xl font-bold tracking-[-0.01em]">Republican chance of keeping the Senate</h2>
           <div className="mt-6 max-w-[860px]">
-            <Responsive desktop={860} render={(w) => <HistoryLine w={w} label="Chance Republicans hold the Senate" points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} />} />
+            <Responsive desktop={860} render={(w) => <HistoryChart w={w} label="Chance Republicans hold the Senate" who="Republicans" color="var(--rep)" points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} />} />
           </div>
         </Reveal>
       )}

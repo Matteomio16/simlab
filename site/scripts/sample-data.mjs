@@ -112,7 +112,7 @@ for (const id of ids) {
   for (let d = HISTORY_DAYS - 1; d >= 0; d--) {
     const day = new Date(Date.parse(DATE) - d * 86400000).toISOString().slice(0, 10);
     m = d === 0 ? c : m + (c - m) / (d + 1) + normal() * 0.5;
-    walk.push({ date: day, p_dem_win: r4(phi(m / SD)), p50: r2(m) });
+    walk.push({ date: day, p_dem_win: r4(phi(m / SD)), p50: r2(m), today: r4(phi((m + today - c) / (SD * 0.85))) });
   }
   history.races[id] = walk;
 }

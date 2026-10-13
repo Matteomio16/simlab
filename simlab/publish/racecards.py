@@ -363,6 +363,17 @@ def hero_block(s: Slide, r: dict, x: float, top: float, w: float, style: str = "
         raise ValueError(style)
 
 
+def expected_vote(r: dict) -> str:
+    """The expected two-party vote from the median margin, leader first: "R 51–49" (Matteo, 13 Oct: the vote is
+    always a split, the chance always "in 100", so the two never read alike)."""
+    m = float(r["mid"])
+    lead = round(50 + abs(m) / 2)
+    if lead == 50:
+        return "50–50"
+    side = {"D": "D", "I": "I", "O": "O"}[r.get("left_party", "D")] if m > 0 else "R"
+    return f"{side} {lead}–{100 - lead}"
+
+
 def stamped(t: Theme, r: dict = RACE, hero: str = "split") -> Slide:  # split chosen by Matteo, 8 Oct
     """The Stamp: the state as a masthead, its simulated voters, the verdict stamped beside the number, a ledger."""
     s = slide(t, r)
@@ -383,7 +394,7 @@ def stamped(t: Theme, r: dict = RACE, hero: str = "split") -> Slide:  # split ch
     sw = s.pil("hero", t.hero_weight, spx).getlength(label) + spx * 0.64
     stamp(s, rx + sw / 2 + 6, top + 290, label, px=spx, rot=-5, color=None if t.overprint else verdict_color(t, r["p"]))
     s.y = max(top + 350, s.tag_bottom + 20)
-    rows = [("Range of margins (80%)", span(r)),
+    rows = [("Expected vote", expected_vote(r)),  # in place of the 80% range row (Matteo, 13 Oct)
             ("Poll average", r["poll"]), (f"Market, {abbr(r)}", pct_txt(r["market"])), ("Cook", r["cook"]),
             ("This week", r["change"].replace(" this week", ""))]
     if r.get("today") is not None:  # the election held today: no time left for opinion to drift

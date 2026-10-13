@@ -74,7 +74,7 @@ export default function TrackRecord() {
             <div className="mt-4 overflow-x-auto">
               <table className="w-full min-w-[640px] border-collapse text-[0.92rem]">
                 <thead>
-                  <tr className="border-y-2 border-rule-strong text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
+                  <tr className="border-y border-rule text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
                     <th className="py-2 pr-3">Week to</th>
                     <th className="py-2 pr-3">Forecast</th>
                     <th className="py-2 pr-3">Scored against</th>

@@ -2,7 +2,8 @@ name: Site
 
 # Builds and deploys NotAPoll.org (site/). Production deploys only when the repository variable SITE_DEPLOY is "on"
 # (Matteo's switch). SITE_MODE (prelaunch | forecast) and SITE_DATA (sample | live) are repository variables too;
-# forecast mode in production needs Matteo's go (11 Oct). The preview always builds forecast mode on sample data.
+# forecast mode in production needs Matteo's go (11 Oct). The preview always builds forecast mode on sample data; the
+# launch-page preview was retired on 12 Oct, when the forecast went live.
 
 on:
   push:
@@ -32,25 +33,8 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci
 
-      - name: Build preview (forecast mode, sample data)
-        env:
-          SITE_MODE: forecast
-          SITE_DATA: sample
-          SITE_PREVIEW: "1"
-        run: npm run build && node scripts/check-copy.mjs
-      - name: Deploy preview
-        if: env.CLOUDFLARE_API_TOKEN != ''
-        run: npx --yes wrangler@4 deploy -c wrangler.preview.jsonc
-
-      - name: Build launch-page preview (prelaunch mode)
-        env:
-          SITE_MODE: prelaunch
-          SITE_PREVIEW: "1"
-        run: rm -rf out .next && npm run build && node scripts/check-copy.mjs
-      - name: Deploy launch-page preview
-        if: env.CLOUDFLARE_API_TOKEN != ''
-        run: npx --yes wrangler@4 deploy -c wrangler.launch.jsonc
-
+      # Production first, so nothing the previews do can hold back notapoll.org (12 Oct: a Cloudflare 504 on the preview
+      # deploy stopped the job before production). Each deploy is retried, since Cloudflare's API times out now and then.
       - name: Build production
         if: vars.SITE_DEPLOY == 'on'
         env:
@@ -58,7 +42,7 @@ jobs:
           SITE_DATA: ${{ vars.SITE_DATA || 'sample' }}
         run: |
           if [ "$SITE_MODE" = forecast ] && [ "$SITE_DATA" != live ]; then echo "forecast mode in production needs SITE_DATA=live"; exit 1; fi
-          # Until the daily job's first publish lands (12 Oct, about 10:05-10:45 UTC), keep serving the prelaunch site.
+          # Until the daily job's first publish lands, keep serving the prelaunch site.
           if [ "$SITE_MODE" = forecast ] && [ ! -f data/live/forecast.json ]; then
             echo "::warning::no site/data/live/forecast.json yet; building prelaunch"
             export SITE_MODE=prelaunch SITE_DATA=sample
@@ -66,4 +50,32 @@ jobs:
           rm -rf out .next && npm run build && node scripts/check-copy.mjs
       - name: Deploy production
         if: vars.SITE_DEPLOY == 'on' && env.CLOUDFLARE_API_TOKEN != ''
-        run: npx --yes wrangler@4 deploy -c wrangler.jsonc
+        run: |
+          for i in 1 2 3 4; do
+            npx --yes wrangler@4 deploy -c wrangler.jsonc && exit 0
+            echo "::warning::production deploy attempt $i failed; retrying"
+            sleep $((i * 30))
+          done
+          exit 1
+
+      # The unlisted preview, with the features waiting for Matteo's yes (src/lib/approved.json). Its failures are reported but never fail the run.
+      # Real data once it exists (12 Oct), so designs are reviewed on today's numbers; sample data before that.
+      - name: Build preview (forecast mode)
+        id: preview_build
+        continue-on-error: true
+        env:
+          SITE_MODE: forecast
+          SITE_PREVIEW: "1"
+        run: |
+          export SITE_DATA=$([ -f data/live/forecast.json ] && echo live || echo sample)
+          rm -rf out .next && npm run build && node scripts/check-copy.mjs
+      - name: Deploy preview
+        if: steps.preview_build.outcome == 'success' && env.CLOUDFLARE_API_TOKEN != ''
+        continue-on-error: true
+        run: |
+          for i in 1 2 3; do
+            npx --yes wrangler@4 deploy -c wrangler.preview.jsonc && exit 0
+            echo "::warning::preview deploy attempt $i failed; retrying"
+            sleep $((i * 30))
+          done
+          exit 1

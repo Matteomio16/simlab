@@ -3,7 +3,8 @@ import Link from "next/link";
 import { SHOW } from "@/lib/site";
 import { notFound } from "next/navigation";
 import { SimLabel } from "@/components/Brand";
-import { DotPlot, HistoryLine, MarginRanges, Responsive } from "@/components/charts";
+import { DotPlot, MarginRanges, Responsive } from "@/components/charts";
+import HistoryChart from "@/components/HistoryChart";
 import { HAS_FORECAST, IS_SAMPLE, load, raceCode, raceTitle, senateRacesSafe } from "@/lib/data";
 import { in100, leader, longDate, margin, partyName, partyVar, surname, tierColor } from "@/lib/format";
 import { STATES } from "@/lib/states";
@@ -50,6 +51,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
   const ratingWords = tier.name === "Toss-up" ? "a toss-up" : tier.name.replace(/ D$/, " Democratic").replace(/ R$/, " Republican").replace(/ I$/, " independent").replace(/^\w+/, (w) => w.toLowerCase());
   const sample = (draws.races[id] ?? []).filter((_, i) => i % 10 === 0);
   const hist = (history.races[id] ?? []).map((h) => ({ date: h.date, p: h.p_dem_win }));
+  const histToday = Object.fromEntries((history.races[id] ?? []).filter((h) => h.today != null).map((h) => [h.date, h.today!]));
   const leftShort = surname(meta.candidates.left);
   const rightShort = surname(meta.candidates.right);
   const b = f.benchmarks;
@@ -99,7 +101,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
         </div>
       </header>
 
-      <section className="rise mt-8 grid gap-10 border-t-[3px] border-rule-strong pt-6 lg:grid-cols-[1fr_1fr]">
+      <section className="rise mt-8 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1fr]">
         <div>
           <SplitChance p={f.p_dem_win} left={L} render={(v) => <CountUp value={v} />} />
           <p className="mt-3 text-[0.9rem] text-ink-2">
@@ -157,9 +159,13 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
           <p className="label">Over time</p>
           <h2 className="mt-2 text-xl font-bold">{`${leftShort}'s chance in 100`}</h2>
           <p className="note mt-1">The shaded band is the toss-up zone, 45 to 55.</p>
-          <div className="mt-4">
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[0.78rem] font-semibold text-ink-2">
+            <span className="flex items-center gap-2"><span className="inline-block h-[2px] w-5" style={{ background: f.p_dem_win >= 0.5 ? partyVar(L) : "var(--rep)" }} />The 3 Nov forecast</span>
+            <span className="flex items-center gap-2"><span className="inline-block w-5 border-t-2 border-dashed opacity-60" style={{ borderColor: f.p_dem_win >= 0.5 ? partyVar(L) : "var(--rep)" }} />If the election were today</span>
+          </div>
+          <div className="mt-3">
             {hist.length > 1 ? (
-              <Responsive desktop={500} render={(w) => <HistoryLine w={w} points={hist} label={`${leftShort}'s chance`} />} />
+              <Responsive desktop={500} render={(w) => <HistoryChart w={w} points={hist} today={histToday} label={`${leftShort}'s chance`} who={leftShort} color={f.p_dem_win >= 0.5 ? partyVar(L) : "var(--rep)"} />} />
             ) : (
               <p className="text-ink-2">The line starts after a few daily runs.</p>
             )}
@@ -186,7 +192,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
             ))}
           </ul>
         )}
-        <p className="mt-5 max-w-3xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
+        <p className="mt-5 max-w-3xl rounded-xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
           <strong className="mr-2 font-bold">What the news is worth.</strong>
           {newsLine}
         </p>

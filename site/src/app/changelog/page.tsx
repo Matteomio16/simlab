@@ -18,7 +18,7 @@ export default function Changelog() {
       <h1 className="rise mt-6 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
         Every change to the method, dated
       </h1>
-      <div className="mt-8 border-t-[3px] border-rule-strong">
+      <div className="mt-8 section-rule">
         <div className="prose-np max-w-[680px] [&>h2:first-child]:mt-4" dangerouslySetInnerHTML={{ __html: toHtml(md) }} />
       </div>
     </div>

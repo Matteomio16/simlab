@@ -36,7 +36,7 @@ export default function Archive() {
             {days.map((d) => (
               <li key={d} className="flex items-baseline justify-between border-b border-rule py-3">
                 <span className="font-semibold">{longDate(d)}</span>
-                <a href={`/data/${d}/forecast.json`} className="link text-sm font-semibold" download>
+                <a href={`/data/${d}/forecast.json`} className="btn btn-ghost btn-sm" download>
                   forecast.json
                 </a>
               </li>

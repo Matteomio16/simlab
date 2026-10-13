@@ -104,55 +104,44 @@ export function MarginRanges({ rows, left, w = 640 }: { rows: RangeRow[]; left: 
 }
 
 // Republican seat totals across the simulated elections; 50 or more (with the Vice President) keeps control.
-export function SeatHistogram({ dist, w = 640 }: { dist: Record<string, number>; w?: number }) {
+// Seats across simulated elections: each bar in the colour of the party that controls the chamber at that count, on
+// tinted zones that name it (Matteo, 12 Oct). Defaults are the Senate's
+// (Republican seats, 50 for control); the House passes Democratic seats and 218.
+export function SeatHistogram({
+  dist, w = 640, line = 50, span = 8, every,
+  axis = "Republican seats", left = { label: "Democrats control", color: "var(--dem)" }, right = { label: "Republicans keep control", color: "var(--rep)" },
+  label = "Distribution of Republican Senate seats across simulated elections",
+}: {
+  dist: Record<string, number>; w?: number; line?: number; span?: number; every?: number; axis?: string;
+  left?: { label: string; color: string }; right?: { label: string; color: string }; label?: string;
+}) {
   const entries = Object.entries(dist).map(([k, v]) => [Number(k), v] as const).filter(([, v]) => v > 0.0005);
-  const lo = Math.min(42, ...entries.map(([k]) => k));
-  const hi = Math.max(58, ...entries.map(([k]) => k));
-  const W = w, H = w < 480 ? 170 : 200, pad = { l: 8, r: 8, t: 22, b: 30 };
+  const lo = Math.min(line - span, ...entries.map(([k]) => k));
+  const hi = Math.max(line + span, ...entries.map(([k]) => k));
+  const W = w, H = w < 480 ? 196 : 226, pad = { l: 8, r: 8, t: 30, b: 48 };
   const n = hi - lo + 1;
   const bw = (W - pad.l - pad.r) / n;
   const max = Math.max(...entries.map(([, v]) => v));
   const y = (v: number) => (v / max) * (H - pad.t - pad.b);
   const x = (k: number) => pad.l + (k - lo) * bw;
+  const base = H - pad.b;
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="Distribution of Republican Senate seats across simulated elections">
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={label}>
+      <rect x={pad.l} y={pad.t - 22} width={x(line) - pad.l} height={base - pad.t + 22} fill={left.color} opacity={0.07} />
+      <rect x={x(line)} y={pad.t - 22} width={W - pad.r - x(line)} height={base - pad.t + 22} fill={right.color} opacity={0.07} />
+      <text x={x(line) - 6} y={pad.t - 9} textAnchor="end" fill={left.color} style={{ ...MONO, fontWeight: 700 }}>{`← ${left.label}`}</text>
+      <text x={x(line) + 6} y={pad.t - 9} fill={right.color} style={{ ...MONO, fontWeight: 700 }}>{`${right.label} →`}</text>
       {entries.map(([k, v]) => (
-        <rect key={k} x={x(k) + 1} y={H - pad.b - y(v)} width={bw - 2} height={y(v)} rx={1.5} fill={k >= 50 ? "var(--rep)" : "var(--dem)"} opacity={0.85} />
+        <rect key={k} x={x(k) + (bw > 3 ? 1 : 0)} y={base - y(v)} width={Math.max(0.6, bw - (bw > 3 ? 2 : 0.3))} height={y(v)} rx={bw > 3 ? 1.5 : 0} fill={k >= line ? right.color : left.color} opacity={0.85}>
+          <title>{`${k} ${axis.toLowerCase()}: ${(v * 100).toFixed(1)}% of simulated elections`}</title>
+        </rect>
       ))}
-      <line x1={x(50) - 0.5} x2={x(50) - 0.5} y1={pad.t - 12} y2={H - pad.b} stroke="var(--sim)" strokeWidth={1.5} />
-      <text x={x(50) + 4} y={pad.t - 4} fill="var(--sim)" style={MONO}>50 SEATS</text>
-      <line x1={pad.l} x2={W - pad.r} y1={H - pad.b} y2={H - pad.b} stroke="var(--axis)" />
-      {Array.from({ length: n }, (_, i) => lo + i).filter((k) => k % (W < 480 ? 4 : 2) === 0).map((k) => (
-        <text key={k} x={x(k) + bw / 2} y={H - 12} textAnchor="middle" fill="var(--muted)" style={MONO}>{k}</text>
+      <line x1={x(line) - 0.5} x2={x(line) - 0.5} y1={pad.t - 22} y2={base} stroke="var(--sim)" strokeWidth={1.5} />
+      <line x1={pad.l} x2={W - pad.r} y1={base} y2={base} stroke="var(--axis)" />
+      {Array.from({ length: n }, (_, i) => lo + i).filter((k) => k % (every ?? (W < 480 ? 4 : 2)) === 0).map((k) => (
+        <text key={k} x={x(k) + bw / 2} y={base + 16} textAnchor="middle" fill={k === line ? "var(--sim)" : "var(--muted)"} style={{ ...MONO, fontWeight: k === line ? 700 : 400 }}>{k}</text>
       ))}
-    </svg>
-  );
-}
-
-// Chance over time; the toss-up zone (45–55%) is shaded.
-export function HistoryLine({ points, label, w = 640 }: { points: { date: string; p: number }[]; label: string; w?: number }) {
-  if (points.length < 2) return null;
-  const W = w, H = w < 480 ? 160 : 180, pad = { l: 34, r: 40, t: 12, b: 26 };
-  const x = (i: number) => pad.l + (i / (points.length - 1)) * (W - pad.l - pad.r);
-  const y = (p: number) => pad.t + (1 - p) * (H - pad.t - pad.b);
-  const d = points.map((pt, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(pt.p).toFixed(1)}`).join("");
-  const last = points[points.length - 1];
-  const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const fmt = (iso: string) => `${Number(iso.slice(8, 10))} ${MON[Number(iso.slice(5, 7)) - 1]}`;
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={`${label}, from ${fmt(points[0].date)} to ${fmt(last.date)}`}>
-      <rect x={pad.l} y={y(0.55)} width={W - pad.l - pad.r} height={y(0.45) - y(0.55)} fill="var(--tossup)" />
-      {[0, 0.5, 1].map((p) => (
-        <g key={p}>
-          <line x1={pad.l} x2={W - pad.r} y1={y(p)} y2={y(p)} stroke={p === 0.5 ? "var(--axis)" : "var(--rule)"} />
-          <text x={pad.l - 6} y={y(p) + 3} textAnchor="end" fill="var(--muted)" style={MONO}>{p * 100}</text>
-        </g>
-      ))}
-      <text x={W - pad.r + 4} y={y(0.5) + 3} fill="var(--muted)" style={MONO}>TOSS</text>
-      <path d={d} fill="none" stroke="var(--sim)" strokeWidth={2.2} strokeLinejoin="round" />
-      <circle cx={x(points.length - 1)} cy={y(last.p)} r={4} fill="var(--sim)" />
-      <text x={pad.l} y={H - 8} fill="var(--muted)" style={MONO}>{fmt(points[0].date).toUpperCase()}</text>
-      <text x={W - pad.r} y={H - 8} textAnchor="end" fill="var(--muted)" style={MONO}>{fmt(last.date).toUpperCase()}</text>
+      <text x={W / 2} y={H - 8} textAnchor="middle" fill="var(--ink-2)" style={{ ...MONO, fontWeight: 600 }}>{`${axis} (${line} for control)`}</text>
     </svg>
   );
 }

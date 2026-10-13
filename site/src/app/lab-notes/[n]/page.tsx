@@ -37,12 +37,15 @@ function Prose({ md }: { md: string }) {
     <>
       <div className="prose-np text-[1.08rem]" dangerouslySetInnerHTML={html(plain.trim())} />
       {detail?.trim() && (
-        <details className="group mt-5 border-t border-rule">
-          <summary className="flex cursor-pointer list-none items-center gap-2 py-3 text-[0.9rem] font-semibold text-ink">
-            <span className="inline-block w-3 text-center transition-transform group-open:rotate-90" aria-hidden="true">›</span>
-            In detail
+        <details className="group mt-5">
+          <summary className="w-fit cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+            <span className="btn btn-ghost btn-sm">
+              <span className="inline-block w-2.5 text-center transition-transform group-open:rotate-90" aria-hidden="true">›</span>
+              <span className="group-open:hidden">In detail</span>
+              <span className="hidden group-open:inline">Less detail</span>
+            </span>
           </summary>
-          <div className="prose-np pb-2 text-[0.95rem]" dangerouslySetInnerHTML={html(detail.trim())} />
+          <div className="prose-np mt-4 border-l-2 border-rule pb-2 pl-4 text-[0.95rem]" dangerouslySetInnerHTML={html(detail.trim())} />
         </details>
       )}
     </>

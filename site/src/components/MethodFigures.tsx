@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 
 function Figure({ title, note, children }: { title: string; note?: string; children: ReactNode }) {
   return (
-    <figure className="border-t-2 border-rule-strong pt-3">
+    <figure className="border-t border-rule pt-3">
       <figcaption className="text-[0.8rem] font-bold text-ink">{title}</figcaption>
       <div className="mt-4">{children}</div>
       {note && <p className="note mt-3">{note}</p>}
@@ -164,7 +164,7 @@ function Table({ head, rows, boldFirst = true }: { head: string[]; rows: ReactNo
   return (
     <table className="w-full border-collapse text-[0.9rem]">
       <thead>
-        <tr className="border-y-2 border-rule-strong text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
+        <tr className="border-y border-rule text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
           {head.map((h) => (
             <th key={h} className="py-2 pr-4">{h}</th>
           ))}
