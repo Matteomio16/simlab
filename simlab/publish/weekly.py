@@ -6,9 +6,10 @@ plus one slide per race whose week was flagged or cancelled.
 The check file is the Sunday weekly check (Statistics), one row per race:
     {"week_ending": "2026-10-18", "races": [{"race": "IA", "state": "Iowa", "ours": -1.2, "polls": 0.8,
       "gap": 2.0, "flag": "" | "flag" | "severe" | "cancelled", "n_polls": 3, "basis": "polls" | "markets",
-      "stories": ["..."], "what_we_did": "..."}]}
-"ours" and "polls" are the week's change in margin (Democrat or independent minus Republican, points). --example
-draws invented numbers stamped EXAMPLE, for review.
+      "stories": ["..."], "what_we_did": "...", "left": "Turek", "left_party": "D", "right": "Hinson"}]}
+"ours" (our expected vote) and "polls" (the poll average) are the week's change in margin, Democrat or independent
+minus Republican, in points. "left"/"right" are the candidates' surnames, so every change is named by whom it moved
+toward. Vote only on this post, never chances (review, 13 Oct). --example draws invented numbers stamped EXAMPLE.
 """
 from __future__ import annotations
 
@@ -26,12 +27,16 @@ SERIES = "Weekly check"
 FLAG_WORD = {"flag": "Flagged", "severe": "Investigated", "cancelled": "Week undone"}
 EXAMPLE = {"week_ending": "2026-10-18", "races": [
     {"race": "IA", "state": "Iowa", "ours": -1.6, "polls": 1.9, "gap": 3.5, "flag": "flag", "n_polls": 3,
-     "basis": "polls", "stories": ["Farm-state tariff story"],
+     "basis": "polls", "stories": ["Farm-state tariff story"], "left": "Turek", "right": "Hinson",
      "what_we_did": "we checked that the story was matched to the right race and kept it."},
-    {"race": "OH-S", "state": "Ohio", "ours": 0.4, "polls": -1.1, "gap": 1.5, "flag": "", "n_polls": 4, "basis": "polls"},
-    {"race": "TX", "state": "Texas", "ours": 0.9, "polls": 0.2, "gap": 0.7, "flag": "", "n_polls": 3, "basis": "polls"},
-    {"race": "ME", "state": "Maine", "ours": -0.3, "polls": 0.6, "gap": 0.9, "flag": "", "n_polls": 2, "basis": "polls"},
-    {"race": "AK", "state": "Alaska", "ours": 2.4, "polls": -0.4, "gap": 2.8, "flag": "", "n_polls": 1, "basis": "polls"},
+    {"race": "OH-S", "state": "Ohio", "ours": 0.4, "polls": -1.1, "gap": 1.5, "flag": "", "n_polls": 4, "basis": "polls",
+     "left": "Brown", "right": "Husted"},
+    {"race": "TX", "state": "Texas", "ours": 0.9, "polls": 0.2, "gap": 0.7, "flag": "", "n_polls": 3, "basis": "polls",
+     "left": "Talarico", "right": "Paxton"},
+    {"race": "ME", "state": "Maine", "ours": -0.3, "polls": 0.6, "gap": 0.9, "flag": "", "n_polls": 2, "basis": "polls",
+     "left": "Jackson", "right": "Collins"},
+    {"race": "AK", "state": "Alaska", "ours": 2.4, "polls": -0.4, "gap": 2.8, "flag": "", "n_polls": 1, "basis": "polls",
+     "left": "Peltola", "right": "Sullivan"},
 ]}
 
 
@@ -39,13 +44,25 @@ def pts(v: float) -> str:
     return "0" if abs(v) < 0.05 else f"{'+' if v > 0 else '−'}{abs(v):.1f}"
 
 
-def toward(v: float, left: str = "Democrats") -> str:
-    """A change named by party, never by sign (review, 13 Oct): "1.6 toward Republicans"."""
-    return "no change" if abs(v) < 0.05 else f"{abs(v):.1f} points toward {left if v > 0 else 'Republicans'}"
+def side(r: dict, v: float) -> str:
+    """Whom a change moved toward: "Hinson (R)", or the party when the check file has no names."""
+    if not r.get("left"):
+        return "Democrats" if v > 0 else "Republicans"
+    return f"{r['left']} ({r.get('left_party', 'D')})" if v > 0 else f"{r['right']} (R)"
+
+
+def toward(r: dict, v: float) -> str:
+    """A change named by candidate, never by sign (review, 13 Oct): "1.6 points toward Hinson (R)"."""
+    return "no change" if abs(v) < 0.05 else f"{abs(v):.1f} points toward {side(r, v)}"
+
+
+LAUNCH = date(2026, 10, 12)
 
 
 def build(check: dict, theme=LAB, example: bool = False) -> tuple[Path, list[str]]:
     ending = date.fromisoformat(check["week_ending"])
+    if not example and (ending - LAUNCH).days < 6:  # a full week of published forecasts first (review, 13 Oct)
+        raise SystemExit(f"week to {ending} has fewer than seven published forecasts; the first post waits a week")
     week = ending + timedelta(days=1)  # posted on Monday, the morning after the Sunday check
     span = f"week to {ending.day} {ending:%b}"
     kicker = "EXAMPLE · INVENTED NUMBERS" if example else ""
@@ -58,13 +75,14 @@ def build(check: dict, theme=LAB, example: bool = False) -> tuple[Path, list[str
 
     a = Slide(week, kicker, theme, series=SERIES)
     a.headline("Where we and the polls moved apart this week", px=64)
-    a.dek(f"Each race's change in margin, {span}, in points: our forecast against its poll average. Polls only "
-          "check us; they don't move our numbers.", px=32)
-    charts.legend_dots(a, [("Poll average", theme.data, False), ("Our forecast", theme.ai, True)])
+    a.dek(f"Each race's change in points of margin, {span}: our expected vote against its poll average. Polls "
+          "only check us; they don't move our numbers.", px=32)
+    charts.legend_dots(a, [("Poll average", theme.data, False), ("Our expected vote", theme.ai, True)])
     a.y += 6
     lim = max(4, max(max(abs(r["ours"]), abs(r["polls"])) for r in top) + 1)
     charts.dumbbell(a, [(r["state"] + (" *" if r["flag"] else ""), r["polls"], r["ours"]) for r in top], lim,
-                    80 * len(top), "toward Republicans", "toward Democrats", pts, label_w=230)
+                    80 * len(top), "toward Republicans", "toward Democrats",
+                    lambda v: f"{abs(v):g}", label_w=230)
     flagged = [r for r in rows if r["flag"]]
     a.text(("* " + ", ".join(f"{r['state']}: {FLAG_WORD[r['flag']].lower()}" for r in flagged)) if flagged else
            "No race moved more than 3 points apart from its polls.", px=30, color=theme.ink2)
@@ -77,10 +95,10 @@ def build(check: dict, theme=LAB, example: bool = False) -> tuple[Path, list[str
                "the other way from the polls" if r["ours"] * r["polls"] < 0 else "less than the polls")
         b.headline(f"{r['state']}: we moved {way} this week.", px=76)
         bench = "polls" if r.get("basis", "polls") == "polls" else "markets"
-        side = lambda v: "Democrats" if v > 0 else "Republicans"
-        charts.stats(b, [(f"{abs(r['ours']):.1f}", f"us, toward {side(r['ours'])}"),
-                         (f"{abs(r['polls']):.1f}", f"{bench}, toward {side(r['polls'])}")], px=110, rule=True)
-        b.text(f"Change in margin, {span}, in points.", px=28, color=theme.ink2, after=0.8)
+        bench = "poll average" if bench == "polls" else "markets"
+        b.text(f"Our expected vote: {toward(r, r['ours'])}", "serif", 600, 44, after=0.3)
+        b.text(f"{bench[0].upper() + bench[1:]}: {toward(r, r['polls'])}", "serif", 600, 44, theme.data, after=0.3)
+        b.text(f"Change in margin, {span}.", px=28, color=theme.ink2, after=0.8)
         if r.get("stories"):
             b.text("What moved us", "sans", 600, 30, theme.ink2, after=0.4)
             b.text("; ".join(r["stories"]) + ".", "serif", 600, 36, after=0.8)
@@ -101,17 +119,17 @@ def build(check: dict, theme=LAB, example: bool = False) -> tuple[Path, list[str
         s.save(out / f"slide-{i}.jpg")
 
     big = top[0]
-    lines = [f"Every Sunday we check our forecast against the polls. Since 12 October polls no longer move our numbers: "
+    lines = [f"Every Sunday we check our expected vote against the polls. Since 12 October polls no longer move our numbers: "
              f"only the news does, through the voter personas. So each week we look at where the two moved apart.", "",
-             f"The biggest gap in the {span}: {big['state']}, where our forecast moved {toward(big['ours'])} "
-             f"and the poll average {toward(big['polls'])}."]
+             f"The biggest gap in the {span}: {big['state']}, where our expected vote moved "
+             f"{toward(big, big['ours'])} and the poll average {toward(big, big['polls'])}."]
     done = {"flag": "was flagged", "severe": "was investigated", "cancelled": "had its week undone"}
     for r in flagged:
         lines += ["", f"{r['state']} {done[r['flag']]}; {r.get('what_we_did') or 'it is still under review.'}"]
     lines += ["", "Which race do you think we're reading wrong?", "", "#midterms2026 #elections", "", DISCLAIMER]
     caption = "\n".join(lines)
-    x = (f"Weekly check, {span}: the biggest gap between our forecast and the polls was {big['state']} (we moved "
-         f"{toward(big['ours'])}, the polls {toward(big['polls'])}). Polls only check us now; the news moves our "
+    x = (f"Weekly check, {span}: the biggest gap between our expected vote and the polls was {big['state']} (ours "
+         f"moved {toward(big, big['ours'])}, the polls {toward(big, big['polls'])}). Polls only check us now; the news moves our "
          f"numbers. {LABEL}.")
     (out / "caption.txt").write_text(caption, encoding="utf-8")
     (out / "single-post.md").write_text(f"# Single posts\n\n## X ({len(x)} of 280 characters)\n\n{x}\n", encoding="utf-8")
