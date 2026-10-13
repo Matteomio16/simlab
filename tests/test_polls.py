@@ -345,6 +345,13 @@ class MergeTest(unittest.TestCase):
         a1 = self.vh.set_index("votehub_id").loc["a1"]
         self.assertEqual((a1.left, a1.right, a1.partisan, a1.sponsors), (46.5, 46.0, "REP", "Some PAC"))
 
+    def test_a_votehub_partisan_flag_needs_a_sponsor_or_an_internal_poll(self):
+        tag = vh("a6", "2026 Ohio", "Trafalgar Group", {"Jon Husted": 47.0, "Sherrod Brown": 45.0}, "2026-09-10",
+                 "2026-09-12", partisan="REP")
+        internal = dict(tag, id="a7", internal=True)
+        t = polls.votehub_polls([tag, internal], [self.race]).set_index("votehub_id")
+        self.assertEqual((t.loc["a6"].partisan, t.loc["a7"].partisan), ("", "REP"))
+
     def test_votehub_drops_even_split_placeholders(self):
         placeholder = vh("a5", "2026 Ohio", "Tavern Research", {"Jon Husted": 50.0, "Sherrod Brown": 50.0},
                          "2026-09-10", "2026-09-12")

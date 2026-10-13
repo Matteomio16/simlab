@@ -210,6 +210,10 @@ Decided by Matteo, 11 Oct (publishing and ethics review, C7; details in `docs/CH
   weekly change|, any direction; above 3 flag, above 5 severe flag, above 6.5 the race's week is likely cancelled
   (back to the week before, only with Matteo's yes). No new polls: compare with markets, flag only. House district
   news for the ~40 closest seats launches now; OpenRouter cap to $30.
+  Built and approved 13 Oct evening, live from 14 Oct: the start is the launch forecast's own level
+  (`simlab/start.py`), with Wikipedia's sponsor footnotes read; severe and cancel need 3 new polls; VoteHub pollster
+  tags don't count as partisan; the old rule runs daily for scoring. **The start is never moved again**: later
+  changes go live from their day on, logged, both versions scored (Matteo, 13 Oct).
 
 Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.md` §8 and `docs/CHANGELOG.md`):
 - Partisan polls are those sponsored by a party, campaign or partisan group, not Wikipedia's "(R)"/"(D)" pollster tags.

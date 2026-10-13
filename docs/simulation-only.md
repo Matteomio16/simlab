@@ -45,7 +45,10 @@ $27 and $29). Estimated cost: about +$0.30 and +45 minutes a run.
   since then every move comes from how voter personas react to the news; polls are used only to check us. Wording goes
   to Matteo for his yes.
 
-## How Statistics built it (13 Oct, waits for Matteo's yes)
+## How Statistics built it (13 Oct; Matteo's yes the same evening, live from 14 Oct)
+
+- **The start is never moved again** (Matteo, 13 Oct): changes are made live while the forecast goes on, from their
+  day on, as logged changes with both versions scored.
 
 - **The start** is the launch forecast's own level, not the stats-only number: polls and fundamentals with each poll
   taken less the stories in force on its dates. A run dated 12 Oct under the new rule gives back the published launch
@@ -58,7 +61,9 @@ $27 and $29). Estimated cost: about +$0.30 and +45 minutes a run.
 - **A cancelled week** is an entry in `simlab/cancelled_weeks.json` (only with Matteo's yes): that race drops the
   stories first seen in the week.
 - **The 12 Oct start reads Wikipedia's sponsor footnotes** (Matteo's yes, 13 Oct): campaign and party-group polls get
-  half weight and the sponsor shift, as decided on 28 Sep.
+  half weight and the sponsor shift, as decided on 28 Sep. VoteHub's partisan flag counts only with a named sponsor
+  or an internal poll, from 14 Oct (not in the start).
+- **The old rule runs daily** for scoring (`simlab.pollfilter`, `simlab-data/scoring/poll-filter/<date>/`).
 
 ## Who does what
 

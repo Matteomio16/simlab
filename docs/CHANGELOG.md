@@ -2,10 +2,20 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
-## 2026-10-13 (Statistics session): simulation only, built; sponsor footnotes read (waits for Matteo's yes)
+## 2026-10-13 (Statistics session): simulation only, built; sponsor footnotes read (Matteo's yes, from 14 Oct)
 
-Method change after the 12 Oct freeze (`docs/simulation-only.md`, Matteo 13 Oct). Not pushed: it ships only with
-Matteo's direct yes, together with the start file in simlab-data.
+Method change after the 12 Oct freeze (`docs/simulation-only.md`, Matteo 13 Oct). Matteo's yes, 13 Oct evening, to all
+six points below: ship for the 14 Oct run; the start is the launch forecast's own level; the footnote fix is in the
+start and in "polls alone"; severe and cancel need 3 new polls; VoteHub pollster tags no longer count as partisan;
+the old rule runs daily for scoring. **The start is never moved again** (Matteo): "we are on and rolling, any changes
+will be done live while the forecast goes on but we will not start again." Later fixes apply from their day on, as
+logged changes with both versions scored; `python -m simlab.start` refuses to rewrite the start file.
+
+- **VoteHub pollster tags** (Matteo, 13 Oct, decision 5): VoteHub's partisan flag counts only with a named sponsor or
+  an internal poll (`polls._vh_meta`); a flag on the pollster alone, as Trafalgar's, no longer gets half weight and
+  the sponsor shift. Live from 14 Oct: it changes the daily "polls alone" twin and the generic ballot, never the start.
+- **The old rule daily** (decision 6): a last daily step, `simlab.pollfilter`, runs the poll filter on the same inputs
+  into `simlab-data/scoring/poll-filter/<date>/`; it never fails the job (a failure shows in its summary).
 
 - **The start** (`simlab/start.py`, file `simlab-data/start/2026-10-12.json`): each race's level at the 12 Oct launch,
   Senate and House, for every election day from 12 Oct to 3 Nov (the "if the election were today" view needs its own).
@@ -34,8 +44,8 @@ Matteo's direct yes, together with the start file in simlab-data.
 - **Cancelled weeks** (`simlab/cancelled_weeks.json`, empty): with Matteo's yes, an entry drops that race's stories
   first seen in the week. Because stories are projected to 3 Nov, that takes the 3 Nov margin back to the Sunday
   before.
-- **Old rule kept for scoring:** `python -m simlab.statsday --date D --rule poll-filter --out-root derived_poll-filter`
-  (its own Monday re-fits stay in that folder). Days before 14 Oct run the old rule by default.
+- **Old rule kept for scoring:** `python -m simlab.pollfilter --date D` (or `statsday --rule poll-filter --out-root
+  scoring/poll-filter`); its own Monday re-fits stay in that folder. Days before 14 Oct run the old rule by default.
 - **Sponsor footnotes** (Roadmap session, relaying Content & site's find and Matteo's yes, 13 Oct): `polls.py` read
   partisan flags only from VoteHub, so Wikipedia's `{{efn-ua}}` sponsor notes were ignored (the Paxton campaign's
   Pulse Decision Science poll counted as non-partisan). `polls.sponsor` now reads them: a nominee's campaign or a
@@ -51,7 +61,8 @@ Matteo's direct yes, together with the start file in simlab-data.
 - **Before and after on 13 Oct** (3 Nov, scratch runs, old code reproduces the published Senate exactly): the rule
   change alone moves no Senate race by more than 0.11 points (one day of polls since 12 Oct); with the fix,
   Republicans hold 50+ 41.1 → 41.9 in 100, Democratic House majority 62.3 → 60.7.
-- **Workflows:** `daily.yml` and `drills.yml` check out `start/` from simlab-data.
+- **Workflows:** `daily.yml` and `drills.yml` check out `start/` from simlab-data; `daily.yml` also checks out and
+  commits `scoring/`.
 - **Checked:** 361 tests pass (26 new: `tests/test_start.py`, `CheckTest`, `SimulationOnlyTest`, `SponsorTest`); the
   one failure needs `imageio_ffmpeg` (reel video).
 

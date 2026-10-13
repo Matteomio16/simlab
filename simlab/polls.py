@@ -411,8 +411,11 @@ def _vh_date(text: str | None) -> date | None:
 
 
 def _vh_meta(e: dict) -> dict:
+    """A VoteHub entry's metadata. Its partisan flag counts only with a named sponsor or as an internal poll: a flag on
+    the pollster alone (Trafalgar's) is not a sponsor (Matteo, 13 Oct; the 28 Sep rule)."""
+    sponsored = bool(e.get("sponsors") or e.get("internal"))
     return {"votehub_id": e["id"], "pollster": e["pollster"], "sponsors": ", ".join(e.get("sponsors") or []),
-            "partisan": e.get("partisan") or "", "internal": bool(e.get("internal")),
+            "partisan": (e.get("partisan") or "") if sponsored else "", "internal": bool(e.get("internal")),
             "population": e.get("population") or "v", "n": e.get("sample_size"), "start": _vh_date(e["start_date"]),
             "end": _vh_date(e["end_date"]), "created": _vh_date(e.get("created_at")), "url": e.get("url") or ""}
 
