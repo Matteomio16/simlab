@@ -204,11 +204,12 @@ Decided by Matteo, 11 Oct (publishing and ethics review, C7; details in `docs/CH
   with reader-visible method changes dated in the public changelog.
 - No OSF pre-registration for now; don't call the forecast "pre-registered" in public. OpenTimestamps proofs and
   Internet Archive captures of each published day are to be built.
-- **Weekly trend check** (from 19 Oct, in Monday's weekly step): in a state with 3 or more new polls that week, if our
-  forecast's margin moved the opposite way to the week's poll average, a gap of more than 4 points is flagged and more
-  than 6 is analysed for what went wrong in the simulation. No automatic rollback at 7.5 or above: fix only what the
-  analysis finds wrong (a bug, a bad story summary, a story on the wrong race), as a logged change with both versions
-  scored.
+- **Simulation only (Matteo, 13 Oct; full rule in `docs/simulation-only.md`, supersedes the poll correction and the
+  11 Oct trend check).** Polls set each race's start once, at the 12 Oct launch; after that only the simulation moves
+  races. Polls and markets only verify, in a Sunday-evening weekly check: gap = |our weekly change − the poll average's
+  weekly change|, any direction; above 3 flag, above 5 severe flag, above 6.5 the race's week is likely cancelled
+  (back to the week before, only with Matteo's yes). No new polls: compare with markets, flag only. House district
+  news for the ~40 closest seats launches now; OpenRouter cap to $30.
 
 Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.md` §8 and `docs/CHANGELOG.md`):
 - Partisan polls are those sponsored by a party, campaign or partisan group, not Wikipedia's "(R)"/"(D)" pollster tags.
@@ -265,7 +266,8 @@ Decided by Matteo, 28 Sep evening (statistics; details in `docs/stats-groundwork
   polling and fundamentals error, never the news: a story about one state stays in that state (a Maine story doesn't
   move Alaska). House seats keep the shared national, regional and state errors without the floor.
 - **Fat tails keep the fitted spread**, and extremes also follow the simulated dynamics.
-- **News moves every race by its full effect, polls or not.** Polls correct the statistical level underneath.
+- **News moves every race by its full effect, polls or not.** Polls no longer correct the level after 12 Oct (13 Oct,
+  `docs/simulation-only.md`).
   A race that joins the simulation keeps the national news it already had through the nation (Matteo, 11 Oct).
 - **How long news lasts (Matteo, 29 Sep): news fades fast.**
   - Every story fades from the day it is first seen, with a 5.5-day half-life: about 40% left after a week, 17% after
