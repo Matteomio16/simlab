@@ -309,6 +309,15 @@ class Cards(unittest.TestCase):
         self.assertEqual(newsday.write_card(self.story, [first, second]), GOOD)
         self.assertEqual((first.calls, second.calls), (1, 1))
 
+    def test_each_failed_try_says_which_rule_it_broke(self):
+        bad = FakeChat(['{"card": "Politico reports a crypto PAC will spend $30M."}',
+                        '{"card": "The ad could help Democrats in the Senate race, a new poll shows."}'])
+        other = FakeChat(["not json", '{"card": "", "event": false}'])
+        card, why = newsday.card_attempts(self.story, [bad, other])
+        self.assertEqual(card, "")
+        self.assertEqual([w for w, _ in why], ["outlet", "forbidden+effect", "unreadable", "not news"])
+        self.assertEqual(why[0][1], "Politico reports a crypto PAC will spend $30M.")
+
 
 class Scopes(unittest.TestCase):
     def test_a_national_copy_that_names_the_races_candidates_is_that_races_story_only(self):
@@ -402,6 +411,24 @@ class Run(unittest.TestCase):
             self.assertNotIn("titles", e)
         self.assertEqual({p["event_id"] for p in private}, {e["event_id"] for e in events})
         self.assertTrue(all(e["card"] for e in events if e["selected"]))
+
+    def test_cards_not_written_are_split_into_not_news_and_broken_rules(self):
+        # 13 Oct: cards_failed counted round-ups that every model rightly dropped with cards that broke a rule
+        class ByStory(FakeChat):
+            def complete(self, messages, tag="", max_tokens=300, json_mode=True):
+                if "clash" in messages[-1]["content"]:
+                    return '{"card": "", "event": false}'
+                return '{"card": "The ad could hurt Democrats."}' if "previous" in messages[-1]["content"] else \
+                    '{"card": "Polls show a crypto PAC will spend $30M."}'
+        with tempfile.TemporaryDirectory() as tmp:
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
+            summary = newsday.run(date(2026, 9, 28), snap, derived, "r", FakeAsker(), [ByStory([])])
+            private = newsday._jsonl(derived / "2026-09-28" / "news_private.jsonl")
+        self.assertEqual((summary["cards_written"], summary["cards_not_news"], summary["cards_rule_failed"]), (0, 1, 1))
+        self.assertEqual(summary["rules_broken"], {"effect": 1, "forbidden": 1})
+        self.assertEqual(sorted(w for p in private for w, _ in p.get("card_rejected", [])),
+                         ["effect", "forbidden", "not news"])
 
     def test_only_the_best_covered_new_national_stories_are_labeled(self):
         # each is gated for every simulated race, and a race takes at most 3 a day (30 Sep: 300-400 a day came in)

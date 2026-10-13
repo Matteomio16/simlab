@@ -428,12 +428,19 @@ ELECTORAL = re.compile(r"\b(republicans?|democrats?|gop|part(y|ies)|midterms?|el
 CANDIDATE = re.compile(r"\b(" + "|".join(sorted({n for names in SURNAMES.values() for n in names})) + r")\b")
 
 
-def card_ok(card: str, outlet_names: list[str]) -> bool:
+def card_problems(card: str, outlet_names: list[str]) -> list[str]:
+    """The rules a card breaks: length (empty or over 450 characters), forbidden, meta, effect, outlet."""
     low = card.lower()
-    claims_effect = any(EFFECT.search(s) and (ELECTORAL.search(s) or CANDIDATE.search(s))
-                        for s in re.split(r"(?<=[.!?])\s+", card))
-    return (0 < len(card) <= 450 and not FORBIDDEN.search(card) and not META.search(card) and not claims_effect
-            and not any(n.lower() in low for n in outlet_names if len(n) >= 3))
+    rules = {"length": not 0 < len(card) <= 450, "forbidden": bool(FORBIDDEN.search(card)),
+             "meta": bool(META.search(card)),
+             "effect": any(EFFECT.search(s) and (ELECTORAL.search(s) or CANDIDATE.search(s))
+                           for s in re.split(r"(?<=[.!?])\s+", card)),
+             "outlet": any(n.lower() in low for n in outlet_names if len(n) >= 3)}
+    return [r for r, broken in rules.items() if broken]
+
+
+def card_ok(card: str, outlet_names: list[str]) -> bool:
+    return not card_problems(card, outlet_names)
 
 
 def valid_card(card: str, outlet_names: list[str]) -> str:
@@ -441,12 +448,13 @@ def valid_card(card: str, outlet_names: list[str]) -> str:
     return card if card and card_ok(card, outlet_names) else ""
 
 
-def write_card(story: dict, chats: list) -> str:
-    """1-3 neutral sentences from the first model that follows the rules (two tries each); '' if none does. A model
-    that says the headlines aren't a specific event (round-ups, listings, commentary) hands the story to the next, so
-    a story is dropped as a non-event only when every model says so (30 Sep: DeepSeek called a crypto group's ads
-    against Brown commentary; GLM wrote the card)."""
-    user = story_text(story, story["race_id"])
+def card_attempts(story: dict, chats: list) -> tuple[str, list[list[str]]]:
+    """(card, [why, rejected card] for each failed try): 1-3 neutral sentences from the first model that follows the
+    rules (two tries each); '' if none does. A model that says the headlines aren't a specific event (round-ups,
+    listings, commentary) hands the story to the next, so a story is dropped as a non-event only when every model says
+    so (30 Sep: DeepSeek called a crypto group's ads against Brown commentary; GLM wrote the card). A failed try is
+    "not news", "unreadable" (no answer or no JSON) or the rules its card broke, joined by "+"."""
+    user, why = story_text(story, story["race_id"]), []
     for chat in chats:
         for note in ("", "\nYour previous answer broke a rule. Follow every rule exactly."):
             try:
@@ -454,13 +462,20 @@ def write_card(story: dict, chats: list) -> str:
                                       {"role": "user", "content": user + note}], tag="newsday:card", max_tokens=200)
                 reply = json.loads(text[text.index("{"): text.rindex("}") + 1])
                 if reply.get("event") is False:
+                    why.append(["not news", ""])
                     break
                 card = str(reply.get("card", "")).strip()
             except (ValueError, RuntimeError, AttributeError):
-                card = ""
-            if card_ok(card, story["outlet_names"]):
-                return card
-    return ""
+                why.append(["unreadable", ""])
+                continue
+            if not (broken := card_problems(card, story["outlet_names"])):
+                return card, why
+            why.append(["+".join(broken), card])
+    return "", why
+
+
+def write_card(story: dict, chats: list) -> str:
+    return card_attempts(story, chats)[0]
 
 
 POOL = 10
@@ -658,10 +673,14 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
             for e in [c for c in candidates(events, r, top=len(events)) if c["scope"] == sc][:POOL]}
     todo = [e for e in pool.values() if not e["card"]]
     with ThreadPoolExecutor(8) as ex:
-        for e, card in zip(todo, ex.map(lambda e: write_card(by_id[e["event_id"]], chats), todo)):
-            e["card"] = card
+        tries = list(ex.map(lambda e: card_attempts(by_id[e["event_id"]], chats), todo))
+    for e, (card, _) in zip(todo, tries):
+        e["card"] = card
     cont = continue_known([e for e in pool.values() if e["event_id"] not in carried], by_id, known, set(carried), chats)
     priv = {p["event_id"]: p for p in private}
+    for e, (_, why) in zip(todo, tries):
+        if why:  # private: why each try failed, with the rejected cards
+            priv[e["event_id"]]["card_rejected"] = why
     for old, k in cont.items():  # the story continues a known event: its id, first sighting and labels
         e, p, s = pool[old], priv.pop(old), by_id.pop(old)
         days = sorted(set(k["days_seen"]) | set(p["days_seen"]))
@@ -677,7 +696,12 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         e["usable"] = bool(e["card"])  # only stories with a card can be selected (the pool is the top 10 per race)
     merge_same_events(events, by_id, chats, races, tiers)
     select(events, races, tiers)
-    written, failed = sum(bool(e["card"]) for e in todo), sum(not e["card"] for e in todo)
+    # a story with no card: "not news" when every model said it isn't a specific event, else it broke the rules
+    failed = [[w for w, _ in why] for e, (_, why) in zip(todo, tries) if not e["card"]]
+    not_news = sum(w == ["not news"] * len(chats) for w in failed)
+    broke: dict = {}
+    for w in (w for ws in failed if ws != ["not news"] * len(chats) for w in ws if w != "not news"):
+        broke[w] = broke.get(w, 0) + 1
     out = derived_root / f"{day:%Y-%m-%d}"
     out.mkdir(parents=True, exist_ok=True)
     for name, rows in (("events.jsonl", events), ("news_private.jsonl", private)):
@@ -685,7 +709,9 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     return {"articles": len(arts), "stories": len(events), "new": new, "carried": len(events) - new,
             "continued": len(cont),
             "selected": {r: sum(bool(e["selected"].get(r)) for e in events) for r in races + ["US"]},
-            "cards_written": written, "cards_failed": failed, "unlabeled": len(skipped),
+            "cards_written": sum(bool(e["card"]) for e in todo), "cards_not_news": not_news,
+            "cards_rule_failed": len(failed) - not_news, "rules_broken": dict(sorted(broke.items())),
+            "unlabeled": len(skipped),
             "label_errors": sum(bool(e.get("label_error")) for e in events)}
 
 
