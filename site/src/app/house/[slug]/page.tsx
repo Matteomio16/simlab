@@ -129,7 +129,7 @@ export default async function HouseSeat({ params }: { params: Promise<{ slug: st
             <dl className="mt-3 text-[0.92rem]">
               {[
                 ["Our simulation, Nov. 3", `${surname(leftName)} ${in100(d.p)} in 100`],
-                ["Statistics only, no simulation", d.statsP == null ? "–" : `${surname(leftName)} ${in100(d.statsP)} in 100`],
+                ["Polls alone, no simulation", d.statsP == null ? "–" : `${surname(d.statsP >= 0.5 ? leftName : rightName)} ${in100(d.statsP >= 0.5 ? d.statsP : 1 - d.statsP)} in 100`],
                 ["Expert ratings, averaged", consensusName(d.consensus) ?? "–"],
                 ["Incumbent", incumbent],
               ].map(([k, v], i) => (

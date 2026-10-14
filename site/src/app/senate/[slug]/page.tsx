@@ -69,7 +69,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
     });
   const bench: [string, string, boolean][] = [
     ["Our simulation, Nov. 3", `${leftShort} ${in100(f.p_dem_win)} in 100`, true],
-    ["Statistics only, no simulation", `${leftShort} ${in100(f.stats_only.p_dem_win)} in 100`, false],
+    ["Polls alone, no simulation", `${surname(leader(f.stats_only.p_dem_win, meta).name)} ${in100(leader(f.stats_only.p_dem_win, meta).p)} in 100`, false],
     ["Prediction markets", b.market == null ? "–" : `${leftShort} ${Math.round(b.market * 100)}%`, false],
     ["Poll average", b.poll_avg == null ? "No recent polls" : margin(b.poll_avg, L), false],
     ["Cook Political Report", b.cook?.replace("Tossup", "Toss-up").replace("Solid", "Safe") ?? "–", false],
