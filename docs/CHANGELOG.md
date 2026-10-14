@@ -2,6 +2,34 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-13/14 (Engine session): House district news; card failures split; budget at $27/$29; card corrections
+
+- **House district news** (Matteo's yes, 14 Oct; on from the 15 Oct run, `SIMLAB_HOUSE_NEWS: "1"` in daily.yml).
+  Before, no House seat ever had a story of its own: Media Cloud's national collection brought 72 House articles for
+  40 seats on 13 Oct (one naming a seat), and Jev's relevance question asked about "this Senate race", so every
+  House story, a district's own included, scored 0.05-0.17. Now each simulate-tier seat is asked of Media Cloud on its
+  own in its state's "State & Local" collection (`snap.MC_STATE_LOCAL`; +80 requests a day, about 420 in all), a
+  state group's headline that names exactly one seat goes to that seat, the relevance question names the House race,
+  and a seat takes at most 2 of its own stories a day (1 in economy). A seat takes the nation's stories through the
+  nation, as before, never as its own. Cards follow the Senate rules (an effect word next to a House candidate's
+  surname is a claim). Dry run on PA-7, OH-9 and NY-17 (13 Oct data, GLM only, $0.07): 4 seat stories, district
+  stories at 0.8-0.94 relevance. Estimate: about +$0.25 and +35 minutes a run, at most about +$0.40 and +55 minutes.
+  Kev's shadow rows cover the House seats too (Matteo: no exception; about 3 GPU minutes a day).
+- **Card failures split:** newsday's summary now has `cards_not_news` (every model said the headlines are not a
+  specific event) and `cards_rule_failed`, with `rules_broken` counting length, forbidden, meta, effect, outlet and
+  unreadable; `news_private.jsonl` keeps each failed try with its rejected card. The EFFECT words are unchanged
+  ("effects" and "impact" stay; an earlier proposal to drop them was rejected). A targeted fix follows the first
+  real counts.
+- **Budget** (Matteo, 14 Oct): the OpenRouter key's cap is $30 (checked: limit 30, $4.90 spent); the daily job runs
+  in economy from $27 and on polls alone from $29 (`daily.BUDGET_ECONOMY`, `BUDGET_POLLS`); `SIMLAB_BUDGET_USD=29` in
+  the local `.env` (it was missing, so local runs had the code's $9 default).
+- **Card corrections** (Matteo's yes, 14 Oct, Publishing approval): `simlab/card_fixes.json`, `{event_id: {card, was,
+  why, approved}}`, applied where cards are written (newsday) and read (moves), so the next day's events.jsonl,
+  moves.json and the forecast's movers carry the new words. Display only: reactions already asked keep the words they
+  were asked with, and published days stay as they are. First three: US-20261014-00588a69 (inflation preview read
+  as data), US-20261011-05c55f98 (effect claim on Republicans), IA-20261013-31537eec ("both parties" in no
+  headline). Each new entry needs Matteo's yes.
+
 ## 2026-10-13 (Statistics session): simulation only, built; sponsor footnotes read (Matteo's yes, from 14 Oct)
 
 Method change after the 12 Oct freeze (`docs/simulation-only.md`, Matteo 13 Oct). Matteo's yes, 13 Oct evening, to all
