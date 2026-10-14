@@ -64,6 +64,8 @@ $27 and $29). Estimated cost: about +$0.30 and +45 minutes a run.
   half weight and the sponsor shift, as decided on 28 Sep. VoteHub's partisan flag counts only with a named sponsor
   or an internal poll, from 14 Oct (not in the start).
 - **The old rule runs daily** for scoring (`simlab.pollfilter`, `simlab-data/scoring/poll-filter/<date>/`).
+- **The site shows the simulation-only headline** (Matteo, 14 Oct). For 14-16 Oct the approval thread also shows
+  the poll-filter numbers (`python -m simlab.rulecompare`), and Matteo picks which number the posts use.
 
 ## Who does what
 
