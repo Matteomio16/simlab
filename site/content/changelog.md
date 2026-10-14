@@ -1,3 +1,12 @@
+## October 14, 2026
+
+- Polls no longer move the forecast. Each race's starting point was set on October 12 from its polls and
+  fundamentals; since then, every change comes from how voter personas react to the news. Polls and prediction markets
+  are now used only to check us, every Sunday.
+- Because the polls' daily correction is gone, Texas moved on the switch: Talarico now wins 59 in 100 simulated
+  elections, up from 52. No other race moved by more than a point, and Republicans hold 50+ seats in 42 in 100, down
+  from 44. Both versions of the forecast are scored.
+
 ## October 12, 2026
 
 - Daily forecasts begin, every Senate race and the House, updated once a day.

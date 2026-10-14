@@ -1,7 +1,7 @@
 Every day we forecast the 35 Senate races of 3 November 2026 by simulating the social dynamics of the campaign: how
 the news moves different groups of voters.
-Statistics set where each race starts. **Voter personas**, built from real survey answers, carry each day's events
-into every race. Then each race is played out 40,000 times. It is a social simulation, not a poll: we don't ask
+Statistics set where each race started, on 12 October. Since then, **voter personas**, built from real survey
+answers, carry each day's events into every race, and polls only check us. Then each race is played out 40,000 times. It is a social simulation, not a poll: we don't ask
 people what they think today, we model how they react. Each step below takes a few lines; open **In detail** for the full method.
 
 Each voter persona is a language model given one group's profile, so its reactions are the model's estimates, not
@@ -12,12 +12,13 @@ the same day.
 
 ## How a forecast is made
 
-### Statistics set the starting line
+### Statistics set the starting line, once
 
 Before any persona reacts, each race starts from a margin built from two estimates: the polls in that race, with each
 pollster's usual lean taken out, and the fundamentals: the state's partisan lean, the national mood, incumbency and
 the candidates' past results. The more a race is polled, the more its polls count, up to about 80%. A race without
-polls starts from the fundamentals alone.
+polls starts from the fundamentals alone. That starting point was fixed as published on 12 October. Polls don't move
+it again: from then on, a race changes only when the news moves its voters.
 
 {{fig:blend}}
 
@@ -76,8 +77,7 @@ a scale fitted on 45 past events with measured shifts in opinion.
   own race.
 - **Every race shows** how its forecast changes if the news matters less or more.
 - **Lean correction:** the model that gives the reactions sits slightly on the Republican side of real past opinion
-  shifts, by about a quarter of a point per event. A small fixed correction takes that out, and it is re-estimated
-  every week.
+  shifts, by about a quarter of a point per event. A small fixed correction takes that out.
 
 ### News fades
 
@@ -93,22 +93,27 @@ day once it leaves the news; lasting topics, such as prices or a war, keep only 
   "If the election were today" counts everything in force now, and is less uncertain, because there is no time left
   for things to change.
 - **The fade is checked** every week against half-lives from about 3 to 11 days.
-- **No story counts twice.** When a poll was taken while a story was moving voters, the story's simulated effect is
-  taken out before the poll enters the average.
 
-### Every Monday, the evidence checks the simulation
+### Every Sunday, the polls check us
 
-Each Monday we compare how each state's polls actually moved with what the personas' reactions predicted, and tune two
-dials per state: how much the news moves vote choice there, and how much it moves turnout. A dial can make reactions
-larger or smaller; it never changes their direction. Where states publish early-vote counts, the real counts check the
-simulated turnout.
+Since 12 October, every move in a race comes from how voter personas react to the news. Polls and prediction markets
+no longer feed in; we use them to check our work. Each Sunday we compare how far each race moved in our forecast with
+how far its poll average moved that week, in either direction. A gap above 3 points is flagged and looked into; above
+5, we investigate before the next run; above 6.5, and only if the investigation finds the week went wrong, we may undo
+that race's week, back to where it stood the week before. That is never automatic: it is a decision we take and
+explain in Monday's post. Where no new polls came out, we compare with the markets and only flag.
 
 #### In detail
 
-- **Borrowing strength:** states with few polls stay close to the national dial, and the dials' own uncertainty goes
-  into every simulated election.
-- **Surprises** are flagged for any state whose polls moved against the forecast in the latest week.
-- **Early vote:** North Carolina and Maine publish counts now; Iowa and Texas from mid-October. Only counts are used.
+- **Nothing is re-fitted from polls.** The weekly step no longer adjusts any race's level or how strongly a state
+  reacts to the news; it only reports. A change to how strongly a state reacts can come only out of an investigation,
+  is dated in the changelog and is explained in a lab note.
+- **Enough polls first:** a gap counts as more than a flag only when at least three new polls came out in that race
+  that week.
+- **What gets fixed:** an investigation can find a bug, a story summary that was wrong, a story matched to the wrong
+  race or a state reacting too strongly. Each fix is dated in the changelog, and both versions are scored.
+- **Early vote:** we save the counts North Carolina, Maine and Iowa publish, and Texas's from about 19 October. They
+  don't feed the forecast or the weekly check yet; if they start to, the change will be dated here.
 
 ### Then each race is played out 40,000 times
 
@@ -179,8 +184,8 @@ moves them.
   measure memory rather than reasoning. We flag this rather than claim clean validation on past years.
 - **Models lean.** Telling the same story with the parties swapped shows most models keep a small, sometimes uneven,
   lean. We measure it, correct it and publish it.
-- **Few polls early on.** Several Senate races have few or no polls yet, so their forecasts rest mostly on the
-  fundamentals and carry wider ranges until more polling arrives.
+- **Few polls at the start.** Several Senate races had few or no polls on 12 October, so their starting points rest
+  mostly on the fundamentals and carry wider ranges.
 
 ## Sources and credits
 

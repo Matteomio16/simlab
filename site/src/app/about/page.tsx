@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const PARTS = [
   {
     k: "What we want",
-    t: "Forecasting that is independent, transparent and built on human reactions: how the news moves different groups of voters. Polls can be biased or inaccurate; we show where and why our engine sees something different.",
+    t: "Forecasting that is independent, transparent and built on human reactions: how the news moves different groups of voters. Polls can be biased or inaccurate; we show where and why our engine sees something different. Polls set our starting line on 12 October. Since then every move comes from how voters react to the news, and polls check us every week.",
   },
   {
     k: "How we do it",
