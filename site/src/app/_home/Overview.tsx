@@ -38,6 +38,18 @@ function Figure({ n, label, color }: { n: number; label: string; color: string }
   );
 }
 
+function SwitchNote({ date }: { date: string }) {
+  // The switch-day note (simulation only, 14 Oct), shown for its first week.
+  if (date < "2026-10-14" || date > "2026-10-20") return null;
+  return (
+    <p className="note mt-2 max-w-3xl">
+      From 14 October the forecast drops the polls&rsquo; daily correction: polls set the starting point on 12 October,
+      and now only the news moves races. Biggest change: Texas, where Talarico wins 59 in 100 simulated elections, up
+      from 52. Both versions are scored. <Link href="/changelog" className="underline">Changelog</Link>
+    </p>
+  );
+}
+
 export default function Overview() {
   const { forecast, history } = load();
   const s = forecast.senate;
@@ -99,6 +111,7 @@ export default function Overview() {
         <div className="pt-3"><ChamberSwitch active="senate" /></div>
         <section className="rise pt-3">
           <Dateline left="The state of the Senate" right={`Updated ${longDate(forecast.date)} · ${daysTo(forecast.date)} days to go`} />
+          <SwitchNote date={forecast.date} />
           <div className="mt-3">
             <MapPanel
               header={
@@ -223,6 +236,7 @@ export default function Overview() {
       <section className="rise pt-10 sm:pt-12">
         <p className="label">2026 Senate forecast</p>
         <p className="note mt-1">Updated {longDate(forecast.date)} · {daysTo(forecast.date)} days to Election Day</p>
+        <SwitchNote date={forecast.date} />
         <h1 className="mt-4 max-w-4xl text-[2.1rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
           {headline(s.p_r_50plus, s.p_d_caucus_51)}
         </h1>
