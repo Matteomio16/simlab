@@ -19,6 +19,7 @@ what we read wrong.
 | 12-reading-polls-06 | 12 Oct 18:00 Paris | Ohio Senate (special) | co/efficient, Husted +1 (925 LV) | Brown +3 | | open | |
 | 13-reading-polls-07 | 13 Oct 18:00 Paris | Texas Senate | YouGov, Talarico +6 (3,625 LV) | Talarico +3 | | open | |
 | 13-reading-polls-08 | 13 Oct 20:30 Paris | Kansas Senate | InsiderAdvantage, Hamilton +1 (1,200 LV) | Marshall +2 (our expected vote, 51-49; the post promises to keep checking it against new polls) | | open | |
+| 14-reading-polls-09 | 14 Oct 18:00 Paris | Michigan Senate | YouGov, El-Sayed +1 (3,949 LV) | El-Sayed +4 | | open | |
 
 Not posted, so no promise: 08-reading-polls-04 (Florida, dropped 11 Oct); 12-reading-polls-05 (Iowa, dropped 12 Oct:
 the SSRS poll sat in the middle of the pack).
