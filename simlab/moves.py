@@ -17,6 +17,8 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import minimize_scalar
 
+from .newsraces import fix_cards
+
 HERE = Path(__file__).parent
 PARAMS = HERE / "move_params.json"
 ELECTION = date(2026, 11, 3)
@@ -97,6 +99,7 @@ def _history(day: date, derived: Path) -> tuple[dict, dict, set, dict]:
         d = day - timedelta(days=k)
         folder = derived / d.isoformat()
         todays = {e["event_id"]: e for e in _jsonl(folder / "events.jsonl")}
+        fix_cards(todays.values())  # cards corrected after Matteo's yes (newsraces.CARD_FIXES)
         for r in _jsonl(folder / "reactions.jsonl"):
             e = todays.get(r["event_id"])
             if e is not None and "selected" in e and r["race_id"] not in (e["selected"] or {}):

@@ -2,12 +2,14 @@ import json
 import tempfile
 import unittest
 from datetime import date
+from unittest import mock
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from simlab import moves
+from simlab import newsraces as moves_newsraces
 from simlab.groups import GROUPS
 
 A, B = GROUPS[0], GROUPS[-1]
@@ -88,6 +90,19 @@ class BuildTest(unittest.TestCase):
         self.assertAlmostEqual(later["OH-S"]["by_event_effect"]["e1"], full / 2, places=6)
         self.assertAlmostEqual(later["OH-S"]["by_event"]["e1"], full * (0.5 - 0.5 ** 0.9), places=4)
         self.assertEqual(later["OH-S"]["events"]["e1"]["first_seen"], "2026-10-01")
+
+    def test_a_card_corrected_after_matteos_yes_shows_the_new_words(self):
+        # 14 Oct: three cards corrected in the Publishing approval thread; the published day's file stays as it was
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            fixes = root / "card_fixes.json"
+            fixes.write_text(json.dumps({"e1": {"card": "The new words.", "approved": "Matteo, 14 Oct"}}),
+                             encoding="utf-8")
+            write_day(root, "2026-10-01", [event("e1", "2026-10-01T08:00:00+00:00", 1.0)],
+                      [reaction("e1", A, 2.0, 0.0), reaction("e1", B, 2.0, 0.0)])
+            with mock.patch.object(moves_newsraces, "CARD_FIXES", fixes):
+                m = self.build(root, "2026-10-01")
+        self.assertEqual(m["OH-S"]["events"]["e1"]["card"], "The new words.")
 
     def test_rows_for_pairs_the_days_news_no_longer_selects_are_dropped(self):
         with tempfile.TemporaryDirectory() as d:

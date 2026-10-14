@@ -727,6 +727,7 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         e["attention"] = attention(s, spike_ratio(views, s["race_id"]))
         by_id[k["event_id"]] = s
     new -= len(cont)
+    newsraces.fix_cards(events)
     for e in events:
         e["usable"] = bool(e["card"])  # only stories with a card can be selected (the pool is the top 10 per race)
     merge_same_events(events, by_id, chats, races, tiers)

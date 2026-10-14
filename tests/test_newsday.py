@@ -309,6 +309,16 @@ class Cards(unittest.TestCase):
         self.assertEqual(newsday.write_card(self.story, [first, second]), GOOD)
         self.assertEqual((first.calls, second.calls), (1, 1))
 
+    def test_the_corrected_cards_follow_the_card_rules(self):
+        # 14 Oct: cards fixed by hand after Matteo's yes must still pass what a written card must pass
+        fixes = json.loads(newsday.newsraces.CARD_FIXES.read_text(encoding="utf-8"))
+        for eid, f in fixes.items():
+            self.assertTrue(newsday.card_ok(f["card"], []), eid)
+            self.assertTrue(f["approved"].startswith("Matteo"), eid)
+        events = [{"event_id": eid, "card": f["was"]} for eid, f in fixes.items()] + [{"event_id": "x", "card": "c"}]
+        newsday.newsraces.fix_cards(events)
+        self.assertEqual([e["card"] for e in events], [f["card"] for f in fixes.values()] + ["c"])
+
     def test_each_failed_try_says_which_rule_it_broke(self):
         bad = FakeChat(['{"card": "Politico reports a crypto PAC will spend $30M."}',
                         '{"card": "The ad could help Democrats in the Senate race, a new poll shows."}'])

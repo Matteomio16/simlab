@@ -1,0 +1,20 @@
+{
+ "IA-20261013-31537eec": {
+  "card": "President Trump reached a diesel deal with Russian President Vladimir Putin, drawing criticism from members of Congress.",
+  "was": "President Trump reached a diesel deal with Russian President Vladimir Putin, drawing criticism from members of Congress, including from both parties.",
+  "why": "'including from both parties' is in no headline",
+  "approved": "Matteo, 14 Oct (Publishing approval)"
+ },
+ "US-20261011-05c55f98": {
+  "card": "Factory workers are voicing opposition to President Trump's tariffs ahead of the midterms.",
+  "was": "Factory workers are expressing opposition to President Trump's tariffs, with Republicans facing backlash from these workers ahead of the 2026 midterm elections.",
+  "why": "'with Republicans facing backlash' claims an effect on a party",
+  "approved": "Matteo, 14 Oct (Publishing approval)"
+ },
+ "US-20261014-00588a69": {
+  "card": "Higher gas and chip prices were expected to have pushed inflation up last month.",
+  "was": "Inflation rose last month, driven in part by higher gas prices and semiconductor costs, according to the latest data.",
+  "why": "the headline is a preview, not the data",
+  "approved": "Matteo, 14 Oct (Publishing approval)"
+ }
+}

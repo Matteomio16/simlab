@@ -109,6 +109,20 @@ def build(races: dict) -> dict:
     return out
 
 
+CARD_FIXES = Path(__file__).with_name("card_fixes.json")
+
+
+def fix_cards(events, path: Path | None = None) -> None:
+    """Story cards corrected by hand after Matteo's yes (card_fixes.json: {event_id: {card, was, why, approved}}),
+    applied where cards are written (newsday) and read (moves), so the new words show from the next run on. Reactions
+    already asked keep the words they were asked with; a race that first reacts later reads the new ones (14 Oct)."""
+    path = path or CARD_FIXES
+    fixes = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    for e in events:
+        if e.get("event_id") in fixes:
+            e["card"] = fixes[e["event_id"]]["card"]
+
+
 def load(path: Path = CONFIG) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
