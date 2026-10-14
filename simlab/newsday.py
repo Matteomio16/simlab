@@ -84,7 +84,7 @@ def active(scope: str, tiers: dict) -> list[str]:
     return list(PILOT) if scope == "pilot" else sorted(r for r, t in tiers.items() if t != "statistics" and r in CONFIG)
 
 
-ECONOMY_CAPS = {"simulate": (3, 2), "watch": (0, 0), "statistics": (0, 0)}  # past $17 of spend (daily.budget_mode)
+ECONOMY_CAPS = {"simulate": (3, 2), "watch": (0, 0), "statistics": (0, 0)}  # past $27 of spend (daily.budget_mode)
 MODE = "full"  # set by run(): full, economy or polls
 
 

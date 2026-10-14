@@ -51,10 +51,11 @@ def scope_for(day: str, override: str | None) -> str:
     return override or ("all" if day >= FULL_RUN else "pilot")
 
 
-# The OpenRouter key's cap stays at $20 (Matteo, 30 Sep). Past these lifetime totals the day runs cheaper instead of
-# failing at the cap: "economy" (watch races on statistics alone, 3 race and 2 national stories for a simulated race)
-# and "polls" (no model calls: the forecast runs on the polls and the earlier news, which keeps fading).
-BUDGET_ECONOMY, BUDGET_POLLS = 17.0, 19.0
+# The OpenRouter key's cap is $30 (Matteo, 14 Oct; $20 from 30 Sep). Past these lifetime totals the day runs cheaper
+# instead of failing at the cap: "economy" (watch races on statistics alone, 3 race and 2 national stories for a
+# simulated race, 1 for a House seat) and "polls" (no model calls: the forecast runs on the polls and the earlier news,
+# which keeps fading).
+BUDGET_ECONOMY, BUDGET_POLLS = 27.0, 29.0
 
 
 def key_spend() -> float | None:

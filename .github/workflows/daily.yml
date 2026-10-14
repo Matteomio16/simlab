@@ -105,8 +105,8 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           KEV_API_KEY: ${{ secrets.KEV_API_KEY }}
           SIMLAB_BUDGET_USD: "2"
-          # House district news (simlab/newsday.py HOUSE_NEWS): "1" once Matteo has seen the estimate and the dry run
-          SIMLAB_HOUSE_NEWS: "0"
+          # House district news (simlab/newsday.py HOUSE_NEWS), on from 15 Oct (Matteo, 14 Oct)
+          SIMLAB_HOUSE_NEWS: "1"
         # Kev answers as shadow rows (never applied) when the KEV_URL repository variable is set (Matteo, 29 Sep)
         run: |
           data=data-repo scope=
