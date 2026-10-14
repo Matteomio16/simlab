@@ -675,7 +675,89 @@ All our Lab notes: notapoll.org/lab-notes
         })
 
 
-EPISODES = {1: ep01, 2: ep02, 3: ep03, 4: ep04, 5: ep05, 6: ep06, 7: ep07, 8: ep08, 9: ep09}
+def ep10(theme: Theme = LAB) -> Post:
+    """The simulation-only rule (docs/simulation-only.md; Matteo's yes to the topic, 14 Oct). Wording from the approved
+    copy (kits/review/simulation-only-copy.md) and the live "Polls alone · Markets" line; Maine from the 14 Oct run
+    (ours 0.6214 → 62, stats_only 0.6575 → 66, market 0.577 → 58%). Polls are a check, never attacked."""
+    day, k = date(2026, 10, 15), "Lab notes 10"
+    new = lambda: Slide(day, "", theme, series=k)
+
+    a = new().headline("Since 12 October, only the news moves our forecast.", px=76)
+    steps = ["12 October: the polls and each state's voting record set every race's starting point.",
+             "Every day since: voter personas, built from real survey answers, react to the news. That alone moves "
+             "our numbers.",
+             "Every Sunday: the polls and the markets check us."]
+    for n, line in enumerate(steps, 1):
+        top = a.y
+        a._put(MARGIN, top - 6, str(n), "hero", theme.hero_weight, 64, theme.ai, va="top")
+        a.text(line, "serif", 600, 38, x=MARGIN + 76, width=a.width - 76, after=0.7)
+    a.source("Full method: notapoll.org/methods")
+
+    b = new().headline("Maine on 14 October, three ways.", px=96)
+    b.dek("Troy Jackson's chance of winning the Senate seat. Every race page now shows the polls-alone number "
+          "under ours.", px=36)
+    b.y += 40
+    charts.stats(b, [("62", "our simulation"), ("66", "polls alone"), ("58%", "markets")], px=120, rule=True)
+    b.text("Two days in, the gaps are small. The news decides whether they grow.", px=32, color=theme.ink2)
+    b.source("NotAPoll, 14 Oct run. Polls alone: the polls and fundamentals without the simulated news.")
+
+    c = new().headline("Every Sunday, the polls check us.", px=88)
+    for line in ["We compare how far each race moved in our forecast with how far its polls moved that week.",
+                 "A gap above 3 points is flagged. Above 5, we investigate before the next run.",
+                 "We undo a race's week only if an investigation finds it went wrong. Never automatically."]:
+        c.text(line, "serif", 600, 38, after=0.7)
+    c.note("The first check runs this Sunday, 18 October.", width=700)
+    c.source("notapoll.org/methods")
+
+    return Post(day, "Lab notes 10: only the news moves our forecast", [
+        (a, "Since 12 October, only the news moves our forecast. One: on 12 October the polls and each state's voting "
+            "record set every race's starting point. Two: every day since, voter personas built from real survey "
+            "answers react to the news, and that alone moves our numbers. Three: every Sunday, the polls and the "
+            "markets check us."),
+        (b, "Maine on 14 October, three ways: in our simulation Jackson wins 62 in 100 simulated elections; the polls alone "
+            "give him 66 in 100; the markets 58%. Every race page now shows the polls-alone number under ours. Two "
+            "days in, the gaps are small."),
+        (c, "Every Sunday, the polls check us: we compare how far each race moved in our forecast with how far its "
+            "polls moved that week. A gap above 3 points is flagged; above 5, we investigate before the next run. We "
+            "undo a race's week only if an investigation finds it went wrong, never automatically. The first check "
+            "runs this Sunday, 18 October."),
+    ], f"""A change to how our forecast works, from 12 October.
+
+The polls and each state's voting record set every race's starting point on 12 October. Since then, only the news moves our numbers: voter personas, built from real survey answers, react to each day's stories, and that is what shifts a race. Polls and prediction markets no longer feed in. We use them to check our work.
+
+You can see that check on every race page. Under our number there's now a line called "Polls alone": what the polls and the fundamentals would say without the simulated news. In Maine on 14 October, our forecast had Troy Jackson winning 62 of every 100 simulated elections; the polls alone gave him 66 in 100, and the markets 58%. Two days in, the gaps are small. The news will decide whether they grow.
+
+Every Sunday we compare how far each race moved in our forecast with how far its polls moved that week. A gap above 3 points is flagged; above 5, we investigate before the next run. We would undo a race's week only if an investigation found it went wrong, never automatically, and we'd say so on Monday. The first check runs this Sunday.
+
+Why? NotAPoll exists to test whether simulating how people react to the news can forecast an election. If the polls kept steering our numbers, we'd never find out.
+
+Full method: notapoll.org/methods
+
+#midterms2026 #elections #forecast
+
+{DISCLAIMER}""", [
+        f"Since 12 October, only the news moves our forecast: voter personas react to each day's stories. {LABEL}.",
+        "The polls set every race's starting point, and now check us every Sunday. Every race page shows what the "
+        "polls alone would say.",
+        "Maine on 14 Oct: Jackson wins 62 in 100 simulated elections; the polls alone give him 66, the markets 58%.",
+    ], allow=("poll", "polls", "survey"),
+        short=("Since 12 October, only the news moves our forecast: voter personas react to each day's stories. The "
+               "polls set every race's starting point, and now check us every Sunday."),
+        more=" Every race page shows \"Polls alone\" under our number: notapoll.org.",
+        platform={
+            "x": ("From 12 Oct, only the news moves our forecast: voter personas react to each day's stories. Polls "
+                  "set the start and now check us every Sunday. Maine on 14 Oct: Jackson wins 62 in 100 "
+                  "simulated elections; polls alone 66, markets 58%."),
+            "threads": ("A change to how our forecast works: the polls set every race's starting point on 12 October. "
+                        "Since then, only the news moves our numbers, through voter personas reacting to each day's "
+                        "stories, and the polls check us every Sunday. Every race page now shows \"Polls alone\" under "
+                        "our number. Should a forecast follow the polls, or be checked against them?"),
+            "topic": "2026 Midterms",
+            "first_comment": "Should a forecast follow the polls, or be checked against them?",
+        })
+
+
+EPISODES = {1: ep01, 2: ep02, 3: ep03, 4: ep04, 5: ep05, 6: ep06, 7: ep07, 8: ep08, 9: ep09, 10: ep10}
 
 
 def daily(n: int, folder: str, theme: Theme = LAB) -> tuple[Path, list[str]]:
