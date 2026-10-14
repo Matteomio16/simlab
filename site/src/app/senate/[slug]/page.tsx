@@ -74,6 +74,11 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
     ["Poll average", b.poll_avg == null ? "No recent polls" : margin(b.poll_avg, L), false],
     ["Cook Political Report", b.cook?.replace("Tossup", "Toss-up").replace("Solid", "Safe") ?? "–", false],
   ];
+  // "Polls alone · Markets" under our number, worded like it (simulation only, Matteo 14 Oct): no colour, no arrows.
+  const alone = leader(f.stats_only.p_dem_win, meta);
+  const mkt = b.market == null ? null : leader(b.market, meta);
+  const pollsAlone = `Polls alone: ${surname(alone.name)} ${in100(alone.p)} in 100` +
+    (mkt ? ` · Markets: ${surname(mkt.name)} ${Math.round(mkt.p * 100)}%` : "");
   const eff = `${f.news.effect >= 0 ? L : "R"}+${Math.abs(f.news.effect).toFixed(1)}`;
   const newsLine = `All news so far moves the Nov. 3 margin by ${eff} (${Math.abs(f.news.switching).toFixed(1)} from switching, ${Math.abs(f.news.turnout).toFixed(1)} from turnout). If news matters less, ${leftShort} wins ${in100(f.news.if_weaker.p_dem_win)} in 100; if it matters more, ${in100(f.news.if_stronger.p_dem_win)}.`;
 
@@ -104,6 +109,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
       <section className="rise mt-8 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1fr]">
         <div>
           <SplitChance p={f.p_dem_win} left={L} render={(v) => <CountUp value={v} />} />
+          <p className="note mt-2">{pollsAlone}</p>
           <p className="mt-3 text-[0.9rem] text-ink-2">
             <span className="font-semibold" style={{ color: partyVar(L) }}>{`${meta.candidates.left} (${L})`}</span>
             <span className="text-muted"> vs. </span>
@@ -127,6 +133,7 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
               ))}
             </tbody>
           </table>
+          <p className="note mt-3">Polls alone is what the polls and the fundamentals would say without the simulated news. We show it to check ourselves; since 12 October it no longer moves our forecast.</p>
         </div>
       </section>
 

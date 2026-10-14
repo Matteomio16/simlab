@@ -115,10 +115,13 @@ export default function Overview() {
           <div className="mt-3">
             <MapPanel
               header={
-                <h1 className="text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">
-                  {headline(s.p_r_50plus, s.p_d_caucus_51)}
-                  <Trend points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} up="Republicans" down="Democrats" />
-                </h1>
+                <div>
+                  <h1 className="text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">
+                    {headline(s.p_r_50plus, s.p_d_caucus_51)}
+                    <Trend points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} up="Republicans" down="Democrats" />
+                  </h1>
+                  <p className="note mt-1">{`Polls alone: Republicans hold 50+ in ${in100(s.stats_only.p_r_50plus)} in 100` + (s.benchmarks.market == null ? "" : ` · Markets: Republicans ${in100(s.benchmarks.market)}%`)}</p>
+                </div>
               }
               mapClass="mx-auto max-w-[720px]"
               legend={TIER_LEGEND}

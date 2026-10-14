@@ -54,6 +54,12 @@ export default function House() {
         <h1 className="mt-3 border-b border-rule pb-4 text-[1.6rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[1.9rem]">{headline(h.p_d_majority)}
           <Trend points={(history.house ?? []).map((x) => ({ date: x.date, p: x.p_d_majority }))} up="Democrats" down="Republicans" />
         </h1>
+        {h.stats_only && (
+          <p className="note mt-2">
+            {`Polls alone: Democrats win the majority in ${in100(h.stats_only.p_d_majority)} in 100` +
+              (h.benchmarks?.market == null ? "" : ` · Markets: Democrats ${100 - in100(h.benchmarks.market)}%`)}
+          </p>
+        )}
         <div className="mx-auto mt-4 max-w-[720px]">
           <HouseMap seats={districts.map(seatOf)} clickable={SHOW.houseSeats} />
           <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">

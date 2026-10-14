@@ -107,6 +107,11 @@ export default async function HouseSeat({ params }: { params: Promise<{ slug: st
         <section className="rise mt-8 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1fr]">
           <div>
             <SplitChance p={d.p} left={d.left} render={(v) => <CountUp value={v} />} />
+            {d.statsP != null && (
+              <p className="note mt-2">
+                {`Polls alone: ${surname(d.statsP >= 0.5 ? leftName : rightName)} ${in100(d.statsP >= 0.5 ? d.statsP : 1 - d.statsP)} in 100`}
+              </p>
+            )}
             <p className="mt-3 text-[0.9rem] text-ink-2">
               <span className="font-semibold" style={{ color: partyVar(d.left) }}>{`${leftName} (${d.left})`}</span>
               <span className="text-muted"> vs. </span>
@@ -137,6 +142,7 @@ export default async function HouseSeat({ params }: { params: Promise<{ slug: st
                 </div>
               ))}
             </dl>
+            {d.statsP != null && <p className="note mt-3">Polls alone is what the polls and the fundamentals would say without the simulated news. We show it to check ourselves; since 12 October it no longer moves our forecast.</p>}
             {d.tier && TIER[d.tier] && <p className="mt-4 rounded-xl bg-note px-4 py-3 text-[0.92rem] leading-relaxed text-ink">{TIER[d.tier]}</p>}
           </div>
         </section>
