@@ -519,7 +519,7 @@ All our Lab notes: notapoll.org/lab-notes
 def ep08(theme: Theme = LAB) -> Post:
     """We trained our own model (content-plan §3, no. 8), kept positive and factual (Matteo, 4 Oct). docs/CHANGELOG.md:
     Kev ces-v3b answers the 28 voter groups in all 51 states (1,428 group starting points); the reaction version's
-    null and party-swap checks (no change 0.955/0.965, every sign flips); shadow mode, scored weekly."""
+    null and party-swap checks (no change 0.955/0.965, every sign flips); shadow mode; its weekly score starts 19 Oct (Engine, 14 Oct)."""
     day, k = date(2026, 10, 10), "Lab notes 08"
     new = lambda: Slide(day, "", theme, series=k)
 
@@ -538,8 +538,8 @@ def ep08(theme: Theme = LAB) -> Post:
     b.source("Null test: 20 irrelevant stories. Mirror test: 16 stories told twice, parties swapped. Sep 2026.")
 
     c = new().headline("Next, it has to earn the reaction job.", px=84)
-    c.text("For now a hosted model gives the reactions to the news. Ours answers alongside it every day and is scored "
-           "each week against what really happened.", px=40, color=theme.ink2, after=1.2)
+    c.text("For now a hosted model gives the reactions to the news. Ours answers alongside it every day; from 19 "
+           "October it is scored each week against what really happened.", px=40, color=theme.ink2, after=1.2)
     c.note("A model only takes over a job when it does it better.", width=700)
     c.source("Forecasts go public on Monday 12 October.")
 
@@ -548,15 +548,15 @@ def ep08(theme: Theme = LAB) -> Post:
             "in every state and DC."),
         (b, "It passes both fairness checks: no reaction to irrelevant news 96% of the time, and its reaction flipped "
             "on all 16 stories when we swapped the parties."),
-        (c, "Next, it has to earn the reaction job: it answers alongside the hosted model every day and is scored "
-            "each week against what really happened."),
+        (c, "Next, it has to earn the reaction job: it answers alongside the hosted model every day, and from 19 "
+            "October it is scored each week against what really happened."),
     ], f"""This is the part of NotAPoll we built ourselves: our own model, trained on how real Americans answered a 2024 election survey.
 
 We took an open model and fine-tuned it on how real Americans answered the 2024 Cooperative Election Study. It now sets where each of 28 voter groups starts in every state and DC, 1,428 starting points in all.
 
 It also passes both of our fairness checks. Shown 20 news stories that shouldn't matter to anyone, it reacted to almost none of them. Shown 16 stories twice, once as written and once with the parties swapped, its reaction flipped every single time, exactly what a model with no built-in lean should do.
 
-Reactions to the daily news are the next job. For now a hosted model gives them, and ours answers alongside it every day, scored each week against what really happened. A model only takes over a job when it does it better.
+Reactions to the daily news are the next job. For now a hosted model gives them, and ours answers alongside it every day. From 19 October it is scored each week against what really happened. A model only takes over a job when it does it better.
 
 All our Lab notes: notapoll.org/lab-notes
 
@@ -566,7 +566,7 @@ All our Lab notes: notapoll.org/lab-notes
         f"We trained our own model on real 2024 survey answers. It sets 1,428 starting points: 28 voter groups in "
         f"every state and DC. {LABEL}.",
         "It passes both fairness checks: its reaction flipped on all 16 stories when we swapped the parties.",
-        "Next it has to earn the reaction job, scored every week against what really happened.",
+        "Next it has to earn the reaction job: from 19 October it is scored every week against what really happened.",
     ], allow=("survey",), short=("We trained our own model on real 2024 survey answers. It sets 1,428 starting "
                                  "points, and it passes both fairness checks: its reaction flipped on all 16 stories "
                                  "when we swapped the parties."),
