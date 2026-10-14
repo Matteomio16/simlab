@@ -374,6 +374,13 @@ def expected_vote(r: dict) -> str:
     return f"{side} {lead}–{100 - lead}"
 
 
+def today_chance(r: dict) -> str:
+    """The election held today, leader first: "R 51 in 100". A bare "52 in 100" under "Rep wins 59" read as the
+    Republican's chance when it was the Democrat's (Iowa, 14 Oct)."""
+    p = float(r["today"])
+    return f"{abbr(r) if p >= 0.5 else 'R'} {round(max(p, 1 - p) * 100)} in 100"
+
+
 def stamped(t: Theme, r: dict = RACE, hero: str = "split") -> Slide:  # split chosen by Matteo, 8 Oct
     """The Stamp: the state as a masthead, its simulated voters, the verdict stamped beside the number, a ledger."""
     s = slide(t, r)
@@ -398,7 +405,7 @@ def stamped(t: Theme, r: dict = RACE, hero: str = "split") -> Slide:  # split ch
             ("Poll average", r["poll"]), (f"Market, {abbr(r)}", pct_txt(r["market"])), ("Cook", r["cook"]),
             ("This week", r["change"].replace(" this week", ""))]
     if r.get("today") is not None:  # the election held today: no time left for opinion to drift
-        rows.insert(0, ("If the election were today", f"{r['today'] * 100:.0f} in 100"))
+        rows.insert(0, ("If the election were today", today_chance(r)))
     gap = 12 if len(rows) <= 5 else 4
     for name, value in rows:
         s.rule(t.hairline, after=14)

@@ -304,7 +304,7 @@ STORIES = {
         "left": "El-Sayed", "right": "Rogers",
         "headline": "Michigan’s largest recent poll has El-Sayed up just 1. Most others put him 4 to 7 ahead.",
         "dek": "Ten Senate polls since 24 September, El-Sayed (D) minus Rogers (R). Partisan polls left out.",
-        "source": "Polls ending 24 Sep – 10 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 13 Oct.",
+        "source": "Polls ending 24 Sep – 10 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 14 Oct.",
         "title2": "Tightening, or noise?",
         "against_head": "Why it may be too close",
         "against": ["Five of the other nine polls since 24 September put El-Sayed 4 to 7 points ahead.",
