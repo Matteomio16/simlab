@@ -703,7 +703,7 @@ def ep10(theme: Theme = LAB) -> Post:
         sig += amp * np.exp(-((xs - (x0 + c * (x1 - x0))) / 14) ** 2) * np.sin((xs - x0) / 4.0)
     a.ax.plot(xs, base - sig, color=seis.ink, lw=pt(2.4), zorder=3)
     a.ax.scatter([x0 + 4], [base], s=pt(22) ** 2, color=seis.ai, zorder=4)
-    a._put(x0, base + 40, "12 Oct: the polls\nset the start", "sans", 600, 26, seis.ai, va="top", linespacing=1.15)
+    a._put(x0, base + 40, "12 Oct: the\nstarting line", "sans", 600, 26, seis.ai, va="top", linespacing=1.15)
     for c, lab in [(0.3, "debate"), (0.56, "jobs report"), (0.82, "scandal")]:
         a._put(x0 + c * (x1 - x0), top + 20, lab, "sans", 600, 28, seis.rep, ha="center", va="bottom")
     a.y = top + 5 * 90 + 50
