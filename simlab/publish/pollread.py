@@ -341,6 +341,47 @@ STORIES = {
                  "partisan-sponsored polls. They sit between El-Sayed +1 and +7, with the middle around +4; the new YouGov poll, the largest, has El-Sayed "
                  "up 1."),
     },
+    "2026-10-15": {
+        "race": "IA", "since": "2026-09-24", "focus": "Marist University", "folder": "15-reading-polls-10",
+        "left": "Turek", "right": "Hinson",
+        "headline": "Marist has Turek up 7 in Iowa. Most other polls have it within 2.",
+        "dek": "Nine Senate polls since 24 September, Turek (D) minus Hinson (R). Partisan polls left out.",
+        "source": "Polls ending 28 Sep – 12 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 14 Oct.",
+        "title2": "Momentum, or method?",
+        "against": ["It counts registered voters; likely voters lean more Republican in midterms.",
+                    "Marist's September poll had Turek up 8 too, when others had it close.",
+                    "YouGov, at the same time with twice the sample, has Turek up 1."],
+        "for": "Rasmussen and Suffolk, two very different pollsters, both have Turek up 4.",
+        "hypothesis": "Our hypothesis: Hinson by about 1. Our simulation: Hinson wins 59 in 100.",
+        "caption": (
+            "Iowa Senate poll: a new Marist survey has Josh Turek ahead of Ashley Hinson by 7 points, 51 to 44, among "
+            "registered voters. The other eight polls since late September range from Hinson +2 to Turek +4.\n\n"
+            "Read it carefully. Marist counted registered voters, while most others count likely voters, who in a "
+            "midterm often lean a little more Republican. Marist's September poll also had Turek up 8 when others had "
+            "it close. And YouGov, in the field at the same time with twice the sample, has Turek up just 1.\n\n"
+            "But it isn't alone in seeing Turek ahead: Rasmussen and Suffolk, two very different pollsters, both have "
+            "him up 4.\n\n"
+            "Our hypothesis: a race close to even, with Hinson ahead by about 1. In our simulation Hinson wins 59 of "
+            "every 100 simulated elections, with an expected vote of 51–49. We'll check it against the next three "
+            "polls.\n\n"
+            "We leave out polls paid for by a party, a campaign or a partisan group.\n\n"
+            "#midterms2026 #Iowa #IowaSenate #elections"),
+        "short": ("A new Iowa poll, Marist, has Turek up 7 on Hinson among registered voters. The other eight since "
+                  "late Sep range from Hinson +2 to Turek +4. Our hypothesis: close to even. Our simulation: Hinson "
+                  "wins 59 in 100."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("Iowa: Marist has Turek up 7 among registered voters. The other eight polls since late Sep range from "
+              "Hinson +2 to Turek +4; YouGov, twice the sample, has Turek +1. Our hypothesis: close to even. Our "
+              "simulation: Hinson wins 59 in 100."),
+        "threads": ("Iowa's Senate race in a new Marist poll: Josh Turek up 7 on Ashley Hinson. The other recent polls "
+                    "sit between Hinson +2 and Turek +4, and Marist counted registered rather than likely voters. We "
+                    "think it's close to even. If you're in Iowa, which way does it feel?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you live in Iowa, which way does this Senate race feel where you are?",
+        "alt1": ("Dot chart of nine Iowa Senate polls since 24 September, Turek minus Hinson, leaving out "
+                 "partisan-sponsored polls. Eight sit between Hinson +2 and Turek +4; the new Marist poll, of "
+                 "registered voters, has Turek up 7."),
+    },
 }
 
 
