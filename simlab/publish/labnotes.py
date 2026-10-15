@@ -20,7 +20,7 @@ from ..core import RUNS
 from ..scorecard import latest
 from . import charts, text
 from .frame import DISCLAIMER, LABEL, MARGIN, SITE, Slide, Theme, pt, typeset
-from .themes import LAB
+from .themes import LAB, SEISMO
 
 KITS = RUNS.parent / "kits" / "labnotes"
 ARTICLES = Path(__file__).parent / "articles"  # the website versions (labnotes-NN.md), read by the site from post.md
@@ -676,58 +676,117 @@ All our Lab notes: notapoll.org/lab-notes
 
 
 def ep10(theme: Theme = LAB) -> Post:
-    """The simulation-only rule (docs/simulation-only.md; Matteo's yes to the topic, 14 Oct). Wording from the approved
-    copy (kits/review/simulation-only-copy.md) and the live "Polls alone · Markets" line; Maine from the 14 Oct run
-    (ours 0.6214 → 62, stats_only 0.6575 → 66, market 0.577 → 58%). Polls are a check, never attacked."""
-    day, k = date(2026, 10, 15), "Lab notes 10"
-    new = lambda: Slide(day, "", theme, series=k)
+    """The simulation-only rule (docs/simulation-only.md; topic approved by Matteo, 14 Oct; v1 rejected 15 Oct for
+    repetition, an off-topic middle slide and plain design). Three designs he picked (15 Oct): the seismograph cover,
+    the Texas switch-day dots, the gap meter, all on light paper with the purple strip. Texas from rulecompare, 14 Oct
+    run: old poll filter 52.4, simulation only 59.0; no other Senate race moved by a point."""
+    from dataclasses import replace
+    import numpy as np
+    from matplotlib.patches import FancyBboxPatch
+    from . import racecards as rc
+    day, k = date(2026, 10, 16), "Lab notes 10"
+    seis = replace(SEISMO, strip_bg=LAB.strip_bg, strip_fg=LAB.strip_fg)
 
-    a = new().headline("Since 12 October, only the news moves our forecast.", px=76)
-    steps = ["12 October: the polls and each state's voting record set every race's starting point.",
-             "Every day since: voter personas, built from real survey answers, react to the news. That alone moves "
-             "our numbers.",
-             "Every Sunday: the polls and the markets check us."]
-    for n, line in enumerate(steps, 1):
-        top = a.y
-        a._put(MARGIN, top - 6, str(n), "hero", theme.hero_weight, 64, theme.ai, va="top")
-        a.text(line, "serif", 600, 38, x=MARGIN + 76, width=a.width - 76, after=0.7)
-    a.source("Full method: notapoll.org/methods")
+    # 1 The seismograph: news spikes, nothing else (illustration)
+    a = Slide(day, "", seis, series=k)
+    a.headline("Since 12 October, only the news moves the needle.", px=78)
+    top = a.y + 60
+    x0, x1 = MARGIN, a.w - MARGIN
+    for i in range(6):
+        a.ax.plot([x0, x1], [top + i * 90, top + i * 90], color=seis.hairline, lw=pt(1.5), zorder=1)
+    rng = np.random.default_rng(11)
+    xs = np.linspace(x0, x1, 1000)
+    base = top + 225
+    sig = rng.normal(0, 2.6, xs.size)
+    sig[xs < x0 + 0.1 * (x1 - x0)] *= 0.25
+    for c, amp in [(0.3, 120), (0.56, 70), (0.82, 165)]:
+        sig += amp * np.exp(-((xs - (x0 + c * (x1 - x0))) / 14) ** 2) * np.sin((xs - x0) / 4.0)
+    a.ax.plot(xs, base - sig, color=seis.ink, lw=pt(2.4), zorder=3)
+    a.ax.scatter([x0 + 4], [base], s=pt(22) ** 2, color=seis.ai, zorder=4)
+    a._put(x0, base + 40, "12 Oct: the polls\nset the start", "sans", 600, 26, seis.ai, va="top", linespacing=1.15)
+    for c, lab in [(0.3, "debate"), (0.56, "jobs report"), (0.82, "scandal")]:
+        a._put(x0 + c * (x1 - x0), top + 20, lab, "sans", 600, 28, seis.rep, ha="center", va="bottom")
+    a.y = top + 5 * 90 + 50
+    a.text("Each spike: news that reached voters, as voter personas built from real survey answers react to it.",
+           "sans", 400, 32, seis.ink2)
+    rc.stamp(a, a.w / 2 - 20, top + 400, "Illustration", px=36, rot=-6, color=seis.rep)
+    a.source("Illustration, not real data. Method: notapoll.org/methods")
 
-    b = new().headline("Maine on 14 October, three ways.", px=96)
-    b.dek("Troy Jackson's chance of winning the Senate seat. Every race page now shows the polls-alone number "
-          "under ours.", px=36)
-    b.y += 40
-    charts.stats(b, [("62", "our simulation"), ("66", "polls alone"), ("58%", "markets")], px=120, rule=True)
-    b.text("Two days in, the gaps are small. The news decides whether they grow.", px=32, color=theme.ink2)
-    b.source("NotAPoll, 14 Oct run. Polls alone: the polls and fundamentals without the simulated news.")
+    # 2 Texas, switch day: 100 dots, seven turn purple
+    t = LAB
+    b = Slide(day, "", t, series=k)
+    b.headline("Switch day, Texas.", px=96)
+    hy = b.y + 20
+    b._put(MARGIN, hy, "52", "hero", 700, 160, t.muted, va="top")
+    b._put(MARGIN + 215, hy + 40, "→", "hero", 700, 100, t.ai, va="top")
+    b._put(MARGIN + 340, hy, "59", "hero", 700, 160, t.ai, va="top")
+    b.y = hy + 180
+    b.text("Talarico's wins in 100 simulated elections, the day the polls stopped correcting our forecast. No other "
+           "Senate race moved by a point.", "sans", 500, 32, t.ink2, after=0.9)
+    step = b.width / 20
+    r = step * 0.4
+    gx = MARGIN + step / 2
+    gy = b.y + step / 2 + 10
+    for i in range(100):
+        row, col = divmod(i, 20)
+        cx, cy = gx + col * step, gy + row * step
+        if i < 52:
+            fc, ec = t.dem, t.dem
+        elif i < 59:
+            fc, ec = t.ai, t.ai
+        else:
+            fc, ec = "#F3D3CD", "#F3D3CD"
+        b.ax.add_patch(plt.Circle((cx, cy), r, fc=fc, ec=ec, lw=0, zorder=3))
+        if 52 <= i < 59:
+            b.ax.add_patch(plt.Circle((cx, cy), r + 6, fc="none", ec=t.ai, lw=pt(3), alpha=0.35, zorder=2))
+    b.y = gy + 4 * step + step / 2 + 30
+    for x, fc, lab in [(MARGIN, t.dem, "Talarico before"), (MARGIN + 300, t.ai, "the seven that moved"),
+                       (MARGIN + 680, "#F3D3CD", "Paxton")]:
+        b.ax.add_patch(plt.Circle((x + 14, b.y + 16), 14, fc=fc, lw=0))
+        b._put(x + 40, b.y + 16, lab, "sans", 500, 26, t.ink2, va="center")
+    b.source("NotAPoll, 14 Oct run: old poll correction 52.4 vs simulation only 59.0, same day.")
 
-    c = new().headline("Every Sunday, the polls check us.", px=88)
-    for line in ["We compare how far each race moved in our forecast with how far its polls moved that week.",
-                 "A gap above 3 points is flagged. Above 5, we investigate before the next run.",
-                 "We undo a race's week only if an investigation finds it went wrong. Never automatically."]:
-        c.text(line, "serif", 600, 38, after=0.7)
-    c.note("The first check runs this Sunday, 18 October.", width=700)
-    c.source("notapoll.org/methods")
+    # 3 The gap meter, purple ramp
+    c = Slide(day, "", t, series=k)
+    c.headline("Every Sunday, the polls check us.", px=84)
+    top = c.y + 90
+    gx0, gx1 = MARGIN, c.w - MARGIN
+    X = lambda v: gx0 + (gx1 - gx0) * v / 8
+    bands = [(0, 3, "#ECE8F3", "fine"), (3, 5, "#CDB8E3", "flagged"), (5, 6.5, "#9C72C2", "investigated"),
+             (6.5, 8, t.ai, "may be undone")]
+    for lo, hi, fc, lab in bands:
+        c.ax.add_patch(FancyBboxPatch((X(lo) + 3, top), X(hi) - X(lo) - 6, 96,
+                                      boxstyle="round,pad=0,rounding_size=14", fc=fc, lw=0, zorder=2))
+        ha, xx = ("right", gx1) if lab == "may be undone" else ("center", (X(lo) + X(hi)) / 2)
+        c._put(xx, top + (176 if lab == "investigated" else 124), lab, "sans", 700, 28, t.ink, ha=ha, va="top")
+    for v in (0, 3, 5, 6.5, 8):
+        c._put(X(v), top - 16, f"{v:g}", "sans", 600, 28, t.ink2, ha={0: "left", 8: "right"}.get(v, "center"),
+               va="bottom")
+    c._put(gx1, top - 62, "points apart", "sans", 500, 26, t.muted, ha="right", va="bottom")
+    c.y = top + 270
+    for line in ["How far a race moved in our forecast that week, against how far its polls moved.",
+                 "Only an investigation can undo a race's week. Never the meter alone."]:
+        c.text(line, "sans", 500, 36, t.ink, after=0.9)
+    c.note("First check: this Sunday, 18 October.", width=640)
+    c.source("Rule: notapoll.org/methods")
 
     return Post(day, "Lab notes 10: only the news moves our forecast", [
-        (a, "Since 12 October, only the news moves our forecast. One: on 12 October the polls and each state's voting "
-            "record set every race's starting point. Two: every day since, voter personas built from real survey "
-            "answers react to the news, and that alone moves our numbers. Three: every Sunday, the polls and the "
-            "markets check us."),
-        (b, "Maine on 14 October, three ways: in our simulation Jackson wins 62 in 100 simulated elections; the polls alone "
-            "give him 66 in 100; the markets 58%. Every race page now shows the polls-alone number under ours. Two "
-            "days in, the gaps are small."),
-        (c, "Every Sunday, the polls check us: we compare how far each race moved in our forecast with how far its "
-            "polls moved that week. A gap above 3 points is flagged; above 5, we investigate before the next run. We "
-            "undo a race's week only if an investigation finds it went wrong, never automatically. The first check "
-            "runs this Sunday, 18 October."),
-    ], f"""A change to how our forecast works, from 12 October.
+        (a, "Illustration of a seismograph trace. Flat from 12 October, when the polls set every race's starting "
+            "point, then three spikes labelled debate, jobs report and scandal: news that reached voters. Since 12 "
+            "October, only the news moves our forecast."),
+        (b, "Switch day in Texas: Talarico's wins in 100 simulated elections went from 52 to 59 the day the polls "
+            "stopped correcting our forecast. A grid of 100 dots: 52 blue, 7 purple that moved, 41 pale red for "
+            "Paxton. No other Senate race moved by a point."),
+        (c, "Every Sunday, the polls check us. A meter from 0 to 8 points apart: under 3 is fine, 3 to 5 flagged, 5 "
+            "to 6.5 investigated, above 6.5 the race's week may be undone. Only an investigation can undo a week. "
+            "First check: this Sunday, 18 October."),
+    ], f"""Since 12 October, only the news moves our forecast.
 
-The polls and each state's voting record set every race's starting point on 12 October. Since then, only the news moves our numbers: voter personas, built from real survey answers, react to each day's stories, and that is what shifts a race. Polls and prediction markets no longer feed in. We use them to check our work.
+The polls and each state's voting record set every race's starting point on 12 October. Since then, our numbers move only when voter personas, built from real survey answers, react to the day's stories. Polls and prediction markets no longer feed in.
 
-You can see that check on every race page. Under our number there's now a line called "Polls alone": what the polls and the fundamentals would say without the simulated news. In Maine on 14 October, our forecast had Troy Jackson winning 62 of every 100 simulated elections; the polls alone gave him 66 in 100, and the markets 58%. Two days in, the gaps are small. The news will decide whether they grow.
+The switch showed up in one race. Until 13 October the polls also nudged each forecast back toward them every day. Turning that off moved Texas from 52 to 59 in 100 simulated elections for James Talarico. No other Senate race moved by a point.
 
-Every Sunday we compare how far each race moved in our forecast with how far its polls moved that week. A gap above 3 points is flagged; above 5, we investigate before the next run. We would undo a race's week only if an investigation found it went wrong, never automatically, and we'd say so on Monday. The first check runs this Sunday.
+The polls still matter: every Sunday they check us. We compare how far each race moved in our forecast with how far its polls moved that week. Past 3 points apart a race is flagged, past 5 we investigate, and only an investigation can undo a race's week. The first check is this Sunday.
 
 Why? NotAPoll exists to test whether simulating how people react to the news can forecast an election. If the polls kept steering our numbers, we'd never find out.
 
@@ -737,21 +796,20 @@ Full method: notapoll.org/methods
 
 {DISCLAIMER}""", [
         f"Since 12 October, only the news moves our forecast: voter personas react to each day's stories. {LABEL}.",
-        "The polls set every race's starting point, and now check us every Sunday. Every race page shows what the "
-        "polls alone would say.",
-        "Maine on 14 Oct: Jackson wins 62 in 100 simulated elections; the polls alone give him 66, the markets 58%.",
+        "Switching off the polls' daily correction moved one race: Texas, from 52 to 59 in 100 for Talarico.",
+        "The polls still check us every Sunday. Past 5 points apart, we investigate.",
     ], allow=("poll", "polls", "survey"),
-        short=("Since 12 October, only the news moves our forecast: voter personas react to each day's stories. The "
-               "polls set every race's starting point, and now check us every Sunday."),
-        more=" Every race page shows \"Polls alone\" under our number: notapoll.org.",
+        short=("Since 12 October, only the news moves our forecast. Switching off the polls' daily correction moved "
+               "one race: Texas, from 52 to 59 in 100 for Talarico. The polls now check us every Sunday."),
+        more=" Method: notapoll.org/methods.",
         platform={
-            "x": ("From 12 Oct, only the news moves our forecast: voter personas react to each day's stories. Polls "
-                  "set the start and now check us every Sunday. Maine on 14 Oct: Jackson wins 62 in 100 "
-                  "simulated elections; polls alone 66, markets 58%."),
-            "threads": ("A change to how our forecast works: the polls set every race's starting point on 12 October. "
-                        "Since then, only the news moves our numbers, through voter personas reacting to each day's "
-                        "stories, and the polls check us every Sunday. Every race page now shows \"Polls alone\" under "
-                        "our number. Should a forecast follow the polls, or be checked against them?"),
+            "x": ("Since 12 Oct, only the news moves our forecast. Switching off the polls' daily correction moved one "
+                  "race: Texas, 52 to 59 in 100 simulated elections for Talarico. The polls now check us every "
+                  "Sunday."),
+            "threads": ("Since 12 October, only the news moves our forecast: voter personas react to each day's "
+                        "stories, and the polls check us every Sunday. Switching off the polls' daily correction moved "
+                        "one race, Texas, from 52 to 59 in 100 for Talarico. Should a forecast follow the polls, or be "
+                        "checked against them?"),
             "topic": "2026 Midterms",
             "first_comment": "Should a forecast follow the polls, or be checked against them?",
         })
