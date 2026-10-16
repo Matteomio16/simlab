@@ -21,6 +21,7 @@ what we read wrong.
 | 13-reading-polls-08 | 13 Oct 20:30 Paris | Kansas Senate | InsiderAdvantage, Hamilton +1 (1,200 LV) | Marshall +2 (our expected vote, 51-49; the post promises to keep checking it against new polls) | | open | |
 | 14-reading-polls-09 | 14 Oct 18:00 Paris | Michigan Senate | YouGov, El-Sayed +1 (3,949 LV) | El-Sayed +4 | | open | |
 | 15-reading-polls-10 | 15 Oct 18:00 Paris | Iowa Senate | Marist, Turek +7 (1,100 RV) | Hinson +1 | | open | |
+| 16-reading-polls-11 | 16 Oct 20:30 Paris | Texas Senate | InsiderAdvantage, Paxton +1 (1,200 LV) | Talarico +3 | | open | |
 
 Not posted, so no promise: 08-reading-polls-04 (Florida, dropped 11 Oct); 12-reading-polls-05 (Iowa, dropped 12 Oct:
 the SSRS poll sat in the middle of the pack).
