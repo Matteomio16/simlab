@@ -29,7 +29,7 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Alaska Survey Research": "Alaska Survey Res.", "Rasmussen Reports": "Rasmussen",
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
-         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "Z to A Research": "Z to A", "Mitchell Research & Communications": "Mitchell", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
+         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "University of Texas/Texas Politics Project": "UT Texas Politics", "ReconMR/Siena University": "ReconMR/Siena", "Z to A Research": "Z to A", "Mitchell Research & Communications": "Mitchell", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
          "Bowling Green State University/YouGov": "BGSU/YouGov", "Suffolk University": "Suffolk"}
 
 STORIES = {
@@ -381,6 +381,49 @@ STORIES = {
         "alt1": ("Dot chart of nine Iowa Senate polls since 24 September, Turek minus Hinson, leaving out "
                  "partisan-sponsored polls. Eight sit between Hinson +2 and Turek +4; the new Marist poll, of "
                  "registered voters, has Turek up 7."),
+    },
+    "2026-10-16": {
+        "race": "TX", "since": "2026-09-24", "focus": "InsiderAdvantage", "folder": "16-reading-polls-11",
+        "left": "Talarico", "right": "Paxton",
+        "exclude": ["Slingshot Strategies", "University of Massachusetts Lowell Center for Public Opinion/YouGov"],
+        "headline": "A new Texas poll has Paxton up 1. No other poll since September has him ahead.",
+        "dek": "Fourteen Senate polls since 24 September, Talarico (D) minus Paxton (R). Partisan polls left out.",
+        "source": "Polls ending 26 Sep – 14 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 16 Oct.",
+        "title2": "A shift, or a house lean?",
+        "against_head": "Why it may be off",
+        "against": ["Ten of the other thirteen polls have Talarico 2 to 6 points ahead.",
+                    "InsiderAdvantage has usually leaned a little Republican in past cycles.",
+                    "ActiVote, finishing the same day, has Talarico up 4."],
+        "for": "It's the newest poll, with 1,200 voters, and Quantus had the race tied a few days earlier.",
+        "hypothesis": "Our hypothesis: Talarico by about 3. Our simulation: Talarico wins 59 in 100.",
+        "caption": (
+            "Texas Senate poll: a new InsiderAdvantage survey of 1,200 likely voters, taken 13 and 14 October, has Ken "
+            "Paxton ahead of James Talarico by 1 point, 49 to 48. It is the only poll since late September with "
+            "Paxton in front: ten of the other thirteen have Talarico 2 to 6 points ahead.\n\n"
+            "Read it carefully. InsiderAdvantage has usually leaned a little Republican in past cycles, and ActiVote, "
+            "finishing the same day, has Talarico up 4.\n\n"
+            "But it's the newest poll, with a solid sample, and Quantus had the race tied a few days earlier. If more "
+            "polls follow it, the race is tightening.\n\n"
+            "Our hypothesis: Talarico ahead by about 3. In our simulation Talarico wins 59 of every 100 simulated "
+            "elections, with an expected vote of 51–49. We'll check it against the next three polls.\n\n"
+            "We leave out polls paid for by a party, a campaign or a partisan group.\n\n"
+            "#midterms2026 #Texas #TexasSenate #elections"),
+        "short": ("A new Texas poll, InsiderAdvantage with 1,200 voters, has Paxton up 1 on Talarico. No other poll "
+                  "since late Sep has him ahead. Our hypothesis: Talarico by about 3. Our simulation: Talarico wins 59 "
+                  "in 100."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("Texas: InsiderAdvantage, 1,200 voters, has Paxton up 1. It's the only poll since late Sep with him "
+              "ahead; ten of the other thirteen have Talarico 2 to 6 up. Our hypothesis: Talarico by about 3. Our "
+              "simulation: Talarico wins 59 in 100."),
+        "threads": ("A new Texas Senate poll has Ken Paxton up 1 on James Talarico, the first since late September "
+                    "with Paxton ahead. Ten of the other thirteen have Talarico 2 to 6 points up, and this pollster "
+                    "has usually leaned a little Republican. We think Talarico leads by about 3. Texans, does it feel "
+                    "like it's tightening?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you're in Texas, does the Senate race feel like it's tightening?",
+        "alt1": ("Dot chart of fourteen Texas Senate polls since 24 September, Talarico minus Paxton, leaving out "
+                 "partisan-sponsored polls. Thirteen sit between even and Talarico +6; the new InsiderAdvantage poll "
+                 "has Paxton up 1."),
     },
 }
 
