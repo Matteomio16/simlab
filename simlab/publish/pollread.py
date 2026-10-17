@@ -624,51 +624,8 @@ def _ticks(s: Slide, y: float, lo: float, hi: float, X, left: str, right: str):
     s._put(x1 - arrow, y + 40, f"{left} ahead", "sans", 400, 24, t.ink2, ha="right", va="top")
 
 
-def spread(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str):
-    """Slide 1 of the meter design (Matteo, 17 Oct): the other polls as one band (their middle half) with the dots
-    inside it, the new poll standing on its own with its number, the pollster names small underneath."""
-    t, ax = s.t, s.ax
-    rest, hot, ref = _others(p, focus)
-    x0, x1 = MARGIN + 24, s.w - MARGIN - 24
-    lo, hi, X = _scale(p, x0, x1)
-    q1, mid, q3 = ref.gap.quantile(0.25), ref.gap.median(), ref.gap.quantile(0.75)
-    c = lambda g: t.dem if g > 0 else t.rep if g < 0 else t.data
-    tier_a, tier_b = s.y + 16, s.y + 96
-    levels, placed = [], []
-    for g in sorted(rest.gap):  # dots that would touch stack upwards
-        lvl = 0
-        while any(abs(X(g) - X(h)) < 30 and l == lvl for h, l in placed):
-            lvl += 1
-        placed.append((g, lvl))
-        levels.append(lvl)
-    rows = max(levels) + 1
-    band_top = tier_b + 54
-    base = band_top + 46 + (rows - 1) * 34
-    axis_y = base + 60
-    ax.add_patch(plt_rect((X(q1), band_top), X(q3) - X(q1), axis_y - band_top - 10, t.accent, z=0.6))
-    ax.plot([X(0), X(0)], [band_top - 16, axis_y], color=t.ink, lw=pt(3), zorder=1)
-    ax.plot([x0, x1], [axis_y, axis_y], color=t.baseline, lw=pt(2), zorder=1)
-    ax.plot([X(mid), X(mid)], [tier_b + 36, axis_y], color=t.ink2, lw=pt(2), ls=(0, (3, 3)), zorder=1)
-    s._put(X(mid), tier_b, f"middle: {_lead(mid, left, right)}", "sans", 600, 26, t.ink2, ha="center", va="top")
-    for g, lvl in placed:
-        ax.scatter([X(g)], [base - lvl * 34], s=pt(30) ** 2, color=c(g), edgecolor=t.paper, linewidth=pt(3), zorder=4)
-    g = float(hot.gap)
-    ax.scatter([X(g)], [base], s=pt(56) ** 2, color=c(g), edgecolor=t.ink, linewidth=pt(5), zorder=5)
-    ax.plot([X(g), X(g)], [tier_a + 62, base - 30], color=t.ink, lw=pt(2), zorder=3)
-    label = f"{SHORT.get(hot.pollster, hot.pollster)}: {_lead(g, left, right)}"
-    w = s.pil("hero", t.hero_weight, 52).getlength(label)
-    cx = min(max(X(g), MARGIN + w / 2), s.w - MARGIN - w / 2)
-    s._put(cx, tier_a, label, "hero", t.hero_weight, 52, c(g), ha="center", va="top")
-    _ticks(s, axis_y + 14, lo, hi, X, left, right)
-    s.y = axis_y + 120
-    s.text(f"Shaded: the middle half of the other {len(ref)} polls", "sans", 600, 28, t.ai, after=0.5)
-    names = " · ".join(f"{SHORT.get(r.pollster, r.pollster)} {r.gap:+.1f}".replace(".0", "").replace("-", "−")
-                       for r in rest.itertuples())
-    s.text(names, "sans", 400, 26, t.ink2, leading=1.4, after=0.6)
-
-
 def noise_meter(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, hyp: float | None = None):
-    """Slide 2 of the meter design: one bar, the new poll with its margin of error as a band, the middle of the other
+    """Slide 2 of the meter design (Matteo, 17 Oct; slide 1 stays the dot chart): one bar, the new poll with its margin of error as a band, the middle of the other
     polls (and our hypothesis) marked, so "breakaway, or noise?" is answered by eye."""
     t, ax = s.t, s.ax
     rest, hot, ref = _others(p, focus)
@@ -720,10 +677,7 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
     a = Slide(d, "", theme, series=SERIES)
     a.headline(st["headline"], px=64)
     a.dek(st["dek"], px=34)
-    if st.get("design") == "meter":  # Matteo, 17 Oct: Reading the polls in the Lab notes direction
-        spread(a, p, st["focus"], st["left"], st["right"])
-    else:
-        strip_chart(a, p, st["focus"], st["left"], st["right"], ours=(st.get("ours") or {}).get("margin"))
+    strip_chart(a, p, st["focus"], st["left"], st["right"], ours=(st.get("ours") or {}).get("margin"))
     a.source(st["source"])
 
     b = Slide(d, "", theme, series=SERIES)
