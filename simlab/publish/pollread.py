@@ -428,7 +428,9 @@ STORIES = {
     },
     "2026-10-17": {
         "race": "NC", "since": "2026-09-14", "focus": "SurveyUSA", "folder": "17-reading-polls-12",
-        "left": "Cooper", "right": "Whatley",
+        "left": "Cooper", "right": "Whatley", "design": "meter", "hyp": 9,
+        "against_meter": ["Trafalgar, polling the same week, had Cooper up 8.",
+                          "SurveyUSA has leaned slightly toward Democrats in past cycles."],
         "headline": "A new North Carolina poll has Cooper up 14. The others since mid-September sit around +9.",
         "dek": "Twelve Senate polls since mid-September, Cooper (D) minus Whatley (R). Partisan polls left out.",
         "source": "Polls ending 15 Sep – 11 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 17 Oct.",
@@ -591,6 +593,121 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
     return {"rows": rows, "avg": [avg, mark, avg_text] + extra, "others": others}
 
 
+def _others(p: pd.DataFrame, focus: str) -> tuple[pd.DataFrame, pd.Series, pd.DataFrame]:
+    rest = p[p.pollster != focus]
+    lv = rest[rest.population == "lv"]
+    return rest, p[p.pollster == focus].iloc[-1], (lv if len(lv) else rest)
+
+
+def _scale(p: pd.DataFrame, x0: float, x1: float, extra=()) -> tuple[float, float, callable]:
+    """A margin axis padded to whole fives that always shows Even; returns lo, hi and the pixel mapping."""
+    import math
+    lo = 5 * math.floor((min(0.0, p.gap.min(), *extra) - 3) / 5)
+    hi = 5 * math.ceil((max(0.0, p.gap.max(), *extra) + 3) / 5)
+    return lo, hi, lambda v: x0 + (v - lo) / (hi - lo) * (x1 - x0)
+
+
+def _lead(v: float, left: str, right: str) -> str:
+    n = f"{abs(v):.1f}".removesuffix(".0")
+    return f"{left} +{n}" if v > 0.25 else f"{right} +{n}" if v < -0.25 else "even"
+
+
+def _ticks(s: Slide, y: float, lo: float, hi: float, X, left: str, right: str):
+    t = s.t
+    for v in range(int(lo), int(hi) + 1, 5):
+        s._put(X(v), y, "Even" if v == 0 else f"+{abs(v)}", "sans", 400, 26, t.ink2, ha="center", va="top")
+    arrow = s.pil("mono", 400, 24).getlength("← ")
+    x0, x1 = X(lo), X(hi)
+    s._put(x0, y + 40, "← ", "mono", 400, 24, t.ink2, va="top")
+    s._put(x0 + arrow, y + 40, f"{right} ahead", "sans", 400, 24, t.ink2, va="top")
+    s._put(x1, y + 40, " →", "mono", 400, 24, t.ink2, ha="right", va="top")
+    s._put(x1 - arrow, y + 40, f"{left} ahead", "sans", 400, 24, t.ink2, ha="right", va="top")
+
+
+def spread(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str):
+    """Slide 1 of the meter design (Matteo, 17 Oct): the other polls as one band (their middle half) with the dots
+    inside it, the new poll standing on its own with its number, the pollster names small underneath."""
+    t, ax = s.t, s.ax
+    rest, hot, ref = _others(p, focus)
+    x0, x1 = MARGIN + 24, s.w - MARGIN - 24
+    lo, hi, X = _scale(p, x0, x1)
+    q1, mid, q3 = ref.gap.quantile(0.25), ref.gap.median(), ref.gap.quantile(0.75)
+    c = lambda g: t.dem if g > 0 else t.rep if g < 0 else t.data
+    tier_a, tier_b = s.y + 16, s.y + 96
+    levels, placed = [], []
+    for g in sorted(rest.gap):  # dots that would touch stack upwards
+        lvl = 0
+        while any(abs(X(g) - X(h)) < 30 and l == lvl for h, l in placed):
+            lvl += 1
+        placed.append((g, lvl))
+        levels.append(lvl)
+    rows = max(levels) + 1
+    band_top = tier_b + 54
+    base = band_top + 46 + (rows - 1) * 34
+    axis_y = base + 60
+    ax.add_patch(plt_rect((X(q1), band_top), X(q3) - X(q1), axis_y - band_top - 10, t.accent, z=0.6))
+    ax.plot([X(0), X(0)], [band_top - 16, axis_y], color=t.ink, lw=pt(3), zorder=1)
+    ax.plot([x0, x1], [axis_y, axis_y], color=t.baseline, lw=pt(2), zorder=1)
+    ax.plot([X(mid), X(mid)], [tier_b + 36, axis_y], color=t.ink2, lw=pt(2), ls=(0, (3, 3)), zorder=1)
+    s._put(X(mid), tier_b, f"middle: {_lead(mid, left, right)}", "sans", 600, 26, t.ink2, ha="center", va="top")
+    for g, lvl in placed:
+        ax.scatter([X(g)], [base - lvl * 34], s=pt(30) ** 2, color=c(g), edgecolor=t.paper, linewidth=pt(3), zorder=4)
+    g = float(hot.gap)
+    ax.scatter([X(g)], [base], s=pt(56) ** 2, color=c(g), edgecolor=t.ink, linewidth=pt(5), zorder=5)
+    ax.plot([X(g), X(g)], [tier_a + 62, base - 30], color=t.ink, lw=pt(2), zorder=3)
+    label = f"{SHORT.get(hot.pollster, hot.pollster)}: {_lead(g, left, right)}"
+    w = s.pil("hero", t.hero_weight, 52).getlength(label)
+    cx = min(max(X(g), MARGIN + w / 2), s.w - MARGIN - w / 2)
+    s._put(cx, tier_a, label, "hero", t.hero_weight, 52, c(g), ha="center", va="top")
+    _ticks(s, axis_y + 14, lo, hi, X, left, right)
+    s.y = axis_y + 120
+    s.text(f"Shaded: the middle half of the other {len(ref)} polls", "sans", 600, 28, t.ai, after=0.5)
+    names = " · ".join(f"{SHORT.get(r.pollster, r.pollster)} {r.gap:+.1f}".replace(".0", "").replace("-", "−")
+                       for r in rest.itertuples())
+    s.text(names, "sans", 400, 26, t.ink2, leading=1.4, after=0.6)
+
+
+def noise_meter(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, hyp: float | None = None):
+    """Slide 2 of the meter design: one bar, the new poll with its margin of error as a band, the middle of the other
+    polls (and our hypothesis) marked, so "breakaway, or noise?" is answered by eye."""
+    t, ax = s.t, s.ax
+    rest, hot, ref = _others(p, focus)
+    x0, x1 = MARGIN + 24, s.w - MARGIN - 24
+    g, mid = float(hot.gap), ref.gap.median()
+    moe = 2 * 1.96 * (0.25 / float(hot.n)) ** 0.5 * 100
+    lo, hi, X = _scale(p, x0, x1, (g - moe + 3, g + moe - 3))
+    c = t.dem if g > 0 else t.rep if g < 0 else t.data
+    label = f"{SHORT.get(hot.pollster, hot.pollster)}: {_lead(g, left, right)}, give or take {moe:.0f}"
+    w = s.pil("sans", 600, 32).getlength(label)
+    cx = min(max(X(g), MARGIN + w / 2), s.w - MARGIN - w / 2)
+    s._put(cx, s.y, label, "sans", 600, 32, c, ha="center", va="top")
+    bar = s.y + 70
+    ax.add_patch(plt_rect((x0, bar), x1 - x0, 34, t.hairline, z=0.6))
+    a, b = X(max(lo, g - moe)), X(min(hi, g + moe))
+    ax.add_patch(plt_rect((a, bar - 10), b - a, 54, c, z=0.8, alpha=0.28))
+    for x in (a, b):
+        ax.plot([x, x], [bar - 10, bar + 44], color=c, lw=pt(3), zorder=2)
+    ax.plot([X(0), X(0)], [bar - 18, bar + 52], color=t.ink, lw=pt(3), zorder=2)
+    ax.scatter([X(g)], [bar + 17], s=pt(40) ** 2, color=c, edgecolor=t.ink, linewidth=pt(5), zorder=5)
+    ax.plot([X(mid), X(mid)], [bar - 18, bar + 52], color=t.ink, lw=pt(3), ls=(0, (2, 2)), zorder=3)
+    _ticks(s, bar + 62, lo, hi, X, left, right)
+    same = hyp is not None and abs(hyp - mid) < 1
+    mark = (f"Dashed: the middle of the other {len(ref)} polls, {_lead(mid, left, right)}"
+            + (", and our hypothesis" if same else ""))
+    s.y = bar + 146
+    s.text(mark, "sans", 600, 26, t.ink2, after=0.4)
+    if hyp is not None and not same:
+        ax.scatter([X(hyp)], [bar + 17], marker="D", s=pt(22) ** 2, color=t.note, edgecolor=t.ink, zorder=6)
+    inside = min(g - moe, g + moe) <= mid <= max(g - moe, g + moe)
+    s.text("Its margin of error reaches the middle of the other polls." if inside else
+           "Even with its margin of error, it sits apart from the other polls.", "serif", 600, 34, after=0.7)
+
+
+def plt_rect(xy, w, h, color, z=1.0, alpha=1.0):
+    import matplotlib.pyplot as plt
+    return plt.Rectangle(xy, w, h, color=color, lw=0, zorder=z, alpha=alpha)
+
+
 def end(t: str, limit: int, link: int = 0) -> str:
     fits = len(t) + 1 + len(DISCLAIMER) + (link - len(SITE) if link else 0) <= limit
     return f"{t} {DISCLAIMER}" if fits else f"{t} {LABEL}."
@@ -603,11 +720,26 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
     a = Slide(d, "", theme, series=SERIES)
     a.headline(st["headline"], px=64)
     a.dek(st["dek"], px=34)
-    strip_chart(a, p, st["focus"], st["left"], st["right"], ours=(st.get("ours") or {}).get("margin"))
+    if st.get("design") == "meter":  # Matteo, 17 Oct: Reading the polls in the Lab notes direction
+        spread(a, p, st["focus"], st["left"], st["right"])
+    else:
+        strip_chart(a, p, st["focus"], st["left"], st["right"], ours=(st.get("ours") or {}).get("margin"))
     a.source(st["source"])
 
     b = Slide(d, "", theme, series=SERIES)
-    if st.get("ours"):  # polls agree with each other but not with us: show both of our numbers, clearly named
+    if st.get("design") == "meter":  # the margin of error is drawn, so the reasons skip it (no point twice)
+        b.headline(st["title2"], px=72)
+        noise_meter(b, p, st["focus"], st["left"], st["right"], st.get("hyp"))
+        for head, items in ((st.get("against_head", "Why it may be too high"), st.get("against_meter", st["against"])),
+                            (st.get("for_head", "Why it may be right"), [st["for"]])):
+            b.text(head, "sans", 600, 26, theme.ink2, after=0.35)
+            for line in items:
+                b.ax.scatter([MARGIN + 9], [b.y + 19], s=pt(12) ** 2, color=theme.ai, zorder=3)
+                b.text(line, "serif", 600, 30, x=MARGIN + 32, width=b.width - 32, after=0.4)
+            b.y += 12
+        b.note(st["hypothesis"], width=760)
+        b.source(st["source"])
+    elif st.get("ours"):  # polls agree with each other but not with us: show both of our numbers, clearly named
         o = st["ours"]
         b.headline(st["title2"], px=80)
         from . import charts
