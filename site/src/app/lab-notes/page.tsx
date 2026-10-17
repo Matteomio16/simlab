@@ -13,10 +13,10 @@ export default function LabNotes() {
   return (
     <div className="mx-auto max-w-[1200px] px-4 pt-10 sm:px-6 sm:pt-12">
       <Dateline left="Lab notes" />
-      <h1 className="mt-6 max-w-3xl text-[2.3rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.9rem]">
+      <h1 className="mt-5 max-w-3xl text-[1.8rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:mt-6 sm:text-[2.9rem] sm:leading-[1.08]">
         The making-of, published as we go
       </h1>
-      <p className="mt-4 max-w-2xl text-[1.2rem] leading-relaxed text-ink-2">
+      <p className="mt-3 max-w-2xl text-[1.05rem] leading-relaxed text-ink-2 sm:mt-4 sm:text-[1.2rem]">
         What we tested, what failed and what we changed. A short version of each runs on Instagram, Threads and X.
       </p>
       <div className="mt-8 section-rule">
