@@ -26,7 +26,7 @@ export default function MapPanel({ views, legend, header, mapClass = "" }: { vie
       <div className={`${header ? "mt-4" : "mt-6"} ${mapClass}`}>
         <TileMap tiles={view.tiles} />
       </div>
-      <div className={`mt-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between ${mapClass}`}>
+      <div className={`mt-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between ${mapClass} ${header ? "px-3 sm:px-0" : ""}`}>
         <Legend items={legend} />
         <p className="note sm:max-w-xs sm:text-right">{view.note}</p>
       </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { surname } from "@/lib/format";
 import type { Row } from "./RaceTable";
 import SplitChance from "./SplitChance";
 import type { Party } from "@/lib/types";
@@ -8,7 +9,7 @@ const color = (p: string) => (p === "D" ? "var(--dem)" : p === "R" ? "var(--rep)
 // The closest races as cards: the leader's chance, the bar and the rating, one click from the race page.
 export default function RaceCards({ rows }: { rows: Row[] }) {
   return (
-    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <ul className="swipe sm:grid sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
       {rows.map((r) => {
         return (
           <li key={r.id}>
@@ -20,9 +21,9 @@ export default function RaceCards({ rows }: { rows: Row[] }) {
                 </span>
               </div>
               <p className="mt-1 text-[0.8rem] text-ink-2">
-                <span style={{ color: color(r.leftParty) }}>{r.left.split(" ").slice(-1)[0]}</span>
+                <span style={{ color: color(r.leftParty) }}>{surname(r.left)}</span>
                 <span className="text-muted"> vs. </span>
-                <span className="text-rep">{r.right.split(" ").slice(-1)[0]}</span>
+                <span className="text-rep">{surname(r.right)}</span>
               </p>
               <div className="mt-4 mb-auto">
                 <SplitChance p={r.p} left={r.leftParty as Party} size="sm" />

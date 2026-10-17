@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { surname } from "@/lib/format";
 import { useMemo, useState } from "react";
 import type { Party } from "@/lib/types";
 
@@ -24,10 +25,10 @@ export type Row = {
 };
 
 const SORTS = {
-  close: { label: "Closest", fn: (a: Row, b: Row) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5) },
-  left: { label: "Most Democratic", fn: (a: Row, b: Row) => b.p - a.p },
-  right: { label: "Most Republican", fn: (a: Row, b: Row) => a.p - b.p },
-  state: { label: "State", fn: (a: Row, b: Row) => a.title.localeCompare(b.title) },
+  close: { label: "Closest", short: "Closest", fn: (a: Row, b: Row) => Math.abs(a.p - 0.5) - Math.abs(b.p - 0.5) },
+  left: { label: "Most Democratic", short: "Most D", fn: (a: Row, b: Row) => b.p - a.p },
+  right: { label: "Most Republican", short: "Most R", fn: (a: Row, b: Row) => a.p - b.p },
+  state: { label: "State", short: "A–Z", fn: (a: Row, b: Row) => a.title.localeCompare(b.title) },
 } as const;
 
 const color = (p: Party) => (p === "D" ? "var(--dem)" : p === "R" ? "var(--rep)" : "var(--ind)");
@@ -46,7 +47,8 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
         <div className="seg seg-flat">
           {(Object.keys(SORTS) as (keyof typeof SORTS)[]).map((k) => (
             <button key={k} onClick={() => setSort(k)} aria-pressed={sort === k}>
-              {SORTS[k].label}
+              <span className="sm:hidden">{SORTS[k].short}</span>
+              <span className="hidden sm:inline">{SORTS[k].label}</span>
             </button>
           ))}
         </div>
@@ -54,7 +56,7 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
       <table className="mt-4 w-full border-collapse text-[0.92rem]">
         <thead>
           <tr className="border-y border-rule text-left text-[0.7rem] font-bold uppercase tracking-[0.06em]">
-            <th className="py-2 pr-3">Race</th>
+            <th className="hidden py-2 pr-3 sm:table-cell">Race</th>
             <th className="py-2 pr-3">Chance of winning, Nov. 3</th>
             <th className="hidden py-2 pr-3 text-right md:table-cell">Today</th>
             <th className="hidden py-2 pr-3 text-right sm:table-cell">Poll avg.</th>
@@ -68,7 +70,7 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
             const n = Math.round((lead ? r.p : 1 - r.p) * 100);
             return (
               <tr key={r.id} className="border-b border-rule align-top hover:bg-paper-2">
-                <td className="py-3 pr-3">
+                <td className="hidden py-3 pr-3 sm:table-cell">
                   <Link href={`/senate/${r.slug}`} prefetch={false} className="font-bold hover:underline">{r.title}</Link>
                   <span className="mt-0.5 block text-[0.8rem] text-ink-2">
                     <span style={{ color: color(r.leftParty) }}>{r.left}</span>
@@ -76,10 +78,19 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
                     <span style={{ color: "var(--rep)" }}>{r.right}</span>
                   </span>
                 </td>
-                <td className="py-3 pr-3">
+                <td className="py-3 sm:pr-3">
+                  {/* On phones the race's name sits in this cell, so each race takes one full-width row. */}
+                  <div className="mb-1 flex items-baseline justify-between gap-3 sm:hidden">
+                    <Link href={`/senate/${r.slug}`} prefetch={false} className="font-bold hover:underline">{r.title}</Link>
+                    <span className="truncate text-[0.75rem] text-ink-2">
+                      <span style={{ color: color(r.leftParty) }}>{surname(r.left)}</span>
+                      <span className="text-muted"> vs. </span>
+                      <span style={{ color: "var(--rep)" }}>{surname(r.right)}</span>
+                    </span>
+                  </div>
                   <div className="flex items-baseline justify-between gap-3">
                     <span>
-                      <span className="font-semibold">{(lead ? r.left : r.right).split(" ").slice(-1)[0]}</span>{" "}
+                      <span className="font-semibold">{surname(lead ? r.left : r.right)}</span>{" "}
                       <span className="font-bold" style={{ color: color(r.leader) }}>{n}</span>
                       <span className="text-muted"> in 100</span>
                     </span>
@@ -93,6 +104,13 @@ export default function RaceTable({ rows }: { rows: Row[] }) {
                     <div className="absolute inset-y-0 right-0" style={{ width: `${100 - r.p * 100}%`, background: "var(--rep)" }} />
                     <div className="absolute -inset-y-1 left-1/2 w-px bg-ink" />
                   </div>
+                  <p className="mt-1.5 text-[0.72rem] text-muted sm:hidden">
+                    {[
+                      r.market == null ? null : `Markets ${Math.round(r.market * 100)}%`,
+                      r.pollAvg ? `Polls ${r.pollAvg}` : null,
+                      r.cook ? `Cook ${r.cook.replace("Tossup", "Toss-up").replace("Solid", "Safe")}` : null,
+                    ].filter(Boolean).join(" · ")}
+                  </p>
                 </td>
                 <td className="hidden py-3 pr-3 text-right text-ink-2 md:table-cell">{r.today == null ? "–" : Math.round(r.today * 100)}</td>
                 <td className="hidden py-3 pr-3 text-right text-ink-2 sm:table-cell">{r.pollAvg ?? "–"}</td>

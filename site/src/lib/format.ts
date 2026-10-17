@@ -30,7 +30,12 @@ export function margin(m: number, leftParty: Party) {
   return `${side}+${Math.abs(m).toFixed(1)}`;
 }
 
-export const surname = (name: string) => name.split(" ").slice(-1)[0];
+// The last name, skipping suffixes ("Don Davis Jr." -> "Davis").
+export const surname = (name: string) => {
+  const parts = name.replace(/,/g, "").split(" ").filter(Boolean);
+  while (parts.length > 1 && /^(jr\.?|sr\.?|ii|iii|iv)$/i.test(parts[parts.length - 1])) parts.pop();
+  return parts[parts.length - 1] ?? name;
+};
 
 export const pct = (p: number) => `${Math.round(p * 100)}%`;
 
