@@ -30,7 +30,7 @@ export default function Header({ forecast }: { forecast: boolean }) {
         </div>
       </div>
       <div className="border-b border-rule">
-        <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-4 sm:px-6">
+        <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-4 sm:h-16 sm:px-6">
           <Lockup />
           {links.length > 0 && <NavLinks links={links} phoneHidden={SHOW.chamberHome ? [0, 3, 4] : [0]} />}
         </div>

@@ -60,9 +60,13 @@ export default function House() {
               (h.benchmarks?.market == null ? "" : ` · Markets: Democrats ${100 - in100(h.benchmarks.market)}%`)}
           </p>
         )}
-        <div className="mx-auto mt-4 max-w-[720px]">
+        <div className="mt-3 sm:hidden">
+          <SplitChance p={h.p_d_majority} left="D" size="sm" />
+          <p className="mt-1 text-[0.75rem] text-muted">{`Middle result ${D.p50} Democratic seats; 8 in 10 between ${D.p10} and ${D.p90}. ${maj} for control.`}</p>
+        </div>
+        <div className="-mx-3 mt-4 sm:mx-auto sm:max-w-[720px]">
           <HouseMap seats={districts.map(seatOf)} clickable={SHOW.houseSeats} />
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div className="mt-4 flex flex-col gap-2 px-3 sm:flex-row sm:items-start sm:justify-between sm:px-0">
             <Legend items={TIER_LEGEND.filter((t) => t.label !== "Independent")} />
             <p className="note sm:max-w-xs sm:text-right">{SHOW.houseSeats ? "One square per seat. Select a square for its race." : "One square per seat. Hover a square for its race."}</p>
           </div>
@@ -72,7 +76,7 @@ export default function House() {
       <Reveal as="section" className="mt-14 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.25fr]">
         <div>
           <p className="label">Control</p>
-          <div className="mt-4">
+          <div className="mt-4 hidden sm:block">
             <SplitChance p={h.p_d_majority} left="D" />
           </div>
           <p className="mt-4 text-[0.95rem] leading-relaxed text-ink-2">
@@ -108,9 +112,9 @@ export default function House() {
 
       <Reveal as="section" className="mt-16 section-rule">
         <p className="label">The closest seats</p>
-        <ul className="mt-4 grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="swipe mt-4 sm:grid sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-3">
           {closest.map((d) => (
-            <li key={d.id} className="border-b border-rule py-4">
+            <li key={d.id} className="rounded-xl border border-rule p-3 sm:rounded-none sm:border-0 sm:border-b sm:p-0 sm:py-4">
               {SHOW.houseSeats ? (
                 <Link href={`/house/${d.slug}`} prefetch={false} className="text-[0.95rem] font-bold hover:underline">{d.title}</Link>
               ) : (

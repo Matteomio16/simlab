@@ -38,15 +38,51 @@ function Figure({ n, label, color }: { n: number; label: string; color: string }
   );
 }
 
+// Phones only: the chamber's key numbers and one bar, right under the headline, before the map (Matteo, 17 Oct).
+function ControlStrip({ items }: { items: [string, number, string][] }) {
+  return (
+    <div className="mt-3 sm:hidden">
+      <div className="grid grid-cols-3 gap-2">
+        {items.map(([k, v, c]) => (
+          <div key={k}>
+            <p className="text-[0.62rem] font-bold uppercase leading-tight tracking-[0.05em]" style={{ color: c }}>{k}</p>
+            <p className="mt-0.5 leading-none">
+              <span className="text-[1.9rem] font-extrabold tracking-[-0.02em]" style={{ color: c }}>{v}</span>
+              <span className="ml-1 text-[0.72rem] font-semibold text-muted">in 100</span>
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-2 flex h-[6px] gap-[2px] overflow-hidden rounded-full" aria-hidden="true">
+        {items.map(([k, v, c]) => (v > 0 ? <div key={k} style={{ width: `${v}%`, background: c }} /> : null))}
+      </div>
+    </div>
+  );
+}
+
 function SwitchNote({ date }: { date: string }) {
   // The switch-day note (simulation only, 14 Oct), shown for its first week.
   if (date < "2026-10-14" || date > "2026-10-20") return null;
-  return (
-    <p className="note mt-2 max-w-3xl">
+  const body = (
+    <>
       From 14 October the forecast drops the polls&rsquo; daily correction: polls set the starting point on 12 October,
       and now only the news moves races. Biggest change: Texas, where Talarico wins 59 in 100 simulated elections, up
       from 52. Both versions are scored. <Link href="/changelog" className="underline">Changelog</Link>
-    </p>
+    </>
+  );
+  // Folded into a small note, so the forecast and the map come first (Matteo, 17 Oct).
+  return (
+    <>
+      <details className="group mt-2">
+        <summary className="w-fit cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-note px-3 py-1 text-[0.78rem] font-semibold text-ink">
+            What changed on 14 Oct
+            <span className="inline-block transition-transform group-open:rotate-90" aria-hidden="true">›</span>
+          </span>
+        </summary>
+        <p className="note mt-2 max-w-3xl">{body}</p>
+      </details>
+    </>
   );
 }
 
@@ -121,9 +157,10 @@ export default function Overview() {
                     <Trend points={history.senate.map((h) => ({ date: h.date, p: h.p_r_50plus }))} up="Republicans" down="Democrats" />
                   </h1>
                   <p className="note mt-1">{`Polls alone: Republicans hold 50+ in ${in100(s.stats_only.p_r_50plus)} in 100` + (s.benchmarks.market == null ? "" : ` · Markets: Republicans ${in100(s.benchmarks.market)}%`)}</p>
+                  <ControlStrip items={[["Republicans hold", nR, "var(--rep)"], ["Democrats reach 51", nD, "var(--dem)"], ["Independents decide", nI, "var(--ind)"]]} />
                 </div>
               }
-              mapClass="mx-auto max-w-[720px]"
+              mapClass="-mx-3 sm:mx-auto sm:max-w-[720px]"
               legend={TIER_LEGEND}
               views={mapViews}
             />
@@ -132,7 +169,7 @@ export default function Overview() {
 
         <section className="mt-14">
         <Reveal className="grid gap-10 section-rule pt-6 lg:grid-cols-[1.25fr_1fr]">
-          <div>
+          <div className="hidden sm:block">
             <div className="grid grid-cols-3 gap-4">
               <Figure n={nR} label="Republicans hold" color="var(--rep)" />
               <Figure n={nD} label="Democrats reach 51" color="var(--dem)" />
@@ -143,7 +180,7 @@ export default function Overview() {
             </div>
             <p className="note mt-2">Each square is one simulated election in a hundred. Democrats include King and Sanders.</p>
           </div>
-          <div className="border-t border-rule pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
+          <div className="sm:border-t sm:border-rule sm:pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
             <p className="label">Republican seats</p>
             <div className="mt-3">
               <Responsive desktop={460} render={(w) => <SeatHistogram dist={s.seats.R.dist} w={w} />} />
@@ -206,7 +243,8 @@ export default function Overview() {
             Each story&rsquo;s effect on the Nov. 3 margin, after the voter personas&rsquo; reactions and the fade with time.
             Stories are summarized neutrally, without outlet names.
           </p>
-          <ul className="mt-6 grid gap-x-10 md:grid-cols-2">
+          <input type="checkbox" id="moved-more" className="more-toggle sr-only" />
+          <ul className="more-list mt-6 grid gap-x-10 md:grid-cols-2">
             {moved.map((m) => (
               <li key={m.event_id} className="flex gap-4 border-b border-rule py-4">
                 <span className="w-16 shrink-0 text-right font-bold" style={{ color: m.delta > 0 ? (m.left === "I" ? "var(--ind)" : "var(--dem)") : "var(--rep)" }}>
@@ -219,6 +257,9 @@ export default function Overview() {
               </li>
             ))}
           </ul>
+          {moved.length > 3 && (
+            <label htmlFor="moved-more" className="more-btn btn btn-ghost btn-sm mt-4 cursor-pointer">{`Show ${moved.length - 3} more stories`}</label>
+          )}
         </Reveal>
       )}
 
@@ -349,7 +390,8 @@ export default function Overview() {
             Each story&rsquo;s effect on the Nov. 3 margin, after the voter personas&rsquo; reactions and the fade with time.
             Stories are summarized neutrally, without outlet names.
           </p>
-          <ul className="mt-6 grid gap-x-10 md:grid-cols-2">
+          <input type="checkbox" id="moved-more" className="more-toggle sr-only" />
+          <ul className="more-list mt-6 grid gap-x-10 md:grid-cols-2">
             {moved.map((m) => (
               <li key={m.event_id} className="flex gap-4 border-b border-rule py-4">
                 <span className="w-16 shrink-0 text-right font-bold" style={{ color: m.delta > 0 ? (m.left === "I" ? "var(--ind)" : "var(--dem)") : "var(--rep)" }}>
@@ -362,6 +404,9 @@ export default function Overview() {
               </li>
             ))}
           </ul>
+          {moved.length > 3 && (
+            <label htmlFor="moved-more" className="more-btn btn btn-ghost btn-sm mt-4 cursor-pointer">{`Show ${moved.length - 3} more stories`}</label>
+          )}
         </Reveal>
       )}
 

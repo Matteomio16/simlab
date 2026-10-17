@@ -94,10 +94,10 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
           <p className="label">
             {STATES[meta.state]} Senate{meta.special ? " · special election" : ""}{meta.rcv ? " · ranked-choice voting" : ""}
           </p>
-          <h1 className="mt-3 text-[2.1rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.8rem]">
+          <h1 className="mt-3 text-[1.7rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[2.8rem] sm:leading-[1.08]">
             {`${surname(lead.name)} wins ${in100(lead.p)} of 100 simulated elections`}
           </h1>
-          <p className="mt-4 max-w-3xl text-[1.2rem] leading-relaxed text-ink-2">
+          <p className="mt-3 max-w-3xl text-[1rem] leading-relaxed text-ink-2 sm:mt-4 sm:text-[1.2rem]">
             {`The simulation rates ${STATES[meta.state]} ${ratingWords}. The middle simulated result is ${margin(f.margin.p50, L)}, and 8 in 10 fall between ${margin(f.margin.p10, L)} and ${margin(f.margin.p90, L)}.`}
           </p>
         </div>

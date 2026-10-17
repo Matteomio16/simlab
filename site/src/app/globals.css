@@ -159,6 +159,58 @@ body {
   background: #fff;
   box-shadow: 0 1px 3px rgba(17, 17, 16, 0.14), 0 0 0 1px rgba(17, 17, 16, 0.08);
 }
+/* Phones (Matteo, 17 Oct, after The Economist's forecast): bigger map labels, shorter lists that open on demand, and
+   card rows that swipe sideways instead of stacking. */
+.tm-code {
+  font-size: 12.5px;
+}
+.tm-val {
+  font-size: 13.5px;
+}
+.more-btn {
+  display: none;
+}
+@media (max-width: 639px) {
+  .tm-code {
+    font-size: 13.5px;
+  }
+  .tm-val {
+    font-size: 16.5px;
+  }
+  .more-list > li:nth-child(n + 4) {
+    display: none;
+  }
+  .more-toggle:checked ~ .more-list > li {
+    display: flex;
+  }
+  .more-btn {
+    display: inline-flex;
+  }
+  .more-toggle:checked ~ .more-btn {
+    display: none;
+  }
+  .mt-16.section-rule,
+  .mt-14.section-rule {
+    margin-top: 2.5rem;
+  }
+  .swipe {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 0.75rem;
+    margin-inline: -1rem;
+    padding-inline: 1rem;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+  }
+  .swipe::-webkit-scrollbar {
+    display: none;
+  }
+  .swipe > * {
+    flex: 0 0 78%;
+    scroll-snap-align: start;
+  }
+}
 .btn-sm {
   padding: 0.3rem 0.8rem;
   font-size: 0.8rem;

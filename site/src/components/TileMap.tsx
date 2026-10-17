@@ -74,12 +74,12 @@ export default function TileMap({ tiles, className = "" }: { tiles: Tile[]; clas
             <g className={t ? "tile" : undefined} style={{ opacity: faded ? 0.08 : 1, transition: `opacity ${ZOOM_MS * 0.6}ms` }}>
               <title>{t ? t.title : `${st}: no Senate race in 2026`}</title>
               <rect x={t ? x : x + 0.5} y={t ? y : y + 0.5} width={t ? S : S - 1} height={t ? S : S - 1} fill={t ? t.fill : "var(--paper)"} stroke={t ? "none" : "var(--rule)"} />
-              <text x={x + 5} y={y + 15} fill={t ? t.ink : "var(--axis)"} style={{ fontSize: 12.5, fontWeight: 700, letterSpacing: "0.02em" }}>
+              <text x={x + 5} y={y + 15} fill={t ? t.ink : "var(--axis)"} className="tm-code" style={{ fontWeight: 700, letterSpacing: "0.02em" }}>
                 {st}
               </text>
               {t?.special && <circle cx={x + S - 7} cy={y + 8} r={2.6} fill={t.ink} />}
               {t?.value && (
-                <text x={x + S - 5} y={y + S - 6} textAnchor="end" fill={t.ink} style={{ fontSize: 13.5, fontWeight: 600 }}>
+                <text x={x + S - 5} y={y + S - 6} textAnchor="end" fill={t.ink} className="tm-val" style={{ fontWeight: 600 }}>
                   {t.value}
                 </text>
               )}

@@ -89,10 +89,10 @@ export default async function HouseSeat({ params }: { params: Promise<{ slug: st
       <header className="mt-6 grid gap-10 lg:grid-cols-[1fr_340px]">
         <div className="rise">
           <p className="label">{`${state} · ${seat}`}</p>
-          <h1 className="mt-3 text-[2.1rem] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[2.8rem]">
+          <h1 className="mt-3 text-[1.7rem] font-extrabold leading-[1.1] tracking-[-0.02em] sm:text-[2.8rem] sm:leading-[1.08]">
             {lead ? `${surname(lead.name)} wins ${lead.n} of 100 simulated elections` : `Uncontested: only a ${d.fixed === "R" ? "Republican" : "Democrat"} is on the ballot`}
           </h1>
-          <p className="mt-4 max-w-3xl text-[1.2rem] leading-relaxed text-ink-2">
+          <p className="mt-3 max-w-3xl text-[1rem] leading-relaxed text-ink-2 sm:mt-4 sm:text-[1.2rem]">
             {d.p != null && d.margin
               ? `The simulation rates ${d.id} ${r === "Toss-up" ? "a toss-up" : `${r!.toLowerCase()} ${side}`}. The middle simulated result is ${margin(d.margin.p50, d.left)}, and 8 in 10 fall between ${margin(d.margin.p10, d.left)} and ${margin(d.margin.p90, d.left)}.`
               : `This seat counts for the ${d.fixed === "R" ? "Republicans" : "Democrats"} in every simulated election.`}
