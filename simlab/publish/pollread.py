@@ -30,7 +30,8 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
          "Stratus Intelligence": "Stratus", "Marist University": "Marist", "University of Texas/Texas Politics Project": "UT Texas Politics", "ReconMR/Siena University": "ReconMR/Siena", "Z to A Research": "Z to A", "Mitchell Research & Communications": "Mitchell", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
-         "Bowling Green State University/YouGov": "BGSU/YouGov", "Suffolk University": "Suffolk"}
+         "Bowling Green State University/YouGov": "BGSU/YouGov", "Suffolk University": "Suffolk", "Catawba College/YouGov": "Catawba/YouGov",
+         "East Carolina University": "East Carolina", "High Point University": "High Point", "Opinion Diagnostics": "Opinion Diag."}
 
 STORIES = {
     "2026-10-05": {
@@ -424,6 +425,47 @@ STORIES = {
         "alt1": ("Dot chart of fourteen Texas Senate polls since 24 September, Talarico minus Paxton, leaving out "
                  "partisan-sponsored polls. Thirteen sit between even and Talarico +6; the new InsiderAdvantage poll "
                  "has Paxton up 1."),
+    },
+    "2026-10-17": {
+        "race": "NC", "since": "2026-09-14", "focus": "SurveyUSA", "folder": "17-reading-polls-12",
+        "left": "Cooper", "right": "Whatley",
+        "headline": "A new North Carolina poll has Cooper up 14. The others since mid-September sit around +9.",
+        "dek": "Twelve Senate polls since mid-September, Cooper (D) minus Whatley (R). Partisan polls left out.",
+        "source": "Polls ending 15 Sep – 11 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 17 Oct.",
+        "title2": "Breakaway, or noise?",
+        "against_head": "Why it may be too high",
+        "against": ["643 voters: the gap can swing about 8 points either way.",
+                    "Trafalgar, polling the same week, had Cooper up 8.",
+                    "SurveyUSA has leaned slightly toward Democrats in past cycles."],
+        "for": "Leads this size aren’t new: in September Harper had Cooper up 15, and YouGov up 12.5.",
+        "hypothesis": "Our hypothesis: Cooper by about 9. Our simulation: Cooper wins 94 in 100.",
+        "caption": (
+            "North Carolina Senate poll: a new SurveyUSA survey of 643 likely voters has Roy Cooper ahead of Michael "
+            "Whatley by 14 points, 54 to 40. The other polls since mid-September sit around Cooper +9.\n\n"
+            "Read it carefully. With 643 voters the gap can move about 8 points either way, Trafalgar, in the field the "
+            "same week, had Cooper up 8, and SurveyUSA has leaned slightly toward Democrats in past cycles.\n\n"
+            "But leads this size aren't new here: in September, Harper Polling had Cooper up 15 and YouGov's large "
+            "poll had him up 12.5.\n\n"
+            "Our hypothesis: Cooper ahead by about 9. In our simulation Cooper wins 94 of every 100 simulated "
+            "elections, with an expected vote of 54–46. We'll check it against the next three polls.\n\n"
+            "We leave out polls paid for by a party, a campaign or a partisan group.\n\n"
+            "#midterms2026 #NorthCarolina #NCSenate #elections"),
+        "short": ("A new North Carolina poll, SurveyUSA, has Cooper up 14 on Whatley. The other polls since "
+                  "mid-September sit around +9. Our hypothesis: Cooper by about 9. Our simulation: Cooper wins 94 in "
+                  "100."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("North Carolina: SurveyUSA has Cooper up 14. The other polls since mid-September sit around +9; "
+              "Trafalgar, same week: +8. Our hypothesis: Cooper by about 9. Our simulation: Cooper wins 94 in 100, "
+              "expected vote 54–46."),
+        "threads": ("A new North Carolina Senate poll from SurveyUSA has Roy Cooper up 14 on Michael Whatley. The "
+                    "other polls since mid-September sit around Cooper +9, and Trafalgar had him up 8 the same week. "
+                    "We think the race is nearer +9, and we'll check it against the next three polls. If you're in "
+                    "North Carolina, does it feel like a double-digit race?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you live in North Carolina, does this Senate race feel like a double-digit race?",
+        "alt1": ("Dot chart of twelve North Carolina Senate polls since mid-September, Cooper minus Whatley, leaving "
+                 "out partisan-sponsored polls. All have Cooper ahead, from 5 to 15 points, with the middle around +9; "
+                 "the new SurveyUSA poll, ringed, has him up 14."),
     },
 }
 
