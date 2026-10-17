@@ -40,10 +40,10 @@ function Claim({ sub }: { sub: Sub }) {
   const side = figs.filter((f) => !WIDE.has(f));
   const wide = figs.filter((f) => WIDE.has(f));
   return (
-    <div id={sub.id} className="scroll-mt-24 border-t border-rule py-9">
+    <div id={sub.id} className="scroll-mt-24 border-t border-rule py-6 sm:py-9">
       <div className={`grid gap-8 ${side.length ? "lg:grid-cols-[1fr_1fr] lg:gap-14" : ""}`}>
         <div className="max-w-[640px]">
-          <h3 className="text-[1.45rem] font-extrabold leading-snug tracking-[-0.015em]">{sub.title}</h3>
+          <h3 className="text-[1.25rem] font-extrabold sm:text-[1.45rem] leading-snug tracking-[-0.015em]">{sub.title}</h3>
           <div className="prose-np mt-3 text-[1.05rem]" dangerouslySetInnerHTML={html(plain)} />
           {detail && <Detail md={detail} />}
         </div>
@@ -87,11 +87,11 @@ export default function Methods() {
     <div className="mx-auto max-w-[1200px] px-4 pt-10 sm:px-6 sm:pt-12">
       <header className="rise">
         <Dateline left="Methods" />
-        <h1 className="mt-6 max-w-4xl text-[2.3rem] font-extrabold leading-[1.06] tracking-[-0.022em] sm:text-[3rem]">
+        <h1 className="mt-5 max-w-4xl text-[1.9rem] font-extrabold leading-[1.08] tracking-[-0.022em] sm:mt-6 sm:text-[3rem] sm:leading-[1.06]">
           How the forecast works
         </h1>
-        <div className="mt-5 max-w-3xl text-[1.15rem] leading-relaxed text-ink-2 [&_p+p]:mt-4 [&_strong]:font-semibold [&_strong]:text-ink" dangerouslySetInnerHTML={html(lede)} />
-        <nav aria-label="On this page" className="mt-8 flex flex-wrap gap-x-6 gap-y-2 border-y border-rule py-3 text-[0.9rem] font-semibold">
+        <div className="mt-4 max-w-3xl text-[1rem] leading-relaxed sm:mt-5 sm:text-[1.15rem] text-ink-2 [&_p+p]:mt-4 [&_strong]:font-semibold [&_strong]:text-ink" dangerouslySetInnerHTML={html(lede)} />
+        <nav aria-label="On this page" className="-mx-4 mt-6 flex gap-x-5 overflow-x-auto whitespace-nowrap border-y border-rule px-4 py-3 text-[0.85rem] font-semibold [scrollbar-width:none] sm:mx-0 sm:mt-8 sm:flex-wrap sm:gap-x-6 sm:gap-y-2 sm:px-0 sm:text-[0.9rem]">
           {sections.map((s) => (
             <a key={s.id} href={`#${s.id}`} className="text-ink-2 hover:text-ink hover:underline">{s.title}</a>
           ))}
@@ -100,7 +100,7 @@ export default function Methods() {
 
       {sections.map((s) => (
         <Reveal as="section" key={s.id} className="mt-16">
-          <h2 id={s.id} className="scroll-mt-24 text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">{s.title}</h2>
+          <h2 id={s.id} className="scroll-mt-24 text-[1.55rem] font-extrabold sm:text-[2rem] leading-tight tracking-[-0.02em]">{s.title}</h2>
           {s.subs.length ? (
             <div className="mt-6">
               {s.subs.map((sub) => <Claim key={sub.id} sub={sub} />)}

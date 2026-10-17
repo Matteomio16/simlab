@@ -41,7 +41,7 @@ function AboutBody() {
   return (
     <div className="mx-auto max-w-[1200px] px-4 pt-10 sm:px-6 sm:pt-12">
       <Dateline left="About" />
-      <h1 className="mt-6 max-w-4xl text-[2.2rem] font-extrabold leading-[1.08] tracking-[-0.022em] sm:text-[2.9rem]">
+      <h1 className="mt-5 max-w-4xl text-[1.8rem] font-extrabold leading-[1.1] tracking-[-0.022em] sm:mt-6 sm:text-[2.9rem] sm:leading-[1.08]">
         A live experiment in forecasting elections by how people react.
       </h1>
 
@@ -49,7 +49,7 @@ function AboutBody() {
         {PARTS.map((p) => (
           <li key={p.k} className="border-t border-rule pt-4">
             <p className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-muted">{p.k}</p>
-            <p className="mt-2 text-[1.2rem] font-semibold leading-snug tracking-[-0.01em]">{p.t}</p>
+            <p className="mt-2 text-[1.05rem] font-semibold leading-snug sm:text-[1.2rem] tracking-[-0.01em]">{p.t}</p>
           </li>
         ))}
       </ol>
@@ -57,7 +57,7 @@ function AboutBody() {
       <section className="mt-16 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.4fr]">
         <div>
           <p className="label">Fair to every side</p>
-          <h2 className="mt-2 text-[1.6rem] font-extrabold leading-tight tracking-[-0.02em]">
+          <h2 className="mt-2 text-[1.4rem] font-extrabold sm:text-[1.6rem] leading-tight tracking-[-0.02em]">
             We show what the engine sees, and why. You judge.
           </h2>
         </div>
@@ -73,7 +73,7 @@ function AboutBody() {
       <section className="mt-16 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.4fr]">
         <div>
           <p className="label">Who we are</p>
-          <h2 className="mt-2 text-[1.6rem] font-extrabold leading-tight tracking-[-0.02em]">A small, independent lab.</h2>
+          <h2 className="mt-2 text-[1.4rem] font-extrabold sm:text-[1.6rem] leading-tight tracking-[-0.02em]">A small, independent lab.</h2>
         </div>
         <div className="max-w-[640px] text-[1.02rem] leading-relaxed text-ink-2">
           <p>

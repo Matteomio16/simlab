@@ -84,12 +84,12 @@ export default function Prelaunch({ today, live = false }: { today: string; live
               <span>Democracy, rehearsed.</span>
               <span className="text-muted">{live ? "What we do" : "U.S. Senate · 2026"}</span>
             </div>
-            <h1 className="mt-6 text-[2.6rem] font-extrabold leading-[1.02] tracking-[-0.025em] sm:text-[3.6rem]">
+            <h1 className="mt-5 text-[2.15rem] font-extrabold leading-[1.04] tracking-[-0.025em] sm:mt-6 sm:text-[3.6rem] sm:leading-[1.02]">
               The 2026 midterms,
               <br />
               simulated every day.
             </h1>
-            <p className="mt-5 max-w-xl text-[1.2rem] leading-relaxed text-ink-2">
+            <p className="mt-4 max-w-xl text-[1.05rem] leading-relaxed text-ink-2 sm:mt-5 sm:text-[1.2rem]">
               <strong className="mb-1.5 block font-bold leading-snug text-ink">Polls ask people. We simulate how people react.</strong>
               {live
                 ? "Voter personas, built from real survey answers, react to each day’s news, and 40,000 simulated elections turn their reactions into chances for every Senate race and House seat."
@@ -133,7 +133,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
               )}
             </div>
           </div>
-          <VoterField className="h-[340px] sm:h-[420px] lg:h-auto" />
+          <VoterField className="h-[240px] sm:h-[420px] lg:h-auto" />
         </div>
         <SwingBand className="h-[3px]" />
       </section>
@@ -141,7 +141,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
         <Reveal as="section" className="mt-16">
           <p id="how-it-works" className="label scroll-mt-6">How it works</p>
-          <h2 className="mt-2 max-w-3xl text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">
+          <h2 className="mt-2 max-w-3xl text-[1.55rem] font-extrabold leading-tight tracking-[-0.02em] sm:text-[2rem]">
             Three steps, every day.
           </h2>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -159,7 +159,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
         <Reveal as="section" className="mt-16 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.1fr]">
           <div>
             <p className="label">Scored in public</p>
-            <h2 className="mt-2 text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">Every number, beside the benchmarks.</h2>
+            <h2 className="mt-2 text-[1.55rem] font-extrabold leading-tight tracking-[-0.02em] sm:text-[2rem]">Every number, beside the benchmarks.</h2>
             <p className="mt-4 max-w-md text-[1.05rem] leading-relaxed text-ink-2">
               Each forecast sits next to four others, and every Monday from October 19 all of them are scored by the same
               rules. The misses get published too. Where states publish early-vote counts, the real counts check the
@@ -211,7 +211,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
         <Reveal as="section" className="mt-16 grid gap-10 section-rule pt-6 lg:grid-cols-[1fr_1.15fr]">
           <div>
             <p className="label">The map</p>
-            <h2 className="mt-2 text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">35 Senate seats are up.</h2>
+            <h2 className="mt-2 text-[1.55rem] font-extrabold leading-tight tracking-[-0.02em] sm:text-[2rem]">35 Senate seats are up.</h2>
             <p className="mt-4 max-w-md text-[1.05rem] leading-relaxed text-ink-2">
               {`Republicans hold ${held.R} of them and Democrats ${held.D}. Republicans need 50 seats to keep the chamber, with the Vice President's tie-break. From October 12, every square gets a forecast.`}
             </p>
@@ -234,7 +234,7 @@ export default function Prelaunch({ today, live = false }: { today: string; live
             <summary className="flex cursor-pointer list-none items-baseline justify-between gap-4">
               <span>
                 <span className="label">The races</span>
-                <span className="mt-2 block text-[2rem] font-extrabold leading-tight tracking-[-0.02em]">Who is running</span>
+                <span className="mt-2 block text-[1.55rem] font-extrabold leading-tight tracking-[-0.02em] sm:text-[2rem]">Who is running</span>
               </span>
               <span className="btn btn-ghost btn-sm shrink-0 group-open:!hidden">Show all 35</span>
               <span className="btn btn-ghost btn-sm shrink-0 !hidden group-open:!inline-flex">Hide</span>

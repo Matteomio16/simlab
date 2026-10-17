@@ -60,7 +60,7 @@ function Article({ note }: { note: LabNote }) {
   return (
     <>
       {intro.trim() && (
-        <div className="mt-8 max-w-[680px] text-[1.2rem] leading-relaxed text-ink-2 [&_strong]:text-ink" dangerouslySetInnerHTML={html(intro.trim())} />
+        <div className="mt-5 max-w-[680px] text-[1.05rem] leading-relaxed text-ink-2 sm:mt-8 sm:text-[1.2rem] [&_strong]:text-ink" dangerouslySetInnerHTML={html(intro.trim())} />
       )}
       {blocks.map((b, i) => (
         <section key={i} className="mt-10 grid gap-8 border-t border-rule pt-8 lg:grid-cols-[1fr_440px] lg:gap-14">
@@ -75,7 +75,7 @@ function Article({ note }: { note: LabNote }) {
 function CaptionAndSlides({ note }: { note: LabNote }) {
   return (
     <>
-      <div className="mt-8 max-w-[680px] space-y-4 text-[1.15rem] leading-relaxed text-ink">
+      <div className="mt-5 max-w-[680px] space-y-4 text-[1.05rem] leading-relaxed text-ink sm:mt-8 sm:text-[1.15rem]">
         {note.caption.split(/\n{2,}/).map((p, i) => (
           <p key={i} className="whitespace-pre-line">{p}</p>
         ))}
@@ -97,7 +97,7 @@ export default async function LabNotePage({ params }: { params: Promise<{ n: str
         <Link href="/lab-notes" className="hover:underline">Lab notes · Note {note.n}</Link>
         {note.date && <span className="text-muted">{note.date}</span>}
       </div>
-      <h1 className="mt-6 max-w-4xl text-[2.2rem] font-extrabold leading-[1.08] tracking-[-0.022em] sm:text-[2.8rem]">{note.title}</h1>
+      <h1 className="mt-5 max-w-4xl text-[1.8rem] font-extrabold leading-[1.1] tracking-[-0.022em] sm:mt-6 sm:text-[2.8rem] sm:leading-[1.08]">{note.title}</h1>
       {note.article ? <Article note={note} /> : <CaptionAndSlides note={note} />}
     </article>
   );

@@ -188,16 +188,22 @@ export default async function RacePage({ params }: { params: Promise<{ slug: str
             {`No story moved this race today.${meta.tier === "simulate" ? "" : " It runs on statistics, with the biggest stories on watch."}`}
           </p>
         ) : (
-          <ul className="mt-3 max-w-3xl">
-            {f.movers.map((m) => (
-              <li key={m.event_id} className="flex gap-4 border-b border-rule py-3">
-                <span className="w-16 shrink-0 text-right font-bold" style={{ color: m.delta > 0 ? partyVar(L) : "var(--rep)" }}>
-                  {`${m.delta > 0 ? L : "R"}+${Math.abs(m.delta).toFixed(1)}`}
-                </span>
-                <span className="text-[1.05rem] leading-snug text-ink-2">{m.card}</span>
-              </li>
-            ))}
-          </ul>
+          <div>
+            <input type="checkbox" id="race-moved-more" className="more-toggle sr-only" />
+            <ul className="more-list mt-3 max-w-3xl">
+              {f.movers.map((m) => (
+                <li key={m.event_id} className="flex gap-4 border-b border-rule py-3">
+                  <span className="w-16 shrink-0 text-right font-bold" style={{ color: m.delta > 0 ? partyVar(L) : "var(--rep)" }}>
+                    {`${m.delta > 0 ? L : "R"}+${Math.abs(m.delta).toFixed(1)}`}
+                  </span>
+                  <span className="text-[1rem] leading-snug text-ink-2 sm:text-[1.05rem]">{m.card}</span>
+                </li>
+              ))}
+            </ul>
+            {f.movers.length > 3 && (
+              <label htmlFor="race-moved-more" className="more-btn btn btn-ghost btn-sm mt-4 cursor-pointer">{`Show ${f.movers.length - 3} more stories`}</label>
+            )}
+          </div>
         )}
         <p className="mt-5 max-w-3xl rounded-xl bg-note px-4 py-3 text-[0.95rem] leading-relaxed text-ink">
           <strong className="mr-2 font-bold">What the news is worth.</strong>
