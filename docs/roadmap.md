@@ -34,6 +34,22 @@ Checkpoints and fallbacks:
   voters join a week later.
 - **Sun 11 Oct:** pilot review (criteria below), then go or no-go for the public launch.
 
+## Where we are (20 Oct)
+
+Public since 12 Oct; 9 of 9 daily runs passed, the site updates itself after each run (`SITE_PUBLISH` on).
+- **Simulation only from 14 Oct** (Matteo, 13 Oct; `docs/simulation-only.md`): polls set the 12 Oct start, then only
+  the simulation moves races; a Sunday check against polls and markets. First check (18 Oct): Montana and VA-2
+  flagged, nothing severe.
+- **House district news** from 15 Oct: 23–36 of the 40 closest seats get their own stories daily. OpenRouter cap
+  $30 (economy mode at $27, polls only at $29); $10.40 spent by 20 Oct.
+- **Open, Engine:** the run went from 30 to 134 min (limit 180) and GLM costs 10–40× its expected price per call. A
+  dedicated session is diagnosing it (20 Oct); nothing ships without Matteo's yes.
+- **Posting** (Matteo, 20 Oct): whichever thread is open first builds both daily posts; 2–3 approved evergreen spares
+  for silent days; every Reading the polls is an Instagram Reel that leads with a tension; Lab notes weekly; X on
+  autopilot; no retry of the failed 15 Oct Threads forecast. Nothing went out 18–20 Oct (no one approved).
+- Social, 12–20 Oct: Threads about 42K views and 63 comments; Instagram about 15K views (the 16 Oct Texas Reel reached
+  8.2K accounts); X 0–2 impressions a post; Bluesky 1 follower.
+
 ## Where we are (11 Oct)
 
 Pilot day 7 of 7. **Go or no-go today by 13:30 Paris** (Matteo, 11 Oct): Lab notes 09 goes out at 14:00 saying the
