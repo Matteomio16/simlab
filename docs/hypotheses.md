@@ -23,6 +23,7 @@ what we read wrong.
 | 15-reading-polls-10 | 15 Oct 18:00 Paris | Iowa Senate | Marist, Turek +7 (1,100 RV) | Hinson +1 | | open | |
 | 16-reading-polls-11 | 16 Oct 20:30 Paris | Texas Senate | InsiderAdvantage, Paxton +1 (1,200 LV) | Talarico +3 | | open | |
 | 17-reading-polls-12 | 17 Oct 22:15 Paris | North Carolina Senate | SurveyUSA, Cooper +14 (643 LV) | Cooper +9 | | open | |
+| 20-reading-polls-13 | 20 Oct 20:30 Paris | Ohio Senate (special) | Rasmussen, Husted +2 (901 LV) | Brown +3 | | open | |
 
 Not posted, so no promise: 08-reading-polls-04 (Florida, dropped 11 Oct); 12-reading-polls-05 (Iowa, dropped 12 Oct:
 the SSRS poll sat in the middle of the pack).
