@@ -469,6 +469,48 @@ STORIES = {
                  "out partisan-sponsored polls. All have Cooper ahead, from 5 to 15 points, with the middle around +9; "
                  "the new SurveyUSA poll, ringed, has him up 14."),
     },
+    "2026-10-20": {
+        "race": "OH-S", "since": "2026-09-21", "focus": "Rasmussen Reports", "folder": "20-reading-polls-13",
+        "left": "Brown", "right": "Husted", "design": "meter", "hyp": 3,
+        "against_meter": ["Rasmussen has leaned Republican in past cycles, more than most pollsters.",
+                          "Marist, polling the same week, had Brown up 9 among registered voters."],
+        "headline": "A new Ohio poll has Husted up 2. Marist, the same week, has Brown up 9.",
+        "dek": "Fourteen Senate polls since late September, Brown (D) minus Husted (R). Partisan polls left out.",
+        "source": "Polls ending 23 Sep – 18 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 20 Oct.",
+        "title2": "Who's reading Ohio right?",
+        "against_head": "Why it may be off",
+        "against": ["901 voters: the gap can swing about 7 points either way.",
+                    "Rasmussen has leaned Republican in past cycles, more than most pollsters.",
+                    "Marist, polling the same week, had Brown up 9 among registered voters."],
+        "for": "Rasmussen's own September poll had Brown up 3, so it may be catching a real move.",
+        "hypothesis": "Our hypothesis: Brown by about 3. Our simulation: Brown wins 60 in 100.",
+        "caption": (
+            "Ohio Senate poll: a new Rasmussen survey of 901 likely voters has Jon Husted ahead of Sherrod Brown by 2 "
+            "points, 49 to 47. In the same week, Marist had Brown up 9 among registered voters. Of the other polls "
+            "since late September, only one has Husted ahead, and the middle sits around Brown +3.\n\n"
+            "Read it carefully. With 901 voters the gap can move about 7 points either way, and Rasmussen has leaned "
+            "Republican in past cycles, more than most pollsters.\n\n"
+            "But it's worth watching: Rasmussen's own September poll had Brown up 3, so it may be catching a real "
+            "move.\n\n"
+            "Our hypothesis: Brown ahead by about 3. In our simulation Brown wins 60 of every 100 simulated "
+            "elections, with an expected vote of 51–49. We'll check it against the next three polls.\n\n"
+            "We leave out polls paid for by a party, a campaign or a partisan group.\n\n"
+            "#midterms2026 #Ohio #OhioSenate #elections"),
+        "short": ("A new Ohio poll, Rasmussen, has Husted up 2 on Brown. Marist, the same week, has Brown up 9. Our "
+                  "hypothesis: Brown by about 3. Our simulation: Brown wins 60 in 100."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("Ohio, same week, two polls 11 points apart: Rasmussen has Husted up 2, Marist has Brown up 9. The "
+              "middle of the others: Brown +3. Our hypothesis: Brown by about 3. Our simulation: Brown wins 60 in "
+              "100."),
+        "threads": ("Two Ohio Senate polls, the same week, 11 points apart: Rasmussen has Jon Husted up 2, Marist has "
+                    "Sherrod Brown up 9. The middle of the other recent polls sits around Brown +3, and that's where "
+                    "we think the race is. Ohio, which one feels closer to what you see?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you're in Ohio, which of these two polls feels closer to what you see?",
+        "alt1": ("Dot chart of fourteen Ohio Senate polls since late September, Brown minus Husted, leaving out "
+                 "partisan-sponsored polls. Most sit between even and Brown +6, with the middle around +3; Marist "
+                 "has Brown up 9, and the new Rasmussen poll, ringed, has Husted up 2."),
+    },
 }
 
 
