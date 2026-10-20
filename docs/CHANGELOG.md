@@ -2,6 +2,25 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-20 (Engine session): run time and cost; GLM host drift (built and tested, waiting for Matteo's yes)
+
+- **Cause.** OpenInference, GLM's first host since 1 Oct, began ignoring reasoning effort "minimal" between 17 and
+  20 Oct: about 3,800 characters of reasoning a call, 7-8 s, billed at max_tokens (270), 60% uptime with 429s. Each
+  reaction prompt is 4 GLM calls in a row, so a prompt took about 30 s; the 16-thread pool did about 100 calls a
+  minute on 20 Oct against 480 on 17 Oct. It also changed the answers: on 200 of 16 Oct's prompts, today's host order
+  gives turnout +0.40 on average against +0.22 published that day; InferenceNet gives +0.17 and matches the 16 Oct
+  stories (story means r 0.97 support, 0.93 turnout). 20 Oct's published GLM rows are of the drifted kind (turnout
+  +0.36, the month's highest). Not the cause: carried stories (0 rows asked twice in 12-20 Oct), prompts (no dates in
+  them), Kev (200 prompts in 34 s; 2 s a request), 429s in the log (the three matches were timestamps).
+- **Fixes.** GLM hosts InferenceNet then DeepInfra, OpenInference dropped (`core.HOSTS`); GLM and Kev in their own
+  thread pools, GLM 32 threads, Kev 8 (`harness.THREADS`, `KEV_THREADS`); text calls time out after 45 s and back off
+  at most 30 s (`core.CHAT_TIMEOUT_S`, `_post`); every call logged with host, tokens (reasoning included), cost,
+  seconds and each attempt's status (`core.CallLog`, `runs/calls.jsonl`), summarised per step and model in run.json
+  (`calls`) and saved as `derived/<day>/calls.jsonl.gz`; the harness summary has `seconds_by_model`.
+- **Checks** (test calls $0.35): 200 of today's prompts take 100 s instead of 377 s; $0.000045-0.000047 a call
+  instead of $0.000051; Kev's rows unchanged (45 of 56 identical, the rest r 0.994 or more). Row-level r of 0.95 is
+  out of reach for any setting: the same host asked twice gives support r 0.90-0.93 and turnout 0.82-0.87.
+
 ## 2026-10-13/14 (Engine session): House district news; card failures split; budget at $27/$29; card corrections
 
 - **House district news** (Matteo's yes, 14 Oct; on from the 15 Oct run, `SIMLAB_HOUSE_NEWS: "1"` in daily.yml).

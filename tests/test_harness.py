@@ -100,7 +100,7 @@ class React(unittest.TestCase):
             def ask_many(self, state, questions, tag=""):
                 Down.calls += 1
                 raise RuntimeError("giving up after 8 tries")
-        with mock.patch.object(harness, "THREADS", 1):
+        with mock.patch.object(harness, "THREADS", 1), mock.patch.object(harness, "KEV_THREADS", 1):
             rows, failed = harness.react(EVENTS[:1], [("glm", FakeLLM(), False), ("kev", Down(), True)], "direct",
                                          skip=set())
         self.assertEqual(Down.calls, harness.MAX_FAILS)
@@ -115,6 +115,26 @@ class React(unittest.TestCase):
                 return super().ask_many(state, questions, tag, groups)
         rows, failed = harness.react(EVENTS[:1], [("glm", Flaky(), False)], "direct", skip=set())
         self.assertEqual((len(rows), failed), (24, 4))
+
+    def test_glm_and_kev_run_side_by_side_in_their_own_pools(self):
+        # 20 Oct: one shared pool of 16 let a slow model hold the other's threads
+        import threading
+        kev_answered = threading.Event()
+
+        class WaitsForKev(FakeLLM):
+            def ask_many(self, state, questions, tag="", groups=None):
+                assert kev_answered.wait(5), "GLM's pool waited behind Kev's work"
+                return super().ask_many(state, questions, tag, groups)
+
+        class Kev(FakeDecision):
+            def ask_many(self, state, questions, tag=""):
+                kev_answered.set()
+                return super().ask_many(state, questions, tag)
+        with mock.patch.object(harness, "THREADS", 1), mock.patch.object(harness, "KEV_THREADS", 1):
+            rows, failed = harness.react(EVENTS[:1], [("glm", WaitsForKev(), False), ("kev", Kev(), True)], "direct",
+                                         skip=set())
+        self.assertEqual((len(rows), failed), (56, 0))
+        self.assertEqual(set(harness.react.seconds), {"glm", "kev"})
 
     def test_asked_before_reads_earlier_days(self):
         with tempfile.TemporaryDirectory() as tmp:
