@@ -30,7 +30,7 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
          "Stratus Intelligence": "Stratus", "Marist University": "Marist", "University of Texas/Texas Politics Project": "UT Texas Politics", "ReconMR/Siena University": "ReconMR/Siena", "Z to A Research": "Z to A", "Mitchell Research & Communications": "Mitchell", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
-         "Bowling Green State University/YouGov": "BGSU/YouGov", "Suffolk University": "Suffolk", "Catawba College/YouGov": "Catawba/YouGov",
+         "Bowling Green State University/YouGov": "BGSU/YouGov", "Data for Progress": "Data for Progress", "Public Policy Polling": "PPP", "Suffolk University": "Suffolk", "Catawba College/YouGov": "Catawba/YouGov",
          "East Carolina University": "East Carolina", "High Point University": "High Point", "Opinion Diagnostics": "Opinion Diag."}
 
 STORIES = {
@@ -511,6 +511,49 @@ STORIES = {
                  "partisan-sponsored polls. Most sit between even and Brown +6, with the middle around +3; Marist "
                  "has Brown up 9, and the new Rasmussen poll, ringed, has Husted up 2."),
     },
+    "2026-10-21": {
+        "race": "AK", "since": "2026-10-01", "focus": "Data for Progress", "folder": "21-reading-polls-14",
+        "left": "Peltola", "right": "Sullivan", "lim": 20,
+        "headline": "Every October poll in Alaska has Peltola ahead. Our simulation calls it a toss-up.",
+        "dek": "Five Senate polls since 1 October, and our expected result. Peltola (D) minus Sullivan (R).",
+        "source": "Polls ending 1–16 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 21 Oct.",
+        "title2": "Where we part ways",
+        "ours": {"margin": 0.6, "leans": "closer to even",
+                 "vote": "50–50", "vote_label": "expected vote",
+                 "chance": "55 in 100", "chance_label": "Peltola's chance to win",
+                 "range": "A toss-up: across 40,000 simulated elections the result runs from Sullivan +6 to "
+                          "Peltola +7.",
+                 "why": "September's three polls had Sullivan ahead or tied, and we blend the polls with Alaska's "
+                        "record (Trump +13 in 2024).",
+                 "wrong": "All five October polls have Peltola ahead, NYT/Siena by 7, and the prediction markets give "
+                          "her 75%."},
+        "hypothesis": "Our forecast: about 50–50. Peltola wins 55 in 100 simulated elections.",
+        "caption": (
+            "Alaska Senate polls: every poll since the start of October has Mary Peltola ahead of Dan Sullivan, by "
+            "1 to 7 points. The newest, from Data for Progress, has her up 3.\n\n"
+            "Our simulation is closer to even, and it's worth being precise about how. Our expected vote is about "
+            "50–50, a hair to Peltola. Across 40,000 simulated elections she wins 55 in every 100: a toss-up.\n\n"
+            "Why we're closer to even: the three September polls had Sullivan ahead or tied, and we blend the polls "
+            "with Alaska's voting record (Trump won it by 13 points in 2024). Since 12 October only the news moves "
+            "our number, and it has moved it a little toward Peltola.\n\n"
+            "Why we might be wrong: the October polls agree with each other, NYT/Siena had Peltola up 7, and the "
+            "prediction markets give her 75%. We'll keep checking our number against new polls.\n\n"
+            "#midterms2026 #Alaska #AlaskaSenate #elections"),
+        "short": ("Alaska: every October poll has Peltola ahead, by 1 to 7 points. Our simulation: expected vote about "
+                  "50–50, and Peltola wins 55 of 100 simulated elections. A chance of winning, not a vote share."),
+        "more": " Reading the polls.",
+        "x": ("Alaska: every October poll has Peltola ahead, by 1 to 7. Our simulation has it a toss-up: expected vote "
+              "about 50–50, and she wins 55 of 100 simulated elections. Who's reading Alaska right?"),
+        "threads": ("Alaska is where our simulation and the polls part ways. Every poll this month has Mary Peltola "
+                    "ahead of Dan Sullivan, by 1 to 7 points. We expect it closer to 50–50, and she wins 55 of every "
+                    "100 simulated elections. The September polls had Sullivan ahead or tied, and Alaska's voting "
+                    "record leans Republican. Who do you think is reading Alaska right?"),
+        "topic": "2026 Midterms",
+        "first_comment": "Who do you think is reading Alaska right, the polls or the simulation?",
+        "alt1": ("Dot chart of five Alaska Senate polls since 1 October, Peltola minus Sullivan. All have Peltola "
+                 "ahead, from 1 to 7 points; a purple line marks our expected result, about even. The newest, Data "
+                 "for Progress, has Peltola up 3."),
+    },
 }
 
 
@@ -719,7 +762,7 @@ def build(day: str, polls: Path, theme=LAB) -> tuple[Path, list[str]]:
     a = Slide(d, "", theme, series=SERIES)
     a.headline(st["headline"], px=64)
     a.dek(st["dek"], px=34)
-    strip_chart(a, p, st["focus"], st["left"], st["right"], ours=(st.get("ours") or {}).get("margin"))
+    strip_chart(a, p, st["focus"], st["left"], st["right"], lim=st.get("lim"), ours=(st.get("ours") or {}).get("margin"))
     a.source(st["source"])
 
     b = Slide(d, "", theme, series=SERIES)
@@ -813,7 +856,7 @@ def reel(day: str, polls: Path, theme=LAB) -> dict:
     s = Slide(d, "", theme, size=(w, h), series=SERIES)
     s.headline(st["headline"], px=64)  # no dek: the axis labels say what the dots are
     s.y += 10
-    art = strip_chart(s, p, st["focus"], st["left"], st["right"], row=min(48, 420 / len(p)),
+    art = strip_chart(s, p, st["focus"], st["left"], st["right"], lim=st.get("lim"), row=min(48, 420 / len(p)),
                       ours=(st.get("ours") or {}).get("margin"))
     s.source(st["source"])
     n_patches, n_texts = len(s.ax.patches), len(s.ax.texts)
