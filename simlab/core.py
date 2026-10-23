@@ -298,12 +298,13 @@ LLMS = {
     "luna": "openai/gpt-6-luna",
 }
 # Allowed hosts per model, all at the same quantisation, so a run never mixes precisions (probed 27 Sep 2026).
-# GLM: InferenceNet fp4 first, DeepInfra fp4 when it refuses (20 Oct). OpenInference (first from 1 Oct) began ignoring
-# effort "minimal" between 17 and 20 Oct: about 3,800 characters of reasoning a call, 7 s, billed at max_tokens, and
-# turnout answers 0.2 higher than the 16 Oct rows, which InferenceNet still matches. DeepSeek: InferenceNet was
-# 429ing most calls and DeepSeek's own endpoint is excluded by the account's guardrail, so DeepInfra fp8. MiMo: two
-# fp8 hosts, load-balanced.
-HOSTS = {"glm": ["InferenceNet", "DeepInfra"], "mimo": ["Xiaomi", "DeepInfra"],
+# GLM: InferenceNet fp4 first, then Sail Research and DeepInfra fp4 when it refuses (Matteo, 23 Oct). OpenInference
+# (first from 1 Oct) began ignoring effort "minimal" between 17 and 20 Oct: about 3,800 characters of reasoning a call,
+# 7 s, billed at max_tokens, and turnout answers 0.2 higher than the 16 Oct rows, which InferenceNet and Sail Research
+# still match (story means r 0.93-0.97, as close as one host asked twice). DeepSeek: InferenceNet was 429ing most
+# calls and DeepSeek's own endpoint is excluded by the account's guardrail, so DeepInfra fp8. MiMo: two fp8 hosts,
+# load-balanced.
+HOSTS = {"glm": ["InferenceNet", "Sail Research", "DeepInfra"], "mimo": ["Xiaomi", "DeepInfra"],
          "deepseek": ["DeepInfra"], "luna": ["OpenAI"]}
 ORDERED = {"glm"}  # hosts tried in the listed order; the others are load-balanced by OpenRouter
 # GLM can't turn reasoning off: "minimal" used 0 reasoning tokens on 27 Sep, 11-36 a call since 30 Sep (up to 70 on

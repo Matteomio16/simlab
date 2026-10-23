@@ -76,15 +76,16 @@ class Complete(unittest.TestCase):
 
 class GlmHosts(unittest.TestCase):
     # 20 Oct: OpenInference reasoned at length (7 s, billed at max_tokens, turnout answers 0.2 higher)
-    def test_glm_asks_inferencenet_then_deepinfra_and_never_openinference(self):
-        self.assertEqual(core.HOSTS["glm"], ["InferenceNet", "DeepInfra"])
+    def test_glm_asks_inferencenet_then_sail_then_deepinfra_and_never_openinference(self):
+        hosts = ["InferenceNet", "Sail Research", "DeepInfra"]
+        self.assertEqual(core.HOSTS["glm"], hosts)
         sent = []
         with mock.patch.object(core, "_post", lambda url, payload, headers, **k: sent.append(payload) or reply("{}")), \
                 mock.patch.object(core.CACHE, "get", lambda k: None), mock.patch.object(core.CACHE, "put", lambda *a: None), \
                 mock.patch.object(core.CallLog, "add", lambda *a, **k: None), \
                 mock.patch.object(core.Ledger, "add", lambda *a: None), mock.patch.object(core.Ledger, "check", lambda: None):
             core.Chat(core.LLMS["glm"], core.HOSTS["glm"], reasoning=core.REASONING["glm"]).complete([])
-        self.assertEqual(sent[0]["provider"], {"order": ["InferenceNet", "DeepInfra"], "only": ["InferenceNet", "DeepInfra"]})
+        self.assertEqual(sent[0]["provider"], {"order": hosts, "only": hosts})
 
 
 if __name__ == "__main__":
