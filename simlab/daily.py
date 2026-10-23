@@ -9,6 +9,7 @@ non-zero, so the missed-run alert fires. Logs print step names, statuses and sum
 """
 from __future__ import annotations
 
+import gzip
 import hashlib
 import importlib.util
 import json
@@ -19,7 +20,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .core import HOSTS, JEV, LLMS, RUNS
+from .core import HOSTS, JEV, LLMS, RUNS, CallLog
 from .newsraces import FULL_RUN
 
 SCHEMA = 1
@@ -140,10 +141,45 @@ def _spend(started: float, finished: float) -> dict:
     return {k: round(v, 4) for k, v in out.items()}
 
 
+def _pct(xs: list[float], q: float) -> float | None:
+    return round(sorted(xs)[int(q * (len(xs) - 1))], 2) if xs else None
+
+
+def calls(started: float, finished: float, path: Path | None = None) -> tuple[dict, list[dict]]:
+    """Per step and model, from the call log: calls, cache hits, tokens (reasoning included), cost, hosts, seconds,
+    429s, retries and timeouts. Returns (summary, the run's log lines)."""
+    path = path or CallLog.path
+    lines = []
+    for line in path.read_text().splitlines() if path.exists() else []:
+        try:
+            e = json.loads(line)
+        except ValueError:
+            continue
+        if started <= e["ts"] <= finished:
+            lines.append(e)
+    out: dict = {}
+    for (step, model) in sorted({(e["tag"].split(":")[0], e["model"]) for e in lines}):
+        es = [e for e in lines if e["tag"].split(":")[0] == step and e["model"] == model]
+        fresh = [e for e in es if not e["cached"]]
+        att = [a for e in fresh for a in e.get("attempts", [])]
+        secs = [e["seconds"] for e in fresh if e.get("seconds") is not None]
+        hosts: dict = {}
+        for e in fresh:
+            hosts[e.get("provider") or "?"] = hosts.get(e.get("provider") or "?", 0) + 1
+        out.setdefault(step, {})[model] = {
+            "calls": len(es), "cache_hits": len(es) - len(fresh), "fresh": len(fresh), "hosts": hosts,
+            **{k: sum(e.get(k) or 0 for e in fresh) for k in ("in", "out", "reasoning")},
+            "usd": round(sum(e.get("usd") or 0 for e in fresh), 4),
+            "seconds_p50": _pct(secs, .5), "seconds_p90": _pct(secs, .9), "seconds_max": _pct(secs, 1),
+            "http_429": att.count(429), "timeouts": att.count("timeout"),
+            "retried": sum(len(e.get("attempts", [])) > 1 for e in fresh)}
+    return out, lines
+
+
 def record(day: str, data: Path, run_id: str, steps: list[dict], started: float, finished: float,
            budget: dict | None = None) -> dict:
-    """run.json: code version, models, the snapshot runs the day read (manifest hashes), steps, spend, and the budget
-    mode the day ran in."""
+    """run.json: code version, models, the snapshot runs the day read (manifest hashes), steps, spend, the model calls
+    (summary; the full log beside it as calls.jsonl.gz) and the budget mode the day ran in."""
     snaps = sorted((data / "snapshots" / day).glob("*/manifest.json"))
     rec = {"schema": SCHEMA, "date": day, "run_id": run_id, "git_sha": _git_sha(),
            "started": datetime.fromtimestamp(started, timezone.utc).isoformat(timespec="seconds"),
@@ -152,9 +188,13 @@ def record(day: str, data: Path, run_id: str, steps: list[dict], started: float,
            "snapshots": [{"run": m.parent.name, "manifest_sha256": hashlib.sha256(m.read_bytes()).hexdigest()}
                          for m in snaps],
            "steps": steps, "spend": _spend(started, finished), "budget": budget}
+    rec["calls"], lines = calls(started, finished)
     out = data / "derived" / day
     out.mkdir(parents=True, exist_ok=True)
     (out / "run.json").write_text(json.dumps(rec, indent=1), encoding="utf-8")
+    if lines:
+        with gzip.open(out / "calls.jsonl.gz", "wt", encoding="utf-8") as f:
+            f.writelines(json.dumps(e) + "\n" for e in lines)
     return rec
 
 
@@ -178,6 +218,10 @@ def main() -> int:
     for s in steps:
         print(f"{s['name']}: {s['status']}" + (f" in {s['seconds']}s" if "seconds" in s else ""), flush=True)
     rec = record(a.date, a.data, run_id, steps, started, time.time(), {"key_spent_before": spent, "mode": mode})
+    for step, models in rec["calls"].items():
+        for m, c in models.items():
+            print(f"calls {step} {m}: {c['calls']} ({c['cache_hits']} cached), hosts {c['hosts']}, "
+                  f"{c['seconds_p50']}s median, {c['http_429']} refused (429), {c['timeouts']} timed out", flush=True)
     print(json.dumps({"steps": {s["name"]: s["status"] for s in steps}, "spend": rec["spend"], "mode": mode}))
     return 1 if any(s["status"] == "failed" for s in steps) else 0
 

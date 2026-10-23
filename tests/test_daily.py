@@ -1,3 +1,4 @@
+import gzip
 import json
 import tempfile
 import unittest
@@ -89,6 +90,33 @@ class Record(unittest.TestCase):
         self.assertIn("glm", rec["models"])
         self.assertEqual(rec["steps"], steps)
         self.assertEqual(rec["seconds"], 60.0)
+
+    def test_the_call_log_is_summarised_per_step_and_model_and_saved_beside_run_json(self):
+        # 20 Oct: no record said which host answered, how long it took or how often it was refused
+        glm = {"model": "z-ai/glm", "tag": "harness:glm", "cached": False, "provider": "InferenceNet", "in": 270,
+               "out": 36, "reasoning": 16, "usd": 4.7e-05}
+        lines = [{**glm, "ts": 110, "attempts": [200], "seconds": 1.0},
+                 {**glm, "ts": 120, "attempts": [429, 200], "seconds": 3.0, "provider": "DeepInfra"},
+                 {**glm, "ts": 130, "attempts": ["timeout", 200], "seconds": 50.0},
+                 {"ts": 140, "model": "z-ai/glm", "tag": "harness:glm", "cached": True},
+                 {"ts": 150, "model": "kev-latest", "tag": "harness:kev", "cached": False, "attempts": [200],
+                  "seconds": 2.0, "usd": 0.0},
+                 {**glm, "ts": 999, "attempts": [200], "seconds": 1.0}]  # another run's
+        with tempfile.TemporaryDirectory() as tmp:
+            data, log = Path(tmp), Path(tmp) / "calls.jsonl"
+            log.write_text("".join(json.dumps(l) + "\n" for l in lines) + "{broken\n", encoding="utf-8")
+            with mock.patch.object(daily.CallLog, "path", log):
+                rec = daily.record("2026-10-05", data, "run-1", [], started=100.0, finished=160.0)
+            with gzip.open(data / "derived" / "2026-10-05" / "calls.jsonl.gz", "rt", encoding="utf-8") as f:
+                saved = [json.loads(l) for l in f]
+        g = rec["calls"]["harness"]["z-ai/glm"]
+        self.assertEqual({k: g[k] for k in ("calls", "cache_hits", "fresh", "hosts", "in", "out", "reasoning", "http_429",
+                                            "timeouts", "retried", "seconds_p50", "seconds_max")},
+                         {"calls": 4, "cache_hits": 1, "fresh": 3, "hosts": {"InferenceNet": 2, "DeepInfra": 1},
+                          "in": 810, "out": 108, "reasoning": 48, "http_429": 1, "timeouts": 1, "retried": 2,
+                          "seconds_p50": 3.0, "seconds_max": 50.0})
+        self.assertEqual(rec["calls"]["harness"]["kev-latest"]["fresh"], 1)
+        self.assertEqual(len(saved), 5)
 
 
 if __name__ == "__main__":

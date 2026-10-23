@@ -14,6 +14,7 @@ import json
 import os
 import sys
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
 from pathlib import Path
@@ -27,7 +28,10 @@ SCHEMA = 1
 HERE = Path(__file__).parent
 CONFIG = newsraces.load()
 STATE_NAME = {rid: c["state_name"] for rid, c in CONFIG.items() if c.get("state_name")}
-THREADS = int(os.environ.get("SIMLAB_THREADS", "16"))  # GLM answered ~270 prompts a minute at 16 (29 Sep)
+# Each model has its own pool, so GLM and Kev run side by side. GLM: 4 calls a prompt, 1-3 s each on InferenceNet
+# (20 Oct); Kev: one request a prompt, its GPU takes 8 at a time (kev_modal.py, max_inputs=8).
+THREADS = int(os.environ.get("SIMLAB_THREADS", "32"))
+KEV_THREADS = int(os.environ.get("SIMLAB_KEV_THREADS", "8"))
 MAX_FAILS = 20  # calls that failed after their retries before a model is left out for the rest of the run
 GROUPS = [["support"], ["turnout"]]
 REACTS = ("Think about how someone like them reacts to the news itself (for example anger, worry or enthusiasm that can "
@@ -120,10 +124,19 @@ def react(events: list[dict], askers: list[tuple], wording: str, skip: set) -> t
     first: dict = {}
     for t in tasks:
         first.setdefault(same(t), t)
-    with ThreadPoolExecutor(THREADS) as ex:
-        answers = dict(zip(first, ex.map(one, first.values())))
+    t0, done = time.time(), {}
+    pools = {name: ThreadPoolExecutor(KEV_THREADS if shadow else THREADS) for name, _, shadow in askers}
+    try:
+        futures = {k: pools[t[3]].submit(one, t) for k, t in first.items()}
+        for k, f in futures.items():
+            f.add_done_callback(lambda _, name=k[3]: done.__setitem__(name, round(time.time() - t0, 1)))
+        answers = {k: f.result() for k, f in futures.items()}
+    finally:
+        for p in pools.values():
+            p.shutdown()
     results = [None if answers[same(t)] is None else {**answers[same(t)], "race_id": t[0]} for t in tasks]
     rows = [r for r in results if r is not None]
+    react.seconds = done
     return rows, len(results) - len(rows)
 
 
@@ -143,7 +156,8 @@ def run(day: date, derived_root: Path, run_id: str, askers: list[tuple], wording
     with out.open("a", encoding="utf-8") as f:
         f.writelines(json.dumps(r) + "\n" for r in rows)
     return {"rows": len(rows), "failed": failed, "parse_errors": sum(r["parse_error"] for r in rows),
-            "by_model": {m: sum(r["model"] == m for r in rows) for m in {r["model"] for r in rows}}}
+            "by_model": {m: sum(r["model"] == m for r in rows) for m in {r["model"] for r in rows}},
+            "seconds_by_model": getattr(react, "seconds", {})}
 
 
 def main() -> None:

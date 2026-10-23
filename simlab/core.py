@@ -118,11 +118,41 @@ class Ledger:
 OR_BASE = "https://openrouter.ai"
 
 
-def _post(url: str, payload: dict, headers: dict, tries: int = 8, timeout: int = 120) -> dict:
-    last = None
+class CallLog:
+    """One line per model call (runs/calls.jsonl): host, tokens (reasoning included), cost, seconds, every attempt's
+    status, or a cache hit. Counts and timings only, never prompts or answers; daily.py summarises it into run.json."""
+    path = RUNS / "calls.jsonl"
+    lock = threading.Lock()
+
+    @classmethod
+    def add(cls, model: str, tag: str, resp: dict | None = None, info: dict | None = None, cached: bool = False):
+        u = (resp or {}).get("usage") or {}
+        rec = {"ts": time.time(), "model": model, "tag": tag, "cached": cached}
+        if not cached:
+            rec |= {"provider": (resp or {}).get("provider"), "in": u.get("prompt_tokens"),
+                    "out": u.get("completion_tokens"),
+                    "reasoning": (u.get("completion_tokens_details") or {}).get("reasoning_tokens"),
+                    "cached_in": (u.get("prompt_tokens_details") or {}).get("cached_tokens"), "usd": _cost(resp or {}),
+                    **(info or {})}
+        with cls.lock, cls.path.open("a") as f:
+            f.write(json.dumps(rec) + "\n")
+
+
+def _post(url: str, payload: dict, headers: dict, tries: int = 8, timeout: int = 120, info: dict | None = None) -> dict:
+    """`info`, when given, receives each attempt's status ("timeout"/"connection" for no reply) and the seconds spent."""
+    last, t0 = None, time.time()
+    statuses = info.setdefault("attempts", []) if info is not None else []
     for i in range(tries):
         try:
-            r = requests.post(url, json=payload, headers=headers, timeout=timeout)
+            try:
+                r = requests.post(url, json=payload, headers=headers, timeout=timeout)
+            except requests.Timeout:
+                statuses.append("timeout")
+                raise
+            except (requests.ConnectionError, requests.exceptions.ChunkedEncodingError):
+                statuses.append("connection")
+                raise
+            statuses.append(r.status_code)
             if r.status_code in (429, 500, 502, 503, 504):
                 raise requests.HTTPError(f"{r.status_code}: {r.text[:200]}")
             if r.status_code >= 400:
@@ -130,11 +160,13 @@ def _post(url: str, payload: dict, headers: dict, tries: int = 8, timeout: int =
             data = r.json()
             if isinstance(data, dict) and "error" in data and not ({"choices", "answers"} & data.keys()):
                 raise requests.HTTPError(f"{r.status_code} with an error body: {str(data['error'])[:200]}")
+            if info is not None:
+                info["seconds"] = round(time.time() - t0, 3)
             return data
         except (requests.HTTPError, requests.ConnectionError, requests.Timeout,
                 requests.exceptions.ChunkedEncodingError) as e:  # a connection dropped mid-reply
             last = e
-            time.sleep(min(2 ** i, 60) + random.random())
+            time.sleep(min(2 ** i, 30) + random.random())
     raise RuntimeError(f"giving up on {url} after {tries} tries; last error: {str(last)[:300]}")
 
 
@@ -176,10 +208,13 @@ class Decisions:
         k = Cache.key("decisions", self.endpoint, payload)
         hit = CACHE.get(k)
         if hit is not None:
+            CallLog.add(self.model, tag, cached=True)
             return hit
         Ledger.check()
-        resp = _post(self.endpoint, payload, self._headers())
+        info: dict = {}
+        resp = _post(self.endpoint, payload, self._headers(), info=info)
         Ledger.add(self.model, _cost(resp), tag)
+        CallLog.add(self.model, tag, resp, info)
         CACHE.put(k, resp)
         return resp
 
@@ -216,11 +251,15 @@ class Chat:
         k = Cache.key("chat", self.model, payload)
         hit = CACHE.get(k)
         if hit:
+            CallLog.add(self.model, tag, cached=True)
             return hit
         for _ in range(3):
             Ledger.check()
-            resp = _post(f"{OR_BASE}/api/v1/chat/completions", payload, _or_headers())
+            info: dict = {}
+            resp = _post(f"{OR_BASE}/api/v1/chat/completions", payload, _or_headers(), timeout=CHAT_TIMEOUT_S,
+                         info=info)
             Ledger.add(self.model, _cost(resp), tag)
+            CallLog.add(self.model, tag, resp, info)
             text = resp["choices"][0]["message"]["content"] or ""
             if text.strip():
                 CACHE.put(k, text)
@@ -259,14 +298,17 @@ LLMS = {
     "luna": "openai/gpt-6-luna",
 }
 # Allowed hosts per model, all at the same quantisation, so a run never mixes precisions (probed 27 Sep 2026).
-# GLM: OpenInference fp4 first, then DeepInfra and InferenceNet fp4 when it refuses (Matteo, 1 Oct): since 30 Sep
-# every host makes GLM reason, and OpenInference costs $0.000013 a call against $0.000031, with the same answers to
-# the 64 historical events. DeepSeek: InferenceNet was 429ing most calls and DeepSeek's own endpoint is excluded by
-# the account's guardrail, so DeepInfra fp8. MiMo: two fp8 hosts, load-balanced.
-HOSTS = {"glm": ["OpenInference", "DeepInfra", "InferenceNet"], "mimo": ["Xiaomi", "DeepInfra"],
+# GLM: InferenceNet fp4 first, then Sail Research and DeepInfra fp4 when it refuses (Matteo, 23 Oct). OpenInference
+# (first from 1 Oct) began ignoring effort "minimal" between 17 and 20 Oct: about 3,800 characters of reasoning a call,
+# 7 s, billed at max_tokens, and turnout answers 0.2 higher than the 16 Oct rows, which InferenceNet and Sail Research
+# still match (story means r 0.93-0.97, as close as one host asked twice). DeepSeek: InferenceNet was 429ing most
+# calls and DeepSeek's own endpoint is excluded by the account's guardrail, so DeepInfra fp8. MiMo: two fp8 hosts,
+# load-balanced.
+HOSTS = {"glm": ["InferenceNet", "Sail Research", "DeepInfra"], "mimo": ["Xiaomi", "DeepInfra"],
          "deepseek": ["DeepInfra"], "luna": ["OpenAI"]}
 ORDERED = {"glm"}  # hosts tried in the listed order; the others are load-balanced by OpenRouter
 # GLM can't turn reasoning off: "minimal" used 0 reasoning tokens on 27 Sep, 11-36 a call since 30 Sep (up to 70 on
 # OpenInference, counted against max_tokens: Chat.complete adds REASONING_ROOM). Others: off.
 REASONING = {"glm": {"effort": "minimal"}}
 REASONING_ROOM = 200
+CHAT_TIMEOUT_S = 45  # a text call takes 1-15 s; a stalled one is retried instead of holding a thread for 2 minutes

@@ -4,6 +4,7 @@ __pycache__/
 data/
 runs/cache.sqlite*
 runs/spend.jsonl
+runs/calls.jsonl
 kev-finetune/*.log
 kits/
 simlab/publish/fonts/_static/
