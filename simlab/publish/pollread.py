@@ -511,41 +511,41 @@ STORIES = {
                  "partisan-sponsored polls. Most sit between even and Brown +6, with the middle around +3; Marist "
                  "has Brown up 9, and the new Rasmussen poll, ringed, has Husted up 2."),
     },
-    "2026-10-21": {
-        "race": "AK", "since": "2026-10-01", "focus": "Data for Progress", "folder": "21-reading-polls-14",
+    "2026-10-23": {
+        "race": "AK", "since": "2026-10-01", "focus": "Data for Progress", "folder": "23-reading-polls-14",
         "left": "Peltola", "right": "Sullivan", "lim": 20,
         "headline": "Every October poll in Alaska has Peltola ahead. Our simulation calls it a toss-up.",
         "dek": "Five Senate polls since 1 October, and our expected result. Peltola (D) minus Sullivan (R).",
-        "source": "Polls ending 1–16 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 21 Oct.",
+        "source": "Polls ending 1–16 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 23 Oct.",
         "title2": "Where we part ways",
-        "ours": {"margin": 0.6, "leans": "closer to even",
+        "ours": {"margin": 0.43, "leans": "closer to even",
                  "vote": "50–50", "vote_label": "expected vote",
-                 "chance": "55 in 100", "chance_label": "Peltola's chance to win",
+                 "chance": "54 in 100", "chance_label": "Peltola's chance to win",
                  "range": "A toss-up: across 40,000 simulated elections the result runs from Sullivan +6 to "
                           "Peltola +7.",
                  "why": "September's three polls had Sullivan ahead or tied, and we blend the polls with Alaska's "
                         "record (Trump +13 in 2024).",
                  "wrong": "All five October polls have Peltola ahead, NYT/Siena by 7, and the prediction markets give "
-                          "her 75%."},
-        "hypothesis": "Our forecast: about 50–50. Peltola wins 55 in 100 simulated elections.",
+                          "her 74%."},
+        "hypothesis": "Our forecast: about 50–50. Peltola wins 54 in 100 simulated elections.",
         "caption": (
             "Alaska Senate polls: every poll since the start of October has Mary Peltola ahead of Dan Sullivan, by "
             "1 to 7 points. The newest, from Data for Progress, has her up 3.\n\n"
             "Our simulation is closer to even, and it's worth being precise about how. Our expected vote is about "
-            "50–50, a hair to Peltola. Across 40,000 simulated elections she wins 55 in every 100: a toss-up.\n\n"
+            "50–50, a hair to Peltola. Across 40,000 simulated elections she wins 54 in every 100: a toss-up.\n\n"
             "Why we're closer to even: the three September polls had Sullivan ahead or tied, and we blend the polls "
             "with Alaska's voting record (Trump won it by 13 points in 2024). Since 12 October only the news moves "
             "our number, and it has moved it a little toward Peltola.\n\n"
             "Why we might be wrong: the October polls agree with each other, NYT/Siena had Peltola up 7, and the "
-            "prediction markets give her 75%. We'll keep checking our number against new polls.\n\n"
+            "prediction markets give her 74%. We'll keep checking our number against new polls.\n\n"
             "#midterms2026 #Alaska #AlaskaSenate #elections"),
         "short": ("Alaska: every October poll has Peltola ahead, by 1 to 7 points. Our simulation: expected vote about "
-                  "50–50, and Peltola wins 55 of 100 simulated elections. A chance of winning, not a vote share."),
+                  "50–50, and Peltola wins 54 of 100 simulated elections. A chance of winning, not a vote share."),
         "more": " Reading the polls.",
         "x": ("Alaska: every October poll has Peltola ahead, by 1 to 7. Our simulation has it a toss-up: expected vote "
-              "about 50–50, and she wins 55 of 100 simulated elections. Who's reading Alaska right?"),
+              "about 50–50, and she wins 54 of 100 simulated elections. Who's reading Alaska right?"),
         "threads": ("Alaska is where our simulation and the polls part ways. Every poll this month has Mary Peltola "
-                    "ahead of Dan Sullivan, by 1 to 7 points. We expect it closer to 50–50, and she wins 55 of every "
+                    "ahead of Dan Sullivan, by 1 to 7 points. We expect it closer to 50–50, and she wins 54 of every "
                     "100 simulated elections. The September polls had Sullivan ahead or tied, and Alaska's voting "
                     "record leans Republican. Who do you think is reading Alaska right?"),
         "topic": "2026 Midterms",
@@ -553,6 +553,49 @@ STORIES = {
         "alt1": ("Dot chart of five Alaska Senate polls since 1 October, Peltola minus Sullivan. All have Peltola "
                  "ahead, from 1 to 7 points; a purple line marks our expected result, about even. The newest, Data "
                  "for Progress, has Peltola up 3."),
+    },
+    "2026-10-24": {
+        "race": "SD", "since": "2026-10-01", "focus": "Emerson College", "folder": "24-reading-polls-15",
+        "left": "Bengs", "right": "Rounds", "design": "meter", "hyp": -20, "lim": 30,
+        "headline": "A new South Dakota poll has Rounds up only 8. Two others this month had him up 19 and 21.",
+        "dek": "Three Senate polls since 1 October, Bengs (I) minus Rounds (R). Partisan polls left out.",
+        "source": "Polls ending 14–20 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 23 Oct.",
+        "title2": "A real race, or a blip?",
+        "against_head": "Why it may be too close",
+        "against": ["803 voters: the gap can swing about 7 points either way.",
+                    "Mason-Dixon and Quantus, polling the same fortnight, had Rounds up 19 and 21.",
+                    "Trump won South Dakota by 29 points in 2024."],
+        "against_meter": ["Mason-Dixon and Quantus, polling the same fortnight, had Rounds up 19 and 21.",
+                          "Trump won South Dakota by 29 points in 2024."],
+        "for": "Emerson has, if anything, leaned slightly Republican in past cycles, so its closer number isn’t a lean "
+               "toward Bengs.",
+        "hypothesis": "Our hypothesis: Rounds by about 20. Our simulation: Rounds wins 99 in 100.",
+        "caption": (
+            "South Dakota Senate poll: a new Emerson College survey of 803 likely voters has Mike Rounds ahead of "
+            "Brian Bengs, an independent, by 8 points, 50 to 42. Two other polls this month had Rounds far further "
+            "ahead: Mason-Dixon by 19 and Quantus by 21.\n\n"
+            "Read it carefully. With 803 voters the gap can move about 7 points either way, and even then it doesn't "
+            "reach the other two. South Dakota voted for Trump by 29 points in 2024.\n\n"
+            "But don't dismiss it: Emerson has, if anything, leaned slightly Republican in past cycles, so a closer "
+            "number from it isn't a lean toward Bengs.\n\n"
+            "Our hypothesis: Rounds ahead by about 20. In our simulation Rounds wins 99 of every 100 simulated "
+            "elections, with an expected vote of 59–41. We'll check it against the next three polls.\n\n"
+            "We leave out polls paid for by a party, a campaign or a partisan group.\n\n"
+            "#midterms2026 #SouthDakota #SDSenate #elections"),
+        "short": ("A new South Dakota poll, Emerson, has Rounds up only 8 on Bengs (I). Mason-Dixon and Quantus this "
+                  "month had him up 19 and 21. Our hypothesis: Rounds by about 20. Our simulation: Rounds wins 99 in "
+                  "100."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("South Dakota: Emerson has Rounds up only 8. Mason-Dixon and Quantus this month: Rounds +19 and +21. "
+              "Our hypothesis: Rounds by about 20. Our simulation: Rounds wins 99 in 100, expected vote 59–41."),
+        "threads": ("A new South Dakota Senate poll from Emerson has Mike Rounds up just 8 on Brian Bengs, the "
+                    "independent. Two other polls this month had Rounds up 19 and 21. Emerson usually leans slightly "
+                    "Republican, which makes the closer number more interesting. We think it's nearer Rounds +20, "
+                    "and we'll check it against the next three polls. South Dakotans, does it feel closer this year?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you live in South Dakota, does this Senate race feel closer than it used to?",
+        "alt1": ("Dot chart of three South Dakota Senate polls since 1 October, Bengs minus Rounds. All have Rounds "
+                 "ahead: Mason-Dixon by 19, Quantus by 21, and the new Emerson poll, ringed, by 8."),
     },
 }
 
