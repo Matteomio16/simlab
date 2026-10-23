@@ -1,0 +1,34 @@
+name: bluesky
+
+# Posts approved NotAPoll posts to Bluesky at their slot (Matteo, 23 Oct: the laptop may be closed). Only folders that
+# the Publishing approval thread committed with a site/public/social/<folder>/bluesky.json after Matteo's yes are
+# posted, each once (the public feed is checked first). Needs the repository secrets BLUESKY_HANDLE and
+# BLUESKY_APP_PASSWORD (an app password, set by Matteo); without them it posts nothing.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: bluesky
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  due:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install --quiet requests
+      - name: Post what is due
+        env:
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+        run: python -m simlab.publish.bluesky due
