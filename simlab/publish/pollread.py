@@ -30,7 +30,7 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
          "Stratus Intelligence": "Stratus", "Marist University": "Marist", "University of Texas/Texas Politics Project": "UT Texas Politics", "ReconMR/Siena University": "ReconMR/Siena", "Z to A Research": "Z to A", "Mitchell Research & Communications": "Mitchell", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
-         "Bowling Green State University/YouGov": "BGSU/YouGov", "Data for Progress": "Data for Progress", "Public Policy Polling": "PPP", "Suffolk University": "Suffolk", "Catawba College/YouGov": "Catawba/YouGov",
+         "Bowling Green State University/YouGov": "BGSU/YouGov", "Data for Progress": "Data for Progress", "Public Policy Polling": "PPP", "University of Houston": "U of Houston", "GS Strategy Group (R)/ New River Strategies": "GS Strategy", "Texas Public Opinion Research": "Texas Public Op.", "Verasight/VoteHub": "Verasight", "Suffolk University": "Suffolk", "Catawba College/YouGov": "Catawba/YouGov",
          "East Carolina University": "East Carolina", "High Point University": "High Point", "Opinion Diagnostics": "Opinion Diag."}
 
 STORIES = {
@@ -597,6 +597,51 @@ STORIES = {
         "alt1": ("Dot chart of three South Dakota Senate polls since 1 October, Bengs minus Rounds. All have Rounds "
                  "ahead: Mason-Dixon by 19, Quantus by 21, and the new Emerson poll, ringed, by 8."),
     },
+    "2026-10-25": {
+        "race": "TX", "since": "2026-10-13", "focus": "Beacon Research (D)/ Shaw & Co. Research",
+        "folder": "25-reading-polls-16", "left": "Talarico", "right": "Paxton", "design": "meter", "hyp": 2,
+        "exclude": ["Slingshot Strategies", "VoteHub/Verasight"],
+        "headline": "A new Fox News poll has Texas tied. Rasmussen, two days later, has it tied too.",
+        "dek": "Twelve Senate polls in the last two weeks, Talarico (D) minus Paxton (R). Partisan polls left out.",
+        "source": "Polls ending 13–21 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 24 Oct.",
+        "title2": "A dead heat, or a blip?",
+        "against_head": "Why it may be too close",
+        "against": ["1,398 voters: the gap can swing about 5 points either way.",
+                    "Nine of the other eleven polls these two weeks have Talarico ahead.",
+                    "Emerson, polling the same days, had Talarico up 1.5."],
+        "against_meter": ["Nine of the other eleven polls these two weeks have Talarico ahead.",
+                          "Emerson, polling the same days, had Talarico up 1.5."],
+        "for": "Fox News’s pollsters have barely leaned either way in past cycles, and Rasmussen found a tie too.",
+        "hypothesis": "Our hypothesis: Talarico by about 2. Our simulation: Talarico wins 62 in 100.",
+        "caption": (
+            "Texas Senate poll: a new Fox News survey of 1,398 likely voters has James Talarico and Ken Paxton tied at "
+            "49. Two days later, Rasmussen also had it tied, 45 to 45. Of the other polls in the last two weeks, nine "
+            "of eleven have Talarico ahead, by about 2 points in the middle.\n\n"
+            "Read it carefully. With 1,398 voters the gap can move about 5 points either way, and Emerson, in the "
+            "field the same days, had Talarico up 1.5.\n\n"
+            "But don't dismiss it: Fox News's pollsters have barely leaned either way in past cycles, so a tie from "
+            "them is worth watching.\n\n"
+            "Our hypothesis: Talarico ahead by about 2. In our simulation Talarico wins 62 of every 100 simulated "
+            "elections, with an expected vote of 51–49. We'll check it against the next three polls.\n\n"
+            "We leave out polls paid for by a party, a campaign or a partisan group.\n\n"
+            "#midterms2026 #Texas #TexasSenate #elections"),
+        "short": ("Texas tied twice in a week: Fox News 49–49, Rasmussen 45–45. Nine of the other eleven recent polls "
+                  "have Talarico ahead, about 2 in the middle. Our hypothesis: Talarico by about 2. Our simulation: "
+                  "Talarico wins 62 in 100."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("Texas, tied twice in a week: Fox News 49–49, Rasmussen 45–45. Nine of the other eleven polls these two "
+              "weeks have Talarico ahead, about 2 in the middle. Our hypothesis: Talarico by about 2. Our simulation: "
+              "Talarico wins 62 in 100."),
+        "threads": ("Two Texas Senate polls in a week have James Talarico and Ken Paxton tied: Fox News at 49–49 and "
+                    "Rasmussen at 45–45. Most other recent polls still have Talarico slightly ahead, about 2 points in "
+                    "the middle. We think that's closer to where it is, and we'll check it against the next three "
+                    "polls. Texans, does it feel tied where you are?"),
+        "topic": "2026 Midterms",
+        "first_comment": "Texans: does this Senate race feel tied where you are?",
+        "alt1": ("Dot chart of twelve Texas Senate polls from the last two weeks, Talarico minus Paxton, leaving out "
+                 "partisan-sponsored polls. Most have Talarico ahead by 1 to 5; the new Fox News poll, ringed, and "
+                 "Rasmussen both have a tie."),
+    },
 }
 
 
@@ -697,7 +742,7 @@ def strip_chart(s: Slide, p: pd.DataFrame, focus: str, left: str, right: str, li
             who = left if row.gap > 0 else right
             # beside its own dot, on the side with more room, so it never sits on the row above (Kansas, 12 Oct)
             right_side = row.gap <= lim * 0.35
-            tag = ax.text(row.gap + (lim * 0.09 if right_side else -lim * 0.09), i, typeset(f"{who} +{abs(row.gap):.0f}"),
+            tag = ax.text(row.gap + (lim * 0.09 if right_side else -lim * 0.09), i, typeset(f"{who} +{abs(row.gap):.0f}" if round(row.gap) else "Tied"),
                           va="center", ha="left" if right_side else "right", color=t.ink,
                           fontproperties=s.font("sans", 600, 28), zorder=2,  # over the lines, under dots
                           bbox={"facecolor": t.paper, "edgecolor": "none", "pad": 1})

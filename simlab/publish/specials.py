@@ -311,14 +311,15 @@ def seismograph(r: dict = NC, t=SEISMO, history: list | None = None, events: lis
 
 
 def tile_map(t=MAP, up: dict = UP, cook: dict = COOK, day: date = DAY, run: str = "a3f9c1e", kicker: str = KICKER,
-             src: str | None = None) -> Slide:
+             src: str | None = None, head: str | None = None, dek: str | None = None, ring: str | None = None,
+             series: str | None = None, size: int = 72) -> Slide:
     """The Map: one square per state. The 35 races are coloured by how the simulations lean; a ring marks each race
     where Cook's rating differs from ours."""
-    s = Slide(day, kicker, t, run=run)
+    s = Slide(day, kicker, t, run=run, **({"series": series} if series else {}))
     tos = sum(1 for p in up.values() if TOSS_UP[0] <= p <= TOSS_UP[1])
-    s.headline(f"35 races. {tos} toss-up{'' if tos == 1 else 's'}.", px=88)
-    s.dek("The Democrat's chance in each state's simulated elections.", px=34)
-    size, gap = 72, 6
+    s.headline(head or f"35 races. {tos} toss-up{'' if tos == 1 else 's'}.", px=60 if head else 88)
+    s.dek(dek or "The Democrat's chance in each state's simulated elections.", px=30 if dek else 34)
+    gap = 6
     x0 = MARGIN + (s.width - 12 * (size + gap) + gap) / 2
     top = s.y + 6
     for k, (row, c) in TILE.items():
@@ -349,7 +350,7 @@ def tile_map(t=MAP, up: dict = UP, cook: dict = COOK, day: date = DAY, run: str 
     diff = sorted(k for k in up if k in cook and cook[k] != verdict(up[k]))
     s.ax.add_patch(FancyBboxPatch((MARGIN + 2, s.y + 2), 24, 24, fill=False, ec=t.ink, lw=pt(3),
                                   boxstyle="round,pad=0,rounding_size=5"))
-    s.text(f"Ringed: Cook rates it differently ({', '.join(diff) or 'none'}).", px=24, color=t.ink2,
+    s.text(ring or f"Ringed: Cook rates it differently ({', '.join(diff) or 'none'}).", px=24, color=t.ink2,
            x=MARGIN + 40, width=s.width - 40, after=0.4)
     s.source(src or "EXAMPLE: invented numbers, not a forecast. Special edition: The Map.")
     return s
