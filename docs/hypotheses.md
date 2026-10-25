@@ -26,6 +26,7 @@ what we read wrong.
 | 20-reading-polls-13 | 20 Oct 20:30 Paris | Ohio Senate (special) | Rasmussen, Husted +2 (901 LV) | Brown +3 | | open | |
 | 23-reading-polls-14 | 23 Oct 18:30 Paris | Alaska Senate | five October polls, Peltola +1 to +7 (middle +5) | about even (our expected vote 50-50; the post promises to keep checking it against new polls) | | open | |
 | 24-reading-polls-15 | 24 Oct 18:00 Paris | South Dakota Senate | Emerson, Rounds +8 (803 LV) | Rounds +20 | | open | |
+| 25-reading-polls-16 | 25 Oct 18:00 Paris | Texas Senate | Fox News (Beacon/Shaw), tie (1,398 LV) | Talarico +2 | | open | |
 
 Not posted, so no promise: 08-reading-polls-04 (Florida, dropped 11 Oct); 12-reading-polls-05 (Iowa, dropped 12 Oct:
 the SSRS poll sat in the middle of the pack).
