@@ -93,10 +93,10 @@ def build(check: dict, theme=LAB, example: bool = False) -> tuple[Path, list[str
           "only check us; they don't move our numbers.", px=32)
     charts.legend_dots(a, [("Poll average", theme.data, False), ("Our expected vote", theme.ai, True)])
     a.y += 6
-    lim = max(4, max(max(abs(r["ours"]), abs(bench(r))) for r in top) + 1)
+    lim = max(4, 2 * -(-(max(max(abs(r["ours"]), abs(bench(r))) for r in top) + 1) // 2))  # round ticks
     charts.dumbbell(a, [(r["state"] + (" †" if r.get("basis") == "markets" else "") + (" *" if r["flag"] else ""),
                          bench(r), r["ours"]) for r in top], lim,
-                    80 * len(top), "toward Republicans", "toward Democrats",
+                    66 * len(top), "toward Republicans", "toward Democrats",
                     lambda v: f"{abs(v):g}", label_w=230)
     flagged = [r for r in rows if r["flag"]]
     a.text(("* " + ", ".join(f"{r['state']}: {FLAG_WORD[r['flag']].lower()}" for r in flagged)) if flagged else
@@ -111,7 +111,8 @@ def build(check: dict, theme=LAB, example: bool = False) -> tuple[Path, list[str
         o, q, them = r["ours"], bench(r), "the polls" if r.get("basis") == "polls" else "the markets"
         way = (f"further than {them}" if abs(o) > abs(q) and o * q >= 0 else
                f"the other way from {them}" if o * q < 0 else f"less than {them}")
-        b.headline(f"{r['state']}: we moved {way} this week.", px=76)
+        b.headline(f"{r['state']}: {them} moved, we barely did." if abs(o) < 1 else
+                   f"{r['state']}: we moved {way} this week.", px=76)
         name = bench_name(r)
         b.text(f"Our expected vote: {toward(r, r['ours'])}", "serif", 600, 44, after=0.3)
         b.text(f"{name[0].upper() + name[1:]}: {toward(r, bench(r))}", "serif", 600, 44, theme.data, after=0.3)
@@ -149,10 +150,29 @@ def build(check: dict, theme=LAB, example: bool = False) -> tuple[Path, list[str
     x = (f"Weekly check, {span}: the biggest gap between our expected vote and the polls was {big['state']} (ours "
          f"moved {toward(big, big['ours'])}, the {bench_name(big)} {toward(big, bench(big))}). Polls only check us now; the news moves our "
          f"numbers. {LABEL}.")
+    from .launch import LIMIT
+    from .pollread import end
+    threads = end(f"Every Sunday we check our simulation against the polls. The biggest gap in the {span} was "
+                  f"{big['state']}: our expected vote moved {toward(big, big['ours'])}, the {bench_name(big)} "
+                  f"{toward(big, bench(big))}." + (f" {big['what_we_did'][0].upper()}{big['what_we_did'][1:]}"
+                                                   if big.get("what_we_did") else "")
+                  + " Which race do you think we're reading wrong?", LIMIT["threads"])
+    short = end(f"Weekly check, {span}: biggest gap between our expected vote and the polls, {big['state']}.",
+                LIMIT["bluesky"])
     (out / "caption.txt").write_text(caption, encoding="utf-8")
-    (out / "single-post.md").write_text(f"# Single posts\n\n## X ({len(x)} of 280 characters)\n\n{x}\n", encoding="utf-8")
-    problems += [f"caption: {q}" for q in text.check(caption, caption=True, allow=("poll", "polls"))]
-    problems += [f"x: {q}" for q in text.check(x, caption=True, allow=("poll", "polls"))]
+    (out / "single-post.md").write_text(
+        "# Single posts (X and Threads through Buffer; Bluesky by hand)\n\n"
+        + "".join(f"## {k} ({len(v)} of {LIMIT[k.lower()]} characters; attach every slide)\n\n{v}\n\n"
+                  for k, v in (("X", x), ("Threads", threads), ("Bluesky", short))), encoding="utf-8")
+    alt = [f"slide-1.jpg: Where we and the polls moved apart, {span}: for the " + ", ".join(r["state"] for r in top)
+           + " Senate races, our expected vote's change against the poll average's change, in points of margin."]
+    alt += [f"slide-{i}.jpg: {r['state']}: our expected vote moved {toward(r, r['ours'])}; the {bench_name(r)} "
+            f"{toward(r, bench(r))}. {(r.get('what_we_did') or '')[:1].upper()}{(r.get('what_we_did') or '')[1:]}".strip()
+            for i, r in enumerate(flagged, 2)]
+    (out / "alt-text.txt").write_text("\n".join(alt) + "\n", encoding="utf-8")
+    (out / "meta.json").write_text(json.dumps({"threads_topic": "2026 Midterms"}, indent=1), encoding="utf-8")
+    for name, t in (("caption", caption), ("x", x), ("threads", threads), ("bluesky", short)):
+        problems += [f"{name}: {q}" for q in text.check(t, caption=True, allow=("poll", "polls"))]
     (out / "checks.txt").write_text("\n".join(problems) or "all rules pass", encoding="utf-8")
     return out, problems
 
