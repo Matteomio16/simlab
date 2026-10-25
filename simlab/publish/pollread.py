@@ -610,15 +610,18 @@ STORIES = {
                     "Nine of the other eleven polls these two weeks have Talarico ahead.",
                     "Emerson, polling the same days, had Talarico up 1.5."],
         "against_meter": ["Nine of the other eleven polls these two weeks have Talarico ahead.",
-                          "Emerson, polling the same days, had Talarico up 1.5."],
-        "for": "Fox News’s pollsters have barely leaned either way in past cycles, and Rasmussen found a tie too.",
+                          "Emerson, polling the same days, had Talarico up 1.5.",
+                          "The other tie is Rasmussen’s, which has usually leaned Republican."],
+        "for": "Fox News’s pollsters have barely leaned either way in past cycles, so a tie from them is worth "
+               "watching.",
         "hypothesis": "Our hypothesis: Talarico by about 2. Our simulation: Talarico wins 62 in 100.",
         "caption": (
             "Texas Senate poll: a new Fox News survey of 1,398 likely voters has James Talarico and Ken Paxton tied at "
             "49. Two days later, Rasmussen also had it tied, 45 to 45. Of the other polls in the last two weeks, nine "
             "of eleven have Talarico ahead, by about 2 points in the middle.\n\n"
-            "Read it carefully. With 1,398 voters the gap can move about 5 points either way, and Emerson, in the "
-            "field the same days, had Talarico up 1.5.\n\n"
+            "Read it carefully. With 1,398 voters the gap can move about 5 points either way, Emerson, in the field "
+            "the same days, had Talarico up 1.5, and the other tie comes from Rasmussen, which has usually leaned "
+            "Republican.\n\n"
             "But don't dismiss it: Fox News's pollsters have barely leaned either way in past cycles, so a tie from "
             "them is worth watching.\n\n"
             "Our hypothesis: Talarico ahead by about 2. In our simulation Talarico wins 62 of every 100 simulated "
