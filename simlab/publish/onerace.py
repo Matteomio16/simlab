@@ -86,7 +86,7 @@ def build(data_day: str, post_day: str, race: str, data: Path, reel: bool = Fals
     a.source(src)
 
     b = Slide(d, "", LAB, series=SERIES)
-    b.headline("Two of our simulated elections. Same night, opposite Senates.", px=60)
+    b.headline("Two of our simulated elections. Same 50–49, opposite Senates.", px=60)
     b.y += 10
     for side, who, result, col in (("D", dem, "Democrats hold the Senate, 51–49.", LAB.dem),
                                    ("R", rep, "50–50, and the Vice President's vote gives Republicans the Senate.",
@@ -118,8 +118,8 @@ def build(data_day: str, post_day: str, race: str, data: Path, reel: bool = Fals
         f"Election night, simulated. In one of our 40,000 simulated elections, No. {no['D']}, every Senate race is "
         f"called but one. Democrats have 50 seats, Republicans 49. Whoever wins {state} controls the Senate. "
         f"{dem} wins it by {tenth}.\n\n"
-        f"In another, No. {no['R']}, the same night ends the other way: {rep} wins {state} by {tenth}, the Senate "
-        f"is 50–50, and the Vice President's vote gives Republicans control.\n\n"
+        f"In another, No. {no['R']}, the night reaches the same 50–49 with only {state} left, and ends the other way: "
+        f"{rep} wins it by {tenth}, the Senate is 50–50, and the Vice President's vote gives Republicans control.\n\n"
         f"It isn't a fluke. In {per100} of every 100 of our simulated elections, control of the Senate comes down to "
         f"a single race decided by less than a point, and {state} is the race that decides it most often.\n\n"
         f"These are simulations, not predictions: each one is a possible election night, played out from voter "
