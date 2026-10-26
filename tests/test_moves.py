@@ -66,6 +66,18 @@ def reaction(eid, group, s, t, race="OH-S", model="glm", shadow=False):
             "turnout": t, "parse_error": False}
 
 
+class OffsetTest(unittest.TestCase):
+    def test_the_offset_cancels_a_lean_toward_republicans(self):
+        pimu = {A: {"pi": 0.1}, B: {"pi": 0.1}}
+        row = lambda e, g, s, m: {"event_id": e, "group": g, "support": s, "weight": 1.0,
+                                  "measured_shift_toward_D": m, "z": m / 0.5}
+        # GLM says 1.0 (5 points at c_s 0.5) where 6 points were measured, and 0 where 1 was: 1 point toward R each
+        rows = [row("e1", g, 1.0, 6.0) for g in (A, B)] + [row("e2", g, 0.0, 1.0) for g in (A, B)]
+        f = moves.fit_offset(rows, pimu, 0.5)
+        self.assertEqual((f["events"], f["lean_plain"], f["points_per_unit"]), (2, -1.0, 5.0))
+        self.assertAlmostEqual(f["offset_plain"], 0.2)
+
+
 class BuildTest(unittest.TestCase):
     def setUp(self):
         self.groups = {"OH-S": {A: {"n": 0.5, "t": 0.5, "d": 0.8, "pi": 0.1, "mu": 0.2},
@@ -103,6 +115,35 @@ class BuildTest(unittest.TestCase):
             with mock.patch.object(moves_newsraces, "CARD_FIXES", fixes):
                 m = self.build(root, "2026-10-01")
         self.assertEqual(m["OH-S"]["events"]["e1"]["card"], "The new words.")
+
+    def test_a_rerun_row_replaces_the_earliest_answer_and_keeps_its_day(self):
+        # 26 Oct: the drifted host's 20-23 Oct rows re-asked (Matteo's yes)
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            e1 = event("e1", "2026-10-01T08:00:00+00:00", 1.0)
+            write_day(root, "2026-10-01", [e1], [reaction("e1", A, 2.0, 0.0), reaction("e1", B, 2.0, 0.0)])
+            write_day(root, "2026-10-03", [], [reaction("e1", A, 1.0, 0.0) | {"rerun": "drifted host, 20-23 Oct"},
+                                               reaction("e1", B, 1.0, 0.0) | {"rerun": "drifted host, 20-23 Oct"},
+                                               reaction("e1", A, -2.0, 0.0)])
+            before, after = self.build(root, "2026-10-02"), self.build(root, "2026-10-03")
+        full = 100 * 2 * 0.1 * 0.5
+        self.assertAlmostEqual(before["OH-S"]["events"]["e1"]["full"], full, places=4)
+        self.assertAlmostEqual(after["OH-S"]["events"]["e1"]["full"], full / 2, places=4)  # the re-run, not the later row
+        self.assertAlmostEqual(after["OH-S"]["by_event"]["e1"], (full / 2) * (0.5 ** 0.2 - 0.5 ** 0.1), places=4)
+
+    def test_a_races_doubles_are_left_out_from_the_drops_day(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            drops = root / "drops.json"
+            drops.write_text(json.dumps({"from": "2026-10-02", "drops": {"OH-S": ["e2"]}}), encoding="utf-8")
+            evs = [event("e1", "2026-10-01T08:00:00+00:00", 1.0), event("e2", "2026-10-01T08:00:00+00:00", 1.0)]
+            write_day(root, "2026-10-01", evs, [reaction(e, g, 1.0, 0.0) for e in ("e1", "e2") for g in (A, B)])
+            with mock.patch.object(moves, "DROPS", drops):
+                first, later = self.build(root, "2026-10-01"), self.build(root, "2026-10-02")
+                with mock.patch.dict("os.environ", {"SIMLAB_KEEP_DOUBLES": "1"}):
+                    kept = self.build(root, "2026-10-02")
+        self.assertEqual((sorted(first["OH-S"]["events"]), sorted(later["OH-S"]["events"])), (["e1", "e2"], ["e1"]))
+        self.assertEqual((later["dropped_doubles"], sorted(kept["OH-S"]["events"])), (["OH-S e2"], ["e1", "e2"]))
 
     def test_rows_for_pairs_the_days_news_no_longer_selects_are_dropped(self):
         with tempfile.TemporaryDirectory() as d:

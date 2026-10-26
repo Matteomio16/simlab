@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -21,6 +22,7 @@ from .newsraces import fix_cards
 
 HERE = Path(__file__).parent
 PARAMS = HERE / "move_params.json"
+DROPS = HERE / "story_drops.json"
 ELECTION = date(2026, 11, 3)
 LOOKBACK = 60
 SCHEMA = 1
@@ -85,13 +87,37 @@ def fit_cs(rows: list[dict], pimu: dict) -> dict:
             "corr": round(float(np.corrcoef(shift, p)[0, 1]), 3)}
 
 
+def fit_offset(rows: list[dict], pimu: dict, c_s: float) -> dict:
+    """GLM's lean on the calibration events: each event's predicted shift (the switching term over the national groups,
+    as fit_cs) minus its measured shift, averaged with weights 1/se^2 (se as fit_cs) and plainly, and the support offset
+    that cancels it (minus the mean over the points one unit of support moves an event)."""
+    ev = {}
+    for r in rows:
+        ev.setdefault(r["event_id"], []).append(r)
+    gap, unit, se = [], [], []
+    for rs in ev.values():
+        w = np.array([r["weight"] for r in rs])
+        pred = 100 * np.dot(w, [group_change(r["support"], 0.0, pimu[r["group"]]["pi"], 0.0, 1.0, c_s, 0.0)[0]
+                                for r in rs]) / w.sum()
+        unit.append(100 * np.dot(w, [pimu[r["group"]]["pi"] * c_s for r in rs]) / w.sum())
+        m, z = rs[0]["measured_shift_toward_D"], rs[0]["z"]
+        gap.append(pred - m)
+        se.append(max(abs(m / z) if z else 1.0, 0.1))
+    gap, unit, wt = np.array(gap), float(np.mean(unit)), 1 / np.array(se) ** 2
+    g = float(np.sum(wt * gap) / wt.sum())
+    return {"events": len(ev), "lean_weighted": round(g, 3), "lean_se": round(float(np.sqrt(1 / wt.sum())), 3),
+            "lean_plain": round(float(gap.mean()), 3), "points_per_unit": round(unit, 3),
+            "offset_weighted": round(-g / unit, 4), "offset_plain": round(float(-gap.mean() / unit), 4)}
+
+
 def _jsonl(path: Path) -> list[dict]:
     return [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()] if path.exists() else []
 
 
 def _history(day: date, derived: Path) -> tuple[dict, dict, set, dict]:
-    """Reactions asked in the last LOOKBACK days, earliest answer per (model, race, event, group), with the day asked;
-    the latest record of every event up to `day`; the (race, event) pairs left out because that day's news no
+    """Reactions asked in the last LOOKBACK days, earliest answer per (model, race, event, group), with the day asked
+    (a re-run row, `"rerun"` set, replaces it and keeps the day first asked: Matteo, 26 Oct, for the drifted host's
+    20-23 Oct rows); the latest record of every event up to `day`; the (race, event) pairs left out because that day's news no
     longer selects them (a news re-run after the harness), files without selections counting in full; and the races
     each event was ever gated for (events whose records carry no gate are left out)."""
     reactions, events, dropped, gated = {}, {}, set(), {}
@@ -102,16 +128,29 @@ def _history(day: date, derived: Path) -> tuple[dict, dict, set, dict]:
         fix_cards(todays.values())  # cards corrected after Matteo's yes (newsraces.CARD_FIXES)
         for r in _jsonl(folder / "reactions.jsonl"):
             e = todays.get(r["event_id"])
-            if e is not None and "selected" in e and r["race_id"] not in (e["selected"] or {}):
+            key = (r["model"], bool(r.get("shadow")), r["race_id"], r["event_id"], r["group"])
+            if r.get("rerun"):
+                if not r.get("parse_error"):
+                    reactions[key] = (r, reactions[key][1] if key in reactions else d)
+            elif e is not None and "selected" in e and r["race_id"] not in (e["selected"] or {}):
                 dropped.add((r["race_id"], r["event_id"]))
             elif not r.get("parse_error"):
-                reactions.setdefault((r["model"], bool(r.get("shadow")), r["race_id"], r["event_id"], r["group"]),
-                                     (r, d))
+                reactions.setdefault(key, (r, d))
         events.update(todays)
         for eid, e in todays.items():
             if "gate" in e:
                 gated.setdefault(eid, set()).update(e["gate"] or {})
     return reactions, events, dropped, gated
+
+
+def story_drops(day: date, path: Path | None = None) -> dict:
+    """{race_id: {event_id}}: a race's copies of a story it already counts (story_drops.json, Matteo's yes), left out
+    from the file's "from" day on. SIMLAB_KEEP_DOUBLES=1 keeps them, to score the version before."""
+    path = path or DROPS
+    if os.environ.get("SIMLAB_KEEP_DOUBLES") or not path.exists():
+        return {}
+    f = json.loads(path.read_text(encoding="utf-8"))
+    return {r: set(ids) for r, ids in f["drops"].items()} if day.isoformat() >= f["from"] else {}
 
 
 def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: date) -> dict:
@@ -175,18 +214,21 @@ def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> 
     story ids) can't be placed in time; they are left out and listed under "orphaned_events". Races with reactions but
     no voter groups (a House seat that isn't simulated that day) are listed under "ungrouped_races". A race with
     stories lists under "nation_unasked" the nation's stories it was never asked about (gated before it was
-    simulated), which it takes from the nation (nation_paths)."""
+    simulated), which it takes from the nation (nation_paths). A race's doubles (story_drops) are left out and listed
+    under "dropped_doubles"."""
     reactions, events, dropped, gated = _history(day, derived)
+    doubles = story_drops(day)
     races = [k for k in groups if isinstance(groups[k], dict) and k not in ("units",)]
     out = {"date": day.isoformat(), "run_id": run_id, "schema": SCHEMA, "units": UNITS,
            "params": {k: params[k] for k in ("c_s", "c_t")}, "shadow": {},
            "orphaned_events": sorted({k[3] for k in reactions if k[3] not in events}),
            "deselected_pairs": sorted(f"{race} {eid}" for race, eid in dropped),
-           "ungrouped_races": sorted({k[2] for k in reactions if k[2] not in races})}
+           "ungrouped_races": sorted({k[2] for k in reactions if k[2] not in races}),
+           "dropped_doubles": sorted(f"{race} {eid}" for race, ids in doubles.items() for eid in ids)}
     for shadow in (False, True):
         by_race = {}
         for (model, sh, race, eid, g), v in reactions.items():
-            if sh == shadow:
+            if sh == shadow and eid not in doubles.get(race, ()):
                 by_race.setdefault(race, {}).setdefault(eid, {})[g] = v
         dest = out["shadow"] if shadow else out
         for race in races:
@@ -296,7 +338,13 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fit", action="store_true", help="fit c_s on runs/events2_groups__glm.jsonl")
     ap.add_argument("--lasting", action="store_true", help="measure how long the calibration events' shifts lasted")
+    ap.add_argument("--offset", type=Path, help="GLM's lean on the calibration events in this file (fit_offset)")
     a = ap.parse_args()
+    if a.offset:
+        rows = [r for r in _jsonl(a.offset) if not r.get("parse_error")]
+        pimu = json.loads((HERE / "pimu.json").read_text(encoding="utf-8"))["national"]
+        print(json.dumps(fit_offset(rows, pimu, json.loads(PARAMS.read_text(encoding="utf-8"))["c_s"])))
+        return
     if a.lasting:
         params = json.loads(PARAMS.read_text(encoding="utf-8"))
         params["lasting_evidence"] = lasting_evidence()

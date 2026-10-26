@@ -1,0 +1,13 @@
+{
+ "about": "Copies of a story a race already counts, left out of that race from \"from\" on (Matteo, 26 Oct, via Publishing approval). Seats: the statewide House copy of a story the seat has as its own; Kansas: the second copy of the 20 Oct farm aid story. Engine dedupes new stories from 29 Oct. SIMLAB_KEEP_DOUBLES=1 keeps them, to score the version before.",
+ "from": "2026-10-26",
+ "drops": {
+  "KS": ["KS-20261020-a602bf69"],
+  "NC-11": ["NC-H-20261023-2e972bea"],
+  "IA-1": ["IA-H-20261016-ab715539"],
+  "ME-2": ["ME-H-20261023-9cd141eb"],
+  "MI-4": ["MI-H-20261016-2e1db25d"],
+  "MI-10": ["MI-H-20261016-2e1db25d"],
+  "VA-2": ["VA-H-20261017-5c8ff33b"]
+ }
+}

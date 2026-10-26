@@ -2,6 +2,23 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-26 (Statistics session): doubles dropped from the forecast, re-run reactions, the offset fit (Matteo's yes)
+
+Matteo's yes to all five points of the lock-in follow-up (26 Oct, Publishing approval).
+- **Doubles dropped from 26 Oct** (`simlab/story_drops.json`, `moves.story_drops`): Kansas's second copy of the
+  20 Oct farm aid story (KS-20261020-a602bf69), and the statewide House copy of a story a seat already has as its own
+  in NC-11, IA-1, ME-2, MI-4, MI-10 and VA-2. moves.json lists them under `dropped_doubles`. On 25 Oct data: Kansas
+  -2.04 -> -1.89 on 3 Nov (today view -0.69 -> -0.22), the seats unchanged on 3 Nov (those stories had faded),
+  Republicans 50+ 39.5 -> 39.4. The version before is kept for scoring: `SIMLAB_KEEP_DOUBLES=1` re-runs it. Engine
+  dedupes new stories from 29 Oct.
+- **Re-run reactions** (`moves._history`): a reactions row with `"rerun"` set replaces the earliest answer for its
+  model, race, story and group, and keeps the day first asked; for Engine's re-ask of the drifted host's 20-23 Oct rows.
+- **The support offset fit** (`python -m simlab.moves --offset <rows>`, `moves.fit_offset`): GLM's lean on the 45
+  calibration events, weighted by 1/se^2 and plain. On the 29 Sep answers: lean -0.146 +/- 0.118 (plain -0.174)
+  points per event at 3.06 points per unit, offset +0.048 (plain +0.057), within the +0.08 +/- 0.065 prior from
+  Engine's 29 Sep benchmark. Engine re-asks the events with today's hosts; the same fit runs on them.
+- South Dakota's week stands (no cancelled week).
+
 ## 2026-10-26 (Statistics session): early votes lock in on 3 Nov, built and off (waits for Matteo's yes)
 
 Brief from Matteo via Publishing approval (26 Oct). Off until his yes (`lockin.FROM = None`); nothing public changes,
