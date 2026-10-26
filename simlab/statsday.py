@@ -162,8 +162,12 @@ def _stories(mv: dict, when: str, drop: dict | None = None, lock: dict | None = 
         if (drop or {}).get(r):
             src = [s for s in src if frozen.kept([(s[2]["first_seen"],)], drop[r])]
         if lock and when == "election_day":
-            g = lock["factors"][r.split("-")[0]]
-            out[r] = {e: round(float(v["full"] * g.get(e, 0.0)), 4) for xx, e, v in src}
+            g, sp = lock["factors"][r.split("-")[0]], lock.get("split")
+            share = lambda b, e, v: ((lambda o: o[2] * o[0] + o[3] * o[1])(sp[(b, e)]) / v["full"]
+                                     if sp and (b, e) in sp and v["full"] else 1.0)
+            out[r] = {e: round(float(v["full"] * share(b, e, v) * g.get(e, 0.0)
+                                     + v["election_day"] * (1 - share(b, e, v))), 4)
+                      for xx, e, v in src for b in ["US" if xx is us else r]}
             continue
         out[r] = {e: round(float(value(xx, e, v)), 4) for xx, e, v in src}
     return out
@@ -335,7 +339,7 @@ def _write(path: Path, obj, compact: bool = False) -> str:
 
 def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = None, weekly_update: bool = False,
         rule: str | None = None, out_root: str | None = None, weekly_check: bool = False,
-        lasting: float | None = None) -> dict:
+        lasting: float | None = None, own_only: dict | None = None) -> dict:
     """The day's statistics step under `rule` (start.rule_for(day) by default), written to <out_root>/<date>/
     ("derived" by default; the inputs always come from derived/). Under the simulation-only rule the dials stay at
     the 12 Oct update and nothing is re-fitted from polls; the weekly check runs on Sundays (or `weekly_check`).
@@ -386,8 +390,11 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     at = lambda e: frozen.at(fz, e, hb["tier"] if hb else None) if fz else None
     if sim and lasting is None and lockin.FROM and day >= lockin.FROM:
         lasting = lockin.LASTING
+    if own_only is not None:
+        own_only = own_only | {"groups": grp, "c_t": mp["c_t"], "offset": mp.get("support_offset", 0.0),
+                               "dials": mp.get("dials", {})}
     lk = lockin.prepare(data, day, mv, [r.race_id for r in t["race_list"]] + list(hb["races"] if hb else []),
-                        lasting) if sim and lasting is not None and lasting >= 0 else None
+                        lasting, own_only=own_only) if sim and lasting is not None and lasting >= 0 else None
     lv, head, news, house = _levels(t, day, run_id, mv, inp, mp, hb=hb, start=at(levels.ELECTION), drop=drop,
                                     lock=lk)
     sha["filter_state.json"] = _write(out / "filter_state.json", head | {"moves": "moves.json, main block (GLM)",

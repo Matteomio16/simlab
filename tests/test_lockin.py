@@ -57,7 +57,7 @@ class FactorTest(unittest.TestCase):
         self.assertAlmostEqual(g0["t1"], 0.0, places=3)  # not in the archive, and all but gone by 3 Nov
         g = lockin.factors(MOVES, w, held, today, 0.1)
         self.assertAlmostEqual(g["t1"] - g0["t1"], 0.06, places=4)
-        self.assertGreater(g["n1"], g0["n1"])
+        self.assertAlmostEqual(g["n1"], g0["n1"])  # a lasting topic already lasts: no L on top
 
 
 class PathsTest(unittest.TestCase):
@@ -74,6 +74,21 @@ class PathsTest(unittest.TestCase):
         half = lockin.path_sets(MOVES, {"TX": {"n1": 0.5, "t1": 0.5}}, ["TX"])["all"]["TX"]
         self.assertEqual(sorted(x[2] for x in half), [-1.0, 0.5])
         self.assertTrue(all(x[3] is None and x[4] is None for x in half))  # no further fading
+
+    def test_story_specific_variant_locks_only_the_storys_own_share(self):
+        split = {("TX", "t1"): (-0.8, -0.1, 1.0, 1.0)}
+        ps = lockin.path_sets(MOVES, {"TX": {"t1": 0.4, "n1": 1.0}}, ["TX"], split)["all"]["TX"]
+        t1 = [x for x in ps if x[0] == "2026-10-22"]
+        self.assertAlmostEqual(t1[0][2], -0.9 * 0.4)  # its own part, locked in at G
+        self.assertAlmostEqual(t1[1][2], -2.0 + 0.9)  # the rest, fading as before
+        self.assertEqual((t1[0][3], t1[1][3], t1[1][4]), (None, 5.5, 1))
+        v = MOVES["TX"]["events"]["t1"] | {"a": 1.0, "full_s_unit": 0.4}
+        groups = {"TX": {"g": {"n": 1.0, "t": 0.5, "d": 0.2, "pi": 0.1, "mu": 0.2}}}
+        own = lockin.specific({"TX": {"events": {"t1": v}}}, groups, 0.08, 0.2, 0.2, {"TX": {"k_s": 0.8}})
+        os_, ot, ks, kt = own[("TX", "t1")]
+        self.assertAlmostEqual(os_, -1.6 - 0.08 * 0.4)
+        self.assertAlmostEqual(ot, -0.4)  # one group: turnout changes nobody's share of the vote
+        self.assertEqual((ks, kt), (0.8, 1.0))
 
     def test_the_shares_file_names_its_sources(self):
         f = json.loads(lockin.SHARES.read_text(encoding="utf-8"))

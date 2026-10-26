@@ -29,6 +29,14 @@ the 12 Oct start and the published days stay as they are.
   rule, more Democratic than the polls' move in 20 races; with lock-in 21 (L = 0), 22 (0.05), 25 (0.2).
 - **Stories counted twice** (25 Oct, near-identical cards within 3 days): Kansas's $8 billion farm aid story (about
   0.9 points), and the same story under a district and a statewide House id in NC-11, IA-1 and ME-2. Passed to Engine.
+- **Later the same day** (Engine's notes via Publishing approval): the lasting share L no longer stacks on lasting
+  topics (economy, national), which already skip the after-news drop. A story-specific variant
+  (`lockin.specific`, `statsday.run(own_only=...)`) locks in only each story's own part, net of GLM's +0.0789 support
+  offset and of the average turnout answer (0.207 since 12 Oct without the drifted 20-23 Oct). The rest keeps
+  fading. On 25 Oct it moves away from the polls: median gap -1.76 (L = 0) and -1.97 (0.05), against -1.53 now and
+  -1.18 for full lock-in. The today view's match with the polls comes mostly from the offset and the turnout lift,
+  not from what each story says. The rows from 20-23 Oct (drifted host) carry much of the lock-in in North
+  Carolina: 0.46 of its +0.61, from ballots cast those days.
 - **Shadow:** `simlab.fadeshadow`, a last daily step, writes the current rule to `simlab-data/scoring/fade/<date>/`
   once lock-in is live; it does nothing before. Tests: `tests/test_lockin.py`.
 

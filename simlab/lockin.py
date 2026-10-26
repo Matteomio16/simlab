@@ -144,7 +144,8 @@ def archive(derived: Path, today: date, start: date = date(2026, 9, 1)) -> dict:
 
 
 def factors(m: dict, w: dict, held: dict, today: date, lasting: float, election: date = ELECTION) -> dict:
-    """{event_id: G} for one state's ballot shares `w`, every story in moves.json `m`."""
+    """{event_id: G} for one state's ballot shares `w`, every story in moves.json `m`. Lasting topics (no after-news
+    fading: economy, national) already last; the lasting share L isn't stacked on them."""
     events = {}
     for r, x in m.items():
         if r != "shadow" and isinstance(x, dict) and x.get("events"):
@@ -160,19 +161,50 @@ def factors(m: dict, w: dict, held: dict, today: date, lasting: float, election:
         item = [(v["first_seen"], v["last_seen"], 1.0, v["age_half_life"], v["after_news_half_life"])]
         h = levels.effect(t, item, election, stop=stop)
         g += float(sum(w[d] * h[i] for i, d in enumerate(future) if d < election))
-        g += w[election] * (lasting + (1 - lasting) * float(h[-1]))
+        keep = lasting if v["after_news_half_life"] is not None else 0.0
+        g += w[election] * (keep + (1 - keep) * float(h[-1]))
         out[e] = g
     return out
 
 
-def path_sets(m: dict, fac: dict, races: list[str]) -> dict:
+def specific(m: dict, groups: dict, offset: float, turnout: float, c_t: float, dials: dict | None = None) -> dict:
+    """{(block, event_id): (own switching, own turnout, at dial 1; dials k_s, k_t)}: the part of each story's effect
+    that is its own (Engine's lean check, 26 Oct): switching net of GLM's support offset (`offset` times the effect of
+    one unit of support, full_s_unit), turnout net of the average turnout answer (`turnout` times the effect of one
+    unit of turnout answer for every group, from the block's voter groups). The rest is the same push every story
+    gives; under the story-specific variant it keeps fading as before. The dials are the block's unit's (its state,
+    or the nation's for "US")."""
+    dials = dials or {}
+    dial = lambda b: dials.get(b.split("-")[0], dials.get("default", {}))
+    out = {}
+    for b, x in m.items():
+        if b == "shadow" or not isinstance(x, dict) or not x.get("events") or b not in groups:
+            continue
+        g = {k: v for k, v in groups[b].items() if isinstance(v, dict) and "mu" in v}
+        for e, v in x["events"].items():
+            unit_t = 100 * moves.race_move(g, {}, {k: gv["mu"] * c_t / 2 * v["a"] for k, gv in g.items()})
+            out[(b, e)] = (v["full_s_base"] - offset * v["full_s_unit"], v["full_t_base"] - turnout * unit_t,
+                           dial(b).get("k_s", 1.0), dial(b).get("k_t", 1.0))
+    return out
+
+
+def path_sets(m: dict, fac: dict, races: list[str], split: dict | None = None) -> dict:
     """moves.paths' items for the 3 Nov view with each story's full effect times its state's G (fac: {state: {event:
     G}}) and no further fading, per race and part: "all" (own and taken national stories, or the nation's for a race
     without its own), "own_s"/"own_t" and "us_s"/"us_t" at dial 1, as statsday._levels builds its news parts. Every
-    race is listed, with "US" empty, so no race falls back to the nation's unscaled items. Mirrors moves._split."""
+    race is listed, with "US" empty, so no race falls back to the nation's unscaled items. Mirrors moves._split.
+    With `split` (specific()), only each story's own share locks in; the rest is a second item that fades as now."""
     blocks = {r: x for r, x in m.items() if r != "shadow" and isinstance(x, dict) and x.get("events")}
     us, extra = m.get("US", {}).get("events", {}), moves.takes_nation(m)
-    item = lambda v, key, g: (v["first_seen"], v["last_seen"], v[key] * g, None, None)
+    def items(b, e, v, key, g):
+        if split is None:
+            return [(v["first_seen"], v["last_seen"], v[key] * g, None, None)]
+        if (b, e) not in split:
+            return [(v["first_seen"], v["last_seen"], v[key] * g, None, None)]
+        os_, ot, ks, kt = split[(b, e)]
+        own = ks * os_ + kt * ot if key == "full" else (os_ if "_s" in key else ot)
+        return [(v["first_seen"], v["last_seen"], own * g, None, None),
+                (v["first_seen"], v["last_seen"], v[key] - own, v["age_half_life"], v["after_news_half_life"])]
     out = {name: {"US": []} for name in ("all", "own_s", "own_t", "us_s", "us_t")}
     for r in races:
         f = fac[r.split("-")[0]]
@@ -180,8 +212,8 @@ def path_sets(m: dict, fac: dict, races: list[str]) -> dict:
         take = (set(us) if r in extra else set(own_x.get("nation_unasked", ()))) if own_x else set(us)
         for name, key in (("all", "all"), ("s", "s_base"), ("t", "t_base")):
             k = KEY[key]
-            own = [item(v, k, f.get(e, 0.0)) for e, v in own_x["events"].items()] if own_x else []
-            nat = [item(v, k, f.get(e, 0.0)) for e, v in us.items() if e in take]
+            own = [i for e, v in own_x["events"].items() for i in items(r, e, v, k, f.get(e, 0.0))] if own_x else []
+            nat = [i for e, v in us.items() if e in take for i in items("US", e, v, k, f.get(e, 0.0))]
             if name == "all":
                 out["all"][r] = own + nat
             else:
@@ -189,15 +221,19 @@ def path_sets(m: dict, fac: dict, races: list[str]) -> dict:
     return out
 
 
-def prepare(data: Path, today: date, m: dict, races: list[str], lasting: float, shares: dict | None = None) -> dict:
-    """Everything the 3 Nov view needs on `today`: each state's ballot shares, G per story and the path sets."""
+def prepare(data: Path, today: date, m: dict, races: list[str], lasting: float, shares: dict | None = None,
+            own_only: dict | None = None) -> dict:
+    """Everything the 3 Nov view needs on `today`: each state's ballot shares, G per story and the path sets. With
+    `own_only` ({"offset", "turnout", "c_t", "groups"}), the story-specific variant (specific())."""
     shares = shares or json.loads(SHARES.read_text(encoding="utf-8"))["states"]
     counted, held = counts(data, today), archive(data / "derived", today)
     states = sorted({r.split("-")[0] for r in races})
     w = {s: weights(s, today, shares, counted.get(s)) for s in states}
     fac = {s: factors(m, w[s], held, today, lasting) for s in states}
-    return {"lasting": lasting, "weights": w, "factors": fac, "paths": path_sets(m, fac, races),
-            "counted": sorted(counted)}
+    split = specific(m, own_only["groups"], own_only["offset"], own_only["turnout"], own_only["c_t"],
+                     own_only.get("dials")) if own_only else None
+    return {"lasting": lasting, "weights": w, "factors": fac, "paths": path_sets(m, fac, races, split),
+            "counted": sorted(counted), "split": split}
 
 
 def main() -> int:
