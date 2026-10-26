@@ -546,18 +546,71 @@ def same_event(a: tuple[str, str], b: tuple[str, str], chats: list) -> bool:
     return False
 
 
+# From this day the duplicate check also compares a race's new stories with those it already reacted to in the last
+# 7 days (Matteo's yes, 26 Oct): 14 Oct-25 Oct counted 15 stories twice, each copy picked on a different day (Iowa's
+# water story 14 and 16 Oct, Kansas's farm aid 21 and 22 Oct, a seat's own copy and its state group's 24 and 25 Oct).
+DEDUPE_FROM = date(2026, 10, 29)
+
+
+def counted(derived_root: Path, day: date, lookback: int = 7) -> dict:
+    """{race_id: [story]}: the stories each race reacted to (was selected for) in the previous `lookback` days, whatever
+    race they were filed under (a state House group's story counts for the seat that took it), with their headlines,
+    links and first sighting, for merge_same_events."""
+    out: dict = {}
+    for k in range(1, lookback + 1):
+        d = derived_root / f"{day - timedelta(days=k):%Y-%m-%d}"
+        if not ((d / "events.jsonl").exists() and (d / "news_private.jsonl").exists()):
+            continue
+        priv = {r["event_id"]: r for r in _jsonl(d / "news_private.jsonl")}
+        for e in _jsonl(d / "events.jsonl"):
+            p = priv.get(e["event_id"])
+            for r in (e.get("selected") or {}) if p else ():
+                out.setdefault(r, {}).setdefault(e["event_id"], {
+                    "event_id": e["event_id"], "head": (strip_outlets(p["titles"][0], p["outlet_names"]),
+                                                        e["first_seen"]),
+                    "titles": {t.lower() for t in p["titles"]}, "urls": set(p["urls"])})
+    return {r: list(v.values()) for r, v in out.items()}
+
+
+def _plainly_same(a: dict, b: dict) -> bool:
+    """A headline or a link in common: one story, no model needed."""
+    return bool(a["titles"] & b["titles"] or a["urls"] & b["urls"])
+
+
 def merge_same_events(events: list[dict], stories: dict, chats: list, races: list[str] | None = None,
-                      tiers: dict | None = None) -> None:
+                      tiers: dict | None = None, earlier: dict | None = None, per_story: int = 3) -> dict:
     """Per race, the candidates select() would pick, best first, each checked against the stories already kept: one
     that reports the same event in other words loses its gate for that race (`same_as` names the kept story) and the
     next candidate moves up. (Until 29 Sep only the top 10 of both scopes together were checked, so national stories
-    could push a race's lower copies of one story out of the check but not out of the selection.) Races run in
-    parallel; each writes only its own gate."""
-    lock = threading.Lock()
+    could push a race's lower copies of one story out of the check but not out of the selection.) With `earlier`
+    (counted()), a new story is also checked against the race's stories of the last days: a headline or link in common
+    settles it, else the `per_story` most similar are asked. Races run in parallel; each writes only its own gate.
+    Returns how many copies were caught against today's stories and against earlier days'."""
+    lock, caught = threading.Lock(), {"today": 0, "earlier": 0}
 
     def head(e):
         s = stories[e["event_id"]]
         return strip_outlets(s["titles"][0], s["outlet_names"]), e["first_seen"]
+
+    def info(e):
+        s = stories[e["event_id"]]
+        return {"titles": {t.lower() for t in s["titles"]}, "urls": set(s.get("urls", ()))}
+
+    def before(r, e):
+        prior = [c for c in (earlier or {}).get(r, []) if c["event_id"] != e["event_id"]]
+        if not prior or any(c["event_id"] == e["event_id"] for c in (earlier or {}).get(r, [])):
+            return None  # nothing earlier, or a story carried over from an earlier day: already counted once
+        me = info(e)
+        plain = next((c for c in prior if _plainly_same(c, me)), None)
+        if plain or not chats:
+            return plain
+        try:
+            X = TfidfVectorizer(stop_words="english", ngram_range=(1, 2)).fit_transform(
+                [" ".join(me["titles"])] + [" ".join(sorted(c["titles"])) for c in prior])
+            order = [int(j) for j in np.argsort(-(X[0] @ X[1:].T).toarray()[0])[:per_story]]
+        except ValueError:
+            order = list(range(min(per_story, len(prior))))
+        return next((prior[j] for j in order if same_event(prior[j]["head"], head(e), chats)), None)
 
     def one(r):
         kept: list = []
@@ -566,15 +619,19 @@ def merge_same_events(events: list[dict], stories: dict, chats: list, races: lis
         for e in candidates(events, r, top=len(events)):
             if e["event_id"] not in ok[e["scope"]] or sum(k["scope"] == e["scope"] for k in kept) >= cap[e["scope"]]:
                 continue
-            dup = next((k for k in kept if same_event(head(k), head(e), chats)), None)
-            if dup:
+            dup = next((k for k in kept if (earlier is not None and _plainly_same(info(k), info(e)))
+                        or same_event(head(k), head(e), chats)), None)
+            old = None if dup else before(r, e)
+            if dup or old:
                 e["gate"][r] = 0.0
                 with lock:
-                    e.setdefault("same_as", {})[r] = dup["event_id"]
+                    e.setdefault("same_as", {})[r] = (dup or old)["event_id"]
+                    caught["today" if dup else "earlier"] += 1
             else:
                 kept.append(e)
     with ThreadPoolExecutor(8) as ex:
         list(ex.map(one, list(races or PILOT) + ["US"]))
+    return caught
 
 
 def continue_known(new_events: list[dict], stories: dict, known: list[dict], taken: set, chats: list,
@@ -730,7 +787,8 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
     newsraces.fix_cards(events)
     for e in events:
         e["usable"] = bool(e["card"])  # only stories with a card can be selected (the pool is the top 10 per race)
-    merge_same_events(events, by_id, chats, races, tiers)
+    doubles = merge_same_events(events, by_id, chats, races, tiers,
+                                counted(derived_root, day) if day >= DEDUPE_FROM else None)
     select(events, races, tiers)
     # a story with no card: "not news" when every model said it isn't a specific event, else it broke the rules
     failed = [[w for w, _ in why] for e, (_, why) in zip(todo, tries) if not e["card"]]
@@ -747,7 +805,7 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
             "selected": {r: sum(bool(e["selected"].get(r)) for e in events) for r in races + ["US"]},
             "cards_written": sum(bool(e["card"]) for e in todo), "cards_not_news": not_news,
             "cards_rule_failed": len(failed) - not_news, "rules_broken": dict(sorted(broke.items())),
-            "unlabeled": len(skipped),
+            "unlabeled": len(skipped), "doubles": doubles,
             "label_errors": sum(bool(e.get("label_error")) for e in events)}
 
 

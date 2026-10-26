@@ -2,6 +2,26 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-26 (Engine session): 20-23 Oct re-asked; offset recheck; stories counted twice (Matteo's yes, 26 Oct)
+
+- **20-23 Oct re-asked** (`simlab/rerun.py`): every readable GLM row of those days (15,101 rows, 13,151 prompts,
+  about $2.46) asked again on today's hosts with the same cards, groups, questions and wording, into
+  `derived/2026-10-26/reactions.jsonl` with `rerun`, `first_asked` and `replaces`. moves._history (Statistics, 26 Oct)
+  takes a `rerun` row in place of the earliest answer and keeps the day first asked. Kev's rows and earlier files are
+  untouched; the 26 Oct forecast is the first to use them.
+- **+0.08 support offset rechecked**: GLM's per-group answers to the 46 events2 events on today's hosts
+  (`runs/events2_groups__glm-2026-10-26.jsonl`, `groupcalib --tag`; 2,520 calls, $0.12). Event means r 0.935 with
+  September's; Statistics' fit gives +0.065 (+0.048 on September's answers); the +0.0789 in use stands.
+- **Stories counted twice, from 29 Oct** (`newsday.DEDUPE_FROM`): each double was two copies picked on different
+  days (Iowa 14/16 Oct, Kansas 21/22, NC-11 24/25), because a new story was only checked against the same day's
+  picks. A new pick is now also checked against what its race reacted to in the previous 7 days (`newsday.counted`):
+  a headline or link in common settles it, else the existing same-event question on the 3 most similar. A copy loses
+  its gate there (`same_as`), the next story moves up, and the news summary counts `doubles`. Replay on 15-25 Oct: 64
+  picks of 1,572 caught (52 pairs, 3.8% of story effect since 12 Oct, 26 of 64 toward D/I); about 45 clearly the same
+  event, 1 wrong, 4 borderline; an announcement and the event itself count as one story. A copy caught from 29 Oct is
+  never asked, so the version before can't be scored exactly for those days. The doubles already in the record are
+  Statistics' (`simlab/story_drops.json`).
+
 ## 2026-10-26 (Statistics session): doubles dropped from the forecast, re-run reactions, the offset fit (Matteo's yes)
 
 Matteo's yes to all five points of the lock-in follow-up (26 Oct, Publishing approval).

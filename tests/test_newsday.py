@@ -764,5 +764,85 @@ class House(unittest.TestCase):
         self.assertFalse(newsday.card_ok("The ruling helps Kaptur.", []))
 
 
+class Doubles(unittest.TestCase):
+    # 26 Oct (Matteo's yes, live from 29 Oct): 15 stories were counted twice in 14-25 Oct, each copy picked on a
+    # different day, because a new story was only checked against the same day's picks
+    def ev(self, eid, a, race="KS"):
+        return {"event_id": eid, "scope": "race", "races": [race], "gate": {race: 0.9}, "type": "policy",
+                "salience": 1.0, "attention": {"a": a}, "first_seen": "2026-10-22T07:00:00+00:00"}
+
+    def earlier(self, eid, title, url="https://a.example/1"):
+        return {"event_id": eid, "head": (title, "2026-10-20T15:00:00+00:00"), "titles": {title.lower()}, "urls": {url}}
+
+    def story(self, title, url="https://b.example/2"):
+        return {"titles": [title], "outlet_names": [], "urls": [url]}
+
+    def test_the_same_headline_picked_again_another_day_counts_once_without_asking(self):
+        # Iowa's water story, 14 and 16 Oct; a seat's own copy of its state group's story, NC-11 on 24 and 25 Oct
+        evs = [self.ev("NC-11-20261023-2e972bea", 0.8, "NC-11")]
+        stories = {evs[0]["event_id"]: self.story("Trump stumps for Whatley in Greenville")}
+        chat = FakeChat([])
+        with mock.patch.object(newsday, "HOUSE_NEWS", True):
+            caught = newsday.merge_same_events(evs, stories, [chat], ["NC-11"], earlier={"NC-11": [
+                self.earlier("NC-H-20261023-2e972bea", "Trump stumps for Whatley in Greenville")]})
+        self.assertEqual((evs[0]["gate"]["NC-11"], evs[0]["same_as"], chat.calls),
+                         (0.0, {"NC-11": "NC-H-20261023-2e972bea"}, 0))
+        self.assertEqual(caught, {"today": 0, "earlier": 1})
+
+    def test_a_shared_link_counts_once_too(self):
+        evs = [self.ev("KS-2", 0.8)]
+        stories = {"KS-2": self.story("A different headline", url="https://a.example/1")}
+        newsday.merge_same_events(evs, stories, [FakeChat([])], ["KS"],
+                                  earlier={"KS": [self.earlier("KS-1", "Some headline")]})
+        self.assertEqual(evs[0]["same_as"], {"KS": "KS-1"})
+
+    def test_the_same_event_in_other_words_another_day_is_asked_and_counts_once(self):
+        # Kansas's $8 billion farm aid, picked on 21 and 22 Oct under two headlines
+        evs = [self.ev("KS-20261020-68353aca", 0.8), self.ev("KS-3", 0.5)]
+        stories = {"KS-20261020-68353aca": self.story("Trump announces $8 billion plan to give economic aid to farmers"),
+                   "KS-3": self.story("Kansas wheat harvest comes in early", url="https://c.example/3")}
+        prior = [self.earlier("KS-20261020-a602bf69", "President Trump Announces $8 Billion Aid Package For Farmers"),
+                 self.earlier("KS-0", "Marshall holds a town hall in Topeka", url="https://d.example/4")]
+        chat = FakeChat(['{"same": true}', '{"same": false}', '{"same": false}', '{"same": false}'])
+        newsday.merge_same_events(evs, stories, [chat], ["KS"], earlier={"KS": prior})
+        self.assertEqual(evs[0]["same_as"], {"KS": "KS-20261020-a602bf69"})  # the most similar is asked first
+        self.assertNotIn("same_as", evs[1])
+        self.assertEqual(evs[1]["gate"]["KS"], 0.9)
+        self.assertLessEqual(chat.calls, 1 + 2)  # at most per_story earlier stories asked for each new one
+
+    def test_a_story_carried_over_from_an_earlier_day_is_not_checked_against_the_others(self):
+        evs = [self.ev("KS-1", 0.8)]
+        chat = FakeChat(['{"same": true}'] * 3)
+        newsday.merge_same_events(evs, {"KS-1": self.story("Some headline")}, [chat], ["KS"], earlier={"KS": [
+            self.earlier("KS-1", "Some headline"), self.earlier("KS-0", "Another story", url="https://e.example")]})
+        self.assertEqual((evs[0]["gate"]["KS"], chat.calls), (0.9, 0))
+
+    def test_before_29_oct_nothing_changes(self):
+        # same day, same headline: still the model's call, as before
+        evs = [self.ev("KS-1", 0.8), self.ev("KS-2", 0.5)]
+        stories = {"KS-1": self.story("Same words"), "KS-2": self.story("Same words")}
+        chat = FakeChat(['{"same": false}'])
+        newsday.merge_same_events(evs, stories, [chat], ["KS"])
+        self.assertEqual((chat.calls, evs[1]["gate"]["KS"]), (1, 0.9))
+        self.assertEqual(newsday.DEDUPE_FROM, date(2026, 10, 29))
+
+    def test_counted_reads_what_each_race_took_on_earlier_days(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for day, eid, race, sel in (("2026-10-24", "NC-H-1", "NC-H", {"NC-11": True}),
+                                        ("2026-10-27", "KS-1", "KS", {}),
+                                        ("2026-10-15", "IA-1", "IA", {"IA": True})):
+                d = Path(tmp) / day
+                d.mkdir()
+                (d / "events.jsonl").write_text(json.dumps({"event_id": eid, "first_seen": f"{day}T08:00:00+00:00",
+                                                            "selected": sel}) + "\n", encoding="utf-8")
+                (d / "news_private.jsonl").write_text(json.dumps({
+                    "event_id": eid, "race_id": race, "titles": ["Trump stumps for Whatley in Greenville - WRAL"],
+                    "outlet_names": ["WRAL"], "urls": ["https://x.example/1"]}) + "\n", encoding="utf-8")
+            c = newsday.counted(Path(tmp), date(2026, 10, 29))
+        self.assertEqual(sorted(c), ["NC-11"])  # KS took nothing; 15 Oct is past the 7 days
+        self.assertEqual(c["NC-11"][0]["event_id"], "NC-H-1")
+        self.assertEqual(c["NC-11"][0]["head"][0], "Trump stumps for Whatley in Greenville")
+
+
 if __name__ == "__main__":
     unittest.main()
