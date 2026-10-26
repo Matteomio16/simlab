@@ -2,6 +2,36 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-26 (Statistics session): early votes lock in on 3 Nov, built and off (waits for Matteo's yes)
+
+Brief from Matteo via Publishing approval (26 Oct). Off until his yes (`lockin.FROM = None`); nothing public changes,
+the 12 Oct start and the published days stay as they are.
+
+- **Why:** on 25 Oct the "today" view sits on the poll averages (median gap +0.03, 15 of 29 above), but the 3 Nov view
+  sits 1.5 points more Republican (median −1.53): the fading rule takes every story's effect to nothing by 3 Nov,
+  although most stories push toward the Democrat or independent and many ballots are already cast.
+- **The rule** (`simlab/lockin.py`): a story's 3 Nov contribution in a state is its full effect times the share of
+  the state's ballots cast on each day before 3 Nov times how much of it was felt that day, plus the Election Day
+  voters' share times L + (1 − L) × what is left on 3 Nov. Past days read that day's archived moves.json (effect in
+  force over full effect: what the forecast had then); today and later days project as now. Switching and turnout
+  alike. `statsday --lasting L` runs it; from `lockin.FROM` the daily job uses `lockin.LASTING`.
+- **Ballot shares** (`simlab/early_shares.json`): each state's 2022 shares of early in-person and mail ballots from
+  the EAC's 2022 Election Administration and Voting Survey (section F; Montana from KTVH's 2022 absentee count, as
+  EAVS leaves it blank; Mississippi's absentee ballots from F1h). Timing: the 2022 national pace of pre-Election-Day
+  ballots (US Elections Project counts as reported), in-person all before Election Day, late mail on it. North
+  Carolina and Maine: the 2026 ballots back by day (our early-vote snapshots) and the last week's pace for the days
+  left. The daily job now checks out the last week of NC and Maine early-vote files.
+- **25 Oct, L = 0:** median gap to the poll averages −1.53 → −1.18 (13 above, 16 below); every race between the
+  current 3 Nov view and the today view; no race's early-vote part above today's story effect. Republicans 50+ 39.5
+  → 38.0 in 100, Democratic House majority 64.1 → 65.4. If news kept today's pace, about −0.4 by 3 Nov. Grid: L =
+  0.05, 0.1, 0.2 give −1.05, −0.91, −0.65 and Republicans 50+ 35.6, 33.3, 28.5.
+- **14 to 25 Oct against the polls** (29 races): polls moved −0.20 (median); our 3 Nov margin +0.37 under the current
+  rule, more Democratic than the polls' move in 20 races; with lock-in 21 (L = 0), 22 (0.05), 25 (0.2).
+- **Stories counted twice** (25 Oct, near-identical cards within 3 days): Kansas's $8 billion farm aid story (about
+  0.9 points), and the same story under a district and a statewide House id in NC-11, IA-1 and ME-2. Passed to Engine.
+- **Shadow:** `simlab.fadeshadow`, a last daily step, writes the current rule to `simlab-data/scoring/fade/<date>/`
+  once lock-in is live; it does nothing before. Tests: `tests/test_lockin.py`.
+
 ## 2026-10-20/23 (Engine session): run time and cost; GLM host drift (Matteo's yes, 23 Oct; live from the 24 Oct run)
 
 - **Cause.** OpenInference, GLM's first host since 1 Oct, began ignoring reasoning effort "minimal" between 17 and

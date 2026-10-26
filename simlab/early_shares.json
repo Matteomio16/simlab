@@ -1,0 +1,344 @@
+{
+ "source": "EAC 2022 Election Administration and Voting Survey (EAVS), public release V1.0 CSV (eac.gov, 2022_EAVS_for_Public_Release_nolabel_V1_CSV.zip), section F: in_person = F1f early in person / F1a all ballots, mail = (F1c UOCAVA + F1d mail + F1g all-mail jurisdictions) / F1a; US = ballot-weighted",
+ "timing": "lockin.CURVE: 2022 national pace of pre-Election-Day ballots (US Elections Project counts as reported: about 9.3M three weeks out, 20.4M on 30 Oct, 32M on 2 Nov, 44M on 7 Nov, of about 57M)",
+ "states": {
+  "AK": {
+   "in_person": 0.1771,
+   "mail": 0.1599,
+   "early": 0.337,
+   "ballots": 267047
+  },
+  "AL": {
+   "in_person": 0.0,
+   "mail": 0.0234,
+   "early": 0.0234,
+   "ballots": 1424087
+  },
+  "AR": {
+   "in_person": 0.5599,
+   "mail": 0.0185,
+   "early": 0.5784,
+   "ballots": 896423
+  },
+  "AS": {
+   "in_person": 0.1133,
+   "mail": 0.0043,
+   "early": 0.1176,
+   "ballots": 7460
+  },
+  "AZ": {
+   "in_person": 0.0107,
+   "mail": 0.8035,
+   "early": 0.8142,
+   "ballots": 2592375
+  },
+  "CA": {
+   "in_person": 0.0194,
+   "mail": 0.877,
+   "early": 0.8964,
+   "ballots": 11146561
+  },
+  "CO": {
+   "in_person": 0.0106,
+   "mail": 0.9527,
+   "early": 0.9633,
+   "ballots": 2539897
+  },
+  "CT": {
+   "in_person": 0.0,
+   "mail": 0.1166,
+   "early": 0.1166,
+   "ballots": 1297811
+  },
+  "DC": {
+   "in_person": 0.075,
+   "mail": 0.6355,
+   "early": 0.7105,
+   "ballots": 205774
+  },
+  "DE": {
+   "in_person": 0.1708,
+   "mail": 0.0601,
+   "early": 0.2308,
+   "ballots": 325828
+  },
+  "FL": {
+   "in_person": 0.2913,
+   "mail": 0.3588,
+   "early": 0.6501,
+   "ballots": 7798866
+  },
+  "GA": {
+   "in_person": 0.5779,
+   "mail": 0.0627,
+   "early": 0.6406,
+   "ballots": 3963152
+  },
+  "GU": {
+   "in_person": 0.2346,
+   "mail": 0.0071,
+   "early": 0.2417,
+   "ballots": 34074
+  },
+  "HI": {
+   "in_person": 0.0257,
+   "mail": 0.9511,
+   "early": 0.9768,
+   "ballots": 423443
+  },
+  "IA": {
+   "in_person": 0.0,
+   "mail": 0.301,
+   "early": 0.301,
+   "ballots": 1230143
+  },
+  "ID": {
+   "in_person": 0.1094,
+   "mail": 0.2167,
+   "early": 0.3261,
+   "ballots": 595350
+  },
+  "IL": {
+   "in_person": 0.1451,
+   "mail": 0.1366,
+   "early": 0.2817,
+   "ballots": 4175767
+  },
+  "IN": {
+   "in_person": 0.2846,
+   "mail": 0.083,
+   "early": 0.3675,
+   "ballots": 1893022
+  },
+  "KS": {
+   "in_person": 0.2739,
+   "mail": 0.1336,
+   "early": 0.4076,
+   "ballots": 997607
+  },
+  "KY": {
+   "in_person": 0.1797,
+   "mail": 0.049,
+   "early": 0.2287,
+   "ballots": 1500419
+  },
+  "LA": {
+   "in_person": 0.193,
+   "mail": 0.0733,
+   "early": 0.2663,
+   "ballots": 1410597
+  },
+  "MA": {
+   "in_person": 0.0786,
+   "mail": 0.3691,
+   "early": 0.4476,
+   "ballots": 2511460
+  },
+  "MD": {
+   "in_person": 0.1877,
+   "mail": 0.2666,
+   "early": 0.4543,
+   "ballots": 2028850
+  },
+  "ME": {
+   "in_person": 0.1005,
+   "mail": 0.2551,
+   "early": 0.3556,
+   "ballots": 680909
+  },
+  "MI": {
+   "in_person": 0.0497,
+   "mail": 0.3694,
+   "early": 0.4191,
+   "ballots": 4500400
+  },
+  "MN": {
+   "in_person": 0.1309,
+   "mail": 0.1356,
+   "early": 0.2665,
+   "ballots": 2526646
+  },
+  "MO": {
+   "in_person": 0.0802,
+   "mail": 0.1217,
+   "early": 0.2019,
+   "ballots": 2304250
+  },
+  "MP": {
+   "in_person": 0.5209,
+   "mail": 0.0,
+   "early": 0.5209,
+   "ballots": 13376
+  },
+  "MS": {
+   "in_person": 0.065,
+   "mail": 0.0,
+   "early": 0.065,
+   "ballots": 708585,
+   "note": "Mississippi files its absentee ballots, mostly cast in person at the clerk's office, under EAVS F1h (other): (F1c + F1h) / F1a"
+  },
+  "MT": {
+   "in_person": 0.0,
+   "mail": 0.6,
+   "early": 0.6,
+   "ballots": 468326,
+   "note": "EAVS leaves Montana's methods blank; about 280,000 absentee ballots were in by the day before the 2022 election (KTVH, 7 Nov 2022) of 468,326 ballots"
+  },
+  "NC": {
+   "in_person": 0.5092,
+   "mail": 0.0495,
+   "early": 0.5588,
+   "ballots": 3789932
+  },
+  "ND": {
+   "in_person": 0.1505,
+   "mail": 0.2875,
+   "early": 0.4381,
+   "ballots": 242566
+  },
+  "NE": {
+   "in_person": 0.0321,
+   "mail": 0.3553,
+   "early": 0.3874,
+   "ballots": 682741
+  },
+  "NH": {
+   "in_person": 0.0,
+   "mail": 0.0936,
+   "early": 0.0936,
+   "ballots": 626931
+  },
+  "NJ": {
+   "in_person": 0.0,
+   "mail": 0.2205,
+   "early": 0.2205,
+   "ballots": 2658149
+  },
+  "NM": {
+   "in_person": 0.4982,
+   "mail": 0.14,
+   "early": 0.6381,
+   "ballots": 709556
+  },
+  "NV": {
+   "in_person": 0.2758,
+   "mail": 0.5107,
+   "early": 0.7864,
+   "ballots": 1021780
+  },
+  "NY": {
+   "in_person": 0.1968,
+   "mail": 0.0689,
+   "early": 0.2657,
+   "ballots": 5886371
+  },
+  "OH": {
+   "in_person": 0.1309,
+   "mail": 0.2183,
+   "early": 0.3492,
+   "ballots": 4201368
+  },
+  "OK": {
+   "in_person": 0.115,
+   "mail": 0.0609,
+   "early": 0.1759,
+   "ballots": 1153203
+  },
+  "OR": {
+   "in_person": 0.0,
+   "mail": 0.9999,
+   "early": 0.9999,
+   "ballots": 1968717
+  },
+  "PA": {
+   "in_person": 0.0,
+   "mail": 0.2298,
+   "early": 0.2298,
+   "ballots": 5410022
+  },
+  "RI": {
+   "in_person": 0.1986,
+   "mail": 0.0945,
+   "early": 0.293,
+   "ballots": 361275
+  },
+  "SC": {
+   "in_person": 0.3268,
+   "mail": 0.0331,
+   "early": 0.3599,
+   "ballots": 1718519
+  },
+  "SD": {
+   "in_person": 0.205,
+   "mail": 0.2769,
+   "early": 0.4819,
+   "ballots": 354605
+  },
+  "TN": {
+   "in_person": 0.4808,
+   "mail": 0.0262,
+   "early": 0.507,
+   "ballots": 1756397
+  },
+  "TX": {
+   "in_person": 0.6351,
+   "mail": 0.0454,
+   "early": 0.6805,
+   "ballots": 8151590
+  },
+  "UT": {
+   "in_person": 0.012,
+   "mail": 0.905,
+   "early": 0.917,
+   "ballots": 1074344
+  },
+  "VA": {
+   "in_person": 0.2313,
+   "mail": 0.0963,
+   "early": 0.3277,
+   "ballots": 3074762
+  },
+  "VI": {
+   "in_person": 0.5254,
+   "mail": 0.0236,
+   "early": 0.549,
+   "ballots": 22557
+  },
+  "VT": {
+   "in_person": 0.0,
+   "mail": 0.6798,
+   "early": 0.6798,
+   "ballots": 286300
+  },
+  "WA": {
+   "in_person": 0.001,
+   "mail": 0.999,
+   "early": 1.0,
+   "ballots": 3067686
+  },
+  "WI": {
+   "in_person": 0.1242,
+   "mail": 0.1609,
+   "early": 0.2851,
+   "ballots": 2673154
+  },
+  "WV": {
+   "in_person": 0.2609,
+   "mail": 0.0259,
+   "early": 0.2868,
+   "ballots": 493581
+  },
+  "WY": {
+   "in_person": 0.1948,
+   "mail": 0.193,
+   "early": 0.3878,
+   "ballots": 199513
+  },
+  "US": {
+   "in_person": 0.1907,
+   "mail": 0.32,
+   "early": 0.5107,
+   "ballots": 112054124
+  }
+ }
+}

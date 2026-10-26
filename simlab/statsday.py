@@ -22,6 +22,7 @@ from pathlib import Path
 import pandas as pd
 
 from . import groups, levels, montecarlo, moves, polls, weekly
+from . import lockin
 from . import start as frozen
 from .polls import OVERVIEW_PAGE, Race, slug, surname
 
@@ -142,11 +143,12 @@ def apply_weekly(mp: dict, wk: dict | None) -> dict:
     return out
 
 
-def _stories(mv: dict, when: str, drop: dict | None = None) -> dict:
+def _stories(mv: dict, when: str, drop: dict | None = None, lock: dict | None = None) -> dict:
     """{race_id: {story: effect}}: each story's effect on each race at its dials, on 3 Nov ("election_day") or today,
     for the story-strength draws. A race without its own stories takes the nation's, and a race with stories adds the
     nation's it takes (moves.nation_paths' rule). The effects leave out the offset that polls read net of the news
-    give them, so the draws err on the wide side. A race's cancelled weeks (`drop`, start.cancelled) are left out."""
+    give them, so the draws err on the wide side. A race's cancelled weeks (`drop`, start.cancelled) are left out.
+    With `lock` (lockin.prepare), a story's 3 Nov effect is its full effect times its state's lock-in factor."""
     us, takes = mv.get("US", {}), moves.takes_nation(mv)
     value = (lambda x, e, v: v["election_day"]) if when == "election_day" else (
         lambda x, e, v: x.get("by_event_effect", {}).get(e, 0.0))
@@ -159,12 +161,16 @@ def _stories(mv: dict, when: str, drop: dict | None = None) -> dict:
         src += [(us, e, v) for e, v in us.get("events", {}).items() if taken is None or e in taken]
         if (drop or {}).get(r):
             src = [s for s in src if frozen.kept([(s[2]["first_seen"],)], drop[r])]
+        if lock and when == "election_day":
+            g = lock["factors"][r.split("-")[0]]
+            out[r] = {e: round(float(v["full"] * g.get(e, 0.0)), 4) for xx, e, v in src}
+            continue
         out[r] = {e: round(float(value(xx, e, v)), 4) for xx, e, v in src}
     return out
 
 
 def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict, election: date = levels.ELECTION,
-            hb: dict | None = None, start: tuple | None = None, drop: dict | None = None
+            hb: dict | None = None, start: tuple | None = None, drop: dict | None = None, lock: dict | None = None
             ) -> tuple[dict, dict, dict, dict | None]:
     """Stats-only and headline levels for one election day, and each race's story effect at dial 1 split four ways:
     switching and turnout, from its own stories (its state's dials) and from the nation's (the national dials). The
@@ -173,24 +179,33 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict, ele
     there returns {"error"} and leaves the Senate alone. With `start` (the frozen start's Senate and House levels for
     this election day, start.at), the headline is the start plus the moves since 12 Oct (start.headline, without the
     cancelled weeks in `drop`) and the parts are measured from the start; the stats-only twin still reads the day's
-    polls."""
+    polls. With `lock` (lockin.prepare, the 3 Nov view only) each story counts its full effect times its state's
+    lock-in factor (early votes lock in, Matteo 26 Oct) instead of what is expected to remain on 3 Nov."""
     twin = levels.compute(t, day, run_id, inp=inp, election=election)
     zero = start[0] if start else twin
     run = (lambda p: frozen.headline(start[0], p, day, election, drop)) if start else (
         lambda p: levels.compute(t, day, run_id, moves=p, inp=inp, election=election))
-    head = run(moves.paths(mv))
-    own = {k: {r: x for r, x in moves.paths(mv, f"{k}_base", with_nation=False).items() if r != "US"} for k in "st"}
-    nation = {k: moves.paths(mv, f"{k}_base").get("US", []) for k in "st"}
-    taken = {k: moves.nation_paths(mv, f"{k}_base") for k in "st"}
-    specs = {f"own_{k}": own[k] | {"US": []} for k in "st"} | {
-        f"us_{k}": {"US": nation[k]} | {r: taken[k].get(r, []) for r in own[k]} for k in "st"}
+    lock = lock if lock and start and election != day else None
+    if lock:
+        ps = lock["paths"]
+        head = run(ps["all"])
+        specs = {name: ps[name] for name in ("own_s", "own_t", "us_s", "us_t")}
+        own = {k: {r: x for r, x in ps[f"own_{k}"].items() if r != "US" and (x or ps[f"own_{'t' if k == 's' else 's'}"][r])}
+               for k in "st"}
+    else:
+        head = run(moves.paths(mv))
+        own = {k: {r: x for r, x in moves.paths(mv, f"{k}_base", with_nation=False).items() if r != "US"} for k in "st"}
+        nation = {k: moves.paths(mv, f"{k}_base").get("US", []) for k in "st"}
+        taken = {k: moves.nation_paths(mv, f"{k}_base") for k in "st"}
+        specs = {f"own_{k}": own[k] | {"US": []} for k in "st"} | {
+            f"us_{k}": {"US": nation[k]} | {r: taken[k].get(r, []) for r in own[k]} for k in "st"}
     full = {name: run(p) for name, p in specs.items()}
     runs = {name: f["races"] for name, f in full.items()}
     part = lambda name: {r: runs[name][r]["margin"] - zero["races"][r]["margin"] for r in zero["races"]}
     news = {"switching": part("own_s"), "turnout": part("own_t"), "switching_us": part("us_s"),
             "turnout_us": part("us_t"), "unit": {r: r.split("-")[0] for r in own["s"]},
             "posterior": mp["dial_posterior"], "tau": mp["dial_prior"]["tau"],
-            "stories": _stories(mv, "today" if election == day else "election_day", drop),
+            "stories": _stories(mv, "today" if election == day else "election_day", drop, lock),
             "story_sd": mp.get("story_sd", 0.0)}
     dials = mp.get("dials", {})
     k = lambda unit, x: dials.get(unit, dials.get("default", {})).get(f"k_{x}", 1.0)
@@ -213,7 +228,7 @@ def _levels(t: dict, day: date, run_id: str, mv: dict, inp: tuple, mp: dict, ele
             hz = start[1] if start else h_twin
             hrun = (lambda p, lv: frozen.headline(hz, p, day, election, drop)) if start else (
                 lambda p, lv: house_build(hb, lv, p, election))
-            h = {"twin": h_twin, "levels": hrun(moves.paths(mv), head)}
+            h = {"twin": h_twin, "levels": hrun(lock["paths"]["all"] if lock else moves.paths(mv), head)}
             hp, htw = {name: margins(hrun(p, full[name])) for name, p in specs.items()}, margins(hz)
             for key, name in (("switching", "own_s"), ("turnout", "own_t"), ("switching_us", "us_s"), ("turnout_us", "us_t")):
                 news[key] |= {r: hp[name][r] - htw[r] for r in htw}
@@ -319,11 +334,14 @@ def _write(path: Path, obj, compact: bool = False) -> str:
 
 
 def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = None, weekly_update: bool = False,
-        rule: str | None = None, out_root: str | None = None, weekly_check: bool = False) -> dict:
+        rule: str | None = None, out_root: str | None = None, weekly_check: bool = False,
+        lasting: float | None = None) -> dict:
     """The day's statistics step under `rule` (start.rule_for(day) by default), written to <out_root>/<date>/
     ("derived" by default; the inputs always come from derived/). Under the simulation-only rule the dials stay at
     the 12 Oct update and nothing is re-fitted from polls; the weekly check runs on Sundays (or `weekly_check`).
-    `weekly_update` forces the poll filter's Monday re-fit."""
+    `weekly_update` forces the poll filter's Monday re-fit. Under the simulation-only rule, from lockin.FROM or with
+    `lasting` (the Election Day voters' lasting share L), the 3 Nov view lets early votes lock in (lockin);
+    lasting=lockin.OFF keeps it off."""
     snap = snapshot_for(data, day, hhmm)
     run_id = run_id or f"{day}-{_git_sha()[:7]}"
     rule = rule or frozen.rule_for(day)
@@ -366,7 +384,12 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
     sha["moves.json"] = _write(out / "moves.json", mv)
     fz, drop = (frozen.load(data), frozen.cancelled()) if sim else (None, None)
     at = lambda e: frozen.at(fz, e, hb["tier"] if hb else None) if fz else None
-    lv, head, news, house = _levels(t, day, run_id, mv, inp, mp, hb=hb, start=at(levels.ELECTION), drop=drop)
+    if sim and lasting is None and lockin.FROM and day >= lockin.FROM:
+        lasting = lockin.LASTING
+    lk = lockin.prepare(data, day, mv, [r.race_id for r in t["race_list"]] + list(hb["races"] if hb else []),
+                        lasting) if sim and lasting is not None and lasting >= 0 else None
+    lv, head, news, house = _levels(t, day, run_id, mv, inp, mp, hb=hb, start=at(levels.ELECTION), drop=drop,
+                                    lock=lk)
     sha["filter_state.json"] = _write(out / "filter_state.json", head | {"moves": "moves.json, main block (GLM)",
                                                                           "dials": mp["dials"], "rule": rule})
     params = json.loads((Path(levels.__file__).parent / "stats_params.json").read_text())
@@ -392,6 +415,12 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
                                           candidates(races, hb["races"] if hb else None))
         sha["weekly_check.json"] = _write(out / "weekly_check.json", check)
     forecast["rule"] = rule
+    if lk:
+        forecast["lock_in"] = {"lasting": lk["lasting"], "counted": lk["counted"],
+                               "cast_before_election_day": {st: round(1 - w[levels.ELECTION], 4)
+                                                            for st, w in sorted(lk["weights"].items())},
+                               "cast_by_today": {st: round(sum(v for d, v in w.items() if d < day), 4)
+                                                 for st, w in sorted(lk["weights"].items())}}
     forecast |= {"snapshot": t["snapshot"], "inputs": sha}
     history = [json.loads(f.read_text(encoding="utf-8")) for k in range(1, 7)
                if (f := data / "derived" / (day - timedelta(days=k)).isoformat() / "races.json").exists()]
@@ -407,6 +436,7 @@ def run(day: date, data: Path, hhmm: str | None = None, run_id: str | None = Non
             "orphaned_events": len(mv["orphaned_events"]), "deselected_pairs": len(mv["deselected_pairs"]),
             "ungrouped_races": len(mv["ungrouped_races"]), "weekly_update": mp.get("weekly_update"),
             "trend": trend_summary(wk["trend"]) if wk else None, "rule": rule,
+            "lock_in": lk and {"lasting": lk["lasting"], "counted": lk["counted"]},
             "weekly_check": weekly.check_summary(check) if check else None,
             "stories": sum(len(x["events"]) for k, x in mv.items() if k != "shadow" and isinstance(x, dict) and "events" in x),
             "house": house_note,
@@ -427,9 +457,12 @@ def main() -> int:
                     help="default: simulation-only from 14 Oct, the poll filter before")
     ap.add_argument("--out-root", default=None, help="write to <data>/<out-root>/<date>/ instead of derived/")
     ap.add_argument("--weekly-check", action="store_true", help="run the Sunday weekly check today")
+    ap.add_argument("--lasting", type=float, default=None,
+                    help="let early votes lock in on 3 Nov with this lasting share for Election Day voters")
     a = ap.parse_args()
     try:
-        summary = run(a.date, a.data, a.snapshot, a.run_id or None, a.weekly, a.rule, a.out_root, a.weekly_check)
+        summary = run(a.date, a.data, a.snapshot, a.run_id or None, a.weekly, a.rule, a.out_root, a.weekly_check,
+                      a.lasting)
     except Exception as e:
         traceback.print_exc()
         print(json.dumps({"ok": False, "date": a.date.isoformat(), "error": f"{type(e).__name__}: {e}"}))

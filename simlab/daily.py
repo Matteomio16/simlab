@@ -44,6 +44,9 @@ STEPS = [
     # the old rule beside the published one, for scoring (Matteo, 13 Oct); it never fails the job
     ("poll filter", "simlab.pollfilter", lambda d, data, o: ["--date", d, "--data", str(data)] + _rid(o),
      ["statistics"]),
+    # the 3 Nov view without early votes locking in, once lock-in is live, for scoring (Matteo, 26 Oct)
+    ("fade shadow", "simlab.fadeshadow", lambda d, data, o: ["--date", d, "--data", str(data)] + _rid(o),
+     ["statistics"]),
 ]
 
 

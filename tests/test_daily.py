@@ -26,7 +26,7 @@ class Steps(unittest.TestCase):
                                 exists=lambda m: m in built)
         self.assertEqual([(s["name"], s["status"]) for s in steps],
                          [("news", "ok"), ("reactions", "failed"), ("statistics", "not run"), ("post kit", "not run"),
-                          ("poll filter", "not run")])
+                          ("poll filter", "not run"), ("fade shadow", "not run")])
         self.assertEqual(steps[0]["summary"], {"ok": True})
         self.assertIn("giving up", steps[1]["error"])
         self.assertEqual([c[0] for c in runner.calls], ["simlab.newsday", "simlab.harness"])
@@ -35,7 +35,7 @@ class Steps(unittest.TestCase):
         runner = fake_runner({})
         steps = daily.run_steps("2026-10-05", Path("/data"), {"wording": "reaction", "kev": "https://kev"}, runner,
                                 exists=lambda m: m != "simlab.statsday")
-        self.assertEqual([s["status"] for s in steps], ["ok", "ok", "skipped", "skipped", "skipped"])
+        self.assertEqual([s["status"] for s in steps], ["ok", "ok", "skipped", "skipped", "skipped", "skipped"])
         self.assertEqual(steps[3]["reason"], "needs statistics")
         harness_args = [c[1] for c in runner.calls if c[0] == "simlab.harness"][0]
         self.assertEqual(harness_args[-4:], ["--wording", "reaction", "--kev", "https://kev"])

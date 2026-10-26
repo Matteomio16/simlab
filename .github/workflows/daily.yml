@@ -88,7 +88,10 @@ jobs:
       - name: The day's snapshots (its news window starts the day before; repeats are looked up 2 days back)
         if: steps.due.outputs.run != 'false'
         working-directory: data-repo
-        run: git sparse-checkout add $(for k in 2 1 0; do d=$(date -u -d "$DAY -$k day" +%F); echo "/snapshots/$d/ /news/$d/"; done)
+        run: |
+          git sparse-checkout add $(for k in 2 1 0; do d=$(date -u -d "$DAY -$k day" +%F); echo "/snapshots/$d/ /news/$d/"; done)
+          # the latest NC and Maine early-vote counts, for the 3 Nov view's lock-in (simlab/lockin.py)
+          git sparse-checkout add $(for k in 6 5 4 3 2 1 0; do d=$(date -u -d "$DAY -$k day" +%F); echo "/earlyvote/nc/$d/ /earlyvote/me/$d/"; done)
       - uses: astral-sh/setup-uv@v6
         if: steps.due.outputs.run != 'false'
       - run: uv sync --frozen
