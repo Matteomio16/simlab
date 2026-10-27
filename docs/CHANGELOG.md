@@ -5,10 +5,12 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 ## 2026-10-26 (Engine session): 20-23 Oct re-asked; offset recheck; stories counted twice (Matteo's yes, 26 Oct)
 
 - **20-23 Oct re-asked** (`simlab/rerun.py`): every readable GLM row of those days (15,101 rows, 13,151 prompts,
-  about $2.46) asked again on today's hosts with the same cards, groups, questions and wording, into
-  `derived/2026-10-26/reactions.jsonl` with `rerun`, `first_asked` and `replaces`. moves._history (Statistics, 26 Oct)
-  takes a `rerun` row in place of the earliest answer and keeps the day first asked. Kev's rows and earlier files are
-  untouched; the 26 Oct forecast is the first to use them.
+  about $2.46) asked again on today's hosts with the same cards, groups, questions and wording, with `rerun`,
+  `first_asked` and `replaces`. moves._history (Statistics, 26 Oct) takes a `rerun` row in place of the earliest answer
+  and keeps the day first asked. The laptop run took 23 hours and missed the 26 Oct run, so the rows went into
+  `derived/2026-10-27/reactions.jsonl` (26 Oct's record stays as published); the 27 Oct forecast is the first to use
+  them. Turnout answers fell from +0.36-0.39 to +0.17-0.22 a day, support by 0.01-0.11. Kev's rows and earlier files
+  are untouched.
 - **+0.08 support offset rechecked**: GLM's per-group answers to the 46 events2 events on today's hosts
   (`runs/events2_groups__glm-2026-10-26.jsonl`, `groupcalib --tag`; 2,520 calls, $0.12). Event means r 0.935 with
   September's; Statistics' fit gives +0.065 (+0.048 on September's answers); the +0.0789 in use stands.
