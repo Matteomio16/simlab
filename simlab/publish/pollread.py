@@ -645,6 +645,50 @@ STORIES = {
                  "partisan-sponsored polls. Most have Talarico ahead by 1 to 5; the new Fox News poll, ringed, and "
                  "Rasmussen both have a tie."),
     },
+    "2026-10-27": {
+        "race": "ME", "since": "2026-10-06", "focus": "Echelon Insights",
+        "folder": "27-reading-polls-17", "left": "Jackson", "right": "Collins", "design": "meter", "hyp": 2,
+        "headline": "A new Maine poll has Jackson up 7. Four of the other six have him up exactly 2.",
+        "dek": "Seven Senate polls since 6 Oct, Jackson (D) minus Collins (R). Partisan polls left out.",
+        "source": "Polls ending 8–25 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 27 Oct.",
+        "title2": "A real lead, or a small sample?",
+        "against_head": "Why it may be too high",
+        "against": ["413 voters: the gap can swing about 10 points either way.",
+                    "Four of the other six polls since 6 Oct have Jackson up exactly 2; two have a tie.",
+                    "In 2020, Maine’s polls had Collins behind. She won by 9."],
+        "against_meter": ["Four of the other six have Jackson up 2; two have a tie.",
+                          "Trafalgar, polling the same days, had a tie.",
+                          "In 2020, Maine’s polls had Collins behind. She won by 9."],
+        "for": "No poll this month has Collins ahead: all seven have Jackson level or in front.",
+        "hypothesis": "Our hypothesis: Jackson by about 2. Our simulation: Jackson wins 63 in 100.",
+        "caption": (
+            "Maine Senate poll: a new Echelon Insights survey of 413 likely voters has Troy Jackson ahead of Susan "
+            "Collins by 7, 51 to 44. Of the other six polls since 6 October, four have Jackson up exactly 2 and two "
+            "have a tie.\n\n"
+            "Read it carefully. With 413 voters the gap can move about 10 points either way, Trafalgar, in the field "
+            "the same days, had a tie, and Maine has surprised before: in 2020 the polls had Collins behind and she "
+            "won by 9.\n\n"
+            "But don't dismiss it: no poll this month has Collins ahead. All seven have Jackson level or in front.\n\n"
+            "Our hypothesis: Jackson ahead by about 2. In our simulation Jackson wins 63 of every 100 simulated "
+            "elections, with an expected vote of 51–49. We'll check it against the next three polls.\n\n"
+            "We leave out polls paid for by a party, a campaign or a partisan group.\n\n"
+            "#midterms2026 #Maine #MaineSenate #elections"),
+        "short": ("Maine: a new Echelon poll has Jackson up 7 on Collins. Four of the other six since 6 Oct have him up "
+                  "exactly 2, two have a tie. Our hypothesis: Jackson by about 2. Our simulation: Jackson wins 63 in "
+                  "100."),
+        "more": " We'll check it against the next three polls. Reading the polls.",
+        "x": ("Maine: a new Echelon poll has Jackson up 7 on Collins. Four of the other six since 6 Oct have him up "
+              "exactly 2; two have a tie. Our hypothesis: Jackson by about 2. Our simulation: Jackson wins 63 in 100."),
+        "threads": ("A new Maine Senate poll has Troy Jackson up 7 on Susan Collins. Four of the other six polls since "
+                    "6 October have him up exactly 2, and two have a tie. With only 413 voters, we think 2 is closer "
+                    "to where it is, and we'll check it against the next three polls. Mainers, which number feels "
+                    "right where you are?"),
+        "topic": "2026 Midterms",
+        "first_comment": "Mainers: does Jackson +7 or a tie feel closer to what you see?",
+        "alt1": ("Dot chart of seven Maine Senate polls since 6 October, Jackson minus Collins, leaving out "
+                 "partisan-sponsored polls. Four have Jackson up 2 and two have a tie; the new Echelon Insights poll, "
+                 "ringed, has Jackson up 7."),
+    },
 }
 
 
