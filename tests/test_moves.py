@@ -124,12 +124,14 @@ class BuildTest(unittest.TestCase):
             write_day(root, "2026-10-01", [e1], [reaction("e1", A, 2.0, 0.0), reaction("e1", B, 2.0, 0.0)])
             write_day(root, "2026-10-03", [], [reaction("e1", A, 1.0, 0.0) | {"rerun": "drifted host, 20-23 Oct"},
                                                reaction("e1", B, 1.0, 0.0) | {"rerun": "drifted host, 20-23 Oct"},
-                                               reaction("e1", A, -2.0, 0.0)])
+                                               reaction("e1", A, -2.0, 0.0),
+                                               reaction("e1", A, 2.0, 0.0, race="NC") | {"rerun": "never asked before"}])
             before, after = self.build(root, "2026-10-02"), self.build(root, "2026-10-03")
         full = 100 * 2 * 0.1 * 0.5
         self.assertAlmostEqual(before["OH-S"]["events"]["e1"]["full"], full, places=4)
         self.assertAlmostEqual(after["OH-S"]["events"]["e1"]["full"], full / 2, places=4)  # the re-run, not the later row
         self.assertAlmostEqual(after["OH-S"]["by_event"]["e1"], (full / 2) * (0.5 ** 0.2 - 0.5 ** 0.1), places=4)
+        self.assertNotIn("NC", after["ungrouped_races"])  # a re-run never adds a pair
 
     def test_a_races_doubles_are_left_out_from_the_drops_day(self):
         with tempfile.TemporaryDirectory() as d:

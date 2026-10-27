@@ -116,8 +116,8 @@ def _jsonl(path: Path) -> list[dict]:
 
 def _history(day: date, derived: Path) -> tuple[dict, dict, set, dict]:
     """Reactions asked in the last LOOKBACK days, earliest answer per (model, race, event, group), with the day asked
-    (a re-run row, `"rerun"` set, replaces it and keeps the day first asked: Matteo, 26 Oct, for the drifted host's
-    20-23 Oct rows); the latest record of every event up to `day`; the (race, event) pairs left out because that day's news no
+    (a re-run row, `"rerun"` set, replaces a counted answer and keeps the day first asked, never adding a pair the
+    news left out: Matteo, 26 Oct, for the drifted host's 20-23 Oct rows); the latest record of every event up to `day`; the (race, event) pairs left out because that day's news no
     longer selects them (a news re-run after the harness), files without selections counting in full; and the races
     each event was ever gated for (events whose records carry no gate are left out)."""
     reactions, events, dropped, gated = {}, {}, set(), {}
@@ -130,8 +130,8 @@ def _history(day: date, derived: Path) -> tuple[dict, dict, set, dict]:
             e = todays.get(r["event_id"])
             key = (r["model"], bool(r.get("shadow")), r["race_id"], r["event_id"], r["group"])
             if r.get("rerun"):
-                if not r.get("parse_error"):
-                    reactions[key] = (r, reactions[key][1] if key in reactions else d)
+                if not r.get("parse_error") and key in reactions:  # replaces an answer already counted, never adds one
+                    reactions[key] = (r, reactions[key][1])
             elif e is not None and "selected" in e and r["race_id"] not in (e["selected"] or {}):
                 dropped.add((r["race_id"], r["event_id"]))
             elif not r.get("parse_error"):

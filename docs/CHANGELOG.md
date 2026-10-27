@@ -34,7 +34,11 @@ Matteo's yes to all five points of the lock-in follow-up (26 Oct, Publishing app
   Republicans 50+ 39.5 -> 39.4. The version before is kept for scoring: `SIMLAB_KEEP_DOUBLES=1` re-runs it. Engine
   dedupes new stories from 29 Oct.
 - **Re-run reactions** (`moves._history`): a reactions row with `"rerun"` set replaces the earliest answer for its
-  model, race, story and group, and keeps the day first asked; for Engine's re-ask of the drifted host's 20-23 Oct rows.
+  model, race, story and group, and keeps the day first asked; it never adds a pair that had no counted answer (27 Oct).
+  Engine's re-ask of the drifted host's 20-23 Oct rows landed in derived/2026-10-27/reactions.jsonl (15,101 rows, every
+  readable original covered, none on a deselected pair), so the 27 Oct forecast is the first to use them. Their turnout
+  answers average 0.17-0.22 against the drifted 0.36-0.39, and support moves slightly toward R (+0.06 to +0.14 became
+  -0.03 to +0.02).
 - **The support offset fit** (`python -m simlab.moves --offset <rows>`, `moves.fit_offset`): GLM's lean on the 45
   calibration events, weighted by 1/se^2 and plain. On the 29 Sep answers: lean -0.146 +/- 0.118 (plain -0.174)
   points per event at 3.06 points per unit, offset +0.048 (plain +0.057), within the +0.08 +/- 0.065 prior from
