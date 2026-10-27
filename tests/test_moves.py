@@ -147,6 +147,31 @@ class BuildTest(unittest.TestCase):
         self.assertEqual((sorted(first["OH-S"]["events"]), sorted(later["OH-S"]["events"])), (["e1", "e2"], ["e1"]))
         self.assertEqual((later["dropped_doubles"], sorted(kept["OH-S"]["events"])), (["OH-S e2"], ["e1", "e2"]))
 
+    def test_a_story_the_news_check_marks_as_a_double_is_asked_but_left_out(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            e2 = event("e2", "2026-10-01T08:00:00+00:00", 1.0) | {"double_of": {"OH-S": "e1"}}
+            write_day(root, "2026-10-01", [event("e1", "2026-10-01T08:00:00+00:00", 1.0), e2],
+                      [reaction(e, g, 1.0, 0.0) for e in ("e1", "e2") for g in (A, B)])
+            with mock.patch.object(moves, "DROPS", root / "none.json"):
+                m = self.build(root, "2026-10-01")
+                with mock.patch.dict("os.environ", {"SIMLAB_KEEP_DOUBLES": "1"}):
+                    kept = self.build(root, "2026-10-01")
+        self.assertEqual((sorted(m["OH-S"]["events"]), m["dropped_doubles"]), (["e1"], ["OH-S e2"]))
+        self.assertEqual(sorted(kept["OH-S"]["events"]), ["e1", "e2"])
+
+    def test_each_drops_list_holds_from_its_day_until_the_next(self):
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "drops.json"
+            f.write_text(json.dumps({"lists": [{"from": "2026-10-26", "drops": {"KS": ["a"]}},
+                                               {"from": "2026-10-28", "drops": {"KS": ["b"], "US": ["n"]}}]}))
+            got = lambda day: moves.story_drops(date.fromisoformat(day), f)
+            self.assertEqual((got("2026-10-25"), got("2026-10-27"), got("2026-10-29")),
+                             ({}, {"KS": {"a"}}, {"KS": {"b"}, "US": {"n"}}))
+        lists = json.loads(moves.DROPS.read_text(encoding="utf-8"))["lists"]
+        self.assertEqual([x["from"] for x in lists], ["2026-10-26", "2026-10-28"])
+        self.assertIn("KS-20261020-68353aca", lists[1]["drops"]["KS"])  # the later copy of the farm aid story goes
+
     def test_rows_for_pairs_the_days_news_no_longer_selects_are_dropped(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

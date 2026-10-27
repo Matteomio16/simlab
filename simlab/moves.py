@@ -144,13 +144,16 @@ def _history(day: date, derived: Path) -> tuple[dict, dict, set, dict]:
 
 
 def story_drops(day: date, path: Path | None = None) -> dict:
-    """{race_id: {event_id}}: a race's copies of a story it already counts (story_drops.json, Matteo's yes), left out
-    from the file's "from" day on. SIMLAB_KEEP_DOUBLES=1 keeps them, to score the version before."""
+    """{race_id: {event_id}}: a race's copies of a story it already counts (story_drops.json, Matteo's yes): the latest
+    of the file's lists whose "from" day is on or before `day`, so a re-run of any day leaves out what that day's
+    forecast left out ("US" is the nation's block). SIMLAB_KEEP_DOUBLES=1 keeps them all, to score the version
+    before."""
     path = path or DROPS
     if os.environ.get("SIMLAB_KEEP_DOUBLES") or not path.exists():
         return {}
     f = json.loads(path.read_text(encoding="utf-8"))
-    return {r: set(ids) for r, ids in f["drops"].items()} if day.isoformat() >= f["from"] else {}
+    lists = [x for x in f.get("lists", [f]) if x["from"] <= day.isoformat()]
+    return {r: set(ids) for r, ids in max(lists, key=lambda x: x["from"])["drops"].items()} if lists else {}
 
 
 def _race(race: str, rows: dict, events: dict, groups: dict, params: dict, day: date) -> dict:
@@ -214,10 +217,16 @@ def build(day: date, derived: Path, groups: dict, params: dict, run_id: str) -> 
     story ids) can't be placed in time; they are left out and listed under "orphaned_events". Races with reactions but
     no voter groups (a House seat that isn't simulated that day) are listed under "ungrouped_races". A race with
     stories lists under "nation_unasked" the nation's stories it was never asked about (gated before it was
-    simulated), which it takes from the nation (nation_paths). A race's doubles (story_drops) are left out and listed
-    under "dropped_doubles"."""
+    simulated), which it takes from the nation (nation_paths). A race's doubles are left out and listed under
+    "dropped_doubles": those in story_drops, and from 29 Oct those Engine's news check marks as a copy of a story the
+    race already counts (an event's "double_of": {race_id: the story it repeats}); their rows are still asked, so the
+    version with them can be scored (SIMLAB_KEEP_DOUBLES=1 keeps both kinds)."""
     reactions, events, dropped, gated = _history(day, derived)
     doubles = story_drops(day)
+    if not os.environ.get("SIMLAB_KEEP_DOUBLES"):
+        for eid, e in events.items():
+            for race in e.get("double_of") or {}:
+                doubles.setdefault(race, set()).add(eid)
     races = [k for k in groups if isinstance(groups[k], dict) and k not in ("units",)]
     out = {"date": day.isoformat(), "run_id": run_id, "schema": SCHEMA, "units": UNITS,
            "params": {k: params[k] for k in ("c_s", "c_t")}, "shadow": {},

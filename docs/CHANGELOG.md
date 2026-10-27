@@ -2,6 +2,20 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-27 (Statistics session): the doubles Engine found, dropped from 28 Oct (Matteo's yes)
+
+- **`simlab/story_drops.json` now holds dated lists**, each from its day until the next, so re-running any day leaves
+  out what that day's forecast left out. 26-27 Oct: the 15 known. From 28 Oct: Engine's replay of 15-25 Oct, 59
+  copies in 27 races (Engine's wrong pair, the Guilfoyle resignation and the Trump-to-Alaska stories, and its 4
+  borderline pairs stay separate stories), plus the nation's copy of the 14 Oct inflation story
+  (US-20261014-ba5bf77f) and Maine 2nd's pair from the first list. In each pair the first copy keeps counting and
+  the later or more local one goes, as Engine's check from 29 Oct does; that switches 5 same-day pairs of the first
+  list (Kansas's farm aid, and the district copies in NC-11, ME-2, MI-4 and MI-10). On 25 Oct data the whole set moves
+  no race's 3 Nov margin by more than 0.03 points except Kansas (-2.04 -> -1.87), and Republicans 50+ 39.5 -> 39.2.
+- **From 29 Oct, Engine's news check** marks a copy in events.jsonl (`"double_of": {race_id: the story it repeats}`):
+  its rows are still asked, and moves leaves the pair out (Matteo, 27 Oct), listed under `dropped_doubles`.
+  `SIMLAB_KEEP_DOUBLES=1` keeps both kinds, to score the version with them.
+
 ## 2026-10-26 (Engine session): 20-23 Oct re-asked; offset recheck; stories counted twice (Matteo's yes, 26 Oct)
 
 - **20-23 Oct re-asked** (`simlab/rerun.py`): every readable GLM row of those days (15,101 rows, 13,151 prompts,

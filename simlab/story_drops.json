@@ -1,13 +1,159 @@
 {
- "about": "Copies of a story a race already counts, left out of that race from \"from\" on (Matteo, 26 Oct, via Publishing approval). Seats: the statewide House copy of a story the seat has as its own; Kansas: the second copy of the 20 Oct farm aid story. Engine dedupes new stories from 29 Oct. SIMLAB_KEEP_DOUBLES=1 keeps them, to score the version before.",
- "from": "2026-10-26",
- "drops": {
-  "KS": ["KS-20261020-a602bf69"],
-  "NC-11": ["NC-H-20261023-2e972bea"],
-  "IA-1": ["IA-H-20261016-ab715539"],
-  "ME-2": ["ME-H-20261023-9cd141eb"],
-  "MI-4": ["MI-H-20261016-2e1db25d"],
-  "MI-10": ["MI-H-20261016-2e1db25d"],
-  "VA-2": ["VA-H-20261017-5c8ff33b"]
- }
+ "about": "Copies of a story a race already counts, left out of that race (moves.story_drops). Each list holds from its day until the next list's: a re-run of a day leaves out what that day's forecast left out. SIMLAB_KEEP_DOUBLES=1 keeps them all, to score the version before. Engine dedupes new stories from 29 Oct.",
+ "lists": [
+  {
+   "from": "2026-10-26",
+   "approved": "Matteo, 26 Oct (Publishing approval)",
+   "note": "the doubles found by 26 Oct: Kansas farm aid, and the statewide House copy where a seat had its own",
+   "drops": {
+    "KS": [
+     "KS-20261020-a602bf69"
+    ],
+    "NC-11": [
+     "NC-H-20261023-2e972bea"
+    ],
+    "IA-1": [
+     "IA-H-20261016-ab715539"
+    ],
+    "ME-2": [
+     "ME-H-20261023-9cd141eb"
+    ],
+    "MI-4": [
+     "MI-H-20261016-2e1db25d"
+    ],
+    "MI-10": [
+     "MI-H-20261016-2e1db25d"
+    ],
+    "VA-2": [
+     "VA-H-20261017-5c8ff33b"
+    ]
+   }
+  },
+  {
+   "from": "2026-10-28",
+   "approved": "Matteo, 27 Oct (Publishing approval)",
+   "note": "Engine's dedupe replay of 15-25 Oct: 59 copies in 27 races (the pair Engine marked wrong and its 4 borderline pairs stay separate stories); in each pair the first copy keeps counting and the later or more local one goes, as Engine's check from 29 Oct; the nation's copy of the 14 Oct inflation story leaves the nation's block too; ME-2's pair from the first list, its district copy going by the same rule",
+   "drops": {
+    "AK": [
+     "AK-20261014-1e597ba3",
+     "AK-20261016-39ae8700",
+     "AK-20261016-7eaa5cef",
+     "AK-20261023-f01e6294",
+     "AK-20261024-582e7842",
+     "US-20261014-ba5bf77f"
+    ],
+    "AZ-1": [
+     "AZ-1-20261015-458debdd"
+    ],
+    "CA-22": [
+     "CA-22-20261016-4b3b3b40"
+    ],
+    "FL-25": [
+     "FL-25-20261021-f3df5c2b",
+     "FL-25-20261023-8c1fb67a"
+    ],
+    "IA": [
+     "IA-20261015-8029aed6",
+     "US-20261014-ba5bf77f"
+    ],
+    "IA-1": [
+     "IA-H-20261016-ab715539"
+    ],
+    "IA-3": [
+     "IA-3-20261021-5673c286",
+     "IA-H-20261016-ab715539",
+     "IA-H-20261016-edbe5d65"
+    ],
+    "KS": [
+     "KS-20261014-22031d5b",
+     "KS-20261016-d5cb371f",
+     "KS-20261020-68353aca",
+     "US-20261014-ba5bf77f"
+    ],
+    "ME": [
+     "ME-20261019-1a422098",
+     "ME-20261021-08a9f0c4",
+     "US-20261014-ba5bf77f"
+    ],
+    "ME-2": [
+     "ME-2-20261023-aa7272cb"
+    ],
+    "MI": [
+     "MI-20261022-5c30b4bb",
+     "MI-20261024-78f9564a",
+     "MI-20261024-e6e37c47",
+     "US-20261014-ba5bf77f"
+    ],
+    "MI-10": [
+     "MI-10-20261016-2e1db25d"
+    ],
+    "MI-4": [
+     "MI-4-20261016-2e1db25d"
+    ],
+    "MN": [
+     "US-20261014-ba5bf77f"
+    ],
+    "MT-1": [
+     "MT-1-20261015-c7bd3c3c",
+     "MT-1-20261015-f554d642"
+    ],
+    "NC": [
+     "NC-20261020-74ee9dff",
+     "US-20261014-ba5bf77f"
+    ],
+    "NC-1": [
+     "NC-1-20261020-0683a6e1",
+     "NC-H-20261021-b376a9b9"
+    ],
+    "NC-11": [
+     "NC-11-20261023-2e972bea",
+     "NC-H-20261021-b376a9b9"
+    ],
+    "NE": [
+     "US-20261014-ba5bf77f",
+     "US-20261023-2d27291e"
+    ],
+    "NH": [
+     "US-20261014-ba5bf77f"
+    ],
+    "OH-1": [
+     "OH-1-20261021-d456e3a4",
+     "OH-H-20261018-58434126"
+    ],
+    "OH-7": [
+     "OH-H-20261018-58434126"
+    ],
+    "OH-S": [
+     "OH-S-20261020-3ed4338e",
+     "US-20261014-ba5bf77f",
+     "US-20261018-58434126"
+    ],
+    "PA-1": [
+     "PA-H-20261021-f8faa76f"
+    ],
+    "SC": [
+     "SC-20261016-03728736",
+     "SC-20261019-88a85813",
+     "US-20261014-ba5bf77f"
+    ],
+    "TX": [
+     "TX-20261012-961d9bb9",
+     "TX-20261015-6403691f",
+     "TX-20261016-d2d354c5",
+     "TX-20261020-ad07984e",
+     "TX-20261021-80d7a4fe",
+     "US-20261014-ba5bf77f"
+    ],
+    "US": [
+     "US-20261014-ba5bf77f"
+    ],
+    "VA-2": [
+     "VA-H-20261017-5c8ff33b"
+    ],
+    "WI-1": [
+     "WI-1-20261016-9801eaa0"
+    ]
+   }
+  }
+ ]
 }
