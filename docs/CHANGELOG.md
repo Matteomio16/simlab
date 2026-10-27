@@ -31,12 +31,14 @@ For Cowork to pick up. Newest first. Final decisions are also summarised in CLAU
 - **Stories counted twice, from 29 Oct** (`newsday.DEDUPE_FROM`): each double was two copies picked on different
   days (Iowa 14/16 Oct, Kansas 21/22, NC-11 24/25), because a new story was only checked against the same day's
   picks. A new pick is now also checked against what its race reacted to in the previous 7 days (`newsday.counted`):
-  a headline or link in common settles it, else the existing same-event question on the 3 most similar. A copy loses
-  its gate there (`same_as`), the next story moves up, and the news summary counts `doubles`. Replay on 15-25 Oct: 64
-  picks of 1,572 caught (52 pairs, 3.8% of story effect since 12 Oct, 26 of 64 toward D/I); about 45 clearly the same
-  event, 1 wrong, 4 borderline; an announcement and the event itself count as one story. A copy caught from 29 Oct is
-  never asked, so the version before can't be scored exactly for those days. The doubles already in the record are
-  Statistics' (`simlab/story_drops.json`).
+  a headline or link in common settles it, else the existing same-event question on the 3 most similar. Matteo (27
+  Oct) chose to score both versions exactly: a copy stays selected and is asked (about 3 cents a day), so the day's
+  selection is the version before, and is marked `double_of` {race: the story it repeats} in events.jsonl, carried
+  on the days it continues; moves leaves it out (Statistics). The news summary counts `doubles` (merged by the old
+  same-day check, marked by the new one). Replay on 15-25 Oct: 64 picks of 1,572 caught (52 pairs, 3.8% of story
+  effect since 12 Oct, 26 of 64 toward D/I); about 45 clearly the same event, 1 wrong, 4 borderline; an announcement
+  and the event itself count as one story (Matteo, 27 Oct). The doubles already in the record are Statistics'
+  (`simlab/story_drops.json`: 59 clear copies from 28 Oct).
 
 ## 2026-10-26 (Statistics session): doubles dropped from the forecast, re-run reactions, the offset fit (Matteo's yes)
 

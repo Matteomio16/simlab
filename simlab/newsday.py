@@ -547,8 +547,9 @@ def same_event(a: tuple[str, str], b: tuple[str, str], chats: list) -> bool:
 
 
 # From this day the duplicate check also compares a race's new stories with those it already reacted to in the last
-# 7 days (Matteo's yes, 26 Oct): 14 Oct-25 Oct counted 15 stories twice, each copy picked on a different day (Iowa's
-# water story 14 and 16 Oct, Kansas's farm aid 21 and 22 Oct, a seat's own copy and its state group's 24 and 25 Oct).
+# 7 days (Matteo's yes, 26 Oct): each copy found in 15-25 Oct (64 of 1,572 picks) was picked on a different day from
+# the story it repeats (Iowa's water story 14 and 16 Oct, Kansas's farm aid 21 and 22 Oct, a seat's own copy and its
+# state group's 24 and 25 Oct). A copy is still asked and only marked, so both versions can be scored (27 Oct).
 DEDUPE_FROM = date(2026, 10, 29)
 
 
@@ -583,10 +584,13 @@ def merge_same_events(events: list[dict], stories: dict, chats: list, races: lis
     that reports the same event in other words loses its gate for that race (`same_as` names the kept story) and the
     next candidate moves up. (Until 29 Sep only the top 10 of both scopes together were checked, so national stories
     could push a race's lower copies of one story out of the check but not out of the selection.) With `earlier`
-    (counted()), a new story is also checked against the race's stories of the last days: a headline or link in common
-    settles it, else the `per_story` most similar are asked. Races run in parallel; each writes only its own gate.
-    Returns how many copies were caught against today's stories and against earlier days'."""
-    lock, caught = threading.Lock(), {"today": 0, "earlier": 0}
+    (counted()), a story the race keeps is also checked against today's other kept stories by headline and link, and
+    against the race's stories of the last days (a headline or link in common settles it, else the `per_story` most
+    similar are asked). Such a copy stays selected and is asked, so the day's selection is the version before; it is
+    marked `double_of` (race -> the story it repeats) and moves leaves it out (Matteo, 27 Oct: both versions scored
+    exactly). Races run in parallel; each writes only its own race's entries. Returns how many copies lost their gate
+    ("merged") and how many were marked ("marked")."""
+    lock, caught = threading.Lock(), {"merged": 0, "marked": 0}
 
     def head(e):
         s = stories[e["event_id"]]
@@ -619,16 +623,20 @@ def merge_same_events(events: list[dict], stories: dict, chats: list, races: lis
         for e in candidates(events, r, top=len(events)):
             if e["event_id"] not in ok[e["scope"]] or sum(k["scope"] == e["scope"] for k in kept) >= cap[e["scope"]]:
                 continue
-            dup = next((k for k in kept if (earlier is not None and _plainly_same(info(k), info(e)))
-                        or same_event(head(k), head(e), chats)), None)
-            old = None if dup else before(r, e)
-            if dup or old:
+            dup = next((k for k in kept if same_event(head(k), head(e), chats)), None)
+            if dup:
                 e["gate"][r] = 0.0
                 with lock:
-                    e.setdefault("same_as", {})[r] = (dup or old)["event_id"]
-                    caught["today" if dup else "earlier"] += 1
-            else:
-                kept.append(e)
+                    e.setdefault("same_as", {})[r] = dup["event_id"]
+                    caught["merged"] += 1
+                continue
+            if earlier is not None:
+                rep = next((k for k in kept if _plainly_same(info(k), info(e))), None) or before(r, e)
+                if rep:
+                    with lock:
+                        e.setdefault("double_of", {})[r] = rep["event_id"]
+                        caught["marked"] += 1
+            kept.append(e)
     with ThreadPoolExecutor(8) as ex:
         list(ex.map(one, list(races or PILOT) + ["US"]))
     return caught
@@ -755,7 +763,8 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
                        "races": national_races + ["US"] if national else GROUPS.get(s["race_id"], [s["race_id"]]),
                        **labels,
                        "attention": attention(s, spike_ratio(views, s["race_id"])),
-                       "card": valid_card((k or {}).get("card", ""), s["outlet_names"])})
+                       "card": valid_card((k or {}).get("card", ""), s["outlet_names"]),
+                       **({"double_of": dict(k["double_of"])} if k and k.get("double_of") else {})})
         private.append({"schema": SCHEMA, "date": f"{day}", "event_id": s["event_id"], "race_id": s["race_id"],
                         "titles": s["titles"], "outlet_names": s["outlet_names"], "outlets": s["outlets"],
                         "urls": s["urls"], "days_seen": s["days_seen"]})
@@ -777,6 +786,8 @@ def run(day: date, snap_root: Path, derived_root: Path, run_id: str, asker, chat
         e, p, s = pool[old], priv.pop(old), by_id.pop(old)
         days = sorted(set(k["days_seen"]) | set(p["days_seen"]))
         e.update({f: k[f] for f in LABEL_FIELDS})
+        if k.get("double_of"):  # a copy stays a copy for the days it carries on
+            e["double_of"] = dict(k["double_of"])
         e["event_id"], e["first_seen"] = k["event_id"], min(k["first_seen"], e["first_seen"])
         e["card"] = valid_card(k.get("card", ""), s["outlet_names"]) or e["card"]
         s["event_id"], s["days_seen"] = k["event_id"], days

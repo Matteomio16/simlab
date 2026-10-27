@@ -765,8 +765,9 @@ class House(unittest.TestCase):
 
 
 class Doubles(unittest.TestCase):
-    # 26 Oct (Matteo's yes, live from 29 Oct): 15 stories were counted twice in 14-25 Oct, each copy picked on a
-    # different day, because a new story was only checked against the same day's picks
+    # 26 Oct (Matteo's yes, live from 29 Oct): stories were counted twice in 14-25 Oct, each copy picked on a different
+    # day, because a new story was only checked against the same day's picks. 27 Oct: a copy is still asked and only
+    # marked, so the version before can be scored exactly
     def ev(self, eid, a, race="KS"):
         return {"event_id": eid, "scope": "race", "races": [race], "gate": {race: 0.9}, "type": "policy",
                 "salience": 1.0, "attention": {"a": a}, "first_seen": "2026-10-22T07:00:00+00:00"}
@@ -785,16 +786,17 @@ class Doubles(unittest.TestCase):
         with mock.patch.object(newsday, "HOUSE_NEWS", True):
             caught = newsday.merge_same_events(evs, stories, [chat], ["NC-11"], earlier={"NC-11": [
                 self.earlier("NC-H-20261023-2e972bea", "Trump stumps for Whatley in Greenville")]})
-        self.assertEqual((evs[0]["gate"]["NC-11"], evs[0]["same_as"], chat.calls),
-                         (0.0, {"NC-11": "NC-H-20261023-2e972bea"}, 0))
-        self.assertEqual(caught, {"today": 0, "earlier": 1})
+        self.assertEqual((evs[0]["gate"]["NC-11"], evs[0]["double_of"], chat.calls),
+                         (0.9, {"NC-11": "NC-H-20261023-2e972bea"}, 0))
+        self.assertNotIn("same_as", evs[0])
+        self.assertEqual(caught, {"merged": 0, "marked": 1})
 
     def test_a_shared_link_counts_once_too(self):
         evs = [self.ev("KS-2", 0.8)]
         stories = {"KS-2": self.story("A different headline", url="https://a.example/1")}
         newsday.merge_same_events(evs, stories, [FakeChat([])], ["KS"],
                                   earlier={"KS": [self.earlier("KS-1", "Some headline")]})
-        self.assertEqual(evs[0]["same_as"], {"KS": "KS-1"})
+        self.assertEqual(evs[0]["double_of"], {"KS": "KS-1"})
 
     def test_the_same_event_in_other_words_another_day_is_asked_and_counts_once(self):
         # Kansas's $8 billion farm aid, picked on 21 and 22 Oct under two headlines
@@ -805,17 +807,51 @@ class Doubles(unittest.TestCase):
                  self.earlier("KS-0", "Marshall holds a town hall in Topeka", url="https://d.example/4")]
         chat = FakeChat(['{"same": true}', '{"same": false}', '{"same": false}', '{"same": false}'])
         newsday.merge_same_events(evs, stories, [chat], ["KS"], earlier={"KS": prior})
-        self.assertEqual(evs[0]["same_as"], {"KS": "KS-20261020-a602bf69"})  # the most similar is asked first
-        self.assertNotIn("same_as", evs[1])
-        self.assertEqual(evs[1]["gate"]["KS"], 0.9)
-        self.assertLessEqual(chat.calls, 1 + 2)  # at most per_story earlier stories asked for each new one
+        self.assertEqual(evs[0]["double_of"], {"KS": "KS-20261020-a602bf69"})  # the most similar is asked first
+        self.assertNotIn("double_of", evs[1])
+        self.assertEqual((evs[0]["gate"]["KS"], evs[1]["gate"]["KS"]), (0.9, 0.9))
+        # the copy: 1 earlier story asked; the next: today's kept copy, then at most per_story earlier ones
+        self.assertLessEqual(chat.calls, 1 + 1 + 2)
 
     def test_a_story_carried_over_from_an_earlier_day_is_not_checked_against_the_others(self):
         evs = [self.ev("KS-1", 0.8)]
         chat = FakeChat(['{"same": true}'] * 3)
         newsday.merge_same_events(evs, {"KS-1": self.story("Some headline")}, [chat], ["KS"], earlier={"KS": [
             self.earlier("KS-1", "Some headline"), self.earlier("KS-0", "Another story", url="https://e.example")]})
-        self.assertEqual((evs[0]["gate"]["KS"], chat.calls), (0.9, 0))
+        self.assertEqual((evs[0]["gate"]["KS"], chat.calls, "double_of" in evs[0]), (0.9, 0, False))
+
+    def test_the_days_selection_is_the_version_before_and_the_copy_is_only_marked(self):
+        # a same-day copy the model call missed (same headline) and an earlier day's copy both stay selected
+        evs = [self.ev("KS-1", 0.9), self.ev("KS-2", 0.8), self.ev("KS-3", 0.7), self.ev("KS-4", 0.6)]
+        stories = {"KS-1": self.story("Same words", url="https://k.example/1"),
+                   "KS-2": self.story("Same words", url="https://k.example/2"),
+                   "KS-3": self.story("Farm aid announced", url="https://k.example/3"),
+                   "KS-4": self.story("Something else", url="https://k.example/4")}
+        prior = {"KS": [self.earlier("KS-0", "Farm aid announced", url="https://k.example/0")]}
+        old = json.loads(json.dumps(evs))
+        newsday.merge_same_events(old, stories, [FakeChat(['{"same": false}'] * 20)], ["KS"])
+        newsday.select(old, ["KS"])
+        caught = newsday.merge_same_events(evs, stories, [FakeChat(['{"same": false}'] * 20)], ["KS"], earlier=prior)
+        newsday.select(evs, ["KS"])
+        self.assertEqual([e["selected"] for e in evs], [e["selected"] for e in old])
+        self.assertEqual({e["event_id"]: e.get("double_of") for e in evs},
+                         {"KS-1": None, "KS-2": {"KS": "KS-1"}, "KS-3": {"KS": "KS-0"}, "KS-4": None})
+        self.assertEqual(caught, {"merged": 0, "marked": 2})
+
+    def test_a_marked_copy_stays_marked_on_the_days_it_carries_on(self):
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(newsday, "MODE", newsday.MODE):
+            snap, derived = Path(tmp) / "snap", Path(tmp) / "derived"
+            snapshot(snap, "2026-09-28", "0036", {"gdelt-ohio": OHIO})
+            snapshot(snap, "2026-09-29", "0036", {"gdelt-ohio": OHIO_NEXT_DAY})
+            chat = FakeChat(['{"card": "%s"}' % GOOD] * 10)
+            newsday.run(date(2026, 9, 28), snap, derived, "d1", FakeAsker(), [chat])
+            path = derived / "2026-09-28" / "events.jsonl"
+            day1 = newsday._jsonl(path)
+            day1[0]["double_of"] = {"OH-S": "OH-S-0"}
+            path.write_text("".join(json.dumps(e) + "\n" for e in day1), encoding="utf-8")
+            newsday.run(date(2026, 9, 29), snap, derived, "d2", FakeAsker(), [chat], mode="polls")
+            day2 = {e["event_id"]: e for e in newsday._jsonl(derived / "2026-09-29" / "events.jsonl")}
+        self.assertEqual(day2[day1[0]["event_id"]]["double_of"], {"OH-S": "OH-S-0"})
 
     def test_before_29_oct_nothing_changes(self):
         # same day, same headline: still the model's call, as before
