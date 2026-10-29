@@ -84,8 +84,8 @@ def build(race: str, data_day: str, post_day: str, data: Path, reel: bool = Fals
     b = Slide(d, "", LAB, series=SERIES)
     b.headline(f"Who the {k} are", px=80)
     b.y += 10
-    for n, label in ((ind, "are independents"), (nod, "have no four-year college degree"),
-                     (col, f"are {people} of color")):
+    color = f"is a {people[:-1]} of color" if col == 1 else f"are {people} of color"
+    for n, label in ((ind, "are independents"), (nod, "have no four-year college degree"), (col, color)):
         b._put(MARGIN, b.y, f"{n} of {k}", "hero", 700, 46, LAB.ai, va="top")
         b._put(MARGIN + 190, b.y + 10, label, "sans", 600, 32, LAB.ink, va="top")
         b.y += 70
@@ -104,7 +104,7 @@ def build(race: str, data_day: str, post_day: str, data: Path, reel: bool = Fals
         f"change who they vote for: undecided, or likely to switch before voting, judging by how people like them "
         f"behaved in the last two midterms. The other {100 - k} have, for the most part, made up their minds.\n\n"
         f"Who are the {k}? {ind.__str__().capitalize()} are independents. {nod} have no four-year college degree. "
-        f"{col} are {people} of color. And {mob} in 100 could still decide whether to vote at all.\n\n"
+        f"{col} {color}. And {mob} in 100 could still decide whether to vote at all.\n\n"
         f"These are the people our social simulation is built around. Every day, voter personas built from real "
         f"survey answers stand in for groups like them and react to the news, and only the share of each group that "
         f"can still move, moves.\n\n"
@@ -128,8 +128,8 @@ def build(race: str, data_day: str, post_day: str, data: Path, reel: bool = Fals
         s.save(out / f"slide-{i}.jpg")
     alt1 = (f"A grid of 100 small figures standing for {state}'s adult citizens. {k} are purple, scattered through the "
             f"grid: those who could still change who they vote for. The other {100 - k} are grey.")
-    alt2 = (f"Who the {k} are: {ind} are independents, {nod} have no four-year college degree, {col} are {people} of "
-            f"color. And {mob} in 100 could still decide whether to vote at all.")
+    alt2 = (f"Who the {k} are: {ind} are independents, {nod} have no four-year college degree, {col} {color}. And "
+            f"{mob} in 100 could still decide whether to vote at all.")
     (out / "caption.txt").write_text(caption, encoding="utf-8")
     (out / "alt-text.txt").write_text(f"slide-1.jpg: {alt1}\nslide-2.jpg: {alt2}\n", encoding="utf-8")
     meta = {"threads_topic": "2026 Midterms",
