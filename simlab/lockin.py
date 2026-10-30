@@ -42,7 +42,7 @@ ELECTION = levels.ELECTION
 CURVE = [(42, 0.0), (35, 0.02), (28, 0.06), (21, 0.16), (9, 0.36), (6, 0.56), (1, 0.77), (0, 1.0)]
 KEY = {"all": "full", "s": "full_s", "t": "full_t", "s_base": "full_s_base", "t_base": "full_t_base"}
 COUNTED = ("nc", "me")
-FROM, LASTING = None, 0.0  # off until Matteo's yes; then the first day and the chosen L
+FROM, LASTING = date(2026, 10, 31), 0.0  # Matteo's yes, 30 Oct (Publishing approval): early votes lock in, L = 0
 OFF = -1.0  # statsday.run(lasting=OFF): the 3 Nov view without lock-in (the shadow)
 
 

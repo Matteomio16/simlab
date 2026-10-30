@@ -2,6 +2,17 @@
 
 For Cowork to pick up. Newest first. Final decisions are also summarised in CLAUDE.md section 5.
 
+## 2026-10-30 (Statistics session): early votes lock in on 3 Nov from the 31 Oct run (Matteo's yes)
+
+- Matteo's yes (30 Oct, Publishing approval), after the 30 Oct run: `lockin.FROM = 31 Oct`, `LASTING = 0` (no lasting
+  share for Election Day voters). From the 31 Oct run each story's 3 Nov contribution counts the share of the state's
+  ballots cast while it was in the news (`simlab/lockin.py`, CHANGELOG 26 Oct). The rule before runs every day as the
+  scored shadow (`simlab.fadeshadow`, `simlab-data/scoring/fade/<date>/`); the poll filter keeps running too.
+- On 28 Oct data (with the corrected 20-23 Oct answers and the 28 Oct drop list): Republicans 50+ 38.0 -> 36.5 in
+  100, Democratic House majority 63.4 -> 64.6; Texas +1.6 -> +1.9, Maine +1.7 -> +2.0, North Carolina +8.6 -> +8.9.
+  The median gap to the poll averages hardly moves (-1.05 -> -1.02): the case is the mechanism (by 27 Oct 52% of
+  North Carolina's ballots and 43% of Texas's were cast), not the fit.
+
 ## 2026-10-27 (Statistics session): the doubles Engine found, dropped from 28 Oct (Matteo's yes)
 
 - **`simlab/story_drops.json` now holds dated lists**, each from its day until the next, so re-running any day leaves

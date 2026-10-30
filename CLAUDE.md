@@ -215,6 +215,9 @@ Decided by Matteo, 11 Oct (publishing and ethics review, C7; details in `docs/CH
   (`simlab/start.py`), with Wikipedia's sponsor footnotes read; severe and cancel need 3 new polls; VoteHub pollster
   tags don't count as partisan; the old rule runs daily for scoring. **The start is never moved again**: later
   changes go live from their day on, logged, both versions scored (Matteo, 13 Oct).
+- **Early votes lock in on 3 Nov (Matteo, 30 Oct; live from the 31 Oct run).** A story's 3 Nov effect counts the
+  share of each state's ballots cast while it was in the news (EAVS 2022 shares, NC and Maine 2026 counts), with no
+  lasting share for Election Day voters (L = 0; `simlab/lockin.py`). The rule before runs daily as the scored shadow.
 
 Decided by Matteo, 28 Sep (statistics layer; details in `docs/stats-groundwork.md` §8 and `docs/CHANGELOG.md`):
 - Partisan polls are those sponsored by a party, campaign or partisan group, not Wikipedia's "(R)"/"(D)" pollster tags.
