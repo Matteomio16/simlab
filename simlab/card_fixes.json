@@ -16,5 +16,23 @@
   "was": "Inflation rose last month, driven in part by higher gas prices and semiconductor costs, according to the latest data.",
   "why": "the headline is a preview, not the data",
   "approved": "Matteo, 14 Oct (Publishing approval)"
+ },
+ "TX-20261027-c40703da": {
+  "card": "President Trump and Marco Rubio plan to visit an oil tanker carrying Venezuelan crude in Texas.",
+  "was": "President Trump and Senator Marco Rubio plan to visit an oil tanker carrying Venezuelan crude in Texas.",
+  "why": "Rubio is Secretary of State, not a senator; the headline says only 'Rubio'",
+  "approved": "Matteo, 30 Oct (Publishing approval)"
+ },
+ "US-20261026-15632ec1": {
+  "card": "President Trump offered a $1 million reward for tips about voter fraud, ahead of the 2026 midterm elections.",
+  "was": "President Trump offered a $1 million reward for tips about voter fraud that lead to convictions, ahead of the 2026 midterm elections.",
+  "why": "'that lead to convictions' is in no headline",
+  "approved": "Matteo, 30 Oct (Publishing approval)"
+ },
+ "US-20261022-600eba3d": {
+  "card": "The cost of job-based health insurance plans has risen, with little relief expected soon.",
+  "was": "The cost of job-based health insurance plans has risen, with no relief expected in the near term.",
+  "why": "the headline says 'little relief in sight', not none",
+  "approved": "Matteo, 30 Oct (Publishing approval)"
  }
 }
