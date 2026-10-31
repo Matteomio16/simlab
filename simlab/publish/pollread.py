@@ -29,7 +29,7 @@ SHORT = {"New York Times/Siena University": "NYT/Siena", "Fabrizio Ward (R)/ Imp
          "Alaska Survey Research": "Alaska Survey Res.", "Rasmussen Reports": "Rasmussen",
          "Texas Public Opinion Research": "Texas Public Op.", "Texas Southern University": "Texas Southern",
          "Beacon Research (D)/ Shaw & Co. Research": "Fox News", "Pulse Decision Science": "Pulse Decision",
-         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "University of Texas/Texas Politics Project": "UT Texas Politics", "ReconMR/Siena University": "ReconMR/Siena", "Z to A Research": "Z to A", "Mitchell Research & Communications": "Mitchell", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
+         "Stratus Intelligence": "Stratus", "Marist University": "Marist", "The Washington Post/SSPG": "Wash. Post/Schar", "University of Texas/Texas Politics Project": "UT Texas Politics", "ReconMR/Siena University": "ReconMR/Siena", "Z to A Research": "Z to A", "Mitchell Research & Communications": "Mitchell", "Global Strategy Group": "Global Strategy", "Wedgewood Polls": "Wedgewood", "Guidant Polling & Strategy": "Guidant", "UMass Lowell/YouGov": "UMass Lowell", "Emerson College": "Emerson",
          "Bowling Green State University/YouGov": "BGSU/YouGov", "Data for Progress": "Data for Progress", "Public Policy Polling": "PPP", "University of Houston": "U of Houston", "GS Strategy Group (R)/ New River Strategies": "GS Strategy", "Texas Public Opinion Research": "Texas Public Op.", "Verasight/VoteHub": "Verasight", "Suffolk University": "Suffolk", "Catawba College/YouGov": "Catawba/YouGov",
          "East Carolina University": "East Carolina", "High Point University": "High Point", "Opinion Diagnostics": "Opinion Diag."}
 
@@ -688,6 +688,50 @@ STORIES = {
         "alt1": ("Dot chart of seven Maine Senate polls since 6 October, Jackson minus Collins, leaving out "
                  "partisan-sponsored polls. Four have Jackson up 2 and two have a tie; the new Echelon Insights poll, "
                  "ringed, has Jackson up 7."),
+    },
+    "2026-11-01": {
+        "race": "KS", "since": "2026-10-01", "focus": "RedBox Research", "folder": "01-reading-polls-18",
+        "left": "Hamilton", "right": "Marshall", "design": "meter", "hyp": 3,
+        "exclude": ["The Washington Post/George Mason University Schar School of Policy and Government"],
+        "against_meter": ["The three newest polls all have Hamilton ahead, by 3.5 to 9.5.",
+                          "Five of the other seven since October have Hamilton in front."],
+        "headline": "A new Kansas poll has Marshall up 1. The three newest have Hamilton ahead.",
+        "dek": "Eight Senate polls since 1 October, Hamilton (D) minus Marshall (R). Partisan polls left out.",
+        "source": "Polls ending 1 – 28 Oct 2026: VoteHub (CC BY 4.0), Wikipedia (CC BY-SA 4.0). Simulation: 31 Oct.",
+        "title2": "Holding on, or slipping?",
+        "against_head": "Why it may be off",
+        "against": ["1,301 voters: the gap can swing about 5 points either way.",
+                    "The three newest polls all have Hamilton ahead, by 3.5 to 9.5.",
+                    "Five of the other seven since October have Hamilton in front."],
+        "for": "It's a big sample, and InsiderAdvantage also had Marshall up 1 in mid-October.",
+        "hypothesis": "Our hypothesis: Hamilton by about 3. Our simulation: Marshall wins 56 in 100.",
+        "caption": (
+            "Kansas Senate poll: a new RedBox Research survey of 1,301 likely voters has Roger Marshall ahead of Adam "
+            "Hamilton by 1 point, 46 to 45. The three polls that came after it all have Hamilton ahead, by 3.5 to 9.5 "
+            "points.\n\n"
+            "Read it carefully. Five of the other seven polls since October have Hamilton in front, and the middle of "
+            "them sits around Hamilton +3.\n\n"
+            "But it's not alone: the sample is large, and InsiderAdvantage also had Marshall up 1 in mid-October.\n\n"
+            "Our hypothesis: the polls point to Hamilton ahead by about 3. Our simulation still leans slightly the "
+            "other way: Marshall wins 56 of every 100 simulated elections, with an expected vote of about 50–50. "
+            "Tuesday will tell us which reading was right.\n\n"
+            "We leave out polls paid for by a party, a campaign or a partisan group.\n\n"
+            "#midterms2026 #Kansas #KansasSenate #elections"),
+        "short": ("A new Kansas poll, RedBox, has Marshall up 1 on Hamilton. The three newest polls have Hamilton "
+                  "ahead, by 3.5 to 9.5. Our hypothesis: Hamilton by about 3. Our simulation: Marshall wins 56 in "
+                  "100."),
+        "more": " Tuesday will tell. Reading the polls.",
+        "x": ("Kansas: RedBox has Marshall up 1. The three newest polls have Hamilton ahead, by 3.5 to 9.5. Our "
+              "hypothesis: Hamilton by about 3. Our simulation still leans Marshall: 56 in 100, expected vote "
+              "50–50."),
+        "threads": ("Kansas, two days out: a new RedBox poll has Roger Marshall up 1, but the three newest polls all "
+                    "have Adam Hamilton ahead, by 3.5 to 9.5. The polls point to Hamilton by about 3; our simulation "
+                    "still leans slightly Marshall, 56 in 100. Kansans, who's reading it right?"),
+        "topic": "2026 Midterms",
+        "first_comment": "If you're in Kansas, which reading feels right to you: the polls or our simulation?",
+        "alt1": ("Dot chart of eight Kansas Senate polls since 1 October, Hamilton minus Marshall, leaving out "
+                 "partisan-sponsored polls. Most sit between even and Hamilton +4, with Washington Post/Schar at "
+                 "Hamilton +9.5; the new RedBox poll, ringed, has Marshall up 1."),
     },
 }
 
