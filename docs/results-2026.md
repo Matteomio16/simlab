@@ -104,8 +104,16 @@ This is the experiment's real question.
   missed by 3.6 points in the same direction (Texas by 9.5, Georgia by 9.4, North Carolina by 8.6). Our fundamentals
   blend added more Republican lean on top. One suspect: the generic ballot is lowered by its historical 2.8-point
   overstatement of Democrats where it feeds the fundamentals; in 2026 it understated them.
-- **Simulation only against the old rule:** the published simulation-only version scored slightly worse than our own
-  polls-alone twin (Brier 0.060 against 0.052). The gap is small, but it is the honest result.
+- **Simulation only against polls alone: roughly level, slightly behind on confidence.**
+  - Same calls: 30 of 33 each. Both had Iowa and Kansas just under a coin flip (we had 43 and 43; polls alone 42 and
+    47), and both missed South Carolina.
+  - On margins it's nearly a tie: average miss 6.3 points against 6.1, and the simulation was closer in 19 of 32 races.
+  - On the probability score, polls alone did slightly better (Brier 0.052 against 0.060). The gap is small but
+    consistent: in 99% of resamples, polls alone came out ahead.
+  - Four races make up most of the gap: South Carolina, Maine, Kansas and Texas. In each, the polls moved toward the
+    Democrat after 12 Oct, while our start stayed frozen and the simulation moved too little to follow.
+  - Fair public line: "we finished level with polls on the calls and slightly behind on confidence; both missed the size
+    of the wave."
 
 ## 5. House
 
