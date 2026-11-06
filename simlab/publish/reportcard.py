@@ -63,7 +63,7 @@ def cover(s: Slide):
     y = big(s, [("59", "in 100: our chance Democrats win the Senate", LAB.dem),
                 ("63", "in 100: our chance Democrats win the House", LAB.dem)], s.y + 20)
     for label, res in [("Senate", "Democrats at 54 seats, with Alaska and Mississippi still counting."),
-                       ("House", "Democrats on course for about 256 seats. About 25 still counting.")]:
+                       ("House", "Democrats won the majority, with about 25 seats still counting.")]:
         mark(s, MARGIN + 4, y + 20, True, 30)
         s._put(MARGIN + 56, y + 20, label, "sans", 700, 32, LAB.ink, va="center")
         s.y = y + 2
@@ -73,7 +73,7 @@ def cover(s: Slide):
     return s
 
 
-def card(s: Slide, rows=RACES, step: float = 47):
+def card(s: Slide, rows=RACES, step: float = 45):
     s.headline("30 of 33 Senate races called right.", px=68)
     s.dek("The closest, with the chance we gave the candidate who won.", px=28)
     top = s.y + 10
@@ -90,7 +90,8 @@ def card(s: Slide, rows=RACES, step: float = 47):
         s._put(xr, y, f"{won} +{abs(r[3]):.1f}", "mono", 600, 26, LAB.ink, ha="right", va="center")
         y += step
     s.y = y + 4
-    s.text("The other 20 called races: all right.", "sans", 500, 26, LAB.ink2)
+    s.text("The other 20 called races: all right.", "sans", 500, 26, LAB.ink2, after=0.3)
+    s.text("Margins: share of the two main candidates' votes.", "sans", 400, 22, LAB.muted)
     return s
 
 
@@ -138,7 +139,7 @@ def build(reel: bool = False) -> tuple[Path, list[str]]:
         "Our report card, three days after the election. These are provisional results; the final scorecard comes "
         "after certification.\n\n"
         "Both chambers right. We gave Democrats the Senate in 59 of every 100 simulated elections, and they're at 54 "
-        "seats, with Alaska and Mississippi still counting. We gave them the House in 63 of 100, and they're on course for about 256 seats.\n\n"
+        "seats, with Alaska and Mississippi still counting. We gave them the House in 63 of 100, and Democrats won the majority, with about 25 seats still counting.\n\n"
         "30 of the 33 called Senate races right. That includes Texas, where we had Talarico favoured while Cook "
         "called it a toss-up, and Ohio, Maine, Michigan, Minnesota, North Carolina and New Hampshire, plus the "
         "Republican holds in Nebraska, Florida and Louisiana.\n\n"
@@ -159,7 +160,7 @@ def build(reel: bool = False) -> tuple[Path, list[str]]:
                "the wave: on average, Democrats beat our margins by about 5 points. Which call surprised you most?")
     posts = {"x": x, "threads": end(threads, LIMIT["threads"])}
     alts = ["Our report card, both chambers called right: we gave Democrats the Senate in 59 of 100 simulated "
-            "elections and they are at 54 seats; the House in 63 of 100 and they are on course for about 256 seats. "
+            "elections and they are at 54 seats; the House in 63 of 100 and they won the majority, with about 25 seats still counting. "
             "Provisional results.",
             "30 of 33 Senate races called right. A list of the closest races with a tick or a cross and the chance we "
             "gave the winner: " + "; ".join(f"{r[0]} {winner(r)[1]} in 100" for r in RACES) + ". Misses: Iowa, "
@@ -172,7 +173,7 @@ def build(reel: bool = False) -> tuple[Path, list[str]]:
     if reel:
         import simlab.publish.final as fin
         fin.SERIES = SERIES  # the Reel's strip names this series
-        _animate(out, DAY, SRC, lambda s: card(s, step=48))
+        _animate(out, DAY, SRC, lambda s: card(s, step=45))
         meta["reel"] = True
         (out / "meta.json").write_text(json.dumps(meta, indent=1, ensure_ascii=False), encoding="utf-8")
     (out / "checks.txt").write_text("\n".join(problems) or "all rules pass", encoding="utf-8")
