@@ -31,7 +31,7 @@ everyone else.**
 | --- | --- | --- |
 | Senate | Democrats control in 59 of 100 (Republicans 50+ in 39) | Democrats 54, Republicans 46 (AK, MS uncalled) |
 | Senate: Democrats at 54 or more | 6 in 100 | yes |
-| House | Democrats win in 63 of 100; median 222 D seats (80% range 205–247) | Democrats about 256 (253 called) |
+| House | Democrats win in 63 of 100; median 222 D seats (80% range 205–247) | Democrats about 256 (253 called): single source, not confirmed by a second check on 6 Nov |
 | House: Democrats at 253 or more | 7 in 100 | yes |
 
 Other forecasters' final chance of Democratic Senate control:
