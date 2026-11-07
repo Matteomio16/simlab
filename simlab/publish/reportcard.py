@@ -126,11 +126,133 @@ def wave(s: Slide):
     return s
 
 
+# Every Senate race in the final 3 Nov run: our chance for the left candidate, the left party (forecast.json); the
+# winner from docs/results-2026.md §3 (the other 20 called races went to our favorite; AK and MS uncalled).
+FINAL = {"AK": (48, "D"), "AL": (1, "D"), "AR": (0, "D"), "CO": (100, "D"), "DE": (100, "D"), "FL": (13, "D"),
+         "GA": (97, "D"), "IA": (43, "D"), "ID": (0, "I"), "IL": (99, "D"), "KS": (43, "D"), "KY": (2, "D"),
+         "LA": (7, "D"), "MA": (100, "D"), "ME": (63, "D"), "MI": (83, "D"), "MN": (86, "D"), "MS": (6, "D"),
+         "MT": (1, "I"), "NC": (95, "D"), "NE": (21, "I"), "NH": (94, "D"), "NJ": (98, "D"), "NM": (99, "D"),
+         "OH": (58, "D"), "OK": (0, "D"), "OR": (100, "D"), "RI": (100, "D"), "SC": (17, "D"), "SD": (1, "I"),
+         "TN": (0, "D"), "TX": (61, "D"), "VA": (100, "D"), "WV": (0, "D"), "WY": (0, "D")}
+MISSED = {"IA", "KS", "SC"}
+COUNTING = {"AK", "MS"}
+
+
+def winner_of(k: str) -> str:
+    p, left = FINAL[k]
+    if k in MISSED:
+        return left
+    return left if p > 50 else "R"
+
+
+def report(s: Slide):
+    """The cover: a school report card, one row per subject."""
+    from matplotlib.patches import FancyBboxPatch
+    from .specials import mix
+    s.headline("Our report card", px=88)
+    s.dek("The 2026 midterms: our final forecast on 3 November against what voters decided.", px=30)
+    x0, w, top = MARGIN, s.width, s.y + 16
+    h = 576
+    s.ax.add_patch(FancyBboxPatch((x0 + 12, top + 12), w, h, boxstyle="round,pad=0,rounding_size=18",
+                                  fc=LAB.accent, lw=0, zorder=1))
+    s.ax.add_patch(FancyBboxPatch((x0, top), w, h, boxstyle="round,pad=0,rounding_size=18", fc="#FFFFFF",
+                                  ec=LAB.hairline, lw=pt(2), zorder=2))
+    s.ax.add_patch(FancyBboxPatch((x0, top), w, 86, boxstyle="round,pad=0,rounding_size=18", fc=LAB.strip_bg, lw=0,
+                                  zorder=3))
+    s.ax.add_patch(plt.Rectangle((x0, top + 50), w, 36, fc=LAB.strip_bg, lw=0, zorder=3))
+    s._put(x0 + 34, top + 43, "REPORT CARD", "sans", 700, 30, LAB.strip_fg, va="center", zorder=4)
+    s._put(x0 + w - 34, top + 43, "2026 MIDTERMS", "mono", 600, 22, LAB.strip_fg, ha="right", va="center", zorder=4)
+    cols = [("SUBJECT", x0 + 34, "left"), ("OUR CALL", x0 + 330, "left"), ("RESULT", x0 + 590, "left"),
+            ("MARK", x0 + w - 34, "right")]
+    y = top + 122
+    for head, x, ha in cols:
+        s._put(x, y, head, "mono", 600, 19, LAB.ink2, ha=ha, va="center", zorder=4)
+    rows = [("Senate control", "Dem 59 in 100", "Dem, 54 seats", "tick"),
+            ("House control", "Dem 63 in 100", "Dem majority", "tick"),
+            ("Senate races", "33 called", "30 right", "30/33"),
+            ("Size of the wave", "Too small", "5 pts bigger", "Needs work")]
+    y += 36
+    for subj, call, res, m in rows:
+        s.ax.plot([x0 + 24, x0 + w - 24], [y, y], color=LAB.hairline, lw=pt(1.5), zorder=3)
+        yc = y + 48
+        s._put(x0 + 34, yc, subj, "sans", 700, 28, LAB.ink, va="center", zorder=4)
+        s._put(x0 + 330, yc, call, "sans", 500, 26, LAB.ink2, va="center", zorder=4)
+        s._put(x0 + 590, yc, res, "sans", 500, 26, LAB.ink2, va="center", zorder=4)
+        if m == "tick":
+            mark(s, x0 + w - 76, yc + 2, True, 40)
+        elif m == "Needs work":
+            s._put(x0 + w - 34, yc, m, "sans", 700, 26, LAB.rep, ha="right", va="center", zorder=4)
+        else:
+            s._put(x0 + w - 34, yc, m, "hero", 700, 40, LAB.ai, ha="right", va="center", zorder=4)
+        y += 96
+    s.y = top + h + 34
+    rc.stamp(s, x0 + w - 150, top + h + 30, "Provisional", px=34, rot=-7, color=LAB.rep)
+    s.note("Right direction. Too timid on the size.", width=560, px=30)
+
+
+def results_map(s: Slide, top: float, size: float = 66, gap: float = 7, label_px: int = 22) -> tuple[float, list]:
+    """Every Senate race coloured by who won; on each tile the chance we gave the winner. Misses carry a cross."""
+    from matplotlib.patches import FancyBboxPatch
+    from .specials import TILE
+    x0 = MARGIN + (s.width - 12 * (size + gap) + gap) / 2
+    tiles = []
+    order = sorted(TILE, key=lambda k: (k not in FINAL, k in MISSED or k in COUNTING, TILE[k]))
+    for k in order:
+        row, c = TILE[k]
+        x, y = x0 + c * (size + gap), top + row * (size + gap)
+        n0, t0, l0 = len(s.ax.patches), len(s.ax.texts), len(s.ax.lines)
+        box = dict(boxstyle="round,pad=0,rounding_size=8", zorder=2)
+        if k in COUNTING:
+            s.ax.add_patch(FancyBboxPatch((x, y), size, size, fc=LAB.paper, ec=LAB.ink2, lw=pt(2.5),
+                                          linestyle=(0, (3, 2)), **box))
+            s._put(x + size / 2, y + size * 0.38, k, "sans", 700, label_px, LAB.ink, ha="center", va="center", zorder=4)
+            s._put(x + size / 2, y + size * 0.7, "count", "mono", 500, label_px - 7, LAB.ink2, ha="center",
+                   va="center", zorder=4)
+        elif k in FINAL:
+            p, left = FINAL[k]
+            won = winner_of(k)
+            chance = p if won == left else 100 - p
+            col = LAB.dem if won in ("D", "I") else LAB.rep
+            s.ax.add_patch(FancyBboxPatch((x, y), size, size, fc=col, lw=0, **box))
+            s._put(x + size / 2, y + size * 0.36, k, "sans", 700, label_px, "#FFFFFF", ha="center", va="center",
+                   zorder=4)
+            s._put(x + size / 2, y + size * 0.68, str(chance), "mono", 600, label_px - 5, "#FFFFFF", ha="center",
+                   va="center", zorder=4)
+            if k in MISSED:
+                cx, cy = x + size - 6, y + 6
+                s.ax.add_patch(plt.Circle((cx, cy), size * 0.24, fc="#FFFFFF", ec=LAB.rep, lw=pt(3), zorder=5))
+                hh = size * 0.11
+                for a, b in (((cx - hh, cy - hh), (cx + hh, cy + hh)), ((cx - hh, cy + hh), (cx + hh, cy - hh))):
+                    s.ax.plot([a[0], b[0]], [a[1], b[1]], color=LAB.rep, lw=pt(4), solid_capstyle="round", zorder=6)
+        else:
+            s.ax.add_patch(FancyBboxPatch((x, y), size, size, fill=False, ec=LAB.hairline, lw=pt(1.5), **box))
+            s._put(x + size / 2, y + size / 2, k, "sans", 400, label_px - 4, LAB.muted, ha="center", va="center",
+                   zorder=4)
+        tiles.append(s.ax.patches[n0:] + s.ax.texts[t0:] + s.ax.lines[l0:])
+    return top + 8 * (size + gap), tiles
+
+
+def map_slide(s: Slide, size: float = 66):
+    s.headline("30 of 33 Senate races called right.", px=68)
+    s.dek("Who won each state, and the chance in 100 we gave the winner.", px=28)
+    s.y, _ = results_map(s, s.y + 20, size)
+    s.y += 8
+    x = MARGIN
+    for col, lab, hollow in [(LAB.dem, "Democrat won", False), (LAB.rep, "Republican won", False),
+                             (LAB.ink2, "still counting", True)]:
+        s.ax.add_patch(plt.Rectangle((x, s.y + 4), 22, 22, fc=LAB.paper if hollow else col, ec=col,
+                                     lw=pt(2) if hollow else 0, zorder=3))
+        s._put(x + 32, s.y + 15, lab, "sans", 600, 22, LAB.ink, va="center")
+        x += 32 + len(lab) * 11.5 + 34
+    s.y += 50
+    s.text("Missed: Iowa and Kansas, near coin flips at 43 in 100, and South Carolina, where we gave the Democrat 17.",
+           "sans", 600, 26, LAB.ink, after=0.3)
+
+
 def build(reel: bool = False) -> tuple[Path, list[str]]:
     a, b, c = (Slide(DAY, "", LAB, series=SERIES) for _ in range(3))
-    cover(a)
-    rc.stamp(a, a.w - 230, a.y + 60, "Provisional", px=40, rot=-6, color=LAB.rep)
-    card(b)
+    report(a)
+    map_slide(b)
     wave(c)
     for s in (a, b, c):
         s.source(SRC)
@@ -159,12 +281,13 @@ def build(reel: bool = False) -> tuple[Path, list[str]]:
                "missed Iowa and Kansas, both near coin flips, and South Carolina. And we underestimated the size of "
                "the wave: on average, Democrats beat our margins by about 5 points. Which call surprised you most?")
     posts = {"x": x, "threads": end(threads, LIMIT["threads"])}
-    alts = ["Our report card, both chambers called right: we gave Democrats the Senate in 59 of 100 simulated "
+    alts = ["Our report card, drawn as a school report: Senate control, our call Democrats 59 in 100, result Democrats at 54 seats, ticked; House control, 63 in 100, Democratic majority, ticked; Senate races, 30 of 33 right; size of the wave, needs work. Both chambers called right: we gave Democrats the Senate in 59 of 100 simulated "
             "elections and they are at 54 seats; the House in 63 of 100 and they won the majority, with about 25 seats still counting. "
             "Provisional results.",
-            "30 of 33 Senate races called right. A list of the closest races with a tick or a cross and the chance we "
-            "gave the winner: " + "; ".join(f"{r[0]} {winner(r)[1]} in 100" for r in RACES) + ". Misses: Iowa, "
-            "Kansas, South Carolina.",
+            "30 of 33 Senate races called right. A tile map of the 35 Senate races, each coloured by who won, with "
+            "the chance we gave the winner: " + "; ".join(f"{r[0]} {winner(r)[1]}" for r in RACES) + ". Iowa, "
+            "Kansas and South Carolina carry a cross: we called them the other way. Alaska and Mississippi: still "
+            "counting.",
             "Where we fell short: our expected margin against the result in 13 Senate races, with arrows; most "
             "results landed to the Democratic side of our number. Democrats beat our margins by about 5 points."]
     meta = {"threads_topic": "2026 Midterms", "instagram_first_comment": "Which call surprised you most?"}
@@ -173,7 +296,8 @@ def build(reel: bool = False) -> tuple[Path, list[str]]:
     if reel:
         import simlab.publish.final as fin
         fin.SERIES = SERIES  # the Reel's strip names this series
-        _animate(out, DAY, SRC, lambda s: card(s, step=45))
+        _animate(out, DAY, SRC, lambda s: (s.headline("30 of 33 Senate races called right.", px=72),
+                                           results_map(s, s.y + 60, 72, 8, 24)))
         meta["reel"] = True
         (out / "meta.json").write_text(json.dumps(meta, indent=1, ensure_ascii=False), encoding="utf-8")
     (out / "checks.txt").write_text("\n".join(problems) or "all rules pass", encoding="utf-8")
