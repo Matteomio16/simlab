@@ -411,13 +411,159 @@ def numbers(s):
 
 
 # ---- the posts --------------------------------------------------------------------------------------------------
+# ---- the second slot (20:30 Paris, early afternoon in the US): lighter posts ------------------------------------
+def card_row(s, y, h, title, body, n=None):
+    t = s.t
+    s.ax.add_patch(FancyBboxPatch((MARGIN, y), s.width, h, boxstyle="round,pad=0,rounding_size=18", fc="#FFFFFF",
+                                  ec=t.hairline, lw=pt(2), zorder=2))
+    x = MARGIN + 28
+    if n is not None:
+        s.ax.add_patch(plt.Circle((MARGIN + 58, y + h / 2), 30, fc=t.ai, lw=0, zorder=3))
+        s._put(MARGIN + 58, y + h / 2, str(n), "hero", 700, 34, "#FFFFFF", ha="center", va="center", zorder=4)
+        x = MARGIN + 112
+    s._put(x, y + 24, title, "sans", 700, 30, t.ink, va="top", zorder=4)
+    for j, line in enumerate(s.wrap(body, "sans", 400, 25, s.width - (x - MARGIN) - 28)):
+        s._put(x, y + 70 + j * 32, line, "sans", 400, 25, t.ink2, va="top", zorder=4)
+
+
+def how_it_worked(s):
+    s.headline("How NotAPoll v1 worked.", px=80)
+    s.dek("Four steps, from the starting line to the final forecast.", px=30)
+    y = s.y + 14
+    for n, (title, body) in enumerate([
+            ("12 Oct: the starting line", "Each race started from its polls and the state's voting record."),
+            ("Every day: the news", "Voter personas, built from real survey answers, reacted to the day's stories."),
+            ("Every race: 40,000 simulated elections", "Each draws its own swings. A candidate's chance is how often "
+                                                       "they win."),
+            ("Every Sunday: the check", "The polls and the markets checked us. They never moved our numbers.")], 1):
+        card_row(s, y, 158, title, body, n)
+        y += 178
+    s.y = y
+
+
+def what_next(s):
+    t = s.t
+    s.headline("The count isn't over.", px=88)
+    s.dek("What happens next, as of 11 November.", px=30)
+    x = MARGIN + 36
+    top = s.y + 36
+    items = [("Mississippi", "A very close count. Certification is expected around 13 to 15 November."),
+             ("18 November: Alaska", "The ranked-choice count is on 18 November."),
+             ("After certification", "Our final scorecard: every race scored against the official results, misses "
+                                     "first.")]
+    step = 200
+    s.ax.plot([x, x], [top + 16, top + step * 2 + 16], color=t.baseline, lw=pt(3), zorder=1)
+    for i, (title, body) in enumerate(items):
+        y = top + i * step
+        s.ax.add_patch(plt.Circle((x, y + 16), 17, fc=t.ai if i == 2 else t.paper, ec=t.ai, lw=pt(3.5), zorder=3,
+                                  linestyle="-" if i == 2 else (0, (3, 2))))
+        s._put(x + 50, y, title, "sans", 700, 34, t.ink, va="top")
+        for j, line in enumerate(s.wrap(body, "sans", 400, 27, s.width - 100)):
+            s._put(x + 50, y + 52 + j * 34, line, "sans", 400, 27, t.ink2, va="top")
+    s.y = top + 3 * step - 10
+    s.note("Until then, every number is provisional.", width=640, px=30)
+
+
+def chips(s, items, h=128, gap=26, px=54):
+    t = s.t
+    y = s.y + 30
+    for letter, txt in items:
+        s.ax.add_patch(FancyBboxPatch((MARGIN, y), s.width, h, boxstyle="round,pad=0,rounding_size=22", fc="#FFFFFF",
+                                      ec=t.ai, lw=pt(3), zorder=2))
+        s.ax.add_patch(plt.Circle((MARGIN + 70, y + h / 2), 38, fc=t.ai, lw=0, zorder=3))
+        s._put(MARGIN + 70, y + h / 2, letter, "hero", 700, 44, "#FFFFFF", ha="center", va="center", zorder=4)
+        s._put(MARGIN + 140, y + h / 2, txt, "hero", 700, px, t.ink, va="center", zorder=4)
+        y += h + gap
+    s.y = y
+
+
+def guess_q(s):
+    s.headline("Guess the margin.", px=96)
+    s.dek("North Carolina Senate. NotAPoll v1 said Cooper by 8.8 points. Where did it land?", px=30)
+    chips(s, [("A", "Cooper by 9"), ("B", "Cooper by 14"), ("C", "Cooper by 20")])
+    s.note("Swipe for the answer.", width=520, px=32)
+
+
+def guess_a(s):
+    t = s.t
+    s.headline("Cooper by 20.0.", px=96)
+    s.dek("The result, in points. NotAPoll v1 had said 8.8.", px=30)
+    y = s.y + 30
+    s._put(MARGIN, y, "8.8", "hero", 700, 170, t.muted, va="top")
+    s._put(MARGIN + 380, y + 50, "→", "hero", 700, 110, t.ai, va="top")
+    s._put(MARGIN + 520, y, "20.0", "hero", 700, 170, t.ai, va="top")
+    s._put(MARGIN, y + 190, "v1's expected margin", "sans", 600, 26, t.ink2, va="top")
+    s._put(MARGIN + 520, y + 190, "the result", "sans", 600, 26, t.ink2, va="top")
+    s.y = y + 250
+    s.text("The biggest gap between v1 and a result in the 13 closest Senate races: 11.2 points.", "sans", 600, 30,
+           t.ink, after=0.6)
+    s.note("A safe call, right. A margin far bigger than v1 expected.", width=860, px=30)
+
+
+def sc_chances(s):
+    t = s.t
+    s.headline("South Carolina: the real miss.", px=66)
+    s.dek("The chance in 100 each gave the Democrat.", px=28)
+    xl, xr = MARGIN, s.w - MARGIN
+    X = lambda v: xl + (xr - xl) * v / 100
+    top = s.y + 70
+    for v, lab in [(0, "0"), (50, "coin flip"), (100, "100")]:
+        s.ax.plot([X(v), X(v)], [top - 10, top + 3 * 118 - 36], color=t.baseline if v == 50 else t.hairline, lw=pt(2),
+                  zorder=1)
+        s._put(X(v), top - 18, lab, "mono", 500, 19, t.ink2, ha="left" if v == 0 else "right" if v == 100 else "center",
+               va="bottom")
+    for i, (lab, v, col) in enumerate([("NotAPoll v1", 17, t.ai), ("Polls alone", 25, t.ink2),
+                                       ("Prediction markets", 32, t.ink2)]):
+        y = top + 20 + i * 118
+        s._put(MARGIN, y, lab, "sans", 700 if col == t.ai else 500, 26, t.ai if col == t.ai else t.ink, va="center")
+        s.ax.add_patch(FancyBboxPatch((xl, y + 24), X(v) - xl, 42, boxstyle="round,pad=0,rounding_size=6", fc=col, lw=0,
+                                      zorder=3))
+        s._put(X(v) + 14, y + 45, str(v), "hero", 700, 34, col, va="center")
+    s.y = top + 3 * 118 + 6
+    s.text("All three had the Republican ahead.", "sans", 600, 28, t.ink, after=0.5)
+    s.note("The Democrat won by 4.5 points.", width=620, px=32)
+
+
+def sc_margin(s):
+    t = s.t
+    s.headline("A 10-point miss.", px=96)
+    s.dek("NotAPoll v1's expected margin in South Carolina, against the result.", px=28)
+    xl, xr = MARGIN + 50, s.w - MARGIN - 50
+    X = lambda v: xl + (xr - xl) * (v + 12) / 24
+    y = s.y + 190
+    s.ax.plot([X(-12), X(12)], [y, y], color=t.baseline, lw=pt(3), zorder=1)
+    for v in (-10, -5, 0, 5, 10):
+        s.ax.plot([X(v), X(v)], [y - 10, y + 10], color=t.baseline, lw=pt(2), zorder=1)
+        s._put(X(v), y + 24, str(abs(v)), "mono", 500, 20, t.ink2, ha="center", va="top")
+    s._put(X(-12), y + 62, "← Republican", "sans", 600, 24, t.rep, va="top")
+    s._put(X(12), y + 62, "Democrat →", "sans", 600, 24, t.dem, ha="right", va="top")
+    s.ax.annotate("", xy=(X(4.5) - 22, y), xytext=(X(-5.6) + 22, y), zorder=3, arrowprops=dict(
+        arrowstyle="-|>,head_length=0.5,head_width=0.3", color=t.ink2, lw=pt(3.5), shrinkA=0, shrinkB=0,
+        mutation_scale=pt(20)))
+    s.ax.scatter([X(-5.6)], [y], s=pt(28) ** 2, color=t.ai, zorder=4)
+    s.ax.scatter([X(4.5)], [y], s=pt(28) ** 2, facecolor=t.paper, edgecolor=t.ink, lw=pt(3.5), zorder=4)
+    s._put(X(-5.6), y - 44, "v1: Republican by 5.6", "sans", 700, 25, t.ai, ha="center", va="bottom")
+    s._put(X(4.5), y - 44, "Result: Democrat by 4.5", "sans", 700, 25, t.ink, ha="center", va="bottom")
+    s.y = y + 140
+    s.text("After 12 October the polls moved toward the Democrat. v1's start stayed frozen, and its news moves were too "
+           "small to follow. The same happened in Maine, Kansas and Texas.", "sans", 500, 29, t.ink, after=0.6)
+
+
+def ask_card(s):
+    s.headline("If v2 could get one thing right.", px=74)
+    s.dek("Which would you pick?", px=32)
+    chips(s, [("A", "Which races move most"), ("B", "The size of the wave"), ("C", "Turnout, on its own")], px=46)
+    s.note("A, B or C? Tell us in the comments.", width=700, px=32)
+
+
+
 @dataclass
 class Post:
     name: str
     theme: object
     series: str
     slides: list            # [(draw, source line)]
-    reel: Callable          # draws the 9:16 cover
+    reel: Callable | None   # draws the 9:16 cover (None: no Reel)
     caption: str
     x: str
     threads: str
@@ -662,6 +808,113 @@ def post_list() -> list[Post]:
     return P
 
 
+def second_list() -> list[Post]:
+    P = []
+    P.append(Post(
+        "how-v1-worked", LAB, "How v1 worked", [(how_it_worked, "How NotAPoll v1 worked. Method: notapoll.org/methods")],
+        how_it_worked,
+        "How NotAPoll v1 worked, in four steps.\n\n"
+        "1. On 12 October, each race started from its polls and the state's voting record.\n"
+        "2. Every day after that, voter personas, built from real survey answers, reacted to the day's news.\n"
+        "3. Every race was then played out 40,000 times, and a candidate's chance is how often they win.\n"
+        "4. Every Sunday, the polls and the markets checked us. They never moved our numbers.\n\n"
+        "That was the experiment: could a social simulation, rather than a poll, get close to a real election? This "
+        "week we're sharing how it went, hits and misses.\n\n"
+        f"What would you like us to explain next?\n\n{tags()}",
+        f"How NotAPoll v1 worked: polls and voting records set each race's start on 12 Oct; then voter personas "
+        f"reacted to the news every day, 40,000 simulated elections per race, and polls only checked us on Sundays. "
+        f"{LABEL}.",
+        "How NotAPoll v1 worked, in four steps: a starting line from polls and voting records on 12 October; voter "
+        "personas reacting to the news every day; 40,000 simulated elections per race; and a check against the polls "
+        "and markets every Sunday. What would you like us to explain next?",
+        ["Four numbered steps for how NotAPoll v1 worked. One: 12 October, the starting line, from each race's polls and "
+         "the state's voting record. Two: every day, the news, with voter personas built from real survey answers "
+         "reacting. Three: every race played out 40,000 times. Four: every Sunday, a check against the polls and "
+         "markets, which never moved our numbers."],
+        "What would you like us to explain next?"))
+
+    P.append(Post(
+        "what-next", T_SEIS, "What's next", [(what_next, "Dates from AP and state election offices, as of 11 Nov; "
+                                                         "they can change.")],
+        what_next,
+        "The count isn't over. As of 11 November, two Senate races are still unsettled: Mississippi is a very close "
+        "count, with certification expected around 13 to 15 November, and Alaska's ranked-choice count is on 18 "
+        "November.\n\n"
+        "After certification we publish our final scorecard: every race scored against the official results, misses "
+        "first.\n\n"
+        f"Until then, every number we've shown is provisional. Which race are you watching?\n\n{tags()}",
+        f"The count isn't over (11 Nov): Mississippi is a very close count, certification expected around 13 to 15 "
+        f"Nov; Alaska's ranked-choice count is on 18 Nov. Then our final scorecard, misses first. {LABEL}.",
+        "The count isn't over: as of 11 November, Mississippi is a very close count, with certification expected "
+        "around 13 to 15 November, and Alaska's ranked-choice count is on 18 November. After certification, our "
+        "final scorecard, misses first. Which race are you watching?",
+        ["A timeline of three steps. Mississippi: a very close count, certification expected around 13 to 15 "
+         "November. 18 November: Alaska, the ranked-choice count. After certification: our final scorecard, every "
+         "race scored against the official results, misses first."],
+        "Which race are you watching?"))
+
+    P.append(Post(
+        "guess-margin", T_LILAC, "Guess the margin",
+        [(guess_q, "Margins: share of the two main candidates' votes. Provisional results."),
+         (guess_a, "Result as of 11 Nov (AP, networks, states). Margins: share of the two main candidates' votes.")],
+        None,
+        "Guess the margin. North Carolina Senate: NotAPoll v1 said Cooper by 8.8 points. Where did it land?\n\n"
+        "A. Cooper by 9\nB. Cooper by 14\nC. Cooper by 20\n\n"
+        "Pick one in the comments, then swipe for the answer. Provisional results; the final scorecard comes after "
+        f"certification.\n\nA, B or C?\n\n{tags(' #NorthCarolina')}",
+        f"Guess the margin: North Carolina Senate. NotAPoll v1 said Cooper by 8.8. Was it A) 9, B) 14 or C) 20? Swipe "
+        f"for the answer. {LABEL}.",
+        "Guess the margin: North Carolina Senate. NotAPoll v1 said Cooper by 8.8 points. Was the result A) Cooper by "
+        "9, B) by 14 or C) by 20? Swipe for the answer. A, B or C?",
+        ["Guess the margin. North Carolina Senate, NotAPoll v1 said Cooper by 8.8 points. Three options: A, Cooper by "
+         "9; B, Cooper by 14; C, Cooper by 20. Swipe for the answer.",
+         "The answer: Cooper by 20.0. NotAPoll v1 had said 8.8: the biggest gap between v1 and a result in the 13 "
+         "closest Senate races, 11.2 points."],
+        "A, B or C? Pick before you swipe."))
+
+    P.append(Post(
+        "south-carolina", T_CHAM, "South Carolina",
+        [(sc_chances, SRC), (sc_margin, SRC)],
+        sc_chances,
+        "South Carolina was NotAPoll v1's real miss. v1 gave the Democrat 17 in 100; polls alone gave 25 and the "
+        "prediction markets 32. All three had the Republican ahead. The Democrat won by 4.5 points (provisional).\n\n"
+        "In margin terms, v1 expected the Republican by 5.6, so it missed by 10.1 points.\n\n"
+        "Why? In South Carolina, as in Maine, Kansas and Texas, the polls moved toward the Democrat after 12 October. "
+        "v1's starting line stayed frozen, and its news moves were too small to follow. That's one of the things a v2 "
+        "would test.\n\n"
+        f"Margins are the share of the two main candidates' votes. Did you expect South Carolina?\n\n"
+        f"{tags(' #SouthCarolina')}",
+        f"South Carolina was NotAPoll v1's real miss: 17 in 100 for the Democrat (polls alone 25, markets 32), all "
+        f"three with the Republican ahead. The Democrat won by 4.5 points (provisional); v1 expected the Republican by "
+        f"5.6. {LABEL}.",
+        "South Carolina was NotAPoll v1's real miss: 17 in 100 for the Democrat, with polls alone at 25 and the markets "
+        "at 32, all three with the Republican ahead. The Democrat won by 4.5 points (provisional), a 10-point miss on "
+        "the margin. Did you expect South Carolina?",
+        ["Three bars for the chance in 100 each gave the South Carolina Democrat: NotAPoll v1 17, polls alone 25, "
+         "prediction markets 32. All three had the Republican ahead. The Democrat won by 4.5 points.",
+         "A number line from Republican to Democrat: NotAPoll v1 expected the Republican by 5.6; the result was the "
+         "Democrat by 4.5, a 10-point miss. The polls moved toward the Democrat after 12 October while v1's start "
+         "stayed frozen; the same in Maine, Kansas and Texas."],
+        "Did you expect South Carolina?"))
+
+    P.append(Post(
+        "what-v2-first", T_BALL, "Your v2 pick", [(ask_card, "From our review of the results. Provisional results.")],
+        ask_card,
+        "If a v2 could get one thing right, which would you pick?\n\n"
+        "A. Which races move most\nB. The size of the wave\nC. Turnout, on its own\n\n"
+        "These are the three things our review of NotAPoll v1's results kept pointing to. Tell us in the comments: A, B "
+        f"or C?\n\n{tags()}",
+        f"If a v2 could get one thing right, which would you pick? A) Which races move most, B) the size of the wave, "
+        f"C) turnout, on its own. A, B or C? {LABEL}.",
+        "If a v2 of NotAPoll could get one thing right, which would you pick? A) Which races move most, B) the size of "
+        "the wave, C) turnout, on its own. A, B or C?",
+        ["If a v2 could get one thing right, which would you pick? Three options: A, which races move most; B, the "
+         "size of the wave; C, turnout, on its own."],
+        "A, B or C?"))
+    return P
+
+
+
 def animate(out: Path, d: date, theme, series: str, src: str, draw):
     """9:16 Reel: the slide's marks appear one after another, then hold; the cover is the last frame."""
     import imageio_ffmpeg
@@ -711,7 +964,7 @@ def build(post: Post, d: date, reel: bool = True) -> tuple[Path, list[str]]:
     if not reel and (out / "reel.mp4").exists():  # a static rebuild keeps the Reel flag
         meta["reel"] = True
         (out / "meta.json").write_text(json.dumps(meta, indent=1, ensure_ascii=False), encoding="utf-8")
-    if reel:
+    if reel and post.reel is not None:
         try:
             animate(out, d, post.theme, post.series, post.slides[0][1], post.reel)
             meta["reel"] = True
@@ -725,11 +978,12 @@ def build(post: Post, d: date, reel: bool = True) -> tuple[Path, list[str]]:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only")
+    ap.add_argument("--set", choices=["main", "second"], default="main")
     ap.add_argument("--start", default="2026-11-11")
     ap.add_argument("--reel", action="store_true")
     a = ap.parse_args()
     start = date.fromisoformat(a.start)
-    for i, post in enumerate(post_list()):
+    for i, post in enumerate(post_list() if a.set == "main" else second_list()):
         if a.only and post.name != a.only:
             continue
         out, problems = build(post, start + timedelta(days=i), a.reel)
