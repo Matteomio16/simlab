@@ -97,7 +97,7 @@ def card(s: Slide, rows=RACES, step: float = 45):
 
 def wave(s: Slide):
     s.headline("Where we fell short: the size of the wave.", px=64)
-    s.dek("Our expected margin against the result, in points.", px=28)
+    s.dek("NotAPoll v1's expected margin against the result, in points.", px=28)
     top, x0, x1 = s.y + 34, MARGIN + 250, s.w - MARGIN - 10
     lim = 22
     X = lambda v: x0 + (x1 - x0) * (v + lim) / (2 * lim)
@@ -117,7 +117,7 @@ def wave(s: Slide):
     s._put(X(lim), y, "Democrat →", "sans", 600, 22, LAB.dem, ha="right", va="top")
     s.y = y + 44
     s.ax.scatter([MARGIN + 12], [s.y + 14], s=pt(18) ** 2, color=LAB.ai)
-    s._put(MARGIN + 34, s.y + 14, "our expected margin", "sans", 500, 24, LAB.ink2, va="center")
+    s._put(MARGIN + 34, s.y + 14, "v1's expected margin", "sans", 500, 24, LAB.ink2, va="center")
     s.ax.scatter([MARGIN + 330], [s.y + 14], s=pt(18) ** 2, facecolor=LAB.paper, edgecolor=LAB.ink, lw=pt(3))
     s._put(MARGIN + 352, s.y + 14, "the result", "sans", 500, 24, LAB.ink2, va="center")
     s.y += 56
@@ -149,8 +149,8 @@ def report(s: Slide):
     """The cover: a school report card, one row per subject."""
     from matplotlib.patches import FancyBboxPatch
     from .specials import mix
-    s.headline("Our report card", px=88)
-    s.dek("The 2026 midterms: our final forecast on 3 November against what voters decided.", px=30)
+    s.headline("NotAPoll v1's report card", px=76)
+    s.dek("The 2026 midterms: NotAPoll v1's final forecast on 3 November against what voters decided.", px=30)
     x0, w, top = MARGIN, s.width, s.y + 16
     h = 576
     s.ax.add_patch(FancyBboxPatch((x0 + 12, top + 12), w, h, boxstyle="round,pad=0,rounding_size=18",
@@ -160,7 +160,7 @@ def report(s: Slide):
     s.ax.add_patch(FancyBboxPatch((x0, top), w, 86, boxstyle="round,pad=0,rounding_size=18", fc=LAB.strip_bg, lw=0,
                                   zorder=3))
     s.ax.add_patch(plt.Rectangle((x0, top + 50), w, 36, fc=LAB.strip_bg, lw=0, zorder=3))
-    s._put(x0 + 34, top + 43, "REPORT CARD", "sans", 700, 30, LAB.strip_fg, va="center", zorder=4)
+    s._put(x0 + 34, top + 43, "REPORT CARD · NOTAPOLL V1", "sans", 700, 28, LAB.strip_fg, va="center", zorder=4)
     s._put(x0 + w - 34, top + 43, "2026 MIDTERMS", "mono", 600, 22, LAB.strip_fg, ha="right", va="center", zorder=4)
     cols = [("SUBJECT", x0 + 34, "left"), ("OUR CALL", x0 + 330, "left"), ("RESULT", x0 + 590, "left"),
             ("MARK", x0 + w - 34, "right")]
@@ -187,7 +187,7 @@ def report(s: Slide):
         y += 96
     s.y = top + h + 34
     rc.stamp(s, x0 + w - 150, top + h + 30, "Provisional", px=34, rot=-7, color=LAB.rep)
-    s.note("Right direction. Too timid on the size.", width=560, px=30)
+    s.note("Right direction, too timid on the size. That's v1.", width=640, px=30)
 
 
 def results_map(s: Slide, top: float, size: float = 66, gap: float = 7, label_px: int = 22) -> tuple[float, list]:
@@ -234,7 +234,7 @@ def results_map(s: Slide, top: float, size: float = 66, gap: float = 7, label_px
 
 def map_slide(s: Slide, size: float = 66):
     s.headline("30 of 33 Senate races called right.", px=68)
-    s.dek("Who won each state, and the chance in 100 we gave the winner.", px=28)
+    s.dek("Who won each state, and the chance in 100 NotAPoll v1 gave the winner.", px=28)
     s.y, _ = results_map(s, s.y + 20, size)
     s.y += 8
     x = MARGIN
