@@ -28,7 +28,7 @@ from .pollread import end
 from .specials import TILE
 from .themes import BALLOT, CHAMBER, LAB, SEISMO
 
-AS_OF = "6 Nov"
+AS_OF = "11 Nov"
 SRC = f"Provisional results (AP, networks, states; {AS_OF}). Final scorecard after certification."
 strip = dict(strip_bg=LAB.strip_bg, strip_fg=LAB.strip_fg)
 T_SEIS, T_CHAM, T_BALL = (replace(t, **strip) for t in (SEISMO, CHAMBER, BALLOT))
@@ -178,7 +178,7 @@ def damp(s):
     numbered(s, ["Stories fade fast: a half-life of 5.5 days, so a week-old story keeps about 40% of its effect.",
                  "Only voters who can still move count: the persuadable share for vote choice, the mobilisable share "
                  "for turnout.",
-                 "The size of a reaction was set from past events, about 0.21 on average. No wave was in that history."],
+                 "The size we gave each reaction was set from past events, about 0.21 on our scale. No wave was in that history."],
              size=40)
     s.note("Together, they damped everything.", width=640, px=32)
 
@@ -396,7 +396,7 @@ def numbers(s):
     blocks = [("23", "daily forecasts, 12 Oct to 3 Nov", t.ai, "#FFFFFF"), ("45,000", "news articles read", t.dem, "#FFFFFF"),
               ("135,000", "reactions from voter personas", "#F6DD6E", t.ink),
               ("35 + 435", "Senate races and House seats", "#CDB8E3", t.ink),
-              ("$18", "in model costs, for all of it", t.rep, "#FFFFFF"), ("128", "posts, hits and misses", "#FFFFFF", t.ink)]
+              ("$18", "in model costs for the daily runs", t.rep, "#FFFFFF"), ("128", "posts, hits and misses", "#FFFFFF", t.ink)]
     top = s.y + 6
     for i, (num, lab, fc, fg) in enumerate(blocks):
         r, c = divmod(i, 2)
@@ -435,16 +435,17 @@ def post_list() -> list[Post]:
         "report-card", LAB, "Our report card",
         [(rcard.report, SRC), (rcard.map_slide, SRC), (rcard.wave, SRC)],
         lambda s: (s.headline("30 of 33 Senate races called right.", px=72), rcard.results_map(s, s.y + 60, 72, 8, 24)),
-        "NotAPoll v1's report card. These are provisional results (as of 6 November); the final scorecard comes after "
+        "NotAPoll v1's report card. These are provisional results (as of 11 November); the final scorecard comes after "
         "certification.\n\n"
         "Both chambers right. NotAPoll v1 gave Democrats the Senate in 59 of every 100 simulated elections, and they're "
         "at 54 seats, with Alaska and Mississippi still counting. It gave them the House in 63 of 100, and Democrats "
-        "won the majority, with about 25 seats still counting.\n\n"
+        "won the majority, with more than 250 seats.\n\n"
         "30 of the 33 called Senate races right. That includes Texas, where v1 had Talarico favoured while Cook called "
         "it a toss-up, and Ohio, Maine, Michigan, Minnesota, North Carolina and New Hampshire, plus the Republican "
         "holds in Nebraska, Florida and Louisiana.\n\n"
         "Three misses. Iowa and Kansas we had close, Democrats winning 43 in 100 in each, and both went the other way. "
-        "South Carolina was the real miss: 17 in 100 for the Democrat.\n\n"
+        "South Carolina was the real miss: 17 in 100 for the Democrat. Two races are still too close to call: Alaska, "
+        "and Mississippi, where v1 gave the Republican 94 in 100. If Mississippi flips, it will be v1's biggest miss.\n\n"
         "Where v1 fell short: the size of the wave. On average, Democrats beat our margins by about 5 points in the "
         "Senate, and by more in the House.\n\n"
         "That's v1, our first version. Next: how it compares with the markets, other forecasters and its own "
@@ -472,8 +473,8 @@ def post_list() -> list[Post]:
         "compare", T_SEIS, "How we compare",
         [(tape, "Scored on the 33 called Senate races. Polls alone: our own twin, with the voter personas off. "
                 "Provisional results."),
-         (field, "Final forecasts before the 3 Nov election; markets are Polymarket and Kalshi prices. Provisional "
-                 "results."),
+         (field, "Final forecasts, 1 to 3 Nov. Markets are Polymarket and Kalshi prices; The Economist's figure is via "
+                 "Vote-Scope, 2 Nov. Provisional results."),
          (bias, "Raw poll average: the 27 races with polls. Bias: how far Democrats were underrated, on average. "
                 "Provisional results.")],
         tape,
@@ -488,7 +489,7 @@ def post_list() -> list[Post]:
         "comes from four races: South Carolina, Maine, Kansas and Texas. And we all leaned the same way: the raw poll "
         "average underrated Democrats by 3.6 points, polls alone by 4.9, v1 by 5.2.\n\n"
         "Next to other forecasters, v1 was less sure that Democrats would win the Senate: 59 in 100, against 77 to 80 "
-        "at the markets and four others. Only the Economist was lower, at 53. Democrats won it.\n\n"
+        "at the markets and four others. Only the Economist was lower, at around 53 to 56. Democrats won it.\n\n"
         "This is v1, our first version. The full scorecard comes after certification, and v2 starts from it.\n\n"
         f"Which number surprised you?\n\n{tags()}",
         f"How NotAPoll v1 compares (provisional): level with its polls-alone twin on the calls, 30 of 33 each, and "
@@ -530,7 +531,7 @@ def post_list() -> list[Post]:
          "NotAPoll v1's expected margin: blue arrows lean left, toward Democrats, red toward Republicans. Twelve "
          "arrows are blue; the biggest are North Carolina, Texas and South Carolina. Only Nebraska is red.",
          "Why v1 stayed close to where it started: stories fade with a half-life of 5.5 days; only voters who can "
-         "still move count; reaction sizes were set from past events, about 0.21 on average. Together they damped "
+         "still move count; the size given each reaction was set from past events, about 0.21 on our scale. Together they damped "
          "everything."],
         "Where did the wave surprise you?"))
 
@@ -604,7 +605,7 @@ def post_list() -> list[Post]:
         "The receipts: what we said about seven races in Reading the polls, against the provisional results. "
         "Direction right in 5 of 7, and in all seven the Democrat did better than we said. Texas: we said Talarico "
         "+3, he won by 12.2. Which receipt surprised you?",
-        ["A shop receipt headed NotAPoll v1, results as of 6 November, provisional. Seven rows, what we said and the "
+        ["A shop receipt headed NotAPoll v1, results as of 11 November, provisional. Seven rows, what we said and the "
          "result: Texas Talarico +3, D +12.2, right; Ohio Brown +3, D +5.0, right; Michigan El-Sayed +4, D +7.1, "
          "right; North Carolina Cooper +9, D +20.0, right; Maine Jackson +2, D +6.9, right; Kansas Marshall +2, D "
          "+5.2, wrong; Iowa Hinson +1, D +4.2, wrong. Direction right 5 of 7; Democrats did better 7 of 7."],
@@ -645,18 +646,18 @@ def post_list() -> list[Post]:
         numbers,
         "NotAPoll v1, by the numbers. From 12 October to 3 November: 23 daily forecasts of all 35 Senate races and 435 "
         "House seats; about 45,000 news articles read; about 135,000 reactions from voter personas built from real "
-        "survey answers; 128 posts, hits and misses included. All of it cost $18 in model fees.\n\n"
+        "survey answers; 128 posts, hits and misses included. The daily runs cost about $18 in model fees.\n\n"
         "Thank you for following along, and for every comment. The final scorecard comes after certification. Then, "
         f"v2.\n\nWhat would you like us to score next?\n\n{tags()}",
         f"NotAPoll v1 by the numbers: 23 daily forecasts, about 45,000 news articles read, about 135,000 reactions "
-        f"from voter personas, 128 posts, $18 in model costs. Thank you for following along. Final scorecard after "
-        f"certification. {LABEL}.",
+        f"from voter personas, 128 posts, about $18 in model costs for the daily runs. Thank you for following along. Final scorecard "
+        f"after certification. {LABEL}.",
         "NotAPoll v1, by the numbers: 23 daily forecasts of 35 Senate races and 435 House seats, about 45,000 news "
-        "articles read, about 135,000 reactions from voter personas, 128 posts, and $18 in model costs for all of it. "
+        "articles read, about 135,000 reactions from voter personas, 128 posts, and about $18 in model costs for the daily runs. "
         "Thank you for following along. What would you like us to score next?",
         ["Six colour blocks of numbers for NotAPoll v1: 23 daily forecasts, 12 October to 3 November; 45,000 news "
-         "articles read; 135,000 reactions from voter personas; 35 Senate races plus 435 House seats; $18 in model "
-         "costs for all of it; 128 posts, hits and misses. Thank you for following along."],
+         "articles read; 135,000 reactions from voter personas; 35 Senate races plus 435 House seats; about $18 in "
+         "model costs for the daily runs; 128 posts, hits and misses. Thank you for following along."],
         "What would you like us to score next?"))
     return P
 
