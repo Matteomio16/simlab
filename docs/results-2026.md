@@ -11,6 +11,14 @@ Our numbers are the final 3 Nov run (`simlab-data/derived/2026-11-03/forecast.js
 - prediction markets;
 - Cook ratings, scored as Solid 97, Likely 85, Lean 70, Toss-up 50.
 
+**Refresh, 11 Nov (second-source check):**
+- **Alaska:** still uncalled. Peltola leads on first choices, about 48.6 to 47.5; the ranked-choice count is on 18 Nov.
+- **Mississippi:** still uncalled. Colom (D) leads by about 2,600 votes (0.27 points). We gave Hyde-Smith 94 in 100, so if
+  Colom wins it's a fourth wrong call.
+- **House:** the Democratic majority is confirmed, with about 254 seats called.
+- **Forecasters:** confirmed except the Economist: 53 via Vote-Scope on 2 Nov, against 56 on its own page on 27 Oct.
+- **Model spend:** the $18 is the daily runs only. The key's total including tests is about $23.
+
 ## 1. What we did
 
 - A live forecast for all 35 Senate races and all 435 House seats, every morning from 12 Oct to 3 Nov: 23 public runs,
