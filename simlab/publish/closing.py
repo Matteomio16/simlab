@@ -447,8 +447,8 @@ def what_next(s):
     s.dek("What happens next, as of 11 November.", px=30)
     x = MARGIN + 36
     top = s.y + 36
-    items = [("Mississippi", "A very close count. Certification is expected around 13 to 15 November."),
-             ("18 November: Alaska", "The ranked-choice count is on 18 November."),
+    items = [("Mississippi", "Still counting its last ballots."),
+             ("Alaska", "Runs its ranked-choice count in the coming days."),
              ("After certification", "Our final scorecard: every race scored against the official results, misses "
                                      "first.")]
     step = 200
@@ -834,23 +834,21 @@ def second_list() -> list[Post]:
         "What would you like us to explain next?"))
 
     P.append(Post(
-        "what-next", T_SEIS, "What's next", [(what_next, "Dates from AP and state election offices, as of 11 Nov; "
-                                                         "they can change.")],
+        "what-next", T_SEIS, "What's next", [(what_next, "Status from news reports, as of 11 Nov; it can change.")],
         what_next,
-        "The count isn't over. As of 11 November, two Senate races are still unsettled: Mississippi is a very close "
-        "count, with certification expected around 13 to 15 November, and Alaska's ranked-choice count is on 18 "
-        "November.\n\n"
+        "The count isn't over. As of 11 November, two Senate races are still unsettled: Mississippi is still counting "
+        "its last ballots, and Alaska runs its ranked-choice count in the coming days.\n\n"
         "After certification we publish our final scorecard: every race scored against the official results, misses "
         "first.\n\n"
         f"Until then, every number we've shown is provisional. Which race are you watching?\n\n{tags()}",
-        f"The count isn't over (11 Nov): Mississippi is a very close count, certification expected around 13 to 15 "
-        f"Nov; Alaska's ranked-choice count is on 18 Nov. Then our final scorecard, misses first. {LABEL}.",
-        "The count isn't over: as of 11 November, Mississippi is a very close count, with certification expected "
-        "around 13 to 15 November, and Alaska's ranked-choice count is on 18 November. After certification, our "
-        "final scorecard, misses first. Which race are you watching?",
-        ["A timeline of three steps. Mississippi: a very close count, certification expected around 13 to 15 "
-         "November. 18 November: Alaska, the ranked-choice count. After certification: our final scorecard, every "
-         "race scored against the official results, misses first."],
+        f"The count isn't over (11 Nov): Mississippi is still counting its last ballots, and Alaska runs its "
+        f"ranked-choice count in the coming days. Then our final scorecard, misses first. {LABEL}.",
+        "The count isn't over: as of 11 November, Mississippi is still counting its last ballots, and Alaska runs its "
+        "ranked-choice count in the coming days. After certification, our final scorecard, misses first. Which race "
+        "are you watching?",
+        ["A timeline of three steps. Mississippi: still counting its last ballots. Alaska: runs its ranked-choice count "
+         "in the coming days. After certification: our final scorecard, every race scored against the official "
+         "results, misses first."],
         "Which race are you watching?"))
 
     P.append(Post(
